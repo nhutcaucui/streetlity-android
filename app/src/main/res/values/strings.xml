@@ -154,4 +154,7 @@
     <string name="contacted">Contacted</string>
     <string name="nearby_store">nearby store</string>
     <string name="empty_reason">Empty reason</string>
+    <string name="user_wait_approval">User is waiting for approval</string>
+    <string name="user_not_exist">User doesn\'t exist</string>
+    <string name="empty_comment">Empty comment</string>
 </resources>

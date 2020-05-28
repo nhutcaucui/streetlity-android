@@ -144,4 +144,7 @@
     <string name="contacted">Đã liên lạc</string>
     <string name="nearby_store">cửa hàng gần đây</string>
     <string name="empty_reason">Lí do rỗng</string>
+    <string name="user_wait_approval">Người dùng đang đợi chấp thuận</string>
+    <string name="user_not_exist">Người dùng không tồn tại</string>
+    <string name="empty_comment">Bình luận trống</string>
 </resources>

@@ -140,38 +140,38 @@ public class Login extends AppCompatActivity {
                                 e.putInt("userType", jsonObject.getInt("Role"));
                                 e.commit();
 
-                                Call<ResponseBody> call2 = tour.addDevice("1.0.0", ((MyApplication) Login.this.getApplication()).getToken(),
-                                        username);
-                                call2.enqueue(new Callback<ResponseBody>() {
-                                    @Override
-                                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                        if (response.code() == 200) {
-                                            try {
-                                                JSONObject jsonObject1 = new JSONObject(response.body().string());
-                                                if (jsonObject1.getBoolean("Status")) {
-                                                    Log.e("", "onResponse: " + jsonObject1.toString());
-                                                } else {
-                                                    Log.e("", "onResponse: " + jsonObject1.toString());
-                                                }
-                                            } catch (Exception e) {
-                                                e.printStackTrace();
-                                            }
-                                        } else {
-                                            Log.e("", "onResponse: " + response.code());
-                                        }
-                                    }
-
-                                    @Override
-                                    public void onFailure(Call<ResponseBody> call, Throwable t) {
-
-                                    }
-                                });
+//                                Call<ResponseBody> call2 = tour.addDevice("1.0.0", ((MyApplication) Login.this.getApplication()).getToken(),
+//                                        username);
+//                                call2.enqueue(new Callback<ResponseBody>() {
+//                                    @Override
+//                                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+//                                        if (response.code() == 200) {
+//                                            try {
+//                                                JSONObject jsonObject1 = new JSONObject(response.body().string());
+//                                                if (jsonObject1.getBoolean("Status")) {
+//                                                    Log.e("", "onResponse: " + jsonObject1.toString());
+//                                                } else {
+//                                                    Log.e("", "onResponse: " + jsonObject1.toString());
+//                                                }
+//                                            } catch (Exception e) {
+//                                                e.printStackTrace();
+//                                            }
+//                                        } else {
+//                                            Log.e("", "onResponse: " + response.code());
+//                                        }
+//                                    }
+//
+//                                    @Override
+//                                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+//
+//                                    }
+//                                });
 
 
                                 setResult(RESULT_OK);
                                 finish();
                             } else {
-                                Toast toast = Toast.makeText(Login.this, "User is waiting for approval", Toast.LENGTH_LONG);
+                                Toast toast = Toast.makeText(Login.this, R.string.user_wait_approval, Toast.LENGTH_LONG);
                                 TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
                                 tv.setTextColor(Color.RED);
 
@@ -179,7 +179,7 @@ public class Login extends AppCompatActivity {
                             }
                         }
                         else{
-                            Toast toast = Toast.makeText(Login.this, "User doesn't exist", Toast.LENGTH_LONG);
+                            Toast toast = Toast.makeText(Login.this, R.string.user_not_exist, Toast.LENGTH_LONG);
                             TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
                             tv.setTextColor(Color.RED);
 
@@ -193,7 +193,7 @@ public class Login extends AppCompatActivity {
                 } else {
                     try {
                         Log.e("", "onResponse: " + response.code());
-                        Toast toast = Toast.makeText(Login.this, "User doesn't exist", Toast.LENGTH_LONG);
+                        Toast toast = Toast.makeText(Login.this, R.string.user_not_exist, Toast.LENGTH_LONG);
                         TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
                         tv.setTextColor(Color.RED);
 
