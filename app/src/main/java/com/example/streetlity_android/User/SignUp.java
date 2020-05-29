@@ -235,8 +235,7 @@ public class SignUp extends AppCompatActivity implements OnMapReadyCallback, Goo
                         mail = edtEmail.getText().toString();
                         pass = edtPassword.getText().toString();
                         cfPass = edtCFPassword.getText().toString();
-
-                        isPass = true;
+                        validateUsername(username, mail);
                     }
                 }
 
@@ -287,7 +286,7 @@ public class SignUp extends AppCompatActivity implements OnMapReadyCallback, Goo
                             } else {
                                 try {
                                     Log.e("", "onResponse: " + response.code());
-                                    Toast toast = Toast.makeText(SignUp.this, "Username or Email existed", Toast.LENGTH_LONG);
+                                    Toast toast = Toast.makeText(SignUp.this, R.string.something_wrong, Toast.LENGTH_LONG);
                                     TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
                                     tv.setTextColor(Color.RED);
 
@@ -854,7 +853,7 @@ public class SignUp extends AppCompatActivity implements OnMapReadyCallback, Goo
                 } else {
                     try {
                         Log.e("", "onResponse: "+  response.code());
-                        Toast toast = Toast.makeText(SignUp.this, "Username or Email existed", Toast.LENGTH_LONG);
+                        Toast toast = Toast.makeText(SignUp.this, R.string.something_wrong, Toast.LENGTH_LONG);
                         TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
                         tv.setTextColor(Color.RED);
 
@@ -894,7 +893,7 @@ public class SignUp extends AppCompatActivity implements OnMapReadyCallback, Goo
                             id = 0;
                             signUpMaintain();
                         }else{
-                            Toast toast = Toast.makeText(SignUp.this, "Something went wrong", Toast.LENGTH_LONG);
+                            Toast toast = Toast.makeText(SignUp.this, R.string.something_wrong, Toast.LENGTH_LONG);
                             TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
                             tv.setTextColor(Color.RED);
 
@@ -967,5 +966,103 @@ public class SignUp extends AppCompatActivity implements OnMapReadyCallback, Goo
             Toast.makeText(this, R.string.something_wrong, Toast.LENGTH_LONG).show();
         }
 
+    }
+
+    public void validateEmail(String email, MapAPI tour){
+
+        Call<ResponseBody> call = tour.validateEmail(email);
+
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.code() == 200) {
+                    try {
+                        JSONObject jsonObject = new JSONObject(response.body().string());
+                        Log.e("", "onResponse: " + jsonObject.toString());
+                        if (jsonObject.getBoolean("Status")) {
+                            int current = getItem(+1);
+                            if (current < layouts.size()) {
+                                // move to next screen
+                                mPager.setCurrentItem(current);
+                                step++;
+                            }
+                        } else {
+                            Toast toast = Toast.makeText(SignUp.this, R.string.email_exist, Toast.LENGTH_LONG);
+                            TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
+                            tv.setTextColor(Color.RED);
+
+                            toast.show();
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    try {
+                        Log.e("", "onResponse: " + response.code());
+                        Toast toast = Toast.makeText(SignUp.this, R.string.something_wrong, Toast.LENGTH_LONG);
+                        TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
+                        tv.setTextColor(Color.RED);
+
+                        toast.show();
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Log.e("", "onFailure: " + t.toString());
+            }
+        });
+    }
+
+    public void validateUsername(String username, String email){
+        Retrofit retro = new Retrofit.Builder().baseUrl("http://35.240.232.218/")
+                .addConverterFactory(GsonConverterFactory.create()).build();
+        final MapAPI tour = retro.create(MapAPI.class);
+
+        Call<ResponseBody> call = tour.validateUser(username);
+
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.code() == 200) {
+                    try {
+                        JSONObject jsonObject = new JSONObject(response.body().string());
+                        Log.e("", "onResponse: " + jsonObject.toString());
+                        if (jsonObject.getBoolean("Status")) {
+                            validateEmail(email, tour);
+                        } else {
+                            Toast toast = Toast.makeText(SignUp.this, R.string.username_existed, Toast.LENGTH_LONG);
+                            TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
+                            tv.setTextColor(Color.RED);
+
+                            toast.show();
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    try {
+                        Log.e("", "onResponse: " + response.code());
+                        Toast toast = Toast.makeText(SignUp.this, R.string.something_wrong, Toast.LENGTH_LONG);
+                        TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
+                        tv.setTextColor(Color.RED);
+
+                        toast.show();
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Log.e("", "onFailure: " + t.toString());
+            }
+        });
     }
 }

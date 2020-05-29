@@ -107,4 +107,10 @@ public interface MapAPI {
 
     @GET("service/atm/bank/all")
     Call<ResponseBody> getBank(@Header("Version") String version ,@Query("token") String token);
+
+    @GET("user/validate/email")
+    Call<ResponseBody> validateEmail(@Query("email") String email);
+
+    @GET("user/validate/user")
+    Call<ResponseBody> validateUser(@Query("username") String username);
 }

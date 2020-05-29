@@ -128,7 +128,7 @@ public class SignupAsMaintainer extends AppCompatActivity implements OnMapReadyC
                             } else {
                                 try {
                                     Log.e("", "onResponse: "+  response.code());
-                                    Toast toast = Toast.makeText(SignupAsMaintainer.this, "Username or Email existed", Toast.LENGTH_LONG);
+                                    Toast toast = Toast.makeText(SignupAsMaintainer.this, R.string.something_wrong, Toast.LENGTH_LONG);
                                     TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
                                     tv.setTextColor(Color.RED);
 

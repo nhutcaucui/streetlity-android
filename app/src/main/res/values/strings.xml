@@ -157,4 +157,6 @@
     <string name="user_wait_approval">User is waiting for approval</string>
     <string name="user_not_exist">User doesn\'t exist</string>
     <string name="empty_comment">Empty comment</string>
+    <string name="email_exist">Email existed</string>
+    <string name="username_existed">Username existed</string>
 </resources>

@@ -147,4 +147,6 @@
     <string name="user_wait_approval">Người dùng đang đợi chấp thuận</string>
     <string name="user_not_exist">Người dùng không tồn tại</string>
     <string name="empty_comment">Bình luận trống</string>
+    <string name="email_exist">Email đã tồn tại</string>
+    <string name="username_existed">Tên tài khoản đã tồn tại</string>
 </resources>

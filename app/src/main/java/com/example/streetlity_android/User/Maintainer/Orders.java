@@ -81,7 +81,7 @@ public class Orders extends Fragment {
         TextView tvNoOrderNorm =  rootView.findViewById(R.id.tv_normal_no_order);
         TextView tvNoOrderEmer = rootView.findViewById(R.id.tv_emer_no_order);
 
-        ListView lvNormal = rootView.findViewById(R.id.lv_normal_order);
+        ListView lvNormal = rootView.findViewById(R.id.lv_order);
         ListView lvEmergency = rootView.findViewById(R.id.lv_emergency);
 
         NormalOrderApdater normalOrderAdapter = new NormalOrderApdater(getActivity(), R.layout.lv_item_order,
