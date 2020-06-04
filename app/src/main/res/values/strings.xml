@@ -159,4 +159,8 @@
     <string name="empty_comment">Empty comment</string>
     <string name="email_exist">Email existed</string>
     <string name="username_existed">Username existed</string>
+    <string name="no_atm">No atm nearby</string>
+    <string name="no_fuel">No fuel station nearby</string>
+    <string name="no_wc">No public toilet nearby</string>
+    <string name="no_maintenance">No maintenance store nearby</string>
 </resources>

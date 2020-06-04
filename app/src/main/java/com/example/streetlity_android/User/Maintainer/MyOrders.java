@@ -79,11 +79,11 @@ public class MyOrders extends Fragment {
 
         View rootView = inflater.inflate(R.layout.fragment_my_orders, container, false);
 
-        TextView tvNoOrderNorm =  rootView.findViewById(R.id.tv_normal_no_order);
-        TextView tvNoOrderEmer = rootView.findViewById(R.id.tv_emer_no_order);
+        //TextView tvNoOrderNorm =  rootView.findViewById(R.id.tv_normal_no_order);
+        //TextView tvNoOrderEmer = rootView.findViewById(R.id.tv_emer_no_order);
 
         ListView lvNormal = rootView.findViewById(R.id.lv_order);
-        ListView lvEmergency = rootView.findViewById(R.id.lv_emergency);
+        //ListView lvEmergency = rootView.findViewById(R.id.lv_emergency);
 
         NormalOrderApdater normalOrderAdapter = new NormalOrderApdater(getActivity(), R.layout.lv_item_order,
                 itemNormal);
@@ -93,7 +93,7 @@ public class MyOrders extends Fragment {
         EmergencyOrderApdater emerOrderAdapter = new EmergencyOrderApdater(getActivity(), R.layout.lv_item_order,
                 itemEmer);
 
-        lvEmergency.setAdapter(emerOrderAdapter);
+        //lvEmergency.setAdapter(emerOrderAdapter);
 
         lvNormal.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -102,20 +102,20 @@ public class MyOrders extends Fragment {
             }
         });
 
-        lvEmergency.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-            }
-        });
-
-        if(lvNormal.getAdapter().getCount()==0){
-            tvNoOrderNorm.setVisibility(View.VISIBLE);
-        }
-
-        if(lvEmergency.getAdapter().getCount()==0){
-            tvNoOrderEmer.setVisibility(View.VISIBLE);
-        }
+//        lvEmergency.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//
+//            }
+//        });
+//
+//        if(lvNormal.getAdapter().getCount()==0){
+//            tvNoOrderNorm.setVisibility(View.VISIBLE);
+//        }
+//
+//        if(lvEmergency.getAdapter().getCount()==0){
+//            tvNoOrderEmer.setVisibility(View.VISIBLE);
+//        }
 
         return rootView;
     }

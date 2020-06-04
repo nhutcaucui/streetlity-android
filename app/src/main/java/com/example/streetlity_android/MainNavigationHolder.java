@@ -111,6 +111,10 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
             ((MyApplication) this.getApplication()).setUserType(s.getInt("userType", -1));
 
             setDrawerForUser(navView);
+
+            View header=navView.getHeaderView(0);
+            TextView tvUsername = header.findViewById(R.id.username);
+            tvUsername.setText(((MyApplication) this.getApplication()).getUsername());
         }else{
             setDrawerForNonUser(navView);
         }
@@ -160,7 +164,7 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
                 setDrawerForUser(navView);
 
                 View header=navView.getHeaderView(0);
-                TextView tvUsername = findViewById(R.id.tv_username);
+                TextView tvUsername = header.findViewById(R.id.username);
                 tvUsername.setText(((MyApplication) this.getApplication()).getUsername());
 
             }else if (requestCode == 2 && resultCode == RESULT_OK) {

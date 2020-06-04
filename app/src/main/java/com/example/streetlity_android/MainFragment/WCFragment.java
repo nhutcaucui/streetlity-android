@@ -15,7 +15,9 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.SeekBar;
+import android.widget.TextView;
 
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -60,6 +62,9 @@ public class WCFragment extends Fragment {
     ArrayList<MapObject> items= new ArrayList<>();
     MapObjectAdapter adapter;
 
+    ProgressBar loading;
+    TextView tvNoItem;
+
     float currLat;
     float currLon;
 
@@ -99,6 +104,9 @@ public class WCFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_home_fuel, container, false);
+
+        loading = rootView.findViewById(R.id.loading);
+        tvNoItem = rootView.findViewById(R.id.no_item);
 
         ListView lv = rootView.findViewById(R.id.list_view);
 
@@ -141,6 +149,9 @@ public class WCFragment extends Fragment {
         imgSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                loading.setIndeterminate(true);
+                loading.setVisibility(View.VISIBLE);
+                tvNoItem.setVisibility(View.GONE);
                 callWC(currLat,currLon,sb.getProgress());
             }
         });
@@ -228,6 +239,11 @@ public class WCFragment extends Fragment {
                                     return Float.compare(o1.getDistance(),o2.getDistance());
                                 }
                             });
+                            if (items.size() == 0){
+                                tvNoItem.setVisibility(View.VISIBLE);
+                            }
+                            loading.setIndeterminate(false);
+                            loading.setVisibility(View.GONE);
                         }
                     } catch (Exception e){
                         e.printStackTrace();

@@ -51,7 +51,7 @@ public class HistoryAdapter extends ArrayAdapter {
 
             holder = new HistoryAdapter.ViewHolder();
             convertView = inflater.inflate(R.layout.lv_item_history, null);
-            holder.id = (TextView) convertView.findViewById(R.id.id_order);
+            //holder.id = (TextView) convertView.findViewById(R.id.id_order);
             holder.name = (TextView) convertView.findViewById(R.id.tv_name);
             holder.date = (TextView) convertView.findViewById(R.id.tv_date);
             holder.address = (TextView) convertView.findViewById(R.id.tv_address);
@@ -61,7 +61,7 @@ public class HistoryAdapter extends ArrayAdapter {
         }
 
 
-        holder.id.setText(Integer.toString(this.mOriginalValues.get(position).getId()));
+        //holder.id.setText(Integer.toString(this.mOriginalValues.get(position).getId()));
         holder.name.setText(this.mOriginalValues.get(position).getName());
         holder.date.setText(this.mOriginalValues.get(position).getDate());
         holder.address.setText(this.mOriginalValues.get(position).getAddress());

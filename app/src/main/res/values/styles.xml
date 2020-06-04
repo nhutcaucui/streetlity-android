@@ -38,4 +38,12 @@
         <item name="colorControlActivated">@color/colorAccent</item>
         <item name="colorControlHighlight">@color/colorAccent</item>
     </style>
+
+    <style name="navTextInactive">
+        <item name="android:textColor">#fff</item>
+    </style>
+
+    <style name="navTextActive">
+        <item name="android:textColor">#000</item>
+    </style>
 </resources>

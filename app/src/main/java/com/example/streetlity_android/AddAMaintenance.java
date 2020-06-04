@@ -454,7 +454,7 @@ public class AddAMaintenance extends AppCompatActivity implements OnMapReadyCall
         try {
             if (requestCode == 1 && resultCode == RESULT_OK && null != data) {
                 if(data.getData()!=null){
-
+                    arrImg.clear();
                     Uri mImageUri=data.getData();
                     File file = new File(mImageUri.getPath());
 
@@ -469,6 +469,7 @@ public class AddAMaintenance extends AppCompatActivity implements OnMapReadyCall
                     hasImg = true;
                 } else{
                     if (data.getClipData() != null) {
+                        arrImg.clear();
                         ClipData mClipData = data.getClipData();
                         ArrayList<Uri> mArrayUri = new ArrayList<Uri>();
                         for (int i = 0; i < mClipData.getItemCount(); i++) {

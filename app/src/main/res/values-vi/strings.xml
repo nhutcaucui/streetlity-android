@@ -149,4 +149,8 @@
     <string name="empty_comment">Bình luận trống</string>
     <string name="email_exist">Email đã tồn tại</string>
     <string name="username_existed">Tên tài khoản đã tồn tại</string>
+    <string name="no_atm">Không tìm được ATM gần đây</string>
+    <string name="no_fuel">Không tìm được trạm xăng gần đây</string>
+    <string name="no_wc">Không tìm được nhà vệ sinh gần đâyy</string>
+    <string name="no_maintenance">Không tìm được tiệm sửa xe gần đây</string>
 </resources>

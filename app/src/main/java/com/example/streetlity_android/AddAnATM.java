@@ -590,7 +590,7 @@ public class AddAnATM extends AppCompatActivity implements OnMapReadyCallback {
                             }
 
                         }else{
-                            Toast toast = Toast.makeText(AddAnATM.this, "Something went wrong", Toast.LENGTH_LONG);
+                            Toast toast = Toast.makeText(AddAnATM.this, R.string.something_wrong, Toast.LENGTH_LONG);
                             TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
                             tv.setTextColor(Color.RED);
 

@@ -20,7 +20,9 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.SeekBar;
+import android.widget.TextView;
 
 import com.example.streetlity_android.MapAPI;
 import com.example.streetlity_android.MapNavigationHolder;
@@ -65,6 +67,9 @@ public class FuelFragment extends Fragment {
     ArrayList<MapObject> items= new ArrayList<>();
     MapObjectAdapter adapter;
 
+    ProgressBar loading;
+    TextView tvNoItem;
+
     float currLat;
     float currLon;
 
@@ -107,6 +112,9 @@ public class FuelFragment extends Fragment {
 
         ListView lv = rootView.findViewById(R.id.list_view);
 
+        loading = rootView.findViewById(R.id.loading);
+        tvNoItem = rootView.findViewById(R.id.no_item);
+
         adapter = new MapObjectAdapter(getActivity(), R.layout.lv_item_map_object, items);
         lv.setAdapter(adapter);
 
@@ -146,6 +154,9 @@ public class FuelFragment extends Fragment {
         imgSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                loading.setIndeterminate(true);
+                loading.setVisibility(View.VISIBLE);
+                tvNoItem.setVisibility(View.GONE);
                 callFuel(currLat,currLon,sb.getProgress());
             }
         });
@@ -233,6 +244,12 @@ public class FuelFragment extends Fragment {
                                     return Float.compare(o1.getDistance(),o2.getDistance());
                                 }
                             });
+                            if (items.size() == 0){
+                                tvNoItem.setVisibility(View.VISIBLE);
+                            }
+
+                            loading.setIndeterminate(false);
+                            loading.setVisibility(View.GONE);
                         }
                     } catch (Exception e){
                         e.printStackTrace();

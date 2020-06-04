@@ -4,32 +4,32 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorBackground"
+    android:background="@drawable/gradient_background"
     tools:context=".MainNavigationHolder">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbarlayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:elevation="5dp"
+        android:background="@android:color/transparent"
         android:theme="@style/AppTheme.AppBarOverlay">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
+            android:background="@android:color/transparent"
             app:popupTheme="@style/AppTheme.PopupOverlay">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center_vertical">
+                android:gravity="center|center_vertical">
 
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
+                    android:layout_marginLeft="-50dp"
                     android:src="@drawable/logo"></ImageView>
 
             </LinearLayout>
@@ -51,12 +51,20 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:background="@color/colorBackground"
         android:elevation="5dp"
         android:visibility="visible"
         app:itemIconTint="@drawable/navigationitem"
-        app:itemTextColor="#2F6840"
-        app:labelVisibilityMode="labeled"
+        app:itemTextAppearanceActive="@style/navTextActive"
+        app:itemTextAppearanceInactive="@style/navTextInactive"
+        app:itemTextColor="#000"
+        app:labelVisibilityMode="selected"
         app:menu="@menu/menu_main" />
+
+    <View
+        android:id="@+id/divider3"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_above="@id/navigation"
+        android:background="#000000" />
 
 </RelativeLayout>

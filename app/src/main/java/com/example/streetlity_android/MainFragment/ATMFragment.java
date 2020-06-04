@@ -19,7 +19,9 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.SeekBar;
+import android.widget.TextView;
 
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -66,6 +68,9 @@ public class ATMFragment extends Fragment {
     ArrayList<String> arrBank = new ArrayList<>();
     MapObjectAdapter adapter;
 
+    ProgressBar loading;
+    TextView tvNoItem;
+
     float currLat;
     float currLon;
 
@@ -109,6 +114,9 @@ public class ATMFragment extends Fragment {
         getBank(rootView);
         ListView lv = rootView.findViewById(R.id.list_view);
 
+        loading = rootView.findViewById(R.id.loading);
+        tvNoItem = rootView.findViewById(R.id.no_item);
+
         adapter = new MapObjectAdapter(getActivity(), R.layout.lv_item_map_object, items);
         lv.setAdapter(adapter);
 
@@ -148,6 +156,9 @@ public class ATMFragment extends Fragment {
         imgSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                loading.setIndeterminate(true);
+                loading.setVisibility(View.VISIBLE);
+                tvNoItem.setVisibility(View.GONE);
                 callATM(currLat,currLon,sb.getProgress());
             }
         });
@@ -237,6 +248,11 @@ public class ATMFragment extends Fragment {
                                     return Float.compare(o1.getDistance(),o2.getDistance());
                                 }
                             });
+                            if (items.size() == 0){
+                                tvNoItem.setVisibility(View.VISIBLE);
+                            }
+                            loading.setIndeterminate(false);
+                            loading.setVisibility(View.GONE);
                         }
                     } catch (Exception e){
                         e.printStackTrace();

@@ -51,7 +51,7 @@ public class EmergencyOrderApdater extends ArrayAdapter {
 
             holder = new EmergencyOrderApdater.ViewHolder();
             convertView = inflater.inflate(R.layout.lv_item_order, null);
-            holder.id = (TextView) convertView.findViewById(R.id.id_order);
+             //holder.id = (TextView) convertView.findViewById(R.id.id_order);
             holder.name = (TextView) convertView.findViewById(R.id.tv_name);
             holder.phone = (TextView) convertView.findViewById(R.id.tv_phone);
             holder.reason = (TextView) convertView.findViewById(R.id.tv_address);
@@ -61,7 +61,7 @@ public class EmergencyOrderApdater extends ArrayAdapter {
         }
 
 
-        holder.id.setText(Integer.toString(this.mOriginalValues.get(position).getId()));
+        //holder.id.setText(Integer.toString(this.mOriginalValues.get(position).getId()));
         holder.name.setText(this.mOriginalValues.get(position).getName());
         holder.phone.setText(this.mOriginalValues.get(position).getPhone());
         holder.reason.setText(this.mOriginalValues.get(position).getReason());
