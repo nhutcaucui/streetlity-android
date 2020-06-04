@@ -227,8 +227,6 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
                     case R.id.contribute:
                         startActivity(new Intent(MainNavigationHolder.this, ContributeToService.class));
                         break;
-                    case R.id.about:
-                        break;
                     case R.id.change_pass:
                         startActivity(new Intent(MainNavigationHolder.this, ChangePassword.class));
                 }
