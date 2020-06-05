@@ -163,4 +163,8 @@
     <string name="no_fuel">No fuel station nearby</string>
     <string name="no_wc">No public toilet nearby</string>
     <string name="no_maintenance">No maintenance store nearby</string>
+    <string name="cant_find_loca">Can\'t find location\nplease shake the phone</string>
+    <string name="location_services_off">Please turn on location service</string>
+    <string name="open_settings">Open settings</string>
+    <string name="no_internet">No internet</string>
 </resources>

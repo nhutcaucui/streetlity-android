@@ -153,4 +153,8 @@
     <string name="no_fuel">Không tìm được trạm xăng gần đây</string>
     <string name="no_wc">Không tìm được nhà vệ sinh gần đâyy</string>
     <string name="no_maintenance">Không tìm được tiệm sửa xe gần đây</string>
+    <string name="cant_find_loca">Không tìm được vị trí hiện tại\nXin hãy lắc điện thoại</string>
+    <string name="location_services_off">Xin hãy bật vị trí</string>
+    <string name="open_settings">Mở cài đặt</string>
+    <string name="no_internet">Không có internet</string>
 </resources>

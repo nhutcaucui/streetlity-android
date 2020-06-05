@@ -1,13 +1,19 @@
 package com.example.streetlity_android.MainFragment;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,6 +29,7 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.example.streetlity_android.BroadcastActivity;
+import com.example.streetlity_android.MainNavigationHolder;
 import com.example.streetlity_android.MapAPI;
 import com.example.streetlity_android.MapsActivity;
 import com.example.streetlity_android.R;
@@ -50,7 +57,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
  * Use the {@link MaintenanceFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class MaintenanceFragment extends Fragment {
+public class MaintenanceFragment extends Fragment implements LocationListener {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -66,9 +73,15 @@ public class MaintenanceFragment extends Fragment {
 
     ProgressBar loading;
     TextView tvNoItem;
+    TextView tvNoInternet;
 
     float currLat;
     float currLon;
+
+    private static final long MIN_TIME = 400;
+    private static final float MIN_DISTANCE = 1000;
+
+    LocationManager locationManager;
 
     public MaintenanceFragment() {
         // Required empty public constructor
@@ -109,6 +122,7 @@ public class MaintenanceFragment extends Fragment {
 
         loading = rootView.findViewById(R.id.loading);
         tvNoItem = rootView.findViewById(R.id.no_item);
+        tvNoInternet = rootView.findViewById(R.id.no_internet);
 
         ListView lv = rootView.findViewById(R.id.list_view);
 
@@ -127,22 +141,52 @@ public class MaintenanceFragment extends Fragment {
             }
         });
 
-        LocationManager locationManager = (LocationManager)
+        locationManager = (LocationManager)
                 getActivity().getSystemService(Context.LOCATION_SERVICE);
+        boolean gps_enabled = false;
+        boolean network_enabled = false;
 
+        try {
+            gps_enabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        } catch(Exception ex) {}
 
-        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
-                ContextCompat.checkSelfPermission(getActivity(),Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            Location location = locationManager.getLastKnownLocation(locationManager
-                    .NETWORK_PROVIDER);
-            if(location == null){
-                Log.e("", "onMapReady: MULL");
-            }
-            currLat = (float)location.getLatitude();
-            currLon = (float)location.getLongitude();
-            Log.e("", "onMapReady: " + currLat+" , " + currLon );
+        try {
+            network_enabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+        } catch(Exception ex) {}
+
+        if(!gps_enabled && !network_enabled) {
+            // notify user
+            new AlertDialog.Builder(getActivity())
+                    .setMessage(R.string.location_services_off)
+                    .setPositiveButton(R.string.open_settings, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+                            startActivityForResult(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS), 1);
+                            paramDialogInterface.dismiss();
+                        }
+                    })
+                    .setCancelable(false)
+                    .show();
         }
+        else {
 
+            if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
+                    ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                Location location = locationManager.getLastKnownLocation(locationManager
+                        .NETWORK_PROVIDER);
+                if (location == null) {
+                    loading.setVisibility(View.GONE);
+                    ((MainNavigationHolder) getActivity()).getCantFind().setVisibility(View.VISIBLE);
+                    locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME, MIN_DISTANCE, this);
+                    Log.e("", "onMapReady: MULL");
+                } else {
+                    currLat = (float) location.getLatitude();
+                    currLon = (float) location.getLongitude();
+                    callMaintenance(currLat, currLon, (float) 0);
+                }
+                Log.e("", "onMapReady: " + currLat + " , " + currLon);
+            }
+        }
 
         FloatingActionButton fab = rootView.findViewById(R.id.fab_broadcast);
 
@@ -157,7 +201,6 @@ public class MaintenanceFragment extends Fragment {
             }
         });
 
-        callMaintenance(currLat,currLon,(float)0);
 
         final SeekBar sb = rootView.findViewById(R.id.sb_range);
         ImageButton imgSearch = rootView.findViewById(R.id.img_btn_confirm_range);
@@ -165,8 +208,6 @@ public class MaintenanceFragment extends Fragment {
         imgSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                loading.setIndeterminate(true);
-                loading.setVisibility(View.VISIBLE);
                 tvNoItem.setVisibility(View.GONE);
                 callMaintenance(currLat,currLon,sb.getProgress());
             }
@@ -216,63 +257,70 @@ public class MaintenanceFragment extends Fragment {
 
     public void callMaintenance(double lat, double lon, float range){
         items.removeAll(items);
-        Log.e("", "callMaintenance: " + range );
-        Retrofit retro = new Retrofit.Builder().baseUrl("http://35.240.207.83/")
-                .addConverterFactory(GsonConverterFactory.create()).build();
-        final MapAPI tour = retro.create(MapAPI.class);
-        Call<ResponseBody> call = tour.getMaintenanceInRange("1.0.0",(float)lat, (float)lon,(range+1)/100);
-        //Call<ResponseBody> call = tour.getAllFuel();
-        call.enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                if(response.code() == 200) {
-                    final JSONObject jsonObject;
-                    JSONArray jsonArray;
-                    try {
-                        jsonObject = new JSONObject(response.body().string());
-                        Log.e("", "onResponse: " + jsonObject.toString());
-                        if(jsonObject.getJSONArray("Maintenances").toString() != "null") {
-                            jsonArray = jsonObject.getJSONArray("Maintenances");
+        if(isNetworkAvailable()) {
+            loading.setIndeterminate(true);
+            loading.setVisibility(View.VISIBLE);
+            tvNoInternet.setVisibility(View.GONE);
+            Log.e("", "callMaintenance: " + range);
+            Retrofit retro = new Retrofit.Builder().baseUrl("http://35.240.207.83/")
+                    .addConverterFactory(GsonConverterFactory.create()).build();
+            final MapAPI tour = retro.create(MapAPI.class);
+            Call<ResponseBody> call = tour.getMaintenanceInRange("1.0.0", (float) lat, (float) lon, (range + 1) / 100);
+            //Call<ResponseBody> call = tour.getAllFuel();
+            call.enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    if (response.code() == 200) {
+                        final JSONObject jsonObject;
+                        JSONArray jsonArray;
+                        try {
+                            jsonObject = new JSONObject(response.body().string());
+                            Log.e("", "onResponse: " + jsonObject.toString());
+                            if (jsonObject.getJSONArray("Maintenances").toString() != "null") {
+                                jsonArray = jsonObject.getJSONArray("Maintenances");
 
-                            for (int i = 0; i < jsonArray.length(); i++) {
-                                JSONObject jsonObject1 = jsonArray.getJSONObject(i);
-                                Log.e("", "onResponse: " + jsonObject1.toString());
-                                MapObject item = new MapObject(jsonObject1.getInt("Id"), jsonObject1.getString("Name"), 3,
-                                        jsonObject1.getString("Address"), (float)jsonObject1.getDouble("Lat"),
-                                        (float)jsonObject1.getDouble("Lon"), jsonObject1.getString("Note"),3);
+                                for (int i = 0; i < jsonArray.length(); i++) {
+                                    JSONObject jsonObject1 = jsonArray.getJSONObject(i);
+                                    Log.e("", "onResponse: " + jsonObject1.toString());
+                                    MapObject item = new MapObject(jsonObject1.getInt("Id"), jsonObject1.getString("Name"), 3,
+                                            jsonObject1.getString("Address"), (float) jsonObject1.getDouble("Lat"),
+                                            (float) jsonObject1.getDouble("Lon"), jsonObject1.getString("Note"), 3);
 
-                                float distance = distance(item.getLat(), item.getLon(), currLat, currLon);
+                                    float distance = distance(item.getLat(), item.getLon(), currLat, currLon);
 
-                                item.setDistance(distance);
-                                items.add(item);
-                            }
-
-                            adapter.notifyDataSetChanged();
-
-                            Collections.sort(items, new Comparator<MapObject>() {
-                                @Override
-                                public int compare(MapObject o1, MapObject o2) {
-                                    return Float.compare(o1.getDistance(),o2.getDistance());
+                                    item.setDistance(distance);
+                                    items.add(item);
                                 }
-                            });
-                            if (items.size() == 0){
-                                tvNoItem.setVisibility(View.VISIBLE);
-                            }
 
-                            loading.setIndeterminate(false);
-                            loading.setVisibility(View.GONE);
+                                adapter.notifyDataSetChanged();
+
+                                Collections.sort(items, new Comparator<MapObject>() {
+                                    @Override
+                                    public int compare(MapObject o1, MapObject o2) {
+                                        return Float.compare(o1.getDistance(), o2.getDistance());
+                                    }
+                                });
+                                if (items.size() == 0) {
+                                    tvNoItem.setVisibility(View.VISIBLE);
+                                }
+
+                                loading.setIndeterminate(false);
+                                loading.setVisibility(View.GONE);
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
-                    } catch (Exception e){
-                        e.printStackTrace();
                     }
                 }
-            }
 
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Log.e("", "onFailure: " + t.toString());
-            }
-        });
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    Log.e("", "onFailure: " + t.toString());
+                }
+            });
+        }else {
+            tvNoInternet.setVisibility(View.VISIBLE);
+        }
     }
 
     public static float distance(float lat1, float lng1, float lat2, float lng2) {
@@ -286,5 +334,84 @@ public class MaintenanceFragment extends Fragment {
         float dist = (float) (earthRadius * c);
 
         return dist;
+    }
+
+    public void onLocationChanged(Location location) {
+        currLat = (float) location.getLatitude();
+        currLon = (float) location.getLongitude();
+        loading.setVisibility(View.VISIBLE);
+        ((MainNavigationHolder) getActivity()).getCantFind().setVisibility(View.GONE);
+        callMaintenance(location.getLatitude(),location.getLongitude(),0);
+        locationManager.removeUpdates(this);
+    }
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == 1) {
+            boolean gps_enabled = false;
+            boolean network_enabled = false;
+
+            try {
+                gps_enabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+            } catch(Exception ex) {}
+
+            try {
+                network_enabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+            } catch(Exception ex) {}
+
+            if(!gps_enabled && !network_enabled) {
+                // notify user
+                AlertDialog al =new AlertDialog.Builder(getActivity())
+                        .setMessage(R.string.location_services_off)
+                        .setPositiveButton(R.string.open_settings, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+                                getActivity().startActivityForResult(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS),1);
+                                paramDialogInterface.dismiss();
+                            }
+                        })
+                        .setCancelable(false)
+                        .show();
+            }
+            else {
+
+                if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
+                        ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                    Location location = locationManager.getLastKnownLocation(locationManager
+                            .NETWORK_PROVIDER);
+                    if (location == null) {
+                        loading.setVisibility(View.GONE);
+                        ((MainNavigationHolder) getActivity()).getCantFind().setVisibility(View.VISIBLE);
+                        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME, MIN_DISTANCE, this);
+                        Log.e("", "onMapReady: MULL");
+                    } else {
+                        currLat = (float) location.getLatitude();
+                        currLon = (float) location.getLongitude();
+                        callMaintenance(currLat, currLon, (float) 0);
+                    }
+                    Log.e("", "onMapReady: " + currLat + " , " + currLon);
+                }
+
+            }
+        }
+    }
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 }
