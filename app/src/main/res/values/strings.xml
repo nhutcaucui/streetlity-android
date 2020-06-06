@@ -167,4 +167,8 @@
     <string name="location_services_off">Please turn on location service</string>
     <string name="open_settings">Open settings</string>
     <string name="no_internet">No internet</string>
-</resources>
+    <string name="fuel_success">Fuel station added successfully</string>
+    <string name="wc_success">Public toilet added successfully</string>
+    <string name="underline_signup">&lt;u&gt;Sign Up&lt;/u&gt;</string>
+    <string name="underline_forgotpass">&lt;u&gt;Forgot password?&lt;/u&gt;</string>
+    </resources>

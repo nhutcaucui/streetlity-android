@@ -1,4 +1,4 @@
-package com.example.streetlity_android;
+package com.example.streetlity_android.Contribution;
 
 import android.Manifest;
 import android.content.ClipData;
@@ -18,20 +18,21 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
+import com.example.streetlity_android.MapAPI;
+import com.example.streetlity_android.MyApplication;
+import com.example.streetlity_android.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -52,28 +53,24 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class AddAnATM extends AppCompatActivity implements OnMapReadyCallback {
+public class AddAMaintenance extends AppCompatActivity implements OnMapReadyCallback {
 
-    ArrayList<String> arrBank = new ArrayList<>();
-    ArrayAdapter<String> spinnerAdapter;
     ArrayList<File> arrImg = new ArrayList<>();
-
     boolean hasImg = false;
 
     private GoogleMap mMap;
 
     boolean firstClick = false;
 
-    double mLat;
-    double mLon;
+    double mLat = -500;
+    double mLon = -500;
 
-    int mBankId = -1;
-    String mNote = "";
+    String mName = "";
+    String mNote= "";
     String mAddress = "";
-    boolean isOther = false;
 
     private ViewPager mPager;
-    private AddAnATM.MyViewPagerAdapter myViewPagerAdapter;
+    private AddAMaintenance.MyViewPagerAdapter myViewPagerAdapter;
     private ArrayList<Integer> layouts;
     private Button btnPrevious, btnNext;
 
@@ -84,7 +81,13 @@ public class AddAnATM extends AppCompatActivity implements OnMapReadyCallback {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_an_atm);
+        setContentView(R.layout.activity_add_a_maintenance);
+
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle("");
 
         btnNext = findViewById(R.id.btn_next);
         btnPrevious = findViewById(R.id.btn_previous);
@@ -92,11 +95,11 @@ public class AddAnATM extends AppCompatActivity implements OnMapReadyCallback {
         mPager.setOffscreenPageLimit(3);
 
         layouts = new ArrayList<>();
-        layouts.add(R.layout.vp_atm_info);
-        layouts.add(R.layout.vp_atm_location);
-        layouts.add(R.layout.vp_atm_success);
+        layouts.add(R.layout.vp_maintenance_store_info);
+        layouts.add(R.layout.vp_maintenance_store_location);
+        layouts.add(R.layout.vp_maintenance_success);
 
-        myViewPagerAdapter = new AddAnATM.MyViewPagerAdapter();
+        myViewPagerAdapter = new AddAMaintenance.MyViewPagerAdapter();
         mPager.setAdapter(myViewPagerAdapter);
         mPager.addOnPageChangeListener(mPagerPageChangeListener);
 
@@ -120,57 +123,47 @@ public class AddAnATM extends AppCompatActivity implements OnMapReadyCallback {
                 boolean isPass = false;
 
                 if(step == 0){
-                    Spinner spnType = mPager.findViewById(R.id.spinner_type);
-                    if(isOther){
-                        EditText edtOther = mPager.findViewById(R.id.edt_atm_other);
-                        if(!edtOther.getText().toString().equals("")) {
-                            addBank(edtOther.getText().toString());
-                        }else{
-                            Toast toast = Toast.makeText(AddAnATM.this, R.string.please_select_bank, Toast.LENGTH_LONG);
-                            TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
-                            tv.setTextColor(Color.RED);
+                    EditText edtName = mPager.findViewById(R.id.edt_store_name);
+                    if(edtName.getText().toString().equals("")){
+                        Toast toast = Toast.makeText(AddAMaintenance.this,  R.string.empty_name, Toast.LENGTH_LONG);
+                        TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
+                        tv.setTextColor(Color.RED);
 
-                            toast.show();
-                        }
-                    }else{
-                        if(spnType.getSelectedItemPosition()!=0) {
-                            mBankId = spnType.getSelectedItemPosition();
-                            isPass = true;
-                        }else{
-                            Toast toast = Toast.makeText(AddAnATM.this, R.string.please_select_bank, Toast.LENGTH_LONG);
-                            TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
-                            tv.setTextColor(Color.RED);
-
-                            toast.show();
-                        }
+                        toast.show();
+                    }
+                    else{
+                        mName = edtName.getText().toString();
+                        EditText edtNote = findViewById(R.id.edt_store_note);
+                        mNote = edtNote.toString();
+                        isPass = true;
                     }
                 }
                 else if(step == 1){
-                    edtAddress = mPager.findViewById(R.id.edt_atm_address);
+                    edtAddress = findViewById(R.id.edt_store_address);
                     if(edtAddress.getText().toString().equals("")){
-                        Toast toast = Toast.makeText(AddAnATM.this, R.string.empty_address, Toast.LENGTH_LONG);
+                        Toast toast = Toast.makeText(AddAMaintenance.this,  R.string.empty_address, Toast.LENGTH_LONG);
                         TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
                         tv.setTextColor(Color.RED);
 
                         toast.show();
-                    }
-                    else if(mLat == -500 || mLon == -500){
-                        Toast toast = Toast.makeText(AddAnATM.this, R.string.please_select_location, Toast.LENGTH_LONG);
+                    } else if(mLon == -500 || mLat == -500){
+                        Toast toast = Toast.makeText(AddAMaintenance.this,  R.string.please_select_location, Toast.LENGTH_LONG);
                         TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
                         tv.setTextColor(Color.RED);
 
                         toast.show();
-                    }else{
+                    } else{
                         mAddress = edtAddress.getText().toString();
-
-                        addATM();
+                        addMaintenance();
                     }
+
                 }
                 else if(step == 2){
                     finish();
                 }
 
-                if(isPass) {
+
+                if(isPass){
                     if (getCurrentFocus() != null) {
                         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                         imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
@@ -185,14 +178,13 @@ public class AddAnATM extends AppCompatActivity implements OnMapReadyCallback {
                     }
                 }
             }
+
+
         });
+
     }
 
-    public boolean onOptionsItemSelected(MenuItem item){
-        this.finish();
 
-        return true;
-    }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -210,14 +202,14 @@ public class AddAnATM extends AppCompatActivity implements OnMapReadyCallback {
                     .NETWORK_PROVIDER);
             if(location == null){
                 Log.e("", "onMapReady: MULL");
+            }else {
+                latitude = location.getLatitude();
+                longitude = location.getLongitude();
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude, longitude), 15f));
             }
-            latitude = location.getLatitude();
-            longitude = location.getLongitude();
             Log.e("", "onMapReady: " + latitude+" , " + longitude );
         }
 
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(latitude, longitude)));
-        mMap.animateCamera( CameraUpdateFactory.zoomTo( 15.0f ) );
 
         googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
@@ -226,14 +218,23 @@ public class AddAnATM extends AppCompatActivity implements OnMapReadyCallback {
 
                 mMap.clear();
 
-
                 mMap.addMarker(opt);
+
 
 
                 mLat = latLng.latitude;
                 mLon = latLng.longitude;
             }
         });
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        if (getCurrentFocus() != null) {
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+        }
+        return super.dispatchTouchEvent(ev);
     }
 
     public void callGeocoding(String address){
@@ -253,7 +254,7 @@ public class AddAnATM extends AppCompatActivity implements OnMapReadyCallback {
                         Log.e("", "onResponse: " + jsonObject.toString());
 
                         if(jsonObject.getString("status").equals("ZERO_RESULTS")){
-                            Toast toast = Toast.makeText(AddAnATM.this, R.string.address_not_found, Toast.LENGTH_LONG);
+                            Toast toast = Toast.makeText(AddAMaintenance.this, R.string.address_not_found, Toast.LENGTH_LONG);
                             TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
                             tv.setTextColor(Color.RED);
 
@@ -280,8 +281,7 @@ public class AddAnATM extends AppCompatActivity implements OnMapReadyCallback {
                             edtAddress.setText(jsonObject1.getString("formatted_address"));
 
                             mMap.addMarker(opt);
-                            mMap.moveCamera(CameraUpdateFactory.newLatLng(location));
-                            mMap.animateCamera( CameraUpdateFactory.zoomTo( 18.0f ));
+                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location,18.0f ));
                         }
                     } catch (Exception e){
                         e.printStackTrace();
@@ -305,32 +305,23 @@ public class AddAnATM extends AppCompatActivity implements OnMapReadyCallback {
         });
     }
 
-    @Override
-    public boolean dispatchTouchEvent(MotionEvent ev) {
-        if (getCurrentFocus() != null) {
-            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
-        }
-        return super.dispatchTouchEvent(ev);
-    }
-
-    public void addATM(){
+    public void addMaintenance(){
         Retrofit retro = new Retrofit.Builder().baseUrl(((MyApplication) this.getApplication()).getServiceURL())
                 .addConverterFactory(GsonConverterFactory.create()).build();
         final MapAPI tour = retro.create(MapAPI.class);
 
         String token = ((MyApplication) this.getApplication()).getToken();
 
-        Call<ResponseBody> call = tour.addATM("1.0.0",token,(float) mLat,(float) mLon, mBankId, mAddress, mNote);
+        Call<ResponseBody> call = tour.addMaintenance("1.0.0",token,(float) mLat,(float) mLon, mAddress, mName, mNote);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 if(response.code() == 200) {
                     final JSONObject jsonObject;
-                    JSONArray jsonArray;
                     try {
                         jsonObject = new JSONObject(response.body().string());
                         Log.e("", "onResponse: " + jsonObject.toString());
+
                         if(jsonObject.getBoolean("Status")) {
                             btnNext.setText(R.string.finish);
 
@@ -340,16 +331,20 @@ public class AddAnATM extends AppCompatActivity implements OnMapReadyCallback {
                                 mPager.setCurrentItem(current);
                                 step++;
                             }
+                        }else{
+                            Toast toast = Toast.makeText(AddAMaintenance.this, R.string.something_wrong, Toast.LENGTH_LONG);
+                            TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
+                            tv.setTextColor(Color.RED);
+
+                            toast.show();
                         }
-                        //finish();
                     } catch (Exception e){
                         e.printStackTrace();
                     }
                 }
                 else{
                     try {
-                        Log.e(", ",response.errorBody().toString());
-
+                        Log.e(", ",response.errorBody().toString() + response.code());
                     }catch (Exception e){
                         e.printStackTrace();
                     }
@@ -398,11 +393,12 @@ public class AddAnATM extends AppCompatActivity implements OnMapReadyCallback {
 
             View view = layoutInflater.inflate(layouts.get(position), container, false);
 
-            if(layouts.get(position) == R.layout.vp_atm_location){
+            if(layouts.get(position) == R.layout.vp_maintenance_store_location){
                 SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                         .findFragmentById(R.id.map);
-                mapFragment.getMapAsync(AddAnATM.this);
-                edtAddress = view.findViewById(R.id.edt_atm_address );
+                mapFragment.getMapAsync(AddAMaintenance.this);
+
+                edtAddress = view.findViewById(R.id.edt_store_address);
 
                 ImageButton imgBtnSearch = view.findViewById(R.id.img_btn_search_address);
                 imgBtnSearch.setOnClickListener(new View.OnClickListener() {
@@ -417,7 +413,7 @@ public class AddAnATM extends AppCompatActivity implements OnMapReadyCallback {
                 });
             }
 
-            if(layouts.get(position) == R.layout.vp_atm_info){
+            if(layouts.get(position) == R.layout.vp_maintenance_store_info){
                 EditText edtImg = view.findViewById(R.id.edt_select_img);
                 edtImg.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -429,12 +425,6 @@ public class AddAnATM extends AppCompatActivity implements OnMapReadyCallback {
                         startActivityForResult(Intent.createChooser(intent,"Select Picture"), 1);
                     }
                 });
-            }
-
-
-
-            if(layouts.get(position) == R.layout.vp_atm_info){
-                getBank(view);
             }
 
             container.addView(view);
@@ -464,196 +454,50 @@ public class AddAnATM extends AppCompatActivity implements OnMapReadyCallback {
         return mPager.getCurrentItem() + i;
     }
 
-    public void getBank(View view){
-        Retrofit retro = new Retrofit.Builder().baseUrl(((MyApplication) this.getApplication()).getServiceURL())
-                .addConverterFactory(GsonConverterFactory.create()).build();
-        final MapAPI tour = retro.create(MapAPI.class);
-
-        String token = ((MyApplication) this.getApplication()).getToken();
-
-        Call<ResponseBody> call = tour.getBank("1.0.0",token);
-        call.enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                if(response.code() == 200) {
-                    final JSONObject jsonObject;
-                    try {
-                        jsonObject = new JSONObject(response.body().string());
-                        Log.e("", "onResponse: " + jsonObject.toString());
-
-                        if(jsonObject.getBoolean("Status")) {
-                            Spinner spinner = view.findViewById(R.id.spinner_type);
-                            arrBank.add(getString(R.string.select_bank_spinner));
-
-                            JSONArray jsonArray = jsonObject.getJSONArray("Banks");
-
-                            for(int i = 0; i< jsonArray.length(); i ++){
-                                JSONObject jsonObject1 = jsonArray.getJSONObject(i);
-                                arrBank.add(jsonObject1.getString("Name"));
-                            }
-                            arrBank.add(getString(R.string.other));
-
-                            spinnerAdapter = new ArrayAdapter<String>(AddAnATM.this,
-                                    android.R.layout.simple_spinner_item, arrBank);
-
-                            spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-                            spinner.setAdapter(spinnerAdapter);
-
-                            final EditText edtOther = view.findViewById(R.id.edt_atm_other);
-
-                            spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                                @Override
-                                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                                    if(spinner.getSelectedItem().toString().equals(getString(R.string.other))){
-                                        edtOther.setVisibility(View.VISIBLE);
-                                        isOther = true;
-
-                                    }else{
-                                        isOther = false;
-                                    }
-                                }
-
-                                @Override
-                                public void onNothingSelected(AdapterView<?> parent) {
-
-                                }
-                            });
-                        }else{
-                            Toast toast = Toast.makeText(AddAnATM.this,  R.string.something_wrong, Toast.LENGTH_LONG);
-                            TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
-                            tv.setTextColor(Color.RED);
-
-                            toast.show();
-                        }
-                    } catch (Exception e){
-                        e.printStackTrace();
-                    }
-                }
-                else{
-                    try {
-                        Log.e(", ",response.errorBody().toString() + response.code());
-                    }catch (Exception e){
-                        e.printStackTrace();
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Log.e("", "onFailure: " + t.toString());
-            }
-        });
-    }
-
-    public  void addBank(String name){
-        Retrofit retro = new Retrofit.Builder().baseUrl(((MyApplication) this.getApplication()).getServiceURL())
-                .addConverterFactory(GsonConverterFactory.create()).build();
-        final MapAPI tour = retro.create(MapAPI.class);
-
-        String token = ((MyApplication) this.getApplication()).getToken();
-
-        Call<ResponseBody> call = tour.addBank("1.0.0",token, name);
-        call.enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                if(response.code() == 200) {
-                    final JSONObject jsonObject;
-                    try {
-                        jsonObject = new JSONObject(response.body().string());
-                        Log.e("", "onResponse: " + jsonObject.toString());
-
-                        if(jsonObject.getBoolean("Status")) {
-                            mBankId = arrBank.size()-1;
-
-                            arrBank.set(arrBank.size()-1 ,name);
-                            arrBank.add(getString(R.string.other));
-                            spinnerAdapter.notifyDataSetChanged();
-
-                            Spinner spinner = mPager.findViewById(R.id.spinner_type);
-                            spinner.setSelection(arrBank.size()-2);
-
-                            final EditText edtOther = mPager.findViewById(R.id.edt_atm_other);
-                            edtOther.setVisibility(View.GONE);
-
-                            if (getCurrentFocus() != null) {
-                                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                                imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
-                            }
-                            int current = getItem(+1);
-                            if (current < layouts.size()) {
-                                // move to next screen
-                                mPager.setCurrentItem(current);
-                                step++;
-                            } else {
-
-                            }
-
-                        }else{
-                            Toast toast = Toast.makeText(AddAnATM.this, R.string.something_wrong, Toast.LENGTH_LONG);
-                            TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
-                            tv.setTextColor(Color.RED);
-
-                            toast.show();
-                        }
-                    } catch (Exception e){
-                        e.printStackTrace();
-                    }
-                }
-                else{
-                    try {
-                        Log.e(", ",response.errorBody().toString() + response.code());
-                    }catch (Exception e){
-                        e.printStackTrace();
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Log.e("", "onFailure: " + t.toString());
-            }
-        });
-    }
-
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         try {
-            if (requestCode == 1 && resultCode == RESULT_OK && null != data) {
-                if(data.getData()!=null){
-
-                    Uri mImageUri=data.getData();
-                    File file = new File(mImageUri.getPath());
-
-                    arrImg.add(file);
-
-                    Log.e("", "onActivityResult: " + arrImg.size() );
-
+            if (requestCode == 1) {
+                if(null == data) {
+                    arrImg.clear();
                     EditText edtSelectImg = mPager.findViewById(R.id.edt_select_img);
-                    String temp = getString(R.string.selected);
-                    temp = temp + " 1 " +getString(R.string.images);
-                    edtSelectImg.setHint(temp);
-                    hasImg = true;
-                } else{
-                    if (data.getClipData() != null) {
-                        ClipData mClipData = data.getClipData();
-                        ArrayList<Uri> mArrayUri = new ArrayList<Uri>();
-                        for (int i = 0; i < mClipData.getItemCount(); i++) {
+                    edtSelectImg.setHint(R.string.select_img);
+                }else {
+                    if (data.getData() != null) {
+                        arrImg.clear();
+                        Uri mImageUri = data.getData();
+                        File file = new File(mImageUri.getPath());
 
-                            ClipData.Item item = mClipData.getItemAt(i);
-                            Uri uri = item.getUri();
-                            File file = new File(uri.getPath());
+                        arrImg.add(file);
 
-                            arrImg.add(file);
-                        }
-
-                        Log.e("", "onActivityResult: " + arrImg.size() );
+                        Log.e("", "onActivityResult: " + arrImg.size());
 
                         EditText edtSelectImg = mPager.findViewById(R.id.edt_select_img);
                         String temp = getString(R.string.selected);
-                        temp = temp + " " +arrImg.size()+ " " +getString(R.string.images);
+                        temp = temp + " 1 " + getString(R.string.images);
                         edtSelectImg.setHint(temp);
                         hasImg = true;
+                    } else {
+                        if (data.getClipData() != null) {
+                            arrImg.clear();
+                            ClipData mClipData = data.getClipData();
+                            for (int i = 0; i < mClipData.getItemCount(); i++) {
+
+                                ClipData.Item item = mClipData.getItemAt(i);
+                                Uri uri = item.getUri();
+                                File file = new File(uri.getPath());
+
+                                arrImg.add(file);
+                            }
+
+                            Log.e("", "onActivityResult: " + arrImg.size());
+
+                            EditText edtSelectImg = mPager.findViewById(R.id.edt_select_img);
+                            String temp = getString(R.string.selected);
+                            temp = temp + " " + arrImg.size() + " " + getString(R.string.images);
+                            edtSelectImg.setHint(temp);
+                            hasImg = true;
+                        }
                     }
                 }
             }
@@ -661,5 +505,11 @@ public class AddAnATM extends AppCompatActivity implements OnMapReadyCallback {
             Toast.makeText(this, R.string.something_wrong, Toast.LENGTH_LONG).show();
         }
 
+    }
+
+    public boolean onOptionsItemSelected(MenuItem item){
+        this.finish();
+
+        return true;
     }
 }

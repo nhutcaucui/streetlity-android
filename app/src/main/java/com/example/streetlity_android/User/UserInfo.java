@@ -46,6 +46,12 @@ public class UserInfo extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_info);
 
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle("");
+
         EditText edtAddress = findViewById(R.id.edt_address);
         EditText edtPhone = findViewById(R.id.edt_phone);
 
@@ -97,5 +103,11 @@ public class UserInfo extends AppCompatActivity {
             }
         });
 
+    }
+
+    public boolean onOptionsItemSelected(MenuItem item){
+        this.finish();
+
+        return true;
     }
 }

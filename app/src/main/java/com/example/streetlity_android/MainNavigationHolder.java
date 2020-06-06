@@ -5,11 +5,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 
+import com.example.streetlity_android.Contribution.ContributeToService;
 import com.example.streetlity_android.MainFragment.ATMFragment;
 import com.example.streetlity_android.MainFragment.FuelFragment;
 import com.example.streetlity_android.MainFragment.MaintenanceFragment;

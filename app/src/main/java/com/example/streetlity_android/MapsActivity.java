@@ -15,8 +15,10 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.LayerDrawable;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
@@ -124,6 +126,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         RatingBar rb = findViewById(R.id.ratingbar_map_object);
         rb.setRating(item.getRating());
 
+        LayerDrawable stars = (LayerDrawable) rb.getProgressDrawable();
+        stars.getDrawable(2).setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP);
+        stars.getDrawable(0).setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP);
+        stars.getDrawable(1).setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP);
+
         ListView reviewList = findViewById(R.id.lv_review);
         ArrayList<Review> reviewItems = new ArrayList<Review>();
 
@@ -152,6 +159,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                 EditText edtComment = dialogView2.findViewById(R.id.edt_comment);
                 RatingBar rtReview = dialogView2.findViewById(R.id.rating_review);
+
+                LayerDrawable stars = (LayerDrawable) rtReview.getProgressDrawable();
+                stars.getDrawable(2).setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP);
+                stars.getDrawable(0).setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP);
+                stars.getDrawable(1).setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP);
 
                 Button confirmReview = dialogView2.findViewById(R.id.btn_confrim_review);
 

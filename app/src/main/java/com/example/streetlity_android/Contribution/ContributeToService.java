@@ -1,4 +1,4 @@
-package com.example.streetlity_android;
+package com.example.streetlity_android.Contribution;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,6 +10,8 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+
+import com.example.streetlity_android.R;
 
 public class ContributeToService extends AppCompatActivity {
 
@@ -42,7 +44,7 @@ public class ContributeToService extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent t = new Intent(ContributeToService.this, AddAnATM.class);
-                startActivityForResult(t,2);
+                startActivity(t);
             }
         });
 
@@ -50,7 +52,7 @@ public class ContributeToService extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent t = new Intent(ContributeToService.this, AddAMaintenance.class);
-                startActivityForResult(t, 1);
+                startActivity(t);
             }
         });
 
@@ -76,19 +78,5 @@ public class ContributeToService extends AppCompatActivity {
         this.finish();
 
         return true;
-    }
-
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        try {
-            if (requestCode == 2 && resultCode == RESULT_OK) {
-                Toast toast = Toast.makeText(ContributeToService.this, R.string.added_successfully, Toast.LENGTH_LONG);
-                toast.show();
-            }
-
-        } catch (Exception e) {
-            Toast.makeText(this, R.string.something_wrong, Toast.LENGTH_LONG).show();
-        }
-
     }
 }

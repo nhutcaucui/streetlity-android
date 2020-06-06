@@ -101,8 +101,8 @@
     <string name="signup_success_owner">Đăng kí thành công\\nXin đợi xác nhận</string>
     <string name="something_wrong">Có gì đó sai sai</string>
     <string name="store_info">Thông tin tiệm</string>
-    <string name="store_location">Địa diểm tiệm</string>
-    <string name="store_location_not_owner">Địa diểm tiệm</string>
+    <string name="store_location">Địa điểm tiệm</string>
+    <string name="store_location_not_owner">Địa điểm tiệm</string>
     <string name="store_select">Chọn cửa tiệm</string>
     <string name="store_success">Thêm tiệm thành công</string>
     <string name="title_activity_add_atm">Thêm ATM</string>
@@ -157,4 +157,8 @@
     <string name="location_services_off">Xin hãy bật vị trí</string>
     <string name="open_settings">Mở cài đặt</string>
     <string name="no_internet">Không có internet</string>
+    <string name="fuel_success">Thêm trạm xăng thành công</string>
+    <string name="wc_success">Thêm nhà vệ sinh thành công</string>
+    <string name="underline_signup">&lt;u&gt;Đăng kí&lt;/u&gt;</string>
+    <string name="underline_forgotpass">&lt;u&gt;Quên mật khẩu?&lt;/u&gt;</string>
 </resources>

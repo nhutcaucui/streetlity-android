@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorBackground">
+    android:background="@android:color/transparent">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -19,7 +19,7 @@
             android:layout_marginTop="20dp"
             android:gravity="center"
             android:text="@string/store_info"
-            android:textColor="@color/colorPrimaryDark"
+            android:textColor="@color/black"
             android:textSize="24sp"
             android:textStyle="bold" />
 
@@ -63,7 +63,7 @@
             android:longClickable="false"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
-            android:textColorHint="@color/colorPrimaryDark" />
+            android:textColorHint="@color/black" />
     </LinearLayout>
 
 </FrameLayout>

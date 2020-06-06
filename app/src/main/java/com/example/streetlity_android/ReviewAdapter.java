@@ -2,6 +2,9 @@ package com.example.streetlity_android;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.LayerDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -64,6 +67,11 @@ public class ReviewAdapter extends ArrayAdapter implements Filterable {
         holder.username.setText(this.mDisplayedValues.get(position).username);
         holder.body.setText(this.mDisplayedValues.get(position).reviewBody);
         holder.rating.setRating(this.mDisplayedValues.get(position).rating);
+
+        LayerDrawable stars = (LayerDrawable) holder.rating.getProgressDrawable();
+        stars.getDrawable(2).setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP);
+        stars.getDrawable(0).setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP);
+        stars.getDrawable(1).setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP);
 
         return convertView;
     }

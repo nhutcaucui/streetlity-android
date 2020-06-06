@@ -4,20 +4,22 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorBackground"
+    android:background="@drawable/gradient_background"
     tools:context=".User.Maintainer.OrderInfo">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbarlayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay">
+        android:background="@android:color/transparent"
+        android:theme="@style/AppTheme.AppBarOverlay"
+        app:elevation="0dp">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
+            android:background="@android:color/transparent"
             android:theme="@style/Theme.BlackBackArrow"
             app:popupTheme="@style/AppTheme.PopupOverlay">
 
@@ -169,7 +171,7 @@
                 android:layout_margin="10dp"
                 android:layout_weight="1"
                 android:background="@drawable/button_background"
-                android:elevation="4dp"
+                android:elevation="5dp"
                 android:text="@string/go" />
         </LinearLayout>
 
@@ -187,7 +189,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="@drawable/button_background_negative"
-                android:elevation="4dp"
+                android:elevation="5dp"
                 android:text="@string/decline" />
 
             <Button
@@ -196,7 +198,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="@drawable/button_background"
-                android:elevation="4dp"
+                android:elevation="5dp"
                 android:text="@string/accept" />
         </LinearLayout>
     </LinearLayout>

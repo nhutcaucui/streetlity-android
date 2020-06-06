@@ -4,20 +4,22 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorBackground"
+    android:background="@drawable/gradient_background"
     tools:context=".User.Maintainer.Works">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbarayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay">
+        android:background="@android:color/transparent"
+        android:theme="@style/AppTheme.AppBarOverlay"
+        app:elevation="0dp">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
+            android:background="@android:color/transparent"
             android:theme="@style/Theme.BlackBackArrow"
             app:popupTheme="@style/AppTheme.PopupOverlay">
 
@@ -46,11 +48,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:background="#EEEEEE"
+        android:background="@android:color/transparent"
 
         app:itemIconTint="@drawable/navigationitem"
-        app:itemTextColor="#2F6840"
-        app:labelVisibilityMode="labeled"
+        app:itemTextColor="@color/black"
+        app:labelVisibilityMode="selected"
         app:menu="@menu/menu_works" />
 
 

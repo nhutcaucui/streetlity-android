@@ -11,6 +11,7 @@ import com.example.streetlity_android.MapAPI;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.text.Html;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -39,6 +40,12 @@ public class Login extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle("");
 
         final EditText edtUser = findViewById(R.id.edt_username);
         final EditText edtPass = findViewById(R.id.edt_password);
@@ -97,6 +104,9 @@ public class Login extends AppCompatActivity {
                 startActivityForResult(t, 2);
             }
         });
+
+        btnSignup.setText(Html.fromHtml(getString(R.string.underline_signup)));
+        btnForgot.setText(Html.fromHtml(getString(R.string.underline_forgotpass)));
 
     }
 
@@ -220,5 +230,7 @@ public class Login extends AppCompatActivity {
         }
         return super.dispatchTouchEvent(ev);
     }
+
+
 }
 

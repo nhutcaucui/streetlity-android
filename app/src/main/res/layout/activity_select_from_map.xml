@@ -4,28 +4,38 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#DBDBDB"
+    android:background="@drawable/gradient_background"
     tools:context=".MapNavigationHolder">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appbarlayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:theme="@style/AppTheme.AppBarOverlay"
+        app:elevation="0dp">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@android:color/transparent"
+            android:theme="@style/Theme.BlackBackArrow"
+            app:popupTheme="@style/AppTheme.PopupOverlay" />
+
+    </com.google.android.material.appbar.AppBarLayout>
 
     <TextView
         android:id="@+id/tv_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/appbarlayout"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="20dp"
         android:gravity="center"
         android:text="@string/atm_location"
-        android:textColor="@color/colorPrimaryDark"
+        android:textColor="@color/black"
         android:textSize="24sp"
         android:textStyle="bold" />
-
-    <fragment
-        android:id="@+id/map"
-        android:name="com.google.android.gms.maps.SupportMapFragment"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/layout_note"
-        android:layout_marginTop="10dp" />
 
     <LinearLayout
         android:id="@+id/layout_search"
@@ -61,17 +71,17 @@
     <LinearLayout
         android:id="@+id/layout_note"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_below="@id/layout_search"
-        android:layout_marginLeft="15dp"
         android:layout_marginTop="10dp"
-        android:layout_marginRight="15dp"
         android:orientation="vertical">
 
         <EditText
             android:id="@+id/edt_note"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
             android:ems="10"
             android:hint="@string/note_without"
             android:inputType="text"
@@ -82,7 +92,9 @@
             android:id="@+id/edt_select_img"
             android:layout_width="match_parent"
             android:layout_height="40dp"
+            android:layout_marginLeft="15dp"
             android:layout_marginTop="15dp"
+            android:layout_marginRight="15dp"
             android:background="@drawable/dashed_background"
             android:focusable="false"
             android:focusableInTouchMode="false"
@@ -92,7 +104,14 @@
             android:longClickable="false"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
-            android:textColorHint="@color/colorPrimaryDark" />
+            android:textColorHint="@color/black" />
+
+        <fragment
+            android:id="@+id/map"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="10dp" />
     </LinearLayout>
 
     <Button
@@ -104,6 +123,7 @@
         android:layout_marginRight="15dp"
         android:layout_marginBottom="15dp"
         android:background="@drawable/button_background"
+        android:elevation="5dp"
         android:foreground="?android:attr/selectableItemBackground"
         android:text="@string/confirm"
         android:visibility="gone" />

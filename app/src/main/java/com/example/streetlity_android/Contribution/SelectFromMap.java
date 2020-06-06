@@ -1,4 +1,4 @@
-package com.example.streetlity_android;
+package com.example.streetlity_android.Contribution;
 
 import android.Manifest;
 import android.content.ClipData;
@@ -12,7 +12,7 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.MotionEvent;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -23,9 +23,11 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.example.streetlity_android.MapAPI;
+import com.example.streetlity_android.MyApplication;
+import com.example.streetlity_android.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -66,6 +68,12 @@ public class SelectFromMap extends AppCompatActivity implements OnMapReadyCallba
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_from_map);
+
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle("");
 
         Intent t = getIntent();
         final int type = t.getIntExtra("type", -1);
@@ -168,24 +176,23 @@ public class SelectFromMap extends AppCompatActivity implements OnMapReadyCallba
 
         LocationManager locationManager = (LocationManager)
                 getSystemService(Context.LOCATION_SERVICE);
-        Criteria criteria = new Criteria();
 
-        double latitude = 0;
-        double longitude = 0;
+        double latitude;
+        double longitude;
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
                 ContextCompat.checkSelfPermission(this,Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             Location location = locationManager.getLastKnownLocation(locationManager
                     .NETWORK_PROVIDER);
             if(location == null){
                 Log.e("", "onMapReady: MULL");
-            }
-            latitude = location.getLatitude();
-            longitude = location.getLongitude();
-            Log.e("", "onMapReady: " + latitude+" , " + longitude );
-        }
+            }else {
+                latitude = location.getLatitude();
+                longitude = location.getLongitude();
 
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(latitude, longitude)));
-        mMap.animateCamera( CameraUpdateFactory.zoomTo( 15.0f ) );
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude, longitude), 15f));
+                Log.e("", "onMapReady: " + latitude + " , " + longitude);
+            }
+        }
 
         googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
@@ -226,7 +233,9 @@ public class SelectFromMap extends AppCompatActivity implements OnMapReadyCallba
                         Log.e("", "onResponse: " + jsonObject.toString());
 
                         if(jsonObject.getBoolean("Status")) {
-                            setResult(RESULT_OK);
+                            Intent t = new Intent(SelectFromMap.this,AddSuccess.class);
+                            t.putExtra("type", 1);
+                            startActivity(t);
                             finish();
                         }
                     } catch (Exception e){
@@ -269,8 +278,9 @@ public class SelectFromMap extends AppCompatActivity implements OnMapReadyCallba
                         Log.e("", "onResponse: " + jsonObject.toString());
 
                         if(jsonObject.getBoolean("Status")) {
-
-                            setResult(RESULT_OK);
+                            Intent t = new Intent(SelectFromMap.this,AddSuccess.class);
+                            t.putExtra("type", 2);
+                            startActivity(t);
                             finish();
                         }
                     } catch (Exception e){
@@ -344,8 +354,7 @@ public class SelectFromMap extends AppCompatActivity implements OnMapReadyCallba
                             }
 
                             mMap.addMarker(opt);
-                            mMap.moveCamera(CameraUpdateFactory.newLatLng(location));
-                            mMap.animateCamera( CameraUpdateFactory.zoomTo( 18.0f ));
+                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location,18.0f));
                         }
                     } catch (Exception e){
                         e.printStackTrace();
@@ -372,41 +381,46 @@ public class SelectFromMap extends AppCompatActivity implements OnMapReadyCallba
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         try {
-            if (requestCode == 1 && resultCode == RESULT_OK && null != data) {
-                if(data.getData()!=null){
-
-                    Uri mImageUri=data.getData();
-                    File file = new File(mImageUri.getPath());
-
-                    arrImg.add(file);
-
-                    Log.e("", "onActivityResult: " + arrImg.size() );
-
+            if (requestCode == 1) {
+                if(null == data) {
+                    arrImg.clear();
                     EditText edtSelectImg = findViewById(R.id.edt_select_img);
-                    String temp = getString(R.string.selected);
-                    temp = temp + " 1 " +getString(R.string.images);
-                    edtSelectImg.setHint(temp);
-                    hasImg = true;
-                } else{
-                    if (data.getClipData() != null) {
-                        ClipData mClipData = data.getClipData();
-                        ArrayList<Uri> mArrayUri = new ArrayList<Uri>();
-                        for (int i = 0; i < mClipData.getItemCount(); i++) {
+                    edtSelectImg.setHint(R.string.select_img);
+                }else {
+                    if (data.getData() != null) {
+                        arrImg.clear();
+                        Uri mImageUri = data.getData();
+                        File file = new File(mImageUri.getPath());
 
-                            ClipData.Item item = mClipData.getItemAt(i);
-                            Uri uri = item.getUri();
-                            File file = new File(uri.getPath());
+                        arrImg.add(file);
 
-                            arrImg.add(file);
-                        }
-
-                        Log.e("", "onActivityResult: " + arrImg.size() );
+                        Log.e("", "onActivityResult: " + arrImg.size());
 
                         EditText edtSelectImg = findViewById(R.id.edt_select_img);
                         String temp = getString(R.string.selected);
-                        temp = temp + " " +arrImg.size()+ " " +getString(R.string.images);
+                        temp = temp + " 1 " + getString(R.string.images);
                         edtSelectImg.setHint(temp);
                         hasImg = true;
+                    } else {
+                        if (data.getClipData() != null) {
+                            ClipData mClipData = data.getClipData();
+                            for (int i = 0; i < mClipData.getItemCount(); i++) {
+
+                                ClipData.Item item = mClipData.getItemAt(i);
+                                Uri uri = item.getUri();
+                                File file = new File(uri.getPath());
+
+                                arrImg.add(file);
+                            }
+
+                            Log.e("", "onActivityResult: " + arrImg.size());
+
+                            EditText edtSelectImg = findViewById(R.id.edt_select_img);
+                            String temp = getString(R.string.selected);
+                            temp = temp + " " + arrImg.size() + " " + getString(R.string.images);
+                            edtSelectImg.setHint(temp);
+                            hasImg = true;
+                        }
                     }
                 }
             }
@@ -425,4 +439,9 @@ public class SelectFromMap extends AppCompatActivity implements OnMapReadyCallba
 //        return super.dispatchTouchEvent(ev);
 //    }
 
+    public boolean onOptionsItemSelected(MenuItem item){
+        this.finish();
+
+        return true;
+    }
 }

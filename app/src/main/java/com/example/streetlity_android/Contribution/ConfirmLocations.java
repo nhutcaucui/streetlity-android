@@ -1,4 +1,4 @@
-package com.example.streetlity_android;
+package com.example.streetlity_android.Contribution;
 
 import androidx.fragment.app.FragmentActivity;
 
@@ -11,6 +11,7 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.SeekBar;
 
+import com.example.streetlity_android.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;

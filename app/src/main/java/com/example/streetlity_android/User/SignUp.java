@@ -14,6 +14,7 @@ import android.os.Bundle;
 import com.example.streetlity_android.MapAPI;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.viewpager.widget.PagerAdapter;
@@ -21,6 +22,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
@@ -103,6 +105,12 @@ public class SignUp extends AppCompatActivity implements OnMapReadyCallback, Goo
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
+
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle("");
 
         btnNext = findViewById(R.id.btn_next);
         btnPrevious = findViewById(R.id.btn_previous);
@@ -638,10 +646,11 @@ public class SignUp extends AppCompatActivity implements OnMapReadyCallback, Goo
                     .NETWORK_PROVIDER);
             if(location == null){
                 Log.e("", "onMapReady: MULL");
+            }else {
+                latitude = location.getLatitude();
+                longitude = location.getLongitude();
+                Log.e("", "onMapReady: " + latitude + " , " + longitude);
             }
-            latitude = location.getLatitude();
-            longitude = location.getLongitude();
-            Log.e("", "onMapReady: " + latitude+" , " + longitude );
         }
 
         if(exist == 1) {
@@ -661,8 +670,7 @@ public class SignUp extends AppCompatActivity implements OnMapReadyCallback, Goo
             });
         }
 
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(latitude, longitude)));
-        mMap.animateCamera( CameraUpdateFactory.zoomTo( 12.0f ) );
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude, longitude), 15f));
     }
 
     public void getLocations(float lat, float lon){
@@ -791,8 +799,7 @@ public class SignUp extends AppCompatActivity implements OnMapReadyCallback, Goo
                             edtAddress.setText(jsonObject1.getString("formatted_address"));
 
                             mMap.addMarker(opt);
-                            mMap.moveCamera(CameraUpdateFactory.newLatLng(location));
-                            mMap.animateCamera( CameraUpdateFactory.zoomTo( 18.0f ));
+                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location,18f));
                         }
                     } catch (Exception e){
                         e.printStackTrace();
@@ -924,41 +931,47 @@ public class SignUp extends AppCompatActivity implements OnMapReadyCallback, Goo
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         try {
-            if (requestCode == 1 && resultCode == RESULT_OK && null != data) {
-                if(data.getData()!=null){
-
-                    Uri mImageUri=data.getData();
-                    File file = new File(mImageUri.getPath());
-
-                    arrImg.add(file);
-
-                    Log.e("", "onActivityResult: " + arrImg.size() );
-
+            if (requestCode == 1) {
+                if(null == data) {
+                    arrImg.clear();
                     EditText edtSelectImg = mPager.findViewById(R.id.edt_select_img);
-                    String temp = getString(R.string.selected);
-                    temp = temp + " 1 " +getString(R.string.images);
-                    edtSelectImg.setHint(temp);
-                    hasImg = true;
-                } else{
-                    if (data.getClipData() != null) {
-                        ClipData mClipData = data.getClipData();
-                        ArrayList<Uri> mArrayUri = new ArrayList<Uri>();
-                        for (int i = 0; i < mClipData.getItemCount(); i++) {
+                    edtSelectImg.setHint(R.string.select_img);
+                }else {
+                    if (data.getData() != null) {
+                        arrImg.clear();
+                        Uri mImageUri = data.getData();
+                        File file = new File(mImageUri.getPath());
 
-                            ClipData.Item item = mClipData.getItemAt(i);
-                            Uri uri = item.getUri();
-                            File file = new File(uri.getPath());
+                        arrImg.add(file);
 
-                            arrImg.add(file);
-                        }
-
-                        Log.e("", "onActivityResult: " + arrImg.size() );
+                        Log.e("", "onActivityResult: " + arrImg.size());
 
                         EditText edtSelectImg = mPager.findViewById(R.id.edt_select_img);
                         String temp = getString(R.string.selected);
-                        temp = temp + " " +arrImg.size()+ " " +getString(R.string.images);
+                        temp = temp + " 1 " + getString(R.string.images);
                         edtSelectImg.setHint(temp);
                         hasImg = true;
+                    } else {
+                        if (data.getClipData() != null) {
+                            arrImg.clear();
+                            ClipData mClipData = data.getClipData();
+                            for (int i = 0; i < mClipData.getItemCount(); i++) {
+
+                                ClipData.Item item = mClipData.getItemAt(i);
+                                Uri uri = item.getUri();
+                                File file = new File(uri.getPath());
+
+                                arrImg.add(file);
+                            }
+
+                            Log.e("", "onActivityResult: " + arrImg.size());
+
+                            EditText edtSelectImg = mPager.findViewById(R.id.edt_select_img);
+                            String temp = getString(R.string.selected);
+                            temp = temp + " " + arrImg.size() + " " + getString(R.string.images);
+                            edtSelectImg.setHint(temp);
+                            hasImg = true;
+                        }
                     }
                 }
             }
@@ -1064,5 +1077,11 @@ public class SignUp extends AppCompatActivity implements OnMapReadyCallback, Goo
                 Log.e("", "onFailure: " + t.toString());
             }
         });
+    }
+
+    public boolean onOptionsItemSelected(MenuItem item){
+        this.finish();
+
+        return true;
     }
 }
