@@ -1,4 +1,4 @@
-package com.example.streetlity_android.MainFragment;
+package com.example.streetlity_android.Contribution;
 
 import android.Manifest;
 import android.app.AlertDialog;
@@ -16,10 +16,8 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -32,9 +30,12 @@ import android.widget.TextView;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import com.example.streetlity_android.MainFragment.MapObject;
+import com.example.streetlity_android.MainFragment.MapObjectAdapter;
 import com.example.streetlity_android.MainNavigationHolder;
 import com.example.streetlity_android.MapAPI;
 import com.example.streetlity_android.MapsActivity;
+import com.example.streetlity_android.MapsActivityConfirmation;
 import com.example.streetlity_android.MyApplication;
 import com.example.streetlity_android.R;
 
@@ -60,7 +61,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
  * Use the {@link ATMFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ATMFragment extends Fragment implements LocationListener {
+public class ATMFragment extends Fragment{
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -138,7 +139,7 @@ public class ATMFragment extends Fragment implements LocationListener {
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent t = new Intent(getActivity(), MapsActivity.class);
+                Intent t = new Intent(getActivity(), MapsActivityConfirmation.class);
                 t.putExtra("currLat", currLat);
                 t.putExtra("currLon", currLon);
                 t.putExtra("item", items.get(position));
@@ -150,50 +151,15 @@ public class ATMFragment extends Fragment implements LocationListener {
         locationManager = (LocationManager)
                 getActivity().getSystemService(Context.LOCATION_SERVICE);
 
-        boolean gps_enabled = false;
-        boolean network_enabled = false;
-
-        try {
-            gps_enabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-        } catch(Exception ex) {}
-
-        try {
-            network_enabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-        } catch(Exception ex) {}
-
-        if(!gps_enabled && !network_enabled) {
-            // notify user
-            new AlertDialog.Builder(getActivity())
-                    .setMessage(R.string.location_services_off)
-                    .setPositiveButton(R.string.open_settings, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface paramDialogInterface, int paramInt) {
-                            getActivity().startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
-                        }
-                    })
-                    .setCancelable(false)
-                    .show();
+        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
+                ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            Location location = locationManager.getLastKnownLocation(locationManager
+                    .NETWORK_PROVIDER);
+            currLat = (float) location.getLatitude();
+            currLon = (float) location.getLongitude();
+            callATM(currLat, currLon, (float) 0);
+            Log.e("", "onMapReady: " + currLat + " , " + currLon);
         }
-        else {
-
-            if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
-                    ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                Location location = locationManager.getLastKnownLocation(locationManager
-                        .NETWORK_PROVIDER);
-                if (location == null) {
-                    loading.setVisibility(View.GONE);
-                    ((MainNavigationHolder) getActivity()).getCantFind().setVisibility(View.VISIBLE);
-                    locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME, MIN_DISTANCE, this);
-                    Log.e("", "onMapReady: MULL");
-                } else {
-                    currLat = (float) location.getLatitude();
-                    currLon = (float) location.getLongitude();
-                    callATM(currLat, currLon, (float) 0);
-                }
-                Log.e("", "onMapReady: " + currLat + " , " + currLon);
-            }
-        }
-
 
         final SeekBar sb = rootView.findViewById(R.id.sb_range);
         ImageButton imgSearch = rootView.findViewById(R.id.img_btn_confirm_range);
@@ -278,7 +244,7 @@ public class ATMFragment extends Fragment implements LocationListener {
                                 for (int i = 0; i < jsonArray.length(); i++) {
                                     JSONObject jsonObject1 = jsonArray.getJSONObject(i);
                                     Log.e("", "onResponse: " + jsonObject1.toString());
-                                    MapObject item = new MapObject(jsonObject1.getInt("Id"), arrBank.get(jsonObject1.getInt("BankId")), 3,
+                                    MapObject item = new MapObject(jsonObject1.getInt("Id"), arrBank.get(jsonObject1.getInt("BankId")), 0,
                                             jsonObject1.getString("Address"), (float) jsonObject1.getDouble("Lat"),
                                             (float) jsonObject1.getDouble("Lon"), jsonObject1.getString("Note"), 4);
 
@@ -406,77 +372,6 @@ public class ATMFragment extends Fragment implements LocationListener {
                 Log.e("", "onFailure: " + t.toString());
             }
         });
-    }
-
-    public void onLocationChanged(Location location) {
-        currLat = (float) location.getLatitude();
-        currLon = (float) location.getLongitude();
-        loading.setVisibility(View.VISIBLE);
-        ((MainNavigationHolder) getActivity()).getCantFind().setVisibility(View.GONE);
-        callATM(location.getLatitude(),location.getLongitude(),0);
-        locationManager.removeUpdates(this);
-    }
-    @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {
-    }
-
-    @Override
-    public void onProviderEnabled(String provider) {
-    }
-
-    @Override
-    public void onProviderDisabled(String provider) {
-    }
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == 1) {
-            boolean gps_enabled = false;
-            boolean network_enabled = false;
-
-            try {
-                gps_enabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-            } catch(Exception ex) {}
-
-            try {
-                network_enabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-            } catch(Exception ex) {}
-
-            if(!gps_enabled && !network_enabled) {
-                // notify user
-                AlertDialog al =new AlertDialog.Builder(getActivity())
-                        .setMessage(R.string.location_services_off)
-                        .setPositiveButton(R.string.open_settings, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface paramDialogInterface, int paramInt) {
-                                getActivity().startActivityForResult(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS),1);
-                                paramDialogInterface.dismiss();
-                            }
-                        })
-                        .setCancelable(false)
-                        .show();
-            }
-            else {
-
-                if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
-                        ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                    Location location = locationManager.getLastKnownLocation(locationManager
-                            .NETWORK_PROVIDER);
-                    if (location == null) {
-                        loading.setVisibility(View.GONE);
-                        ((MainNavigationHolder) getActivity()).getCantFind().setVisibility(View.VISIBLE);
-                        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME, MIN_DISTANCE, this);
-                        Log.e("", "onMapReady: MULL");
-                    } else {
-                        currLat = (float) location.getLatitude();
-                        currLon = (float) location.getLongitude();
-                        callATM(currLat, currLon, (float) 0);
-                    }
-                    Log.e("", "onMapReady: " + currLat + " , " + currLon);
-                }
-
-            }
-        }
     }
 
     private boolean isNetworkAvailable() {

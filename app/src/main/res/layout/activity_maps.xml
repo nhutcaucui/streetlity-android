@@ -20,13 +20,14 @@
             android:theme="@style/Theme.BlackBackArrow">
 
             <TextView
+                android:id="@+id/tv_tittle"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"
                 android:paddingLeft="-50dp"
                 android:text="@string/find_direction"
                 android:textColor="#000000"
-                android:textSize="30sp"/>
+                android:textSize="30sp" />
         </androidx.appcompat.widget.Toolbar>
 
     </com.google.android.material.appbar.AppBarLayout>

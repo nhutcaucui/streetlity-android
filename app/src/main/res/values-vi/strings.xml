@@ -161,4 +161,5 @@
     <string name="wc_success">Thêm nhà vệ sinh thành công</string>
     <string name="underline_signup">&lt;u&gt;Đăng kí&lt;/u&gt;</string>
     <string name="underline_forgotpass">&lt;u&gt;Quên mật khẩu?&lt;/u&gt;</string>
+    <string name="confirming_location">Xác nhận điểm</string>
 </resources>

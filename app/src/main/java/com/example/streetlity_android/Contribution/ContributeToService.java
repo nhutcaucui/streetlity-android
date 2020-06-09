@@ -6,7 +6,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -68,7 +67,7 @@ public class ContributeToService extends AppCompatActivity {
         btnConfirming.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent t = new Intent(ContributeToService.this, ConfirmLocations.class);
+                Intent t = new Intent(ContributeToService.this, ConfirmLocationsHolder.class);
                 startActivity(t);
             }
         });

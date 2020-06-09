@@ -171,4 +171,5 @@
     <string name="wc_success">Public toilet added successfully</string>
     <string name="underline_signup">&lt;u&gt;Sign Up&lt;/u&gt;</string>
     <string name="underline_forgotpass">&lt;u&gt;Forgot password?&lt;/u&gt;</string>
+    <string name="confirming_location">Confirming locations</string>
     </resources>

@@ -23,11 +23,13 @@
         app:headerLayout="@layout/nav_header_main"
         app:itemBackground="?attr/selectableItemBackground"
         app:menu="@menu/drawer_menu_user_not_login" >
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
-            android:clickable="true"
+            android:layout_marginBottom="15dp"
+            android:clickable="false"
             android:orientation="vertical">
 
             <TextView
