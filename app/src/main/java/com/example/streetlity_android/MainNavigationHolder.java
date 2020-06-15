@@ -70,7 +70,7 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        String[] Permissions = {Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION};
+        String[] Permissions = {Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION ,Manifest.permission.READ_EXTERNAL_STORAGE};
         if (!hasPermissions(this, Permissions)) {
             ActivityCompat.requestPermissions(this, Permissions, 4);
         }
@@ -177,8 +177,11 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
                 toast.show();
             } else if (requestCode == 5 && resultCode == RESULT_OK && null != data) {
                 String temp = getString(R.string.contacted);
-                temp += data.getIntExtra("numStore", 0);
-                temp +=getString(R.string.nearby_store);
+                temp += " " + data.getIntExtra("numStore", 0);
+                temp += " " + getString(R.string.nearby_store);
+
+                int range = data.getIntExtra("range", 0);
+                temp += " " + getString(R.string.in_range)+ " " + (range/1000)+ "km";
 
                 Toast toast = Toast.makeText(MainNavigationHolder.this, temp, Toast.LENGTH_LONG);
                 toast.show();

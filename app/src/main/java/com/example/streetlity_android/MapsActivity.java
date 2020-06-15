@@ -29,6 +29,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -85,7 +86,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private GoogleMap mMap;
 
-    ArrayList<MarkerOptions> mMarkers = new ArrayList<MarkerOptions>();;
+    ArrayList<MarkerOptions> mMarkers = new ArrayList<MarkerOptions>();
+    ArrayList<Review> reviewItems = new ArrayList<Review>();
+    ReviewAdapter adapter;
+    MapObject item;
+    RatingBar rb;
+    TextView tvRating;
+    DecimalFormat df = new DecimalFormat("#.#");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,14 +110,16 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         bottom_sheet = findViewById(R.id.bottom_sheet);
         sheetBehavior = BottomSheetBehavior.from(bottom_sheet);
 
-        MapObject item = (MapObject) getIntent().getSerializableExtra("item");
+        item = (MapObject) getIntent().getSerializableExtra("item");
+
+
 
         TextView tvName = findViewById(R.id.tv_name);
         tvName.setText(item.getName());
         TextView tvAddress = findViewById(R.id.tv_address);
         tvAddress.setText(item.getAddress());
 
-        DecimalFormat df = new DecimalFormat("#.#");
+
         TextView tvDistance = findViewById(R.id.tv_distance);
         float distance = item.getDistance();
         String dis = "m";
@@ -120,10 +129,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
         tvDistance.setText("~" + df.format(distance) + dis);
 
-        TextView tvRating = findViewById(R.id.tv_rating);
+        tvRating = findViewById(R.id.tv_rating);
         tvRating.setText("("+ df.format(item.getRating()) +")");
 
-        RatingBar rb = findViewById(R.id.ratingbar_map_object);
+        rb = findViewById(R.id.ratingbar_map_object);
         rb.setRating(item.getRating());
 
         LayerDrawable stars = (LayerDrawable) rb.getProgressDrawable();
@@ -132,13 +141,56 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         stars.getDrawable(1).setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP);
 
         ListView reviewList = findViewById(R.id.lv_review);
-        ArrayList<Review> reviewItems = new ArrayList<Review>();
 
         reviewItems.add(new Review("nhut", "i donek know kaahfeeefffffffeijkla jkl ja klj akljfklajj kajkljw klj lkaj eklwaj elkjwa kljela ej l", (float)2.5));
 
-        final ReviewAdapter adapter = new ReviewAdapter(this, R.layout.review_item, reviewItems);
+        adapter = new ReviewAdapter(this, R.layout.review_item, reviewItems);
 
         reviewList.setAdapter(adapter);
+
+        reviewList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if(MyApplication.getInstance().getUsername().equals(reviewItems.get(position).getUsername())){
+                    Dialog dialogUpdate = new Dialog(MapsActivity.this);
+
+                    final LayoutInflater inflater2 = LayoutInflater.from(MapsActivity.this.getApplicationContext());
+
+                    final android.view.View dialogView2 = inflater2.inflate(R.layout.dialog_edit_review, null);
+
+                    EditText edtComment = dialogView2.findViewById(R.id.edt_comment);
+                    edtComment.setText(reviewItems.get(position).getReviewBody());
+                    RatingBar rtReview = dialogView2.findViewById(R.id.rating_review);
+                    rtReview.setRating(reviewItems.get(position).getRating());
+
+                    LayerDrawable stars = (LayerDrawable) rtReview.getProgressDrawable();
+                    stars.getDrawable(2).setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP);
+                    //stars.getDrawable(0).setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP);
+                    stars.getDrawable(1).setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP);
+
+                    Button updateReview = dialogView2.findViewById(R.id.btn_update_review);
+                    Button deleteReview = dialogView2.findViewById(R.id.btn_delete_review);
+
+                    updateReview.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            updateReviews(reviewItems.get(position).getId(), rtReview.getRating(),
+                                    edtComment.getText().toString());
+                        }
+                    });
+
+                    deleteReview.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            deleteReviews(reviewItems.get(position).getId());
+                        }
+                    });
+
+                }
+            }
+        });
+
+        loadReviews();
 
         LinearLayout imgContainer = findViewById(R.id.layout_container);
 
@@ -162,7 +214,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                 LayerDrawable stars = (LayerDrawable) rtReview.getProgressDrawable();
                 stars.getDrawable(2).setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP);
-                stars.getDrawable(0).setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP);
+                //stars.getDrawable(0).setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP);
                 stars.getDrawable(1).setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP);
 
                 Button confirmReview = dialogView2.findViewById(R.id.btn_confrim_review);
@@ -178,14 +230,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                             toast.show();
                         }
                         else{
-                            reviewItems.add(new Review(((MyApplication) MapsActivity.this.getApplication()).getUsername(),
-                                            edtComment.getText().toString(),
-                                            rtReview.getRating()));
-                            adapter.notifyDataSetChanged();
-                            item.setRating(calculateRating(reviewItems));
-                            rb.setRating(calculateRating(reviewItems));
+                            createReviews(rtReview.getRating(),edtComment.getText().toString());
 
-                            tvRating.setText("("+ df.format(item.getRating()) +")");
+
 
                             dialogComment.cancel();
                         }
@@ -336,9 +383,16 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         builder.include(desMarker.getPosition());
         LatLngBounds bounds = builder.build();
 
-        int padding = 5; // offset from edges of the map in pixels
-        CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
-        googleMap.animateCamera(cu);
+        mMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
+            @Override
+            public void onMapLoaded() {
+                int padding = 50; // offset from edges of the map in pixels
+                CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
+                googleMap.animateCamera(cu);
+            }
+        });
+
+
     }
 
     public boolean onOptionsItemSelected(MenuItem item){
@@ -371,5 +425,522 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         });
         imgContainer.addView(img);
+    }
+
+    public void createReviews(float rating,String comment){
+        //MapObject item = (MapObject) getIntent().getSerializableExtra("item");
+        Retrofit retro = new Retrofit.Builder().baseUrl(((MyApplication) this.getApplication()).getServiceURL())
+                .addConverterFactory(GsonConverterFactory.create()).build();
+        final MapAPI tour = retro.create(MapAPI.class);
+        switch (item.getType()) {
+            case 1: {
+                Call<ResponseBody> call = tour.createFuelReview("1.0.0", item.getId(), MyApplication.getInstance().getUsername(),
+                        rating, comment);
+                call.enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        if(response.code() == 200){
+                            final JSONObject jsonObject;
+                            try {
+                                jsonObject = new JSONObject(response.body().string());
+                                Log.e("", "onResponse: " + jsonObject.toString());
+                                if (jsonObject.getBoolean("Status")) {
+                                    reviewItems.add(0, new Review(((MyApplication) MapsActivity.this.getApplication()).getUsername(),
+                                            comment,
+                                            rating));
+                                    adapter.notifyDataSetChanged();
+                                    item.setRating(calculateRating(reviewItems));
+                                    rb.setRating(calculateRating(reviewItems));
+
+                                    tvRating.setText("("+ df.format(item.getRating()) +")");
+                                }
+                            }catch (Exception e){
+                                e.printStackTrace();
+                            }
+                        }else{
+                            Log.e("", "onResponse: " +response.code() );
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                    }
+                });
+                break;
+            }
+            case 2: {
+                Call<ResponseBody> call = tour.createWCReview("1.0.0", item.getId(), MyApplication.getInstance().getUsername(),
+                        rating, comment);
+                call.enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        if(response.code() == 200){
+                            final JSONObject jsonObject;
+                            try {
+                                jsonObject = new JSONObject(response.body().string());
+                                Log.e("", "onResponse: " + jsonObject.toString());
+                                if (jsonObject.getBoolean("Status")) {
+                                    reviewItems.add(0, new Review(((MyApplication) MapsActivity.this.getApplication()).getUsername(),
+                                            comment,
+                                            rating));
+                                    adapter.notifyDataSetChanged();
+                                    item.setRating(calculateRating(reviewItems));
+                                    rb.setRating(calculateRating(reviewItems));
+
+                                    tvRating.setText("("+ df.format(item.getRating()) +")");
+                                }
+                            }catch (Exception e){
+                                e.printStackTrace();
+                            }
+                        }else{
+                            Log.e("", "onResponse: " +response.code() );
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                    }
+                });
+                break;
+            }
+            case 3: {
+                Call<ResponseBody> call = tour.createMaintenanceReview("1.0.0", item.getId(), MyApplication.getInstance().getUsername(),
+                        rating, comment);
+                call.enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        if(response.code() == 200){
+                            final JSONObject jsonObject;
+                            try {
+                                jsonObject = new JSONObject(response.body().string());
+                                Log.e("", "onResponse: " + jsonObject.toString());
+                                if (jsonObject.getBoolean("Status")) {
+                                    reviewItems.add(0, new Review(((MyApplication) MapsActivity.this.getApplication()).getUsername(),
+                                            comment,
+                                            rating));
+                                    adapter.notifyDataSetChanged();
+                                    item.setRating(calculateRating(reviewItems));
+                                    rb.setRating(calculateRating(reviewItems));
+
+                                    tvRating.setText("("+ df.format(item.getRating()) +")");
+                                }
+                            }catch (Exception e){
+                                e.printStackTrace();
+                            }
+                        }else{
+                            Log.e("", "onResponse: " +response.code() );
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                    }
+                });
+                break;
+            }
+            case 4: {
+                Call<ResponseBody> call = tour.createAtmReview("1.0.0", item.getId(), MyApplication.getInstance().getUsername(),
+                        rating, comment);
+                call.enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        if(response.code() == 200){
+                            final JSONObject jsonObject;
+                            try {
+                                jsonObject = new JSONObject(response.body().string());
+                                Log.e("", "onResponse: " + jsonObject.toString());
+                                if (jsonObject.getBoolean("Status")) {
+                                    reviewItems.add(0, new Review(((MyApplication) MapsActivity.this.getApplication()).getUsername(),
+                                            comment,
+                                            rating));
+                                    adapter.notifyDataSetChanged();
+                                    item.setRating(calculateRating(reviewItems));
+                                    rb.setRating(calculateRating(reviewItems));
+
+                                    tvRating.setText("("+ df.format(item.getRating()) +")");
+                                }
+                            }catch (Exception e){
+                                e.printStackTrace();
+                            }
+                        }else{
+                            Log.e("", "onResponse: " +response.code() );
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                    }
+                });
+                break;
+            }
+        }
+
+    }
+    public void updateReviews(int id, float rating, String comment){
+        //MapObject item = (MapObject) getIntent().getSerializableExtra("item");
+        Retrofit retro = new Retrofit.Builder().baseUrl(((MyApplication) this.getApplication()).getServiceURL())
+                .addConverterFactory(GsonConverterFactory.create()).build();
+        final MapAPI tour = retro.create(MapAPI.class);
+        switch (item.getType()) {
+            case 1: {
+                Call<ResponseBody> call = tour.updateFuelReview("1.0.0", id, rating, comment);
+                call.enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        if(response.code() == 200){
+                            final JSONObject jsonObject;
+                            try {
+                                jsonObject = new JSONObject(response.body().string());
+                                Log.e("", "onResponse: " + jsonObject.toString());
+                                if (jsonObject.getBoolean("Status")) {
+
+                                }
+                            }catch (Exception e){
+                                e.printStackTrace();
+                            }
+                        }else{
+                            Log.e("", "onResponse: " +response.code() );
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                    }
+                });
+                break;
+            }
+            case 2: {
+                Call<ResponseBody> call = tour.updateWCReview("1.0.0", id, rating, comment);
+                call.enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        if(response.code() == 200){
+                            final JSONObject jsonObject;
+                            try {
+                                jsonObject = new JSONObject(response.body().string());
+                                Log.e("", "onResponse: " + jsonObject.toString());
+                                if (jsonObject.getBoolean("Status")) {
+
+                                }
+                            }catch (Exception e){
+                                e.printStackTrace();
+                            }
+                        }else{
+                            Log.e("", "onResponse: " +response.code() );
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                    }
+                });
+                break;
+            }
+            case 3: {
+                Call<ResponseBody> call = tour.updateMaintenanceReview("1.0.0", id, rating, comment);
+                call.enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        if(response.code() == 200){
+                            final JSONObject jsonObject;
+                            try {
+                                jsonObject = new JSONObject(response.body().string());
+                                Log.e("", "onResponse: " + jsonObject.toString());
+                                if (jsonObject.getBoolean("Status")) {
+
+                                }
+                            }catch (Exception e){
+                                e.printStackTrace();
+                            }
+                        }else{
+                            Log.e("", "onResponse: " +response.code() );
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                    }
+                });
+                break;
+            }
+            case 4: {
+                Call<ResponseBody> call = tour.updateATMReview("1.0.0", id, rating, comment);
+                call.enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        if(response.code() == 200){
+                            final JSONObject jsonObject;
+                            try {
+                                jsonObject = new JSONObject(response.body().string());
+                                Log.e("", "onResponse: " + jsonObject.toString());
+                                if (jsonObject.getBoolean("Status")) {
+
+                                }
+                            }catch (Exception e){
+                                e.printStackTrace();
+                            }
+                        }else{
+                            Log.e("", "onResponse: " +response.code() );
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                    }
+                });
+                break;
+            }
+        }
+    }
+
+    public void deleteReviews(int id){
+       // MapObject item = (MapObject) getIntent().getSerializableExtra("item");
+        Retrofit retro = new Retrofit.Builder().baseUrl(((MyApplication) this.getApplication()).getServiceURL())
+                .addConverterFactory(GsonConverterFactory.create()).build();
+        final MapAPI tour = retro.create(MapAPI.class);
+        switch (item.getType()) {
+            case 1: {
+                Call<ResponseBody> call = tour.deleteFuelReview("1.0.0", id);
+                call.enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        if(response.code() == 200){
+                            final JSONObject jsonObject;
+                            try {
+                                jsonObject = new JSONObject(response.body().string());
+                                Log.e("", "onResponse: " + jsonObject.toString());
+                                if (jsonObject.getBoolean("Status")) {
+
+                                }
+                            }catch (Exception e){
+                                e.printStackTrace();
+                            }
+                        }else{
+                            Log.e("", "onResponse: " +response.code() );
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                    }
+                });
+                break;
+            }
+            case 2: {
+                Call<ResponseBody> call = tour.deleteWCReview("1.0.0", id);
+                call.enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        if(response.code() == 200){
+                            final JSONObject jsonObject;
+                            try {
+                                jsonObject = new JSONObject(response.body().string());
+                                Log.e("", "onResponse: " + jsonObject.toString());
+                                if (jsonObject.getBoolean("Status")) {
+
+                                }
+                            }catch (Exception e){
+                                e.printStackTrace();
+                            }
+                        }else{
+                            Log.e("", "onResponse: " +response.code() );
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                    }
+                });
+                break;
+            }
+            case 3: {
+                Call<ResponseBody> call = tour.deleteMaintenanceReview("1.0.0", id);
+                call.enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        if(response.code() == 200){
+                            final JSONObject jsonObject;
+                            try {
+                                jsonObject = new JSONObject(response.body().string());
+                                Log.e("", "onResponse: " + jsonObject.toString());
+                                if (jsonObject.getBoolean("Status")) {
+
+                                }
+                            }catch (Exception e){
+                                e.printStackTrace();
+                            }
+                        }else{
+                            Log.e("", "onResponse: " +response.code() );
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                    }
+                });
+                break;
+            }
+            case 4: {
+                Call<ResponseBody> call = tour.deleteATMReview("1.0.0", id);
+                call.enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        if(response.code() == 200){
+                            final JSONObject jsonObject;
+                            try {
+                                jsonObject = new JSONObject(response.body().string());
+                                Log.e("", "onResponse: " + jsonObject.toString());
+                                if (jsonObject.getBoolean("Status")) {
+
+                                }
+                            }catch (Exception e){
+                                e.printStackTrace();
+                            }
+                        }else{
+                            Log.e("", "onResponse: " +response.code() );
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                    }
+                });
+                break;
+            }
+        }
+    }
+
+    public void loadReviews(){
+        reviewItems.clear();
+       // MapObject item = (MapObject) getIntent().getSerializableExtra("item");
+        Retrofit retro = new Retrofit.Builder().baseUrl(((MyApplication) this.getApplication()).getServiceURL())
+                .addConverterFactory(GsonConverterFactory.create()).build();
+        final MapAPI tour = retro.create(MapAPI.class);
+        switch (item.getType()){
+            case 1:{
+                Call<ResponseBody> call = tour.getFuelReview("1.0.0", item.getId());
+                call.enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        if(response.code() == 200){
+                            final JSONObject jsonObject;
+                            try {
+                                jsonObject = new JSONObject(response.body().string());
+                                Log.e("", "onResponse: " + jsonObject.toString());
+                                if (jsonObject.getBoolean("Status")) {
+
+                                }
+                            }catch (Exception e){
+                                e.printStackTrace();
+                            }
+                        }else{
+                            Log.e("", "onResponse: " +response.code() );
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                    }
+                });
+                break;
+            }
+            case 2:{
+                Call<ResponseBody> call = tour.getWCReview("1.0.0", item.getId());
+                call.enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        if(response.code() == 200){
+                            final JSONObject jsonObject;
+                            try {
+                                jsonObject = new JSONObject(response.body().string());
+                                Log.e("", "onResponse: " + jsonObject.toString());
+                                if (jsonObject.getBoolean("Status")) {
+
+                                }
+                            }catch (Exception e){
+                                e.printStackTrace();
+                            }
+                        }else{
+                            Log.e("", "onResponse: " +response.code() );
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                    }
+                });
+                break;
+            }
+            case 3:{
+                Call<ResponseBody> call = tour.getMaintenanceReview("1.0.0", item.getId());
+                call.enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        if(response.code() == 200){
+                            final JSONObject jsonObject;
+                            try {
+                                jsonObject = new JSONObject(response.body().string());
+                                Log.e("", "onResponse: " + jsonObject.toString());
+                                if (jsonObject.getBoolean("Status")) {
+
+                                }
+                            }catch (Exception e){
+                                e.printStackTrace();
+                            }
+                        }else{
+                            Log.e("", "onResponse: " +response.code() );
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                    }
+                });
+                break;
+            }
+            case 4:{
+                Call<ResponseBody> call = tour.getAtmReview("1.0.0", item.getId());
+                call.enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        if(response.code() == 200){
+                            final JSONObject jsonObject;
+                            try {
+                                jsonObject = new JSONObject(response.body().string());
+                                Log.e("", "onResponse: " + jsonObject.toString());
+                                if (jsonObject.getBoolean("Status")) {
+
+                                }
+                            }catch (Exception e){
+                                e.printStackTrace();
+                            }
+                        }else{
+                            Log.e("", "onResponse: " +response.code() );
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                    }
+                });
+                break;
+            }
+        }
     }
 }

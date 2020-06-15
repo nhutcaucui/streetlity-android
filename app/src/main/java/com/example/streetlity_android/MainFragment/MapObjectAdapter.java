@@ -5,6 +5,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.LayerDrawable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -119,13 +120,16 @@ public class MapObjectAdapter extends ArrayAdapter implements Filterable {
 
                 mDisplayedValues = (ArrayList<MapObject>) results.values; // has the filtered values
                 notifyDataSetChanged();  // notifies the data with new filtered values
+                if(constraint.toString().equals("0") || constraint.toString().equals("")){
+                    mDisplayedValues = mOriginalValues;
+                }
             }
 
             @Override
             protected FilterResults performFiltering(CharSequence constraint) {
                 FilterResults results = new FilterResults();        // Holds the results of a filtering operation in values
                 ArrayList<MapObject> FilteredArrList = new ArrayList<MapObject>();
-
+                Log.e("", "performFiltering: " + constraint );
                 if (mOriginalValues == null) {
                     mOriginalValues = new ArrayList<MapObject>(mDisplayedValues); // saves the original data in mOriginalValues
                 }

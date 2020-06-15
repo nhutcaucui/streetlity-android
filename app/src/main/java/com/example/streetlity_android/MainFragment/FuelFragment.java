@@ -72,6 +72,7 @@ public class FuelFragment extends Fragment implements LocationListener {
 
     private OnFragmentInteractionListener mListener;
     ArrayList<MapObject> items= new ArrayList<>();
+    ArrayList<MapObject> displayItems= new ArrayList<>();
     MapObjectAdapter adapter;
 
     ProgressBar loading;
@@ -129,7 +130,7 @@ public class FuelFragment extends Fragment implements LocationListener {
         tvNoItem = rootView.findViewById(R.id.no_item);
         tvNoInternet = rootView.findViewById(R.id.no_internet);
 
-        adapter = new MapObjectAdapter(getActivity(), R.layout.lv_item_map_object, items);
+        adapter = new MapObjectAdapter(getActivity(), R.layout.lv_item_map_object, displayItems);
         lv.setAdapter(adapter);
 
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -200,7 +201,7 @@ public class FuelFragment extends Fragment implements LocationListener {
             @Override
             public void onClick(View v) {
                 tvNoItem.setVisibility(View.GONE);
-                callFuel(currLat,currLon,sb.getProgress());
+                changeRange(sb.getProgress()+1);
             }
         });
 
@@ -246,6 +247,23 @@ public class FuelFragment extends Fragment implements LocationListener {
         void onFragmentInteraction(Uri uri);
     }
 
+    public void changeRange(float range){
+        loading.setIndeterminate(true);
+        loading.setVisibility(View.VISIBLE);
+        displayItems.clear();
+
+        for(MapObject item: items){
+            if (item.getDistance() <= (range*1000)){
+                displayItems.add(item);
+            }
+        }
+        adapter.notifyDataSetChanged();
+        loading.setVisibility(View.GONE);
+        if(displayItems.size()==0){
+            tvNoItem.setVisibility(View.VISIBLE);
+        }
+    }
+
     public void callFuel(double lat, double lon, float range){
         items.removeAll(items);
         if(isNetworkAvailable()) {
@@ -256,7 +274,7 @@ public class FuelFragment extends Fragment implements LocationListener {
             Retrofit retro = new Retrofit.Builder().baseUrl("http://35.240.207.83/")
                     .addConverterFactory(GsonConverterFactory.create()).build();
             final MapAPI tour = retro.create(MapAPI.class);
-            Call<ResponseBody> call = tour.getFuelInRange("1.0.0", (float) lat, (float) lon, (range + 1) / 100);
+            Call<ResponseBody> call = tour.getFuelInRange("1.0.0", (float) lat, (float) lon, (float)0.1);
             //Call<ResponseBody> call = tour.getAllFuel();
             call.enqueue(new Callback<ResponseBody>() {
                 @Override
@@ -281,6 +299,12 @@ public class FuelFragment extends Fragment implements LocationListener {
 
                                     item.setDistance(distance);
                                     items.add(item);
+                                }
+
+                                for(MapObject item: items){
+                                    if (item.getDistance() <= 1000){
+                                        displayItems.add(item);
+                                    }
                                 }
 
                                 adapter.notifyDataSetChanged();

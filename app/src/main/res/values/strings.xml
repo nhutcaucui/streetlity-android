@@ -152,7 +152,7 @@
     <string name="all">All</string>
     <string name="title_activity_broadcast" translatable="false">BroadcastActivity</string>
     <string name="contacted">Contacted</string>
-    <string name="nearby_store">nearby store</string>
+    <string name="nearby_store">nearby stores</string>
     <string name="empty_reason">Empty reason</string>
     <string name="user_wait_approval">User is waiting for approval</string>
     <string name="user_not_exist">User doesn\'t exist</string>
@@ -172,4 +172,8 @@
     <string name="underline_signup">&lt;u&gt;Sign Up&lt;/u&gt;</string>
     <string name="underline_forgotpass">&lt;u&gt;Forgot password?&lt;/u&gt;</string>
     <string name="confirming_location">Confirming locations</string>
+    <string name="error_upload">Error when uploading picture(s)</string>
+    <string name="in_range">in</string>
+    <string name="delete_review">Delete review</string>
+    <string name="update">Update</string>
     </resources>

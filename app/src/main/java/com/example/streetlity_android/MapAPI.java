@@ -2,17 +2,28 @@ package com.example.streetlity_android;
 
 import org.json.JSONArray;
 
+import java.io.File;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
+import retrofit2.http.DELETE;
 import retrofit2.http.Field;
 import retrofit2.http.FieldMap;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
+import retrofit2.http.Multipart;
 import retrofit2.http.POST;
+import retrofit2.http.Part;
+import retrofit2.http.PartMap;
 import retrofit2.http.Query;
+import retrofit2.http.QueryMap;
+import retrofit2.http.Url;
 
 public interface MapAPI {
     @GET("service/fuel/all")
@@ -50,17 +61,17 @@ public interface MapAPI {
     @FormUrlEncoded
     @POST("service/fuel/add")
     Call<ResponseBody> addFuel(@Header("Version") String version, @Header("Auth") String token, @Field("location") float lat, @Field("location" )float lon,
-                               @Field("address") String address, @Field("note") String note);
+                               @Field("address") String address, @Field("note") String note, @Field("images") String[] images);
 
     @FormUrlEncoded
     @POST("service/atm/add")
     Call<ResponseBody> addATM(@Header("Version") String version, @Header("Auth") String token,@Field("location") float lat, @Field("location" )float lon,
-                              @Field("bank") int bankId, @Field("address") String address, @Field("note") String note);
+                              @Field("bank") int bankId, @Field("address") String address, @Field("note") String note, @Field("images") String[] images);
 
     @FormUrlEncoded
     @POST("service/toilet/add")
     Call<ResponseBody> addWC(@Header("Version") String version, @Header("Auth") String token,@Field("location") float lat, @Field("location" )float lon,
-                             @Field("address") String address, @Field("note") String note);
+                             @Field("address") String address, @Field("note") String note, @Field("images") String[] images);
 
     @FormUrlEncoded
     @POST("service/maintenance/add")
@@ -113,4 +124,78 @@ public interface MapAPI {
 
     @GET("user/validate/user")
     Call<ResponseBody> validateUser(@Query("username") String username);
+
+    @Multipart
+    @POST()
+    Call<ResponseBody> upload(@Url String url,@Part List<MultipartBody.Part> body);
+
+    @GET("")
+    Call<ResponseBody> download(@Query("f") String name);
+
+    @GET("service/fuel/review/query")
+    Call<ResponseBody> getFuelReview(@Header("Version") String version ,@Query("service_id") int id);
+
+    @GET("service/atm/review/query")
+    Call<ResponseBody> getAtmReview(@Header("Version") String version ,@Query("service_id") int id);
+
+    @GET("service/maintenance/review/query")
+    Call<ResponseBody> getMaintenanceReview(@Header("Version") String version ,@Query("service_id") int id);
+
+    @GET("service/toilet/review/query")
+    Call<ResponseBody> getWCReview(@Header("Version") String version ,@Query("service_id") int id);
+
+    @FormUrlEncoded
+    @POST("service/fuel/review")
+    Call<ResponseBody> createFuelReview(@Header("Version") String version ,@Field("service_id") int id
+                                        ,@Field("reviewer") String username, @Field("score") float rating,
+                                        @Field("body") String comment);
+    @FormUrlEncoded
+    @POST("service/atm/review")
+    Call<ResponseBody> createAtmReview(@Header("Version") String version ,@Field("service_id") int id
+            ,@Field("reviewer") String username, @Field("score") float rating,
+                                        @Field("body") String comment);
+    @FormUrlEncoded
+    @POST("service/maintenance/review")
+    Call<ResponseBody> createMaintenanceReview(@Header("Version") String version ,@Field("service_id") int id
+            ,@Field("reviewer") String username, @Field("score") float rating,
+                                        @Field("body") String comment);
+    @FormUrlEncoded
+    @POST("service/toilet/review")
+    Call<ResponseBody> createWCReview(@Header("Version") String version ,@Field("service_id") int id
+            ,@Field("reviewer") String username, @Field("score") float rating,
+                                               @Field("body") String comment);
+
+    @FormUrlEncoded
+    @POST("service/fuel/review")
+    Call<ResponseBody> updateFuelReview(@Header("Version") String version ,@Field("review_id") int id,
+            @Field("score") float rating,
+                                        @Field("new_body") String comment);
+    @FormUrlEncoded
+    @POST("service/atm/review")
+    Call<ResponseBody> updateATMReview(@Header("Version") String version ,@Field("review_id") int id,
+                                        @Field("score") float rating,
+                                        @Field("new_body") String comment);
+    @FormUrlEncoded
+    @POST("service/maintenance/review")
+    Call<ResponseBody> updateMaintenanceReview(@Header("Version") String version ,@Field("review_id") int id,
+                                        @Field("score") float rating,
+                                        @Field("new_body") String comment);
+    @FormUrlEncoded
+    @POST("service/toilet/review")
+    Call<ResponseBody> updateWCReview(@Header("Version") String version ,@Field("review_id") int id,
+                                        @Field("score") float rating,
+                                        @Field("new_body") String comment);
+
+    @FormUrlEncoded
+    @DELETE("service/fuel/review")
+    Call<ResponseBody> deleteFuelReview(@Header("Version") String version ,@Field("review_id") int id);
+    @FormUrlEncoded
+    @DELETE("service/atm/review")
+    Call<ResponseBody> deleteATMReview(@Header("Version") String version ,@Field("review_id") int id);
+    @FormUrlEncoded
+    @DELETE("service/maintenance/review")
+    Call<ResponseBody> deleteMaintenanceReview(@Header("Version") String version ,@Field("review_id") int id);
+    @FormUrlEncoded
+    @DELETE("service/toilet/review")
+    Call<ResponseBody> deleteWCReview(@Header("Version") String version ,@Field("review_id") int id);
 }

@@ -27,6 +27,7 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.core.content.ContextCompat;
@@ -44,6 +45,8 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -72,7 +75,8 @@ public class ATMFragment extends Fragment implements LocationListener {
 
     private OnFragmentInteractionListener mListener;
     ArrayList<MapObject> items= new ArrayList<>();
-    ArrayList<String> arrBank = new ArrayList<>();
+    ArrayList<MapObject> displayItems = new ArrayList<>();
+    ArrayList<BankObject> arrBank = new ArrayList<BankObject>();
     MapObjectAdapter adapter;
     private static final long MIN_TIME = 400;
     private static final float MIN_DISTANCE = 1000;
@@ -86,7 +90,7 @@ public class ATMFragment extends Fragment implements LocationListener {
     float currLat;
     float currLon;
 
-    AutoCompleteTextView atcpBank;
+    Spinner atcpBank;
 
     public ATMFragment() {
         // Required empty public constructor
@@ -132,7 +136,7 @@ public class ATMFragment extends Fragment implements LocationListener {
         tvNoItem = rootView.findViewById(R.id.no_item);
         tvNoInternet = rootView.findViewById(R.id.no_internet);
 
-        adapter = new MapObjectAdapter(getActivity(), R.layout.lv_item_map_object, items);
+        adapter = new MapObjectAdapter(getActivity(), R.layout.lv_item_map_object, displayItems);
         lv.setAdapter(adapter);
 
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -202,7 +206,7 @@ public class ATMFragment extends Fragment implements LocationListener {
             @Override
             public void onClick(View v) {
                 tvNoItem.setVisibility(View.GONE);
-                callATM(currLat,currLon,sb.getProgress());
+                changeRange(sb.getProgress()+1);
             }
         });
 
@@ -248,11 +252,28 @@ public class ATMFragment extends Fragment implements LocationListener {
         void onFragmentInteraction(Uri uri);
     }
 
+    public void changeRange(float range){
+        loading.setIndeterminate(true);
+        loading.setVisibility(View.VISIBLE);
+        displayItems.clear();
+        if(atcpBank!= null)
+            atcpBank.setSelection(0);
+        for(MapObject item: items){
+            if (item.getDistance() <= (range*1000)){
+                displayItems.add(item);
+            }
+        }
+        adapter.notifyDataSetChanged();
+        loading.setVisibility(View.GONE);
+        if(displayItems.size()==0){
+            tvNoItem.setVisibility(View.VISIBLE);
+        }
+    }
+
     public void callATM(double lat, double lon, float range){
         items.removeAll(items);
-        if(atcpBank!= null){
-            atcpBank.setText("");
-        }
+        if(atcpBank!= null)
+        atcpBank.setSelection(0);
         if(isNetworkAvailable()) {
             loading.setIndeterminate(true);
             loading.setVisibility(View.VISIBLE);
@@ -261,7 +282,7 @@ public class ATMFragment extends Fragment implements LocationListener {
             Retrofit retro = new Retrofit.Builder().baseUrl("http://35.240.207.83/")
                     .addConverterFactory(GsonConverterFactory.create()).build();
             final MapAPI tour = retro.create(MapAPI.class);
-            Call<ResponseBody> call = tour.getATMInRange("1.0.0", (float) lat, (float) lon, (range + 1) / 100);
+            Call<ResponseBody> call = tour.getATMInRange("1.0.0", (float) lat, (float) lon, (float)0.1);
             //Call<ResponseBody> call = tour.getAllFuel();
             call.enqueue(new Callback<ResponseBody>() {
                 @Override
@@ -278,7 +299,13 @@ public class ATMFragment extends Fragment implements LocationListener {
                                 for (int i = 0; i < jsonArray.length(); i++) {
                                     JSONObject jsonObject1 = jsonArray.getJSONObject(i);
                                     Log.e("", "onResponse: " + jsonObject1.toString());
-                                    MapObject item = new MapObject(jsonObject1.getInt("Id"), arrBank.get(jsonObject1.getInt("BankId")), 3,
+                                    String bankName="";
+                                    for (int j=0;j<arrBank.size();j++){
+                                        if (jsonObject1.getInt("BankId") == arrBank.get(j).getId()) {
+                                            bankName = arrBank.get(j).getName();
+                                        }
+                                    }
+                                    MapObject item = new MapObject(jsonObject1.getInt("Id"), bankName, 3,
                                             jsonObject1.getString("Address"), (float) jsonObject1.getDouble("Lat"),
                                             (float) jsonObject1.getDouble("Lon"), jsonObject1.getString("Note"), 4);
 
@@ -288,6 +315,11 @@ public class ATMFragment extends Fragment implements LocationListener {
 
                                     item.setDistance(distance);
                                     items.add(item);
+                                }
+                                for(MapObject item: items){
+                                    if (item.getDistance() <= 1000){
+                                        displayItems.add(item);
+                                    }
                                 }
 
                                 adapter.notifyDataSetChanged();
@@ -352,25 +384,26 @@ public class ATMFragment extends Fragment implements LocationListener {
 
                         if(jsonObject.getBoolean("Status")) {
                             JSONArray jsonArray = jsonObject.getJSONArray("Banks");
-                            arrBank.add(getString(R.string.all));
+                            arrBank.add(new BankObject(0,getString(R.string.all)));
                             for (int i = 0; i < jsonArray.length(); i++) {
                                 JSONObject jsonObject1 = jsonArray.getJSONObject(i);
-                                arrBank.add(jsonObject1.getString("Name"));
+                                arrBank.add(new BankObject(jsonObject1.getInt("Id"),jsonObject1.getString("Name")));
                                 Log.e("", "onResponse: "+ jsonObject1.getString("Name") + getString(R.string.all) );
                             }
 
                             atcpBank = view.findViewById(R.id.actv_bank);
 
-                            ArrayAdapter adapter1 = new ArrayAdapter(getActivity(), android.R.layout.simple_dropdown_item_1line, arrBank);
+                            BankObjectAdapter adapter1 = new BankObjectAdapter(getActivity(), R.layout.spinner_item_broadcast, arrBank);
 
                             atcpBank.setAdapter(adapter1);
 
                             atcpBank.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                                 @Override
                                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                                    if(position == 0){
-                                        adapter.getFilter().filter(String.valueOf(position));
-                                    }
+
+                                        adapter.getFilter().filter(Integer.toString(arrBank.get(position).getId()));
+                                        Log.e("", "onItemSelected: " + arrBank.get(position).getId());
+
                                 }
 
                                 @Override
@@ -379,14 +412,6 @@ public class ATMFragment extends Fragment implements LocationListener {
                                 }
                             });
 
-                            atcpBank.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-                                @Override
-                                public void onFocusChange(View v, boolean hasFocus) {
-                                    if(hasFocus){
-                                        atcpBank.showDropDown();
-                                    }
-                                }
-                            });
                         }
                     } catch (Exception e){
                         e.printStackTrace();

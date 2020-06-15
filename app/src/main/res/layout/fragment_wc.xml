@@ -54,7 +54,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_above="@id/layout_range"
-            android:divider="#BBBBBB"
+            android:divider="@color/colorPrimaryDark"
             android:dividerHeight="1sp">
 
         </ListView>

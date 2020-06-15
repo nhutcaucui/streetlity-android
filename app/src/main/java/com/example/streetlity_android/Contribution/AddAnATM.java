@@ -29,6 +29,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
@@ -36,6 +37,7 @@ import androidx.viewpager.widget.ViewPager;
 import com.example.streetlity_android.MapAPI;
 import com.example.streetlity_android.MyApplication;
 import com.example.streetlity_android.R;
+import com.example.streetlity_android.Util.ImageFilePath;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -48,7 +50,14 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -61,6 +70,8 @@ public class AddAnATM extends AppCompatActivity implements OnMapReadyCallback {
     ArrayList<String> arrBank = new ArrayList<>();
     ArrayAdapter<String> spinnerAdapter;
     ArrayList<File> arrImg = new ArrayList<>();
+    List<MultipartBody.Part> body = new ArrayList<>();
+    ArrayList<String> fileName = new ArrayList<>();
 
     boolean hasImg = false;
 
@@ -75,11 +86,15 @@ public class AddAnATM extends AppCompatActivity implements OnMapReadyCallback {
     String mNote = "";
     String mAddress = "";
     boolean isOther = false;
+    String[] mImages;
 
     private ViewPager mPager;
     private AddAnATM.MyViewPagerAdapter myViewPagerAdapter;
     private ArrayList<Integer> layouts;
     private Button btnPrevious, btnNext;
+
+    Map<String,String> paramMap = new HashMap<>();
+    Map<String,File> bodyMap = new HashMap<>();
 
     EditText edtAddress;
 
@@ -325,13 +340,139 @@ public class AddAnATM extends AppCompatActivity implements OnMapReadyCallback {
     }
 
     public void addATM(){
+        ConstraintLayout csLayout = findViewById(R.id.layout_cant_find_loca);
+        csLayout.setVisibility(View.VISIBLE);
         Retrofit retro = new Retrofit.Builder().baseUrl(((MyApplication) this.getApplication()).getServiceURL())
                 .addConverterFactory(GsonConverterFactory.create()).build();
+        Retrofit retro2 = new Retrofit.Builder().baseUrl(((MyApplication) this.getApplication()).getDriverURL())
+                .addConverterFactory(GsonConverterFactory.create()).build();
         final MapAPI tour = retro.create(MapAPI.class);
+        final MapAPI tour2 = retro2.create(MapAPI.class);
 
         String token = ((MyApplication) this.getApplication()).getToken();
 
-        Call<ResponseBody> call = tour.addATM("1.0.0",token,(float) mLat,(float) mLon, mBankId, mAddress, mNote);
+        if(hasImg){
+            Call<ResponseBody> call2 = tour2.upload(((MyApplication) this.getApplication()).getDriverURL() + "?f=" + paramMap.get("f"), body);
+            call2.enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    if (response.code() == 200) {
+                        final JSONObject jsonObject;
+                        try {
+                            jsonObject = new JSONObject(response.body().string());
+                            Log.e("", "onResponse: " + jsonObject.toString());
+
+                            if (jsonObject.getBoolean("Status")) {
+                                JSONObject jsonObject1 = jsonObject.getJSONObject("Paths");
+                                mImages = new String[fileName.size()];
+                                for (int i = 0; i < fileName.size(); i++) {
+                                    JSONObject jsonObject2 = jsonObject1.getJSONObject(fileName.get(i)+ i);
+                                    mImages[i] = jsonObject2.getString("Message");
+                                }
+
+                                Call<ResponseBody> call1 = tour.addATM("1.0.0",token,(float) mLat,(float) mLon, mBankId, mAddress, mNote,mImages);
+
+                                call1.enqueue(new Callback<ResponseBody>() {
+                                    @Override
+                                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                        if(response.code() == 200) {
+                                            final JSONObject jsonObject;
+                                            JSONArray jsonArray;
+                                            try {
+                                                jsonObject = new JSONObject(response.body().string());
+                                                Log.e("", "onResponse: " + jsonObject.toString());
+                                                if(jsonObject.getBoolean("Status")) {
+                                                    btnNext.setText(R.string.finish);
+
+                                                    int current = getItem(+1);
+                                                    if (current < layouts.size()) {
+                                                        // move to next screen
+                                                        mPager.setCurrentItem(current);
+                                                        step++;
+                                                    }
+                                                    csLayout.setVisibility(View.GONE);
+                                                }
+                                                //finish();
+                                            } catch (Exception e){
+                                                e.printStackTrace();
+                                                csLayout.setVisibility(View.GONE);
+                                                Toast toast = Toast.makeText(AddAnATM.this, "!", Toast.LENGTH_LONG);
+                                                TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
+                                                tv.setTextColor(Color.RED);
+
+                                                toast.show();
+                                            }
+                                        }
+                                        else{
+                                            try {
+                                                Log.e(", ",response.errorBody().toString());
+                                                csLayout.setVisibility(View.GONE);
+                                                Toast toast = Toast.makeText(AddAnATM.this, "!", Toast.LENGTH_LONG);
+                                                TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
+                                                tv.setTextColor(Color.RED);
+
+                                                toast.show();
+                                            }catch (Exception e){
+                                                e.printStackTrace();
+                                                csLayout.setVisibility(View.GONE);
+                                                Toast toast = Toast.makeText(AddAnATM.this, "!", Toast.LENGTH_LONG);
+                                                TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
+                                                tv.setTextColor(Color.RED);
+
+                                                toast.show();
+                                            }
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                        Log.e("", "onFailure: " + t.toString());
+                                        csLayout.setVisibility(View.GONE);
+                                        Toast toast = Toast.makeText(AddAnATM.this, "!", Toast.LENGTH_LONG);
+                                        TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
+                                        tv.setTextColor(Color.RED);
+
+                                        toast.show();
+
+                                    }
+                                });
+                            } else {
+                                csLayout.setVisibility(View.GONE);
+                                Toast toast = Toast.makeText(AddAnATM.this, R.string.error_upload, Toast.LENGTH_LONG);
+                                TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
+                                tv.setTextColor(Color.RED);
+
+                                toast.show();
+                            }
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            csLayout.setVisibility(View.GONE);
+                            Toast toast = Toast.makeText(AddAnATM.this, "!", Toast.LENGTH_LONG);
+                            TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
+                            tv.setTextColor(Color.RED);
+
+                            toast.show();
+                        }
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    Log.e("", "onFailure: " + t.toString());
+                    csLayout.setVisibility(View.GONE);
+                    Toast toast = Toast.makeText(AddAnATM.this, "!", Toast.LENGTH_LONG);
+                    TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
+                    tv.setTextColor(Color.RED);
+
+                    toast.show();
+                }
+            });
+        }
+        else{
+         mImages=new String[0];
+        Call<ResponseBody> call = tour.addATM("1.0.0",token,(float) mLat,(float) mLon, mBankId, mAddress, mNote,mImages);
+
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -350,18 +491,37 @@ public class AddAnATM extends AppCompatActivity implements OnMapReadyCallback {
                                 mPager.setCurrentItem(current);
                                 step++;
                             }
+                            csLayout.setVisibility(View.GONE);
                         }
                         //finish();
                     } catch (Exception e){
                         e.printStackTrace();
+                        csLayout.setVisibility(View.GONE);
+                        Toast toast = Toast.makeText(AddAnATM.this, "!", Toast.LENGTH_LONG);
+                        TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
+                        tv.setTextColor(Color.RED);
+
+                        toast.show();
                     }
                 }
                 else{
                     try {
                         Log.e(", ",response.errorBody().toString());
+                        csLayout.setVisibility(View.GONE);
+                        Toast toast = Toast.makeText(AddAnATM.this, "!", Toast.LENGTH_LONG);
+                        TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
+                        tv.setTextColor(Color.RED);
+
+                        toast.show();
 
                     }catch (Exception e){
                         e.printStackTrace();
+                        csLayout.setVisibility(View.GONE);
+                        Toast toast = Toast.makeText(AddAnATM.this, "!", Toast.LENGTH_LONG);
+                        TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
+                        tv.setTextColor(Color.RED);
+
+                        toast.show();
                     }
                 }
             }
@@ -371,6 +531,7 @@ public class AddAnATM extends AppCompatActivity implements OnMapReadyCallback {
                 Log.e("", "onFailure: " + t.toString());
             }
         });
+        }
     }
 
     ViewPager.OnPageChangeListener mPagerPageChangeListener = new ViewPager.OnPageChangeListener() {
@@ -630,41 +791,104 @@ public class AddAnATM extends AppCompatActivity implements OnMapReadyCallback {
         super.onActivityResult(requestCode, resultCode, data);
         try {
             if (requestCode == 1) {
+                int leftLimit = 48; // letter 'a'
+                int rightLimit = 122; // letter 'z'
+                int targetStringLength = 10;
                 if(null == data) {
                     arrImg.clear();
-                    EditText edtSelectImg = mPager.findViewById(R.id.edt_select_img);
+                    paramMap.clear();
+                    bodyMap.clear();
+                    EditText edtSelectImg = findViewById(R.id.edt_select_img);
                     edtSelectImg.setHint(R.string.select_img);
-                }else{
+                }else {
                     if (data.getData() != null) {
                         arrImg.clear();
-                        Uri mImageUri = data.getData();
-                        File file = new File(mImageUri.getPath());
+                        paramMap.clear();
+                        bodyMap.clear();
+                        body.clear();
+                        //Uri mImageUri = data.getData();
+
+                        String path = ImageFilePath.getPath(AddAnATM.this, data.getData());
+
+                        File file = new File(path);
+
+
 
                         arrImg.add(file);
 
                         Log.e("", "onActivityResult: " + arrImg.size());
 
-                        EditText edtSelectImg = mPager.findViewById(R.id.edt_select_img);
+                        EditText edtSelectImg = findViewById(R.id.edt_select_img);
                         String temp = getString(R.string.selected);
                         temp = temp + " 1 " + getString(R.string.images);
                         edtSelectImg.setHint(temp);
                         hasImg = true;
+
+                        Random random = new Random();
+
+                        String generatedString = random.ints(leftLimit, rightLimit + 1)
+                                .filter(i -> (i <= 57 || i >= 65) && (i <= 90 || i >= 97))
+                                .limit(targetStringLength)
+                                .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
+                                .toString();
+
+                        RequestBody fbody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
+                        MultipartBody.Part mBody =
+                                MultipartBody.Part.createFormData(generatedString+0, file.getName(), fbody);
+
+                        body.add(mBody);
+
+                        fileName.add(generatedString);
+
+                        paramMap.put("f", generatedString+0);
+                        //bodyMap.put(generatedString+0, body);
                     } else {
                         if (data.getClipData() != null) {
                             arrImg.clear();
+                            paramMap.clear();
+                            bodyMap.clear();
+
                             ClipData mClipData = data.getClipData();
+                            Random random = new Random();
+
+                            body.clear();
+
+                            String generatedString = random.ints(leftLimit, rightLimit + 1)
+                                    .filter(i -> (i <= 57 || i >= 65) && (i <= 90 || i >= 97))
+                                    .limit(targetStringLength)
+                                    .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
+                                    .toString();
                             for (int i = 0; i < mClipData.getItemCount(); i++) {
 
                                 ClipData.Item item = mClipData.getItemAt(i);
                                 Uri uri = item.getUri();
-                                File file = new File(uri.getPath());
+                                String path = ImageFilePath.getPath(AddAnATM.this, uri);
+
+                                File file = new File(path);
+                                String paramValue;
+                                if(paramMap.containsKey("f")){
+                                    paramValue = paramMap.get("f");
+                                    paramValue += "&" + "f" + "=" + (generatedString+i);
+                                }else{
+                                    paramValue = generatedString+i;
+                                }
+
+                                paramMap.put("f", paramValue);
+
+                                RequestBody fbody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
+                                MultipartBody.Part mBody =
+                                        MultipartBody.Part.createFormData(generatedString+i, file.getName(), fbody);
+
+                                body.add(mBody);
+
+                                fileName.add(generatedString);
 
                                 arrImg.add(file);
                             }
 
                             Log.e("", "onActivityResult: " + arrImg.size());
 
-                            EditText edtSelectImg = mPager.findViewById(R.id.edt_select_img);
+                            EditText edtSelectImg = findViewById(R.id.edt_select_img);
                             String temp = getString(R.string.selected);
                             temp = temp + " " + arrImg.size() + " " + getString(R.string.images);
                             edtSelectImg.setHint(temp);

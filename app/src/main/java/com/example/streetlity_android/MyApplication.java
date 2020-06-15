@@ -11,6 +11,14 @@ import android.app.Application;
 
 public class MyApplication extends Application { //35.240.232.218 auth server
 
+    static MyApplication myAppInstance;
+    public MyApplication() {
+        myAppInstance = this;
+    }
+    public static MyApplication getInstance() {
+        return myAppInstance;
+    }
+
     private String token = "";
 
     private String refreshToken = "";
@@ -34,6 +42,12 @@ public class MyApplication extends Application { //35.240.232.218 auth server
     private String serviceURL = "http://35.240.207.83/";
 
     private String authURL = "http://35.240.232.218/";
+
+    private String driverURL = "http://34.87.144.190/";
+
+    public String getDriverURL() {
+        return driverURL;
+    }
 
     public void setToken(String token) {
         this.token = token;

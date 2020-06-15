@@ -162,4 +162,8 @@
     <string name="underline_signup">&lt;u&gt;Đăng kí&lt;/u&gt;</string>
     <string name="underline_forgotpass">&lt;u&gt;Quên mật khẩu?&lt;/u&gt;</string>
     <string name="confirming_location">Xác nhận điểm</string>
+    <string name="error_upload">Lỗi khi tải ảnh lên server</string>
+    <string name="in_range">trong</string>
+    <string name="delete_review">Xóa review</string>
+    <string name="update">Cập nhật</string>
 </resources>

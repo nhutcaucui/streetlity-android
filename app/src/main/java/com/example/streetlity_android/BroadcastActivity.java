@@ -71,8 +71,8 @@ public class BroadcastActivity extends AppCompatActivity {
         arrReason.add(getString(R.string.select_reason_spinner));
         SharedPreferences s = getSharedPreferences("broadcastReason", Context.MODE_PRIVATE);
         if(s.contains("size")){
-            for(int i =1; i< s.getInt("size", 0); i++){
-                arrReason.add(s.getString("reason" + i, ""));
+            for(int i =0; i< s.getInt("size", 0); i++){
+                arrReason.add(s.getString("reason" + (i+1), ""));
             }
         }
         arrReason.add(getString(R.string.other));
@@ -163,6 +163,7 @@ public class BroadcastActivity extends AppCompatActivity {
                     for(int i=1; i<arrReason.size() - 1; i++){
                         e.putString("reason"+i, arrReason.get(i));
                     }
+                    e.commit();
                 }
                 else {
                     Toast toast = Toast.makeText(BroadcastActivity.this, R.string.empty_reason, Toast.LENGTH_LONG);
@@ -189,9 +190,12 @@ public class BroadcastActivity extends AppCompatActivity {
                 SharedPreferences.Editor e = s.edit();
                 e.clear();
                 e.apply();
-                e.putInt("size", arrReason.size()-2);
-                for(int i=1; i<arrReason.size() - 1; i++){
-                    e.putString("reason"+i, arrReason.get(i));
+                if(arrReason.size()-2 >0) {
+                    e.putInt("size", arrReason.size() - 2);
+                    for (int i = 1; i < arrReason.size() - 1; i++) {
+                        e.putString("reason" + i, arrReason.get(i));
+                    }
+                    e.commit();
                 }
             }
         });
@@ -202,7 +206,7 @@ public class BroadcastActivity extends AppCompatActivity {
         Retrofit retro = new Retrofit.Builder().baseUrl("http://35.240.207.83/")
                 .addConverterFactory(GsonConverterFactory.create()).build();
         final MapAPI tour = retro.create(MapAPI.class);
-        Call<ResponseBody> call = tour.getMaintenanceInRange("1.0.0",(float)lat,(float)lon,(float)15);
+        Call<ResponseBody> call = tour.getMaintenanceInRange("1.0.0",(float)lat,(float)lon,(float)0.1);
         //Call<ResponseBody> call = tour.getAllATM();
         call.enqueue(new Callback<ResponseBody>() {
             @Override
@@ -217,16 +221,36 @@ public class BroadcastActivity extends AppCompatActivity {
 
                         final ArrayList<Integer> idList = new ArrayList<>();
 
-                        for (int i = 0; i< jsonArray.length();i++){
-                            JSONObject jsonObject1 = jsonArray.getJSONObject(i);
-                            idList.add(jsonObject1.getInt("Id"));
-                        }
+                        int count = 0;
+                        int range = 1000;
 
                         int[] id = new int[idList.size()];
 
-                        for(int i =0; i< idList.size();i++){
-                            id[i] = idList.get(i);
+                        while(count < 3){
+                            count = 0;
+                            idList.clear();
+
+                            for (int i = 0; i< jsonArray.length();i++){
+                                JSONObject jsonObject1 = jsonArray.getJSONObject(i);
+                                if(distance(lat, lon, jsonObject1.getDouble("Lat"), jsonObject1.getDouble("Lon")) < range) {
+                                    idList.add(jsonObject1.getInt("Id"));
+                                    count ++;
+                                }
+                            }
+
+                            id = new int[idList.size()];
+
+                            for(int i =0; i< idList.size();i++){
+                                id[i] = idList.get(i);
+                            }
+                            range += 1000;
+                            if(range > 10000){
+                                range -=1000;
+                                break;
+                            }
                         }
+
+                        final int fRange = range;
 
                         Call<ResponseBody> call2 = tour.broadcast("1.0.0", reason, name, phone, note, id, "", "");
                         call2.enqueue(new Callback<ResponseBody>() {
@@ -241,6 +265,7 @@ public class BroadcastActivity extends AppCompatActivity {
                                         if (jsonObject.getBoolean("Status")){
                                             Intent data = new Intent();
                                             data.putExtra("numStore", idList.size());
+                                            data.putExtra("range", fRange);
                                             setResult(RESULT_OK, data);
                                             finish();
                                         }
@@ -283,6 +308,19 @@ public class BroadcastActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    public static double distance(double lat1, double lng1, double lat2, double lng2) {
+        double earthRadius = 6371000; //meters
+        double dLat = Math.toRadians(lat2-lat1);
+        double dLng = Math.toRadians(lng2-lng1);
+        double a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) *
+                        Math.sin(dLng/2) * Math.sin(dLng/2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        double dist = (earthRadius * c);
+
+        return dist;
     }
 
     public boolean onOptionsItemSelected(MenuItem item){

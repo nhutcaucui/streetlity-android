@@ -1,34 +1,39 @@
-package com.example.streetlity_android;
+package com.example.streetlity_android.MainFragment;
 
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.LayerDrawable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Filter;
 import android.widget.Filterable;
-import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.example.streetlity_android.R;
+
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
-public class ReviewAdapter extends ArrayAdapter implements Filterable {
+public class BankObjectAdapter extends ArrayAdapter implements Filterable {
 
     Context context;
-    private ArrayList<Review> mDisplayedValues;
+    private ArrayList<BankObject> mDisplayedValues;
+    private ArrayList<BankObject> mOriginalValues;
 
-    public ReviewAdapter(@NonNull Context context, int resource, @NonNull ArrayList<Review> objects) {
+    public BankObjectAdapter(@NonNull Context context, int resource, @NonNull ArrayList<BankObject> objects) {
         super(context, resource, objects);
         this.context = context;
         this.mDisplayedValues = objects;
-
+        this.mOriginalValues = objects;
     }
 
     @Override
@@ -42,9 +47,7 @@ public class ReviewAdapter extends ArrayAdapter implements Filterable {
     }
 
     private class ViewHolder {
-        TextView username, body;
-        RatingBar rating;
-        ImageView editable;
+        TextView tvName;
     }
 
     @NonNull
@@ -57,28 +60,28 @@ public class ReviewAdapter extends ArrayAdapter implements Filterable {
         if (convertView == null) {
 
             holder = new ViewHolder();
-            convertView = inflater.inflate(R.layout.review_item, null);
-            holder.username = (TextView) convertView.findViewById(R.id.tv_username);
-            holder.body = (TextView) convertView.findViewById(R.id.tv_body_review);
-            holder.rating = (RatingBar) convertView.findViewById(R.id.ratingBar2);
-            holder.editable = convertView.findViewById(R.id.img_editable);
+            convertView = inflater.inflate(R.layout.spinner_item_broadcast, null);
+
+            holder.tvName = convertView.findViewById(R.id.tv_name);
+
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        holder.username.setText(this.mDisplayedValues.get(position).username);
-        holder.body.setText(this.mDisplayedValues.get(position).reviewBody);
-        holder.rating.setRating(this.mDisplayedValues.get(position).rating);
+        holder.tvName.setText(this.mDisplayedValues.get(position).getName());
 
-        LayerDrawable stars = (LayerDrawable) holder.rating.getProgressDrawable();
-        stars.getDrawable(2).setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP);
-        stars.getDrawable(0).setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP);
-        stars.getDrawable(1).setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP);
+        return convertView;
+    }
 
-        if(MyApplication.getInstance().getUsername().equals(holder.username.getText().toString())){
-            holder.editable.setVisibility(View.VISIBLE);
+    @Override
+    public View getDropDownView(int position, View convertView, ViewGroup parent) {
+        if(convertView == null){
+            LayoutInflater inflater = ((Activity) context).getLayoutInflater();
+            convertView = inflater.inflate(R.layout.spinner_item_broadcast,parent, false);
         }
+        TextView tvName = (TextView) convertView.findViewById(R.id.tv_name);
+        tvName.setText(mDisplayedValues.get(position).getName());
 
         return convertView;
     }
