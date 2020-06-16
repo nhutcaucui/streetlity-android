@@ -248,6 +248,8 @@ public class SelectFromMap extends AppCompatActivity implements OnMapReadyCallba
 
         String token = ((MyApplication) this.getApplication()).getToken();
 
+        Log.e("", "addATM: "+ mNote+"-"+latToAdd+"-"+latToAdd+"-"+mAddress);
+
         if(hasImg) {
 
             Call<ResponseBody> call2 = tour2.upload(((MyApplication) this.getApplication()).getDriverURL() + "?f=" + paramMap.get("f"), body);
@@ -267,6 +269,9 @@ public class SelectFromMap extends AppCompatActivity implements OnMapReadyCallba
                                     JSONObject jsonObject2 = jsonObject1.getJSONObject(fileName.get(i)+ i);
                                     mImages[i] = jsonObject2.getString("Message");
                                 }
+
+                                for(int i = 0;i<mImages.length;i++)
+                                    Log.e("", "addFuel: "+mImages[i] );
 
                                 Call<ResponseBody> call1 = tour.addFuel("1.0.0", ((MyApplication) SelectFromMap.this.getApplication()).getToken(),
                                         (float) latToAdd, (float) lonToAdd, mAddress, mNote, mImages);
@@ -410,6 +415,8 @@ public class SelectFromMap extends AppCompatActivity implements OnMapReadyCallba
                 .addConverterFactory(GsonConverterFactory.create()).build();
         final MapAPI tour = retro.create(MapAPI.class);
         final MapAPI tour2 = retro2.create(MapAPI.class);
+
+        Log.e("", "addATM: "+ mNote+"-"+latToAdd+"-"+latToAdd+"-"+mAddress);
 
         String token = ((MyApplication) this.getApplication()).getToken();
         if(hasImg) {
@@ -617,6 +624,7 @@ public class SelectFromMap extends AppCompatActivity implements OnMapReadyCallba
                     arrImg.clear();
                     paramMap.clear();
                     bodyMap.clear();
+                    fileName.clear();
                     EditText edtSelectImg = findViewById(R.id.edt_select_img);
                     edtSelectImg.setHint(R.string.select_img);
                 }else {
@@ -626,6 +634,7 @@ public class SelectFromMap extends AppCompatActivity implements OnMapReadyCallba
                         bodyMap.clear();
                         body.clear();
                         //Uri mImageUri = data.getData();
+                        fileName.clear();
 
                         String path = ImageFilePath.getPath(SelectFromMap.this, data.getData());
 
@@ -666,6 +675,7 @@ public class SelectFromMap extends AppCompatActivity implements OnMapReadyCallba
                             arrImg.clear();
                             paramMap.clear();
                             bodyMap.clear();
+                            fileName.clear();
 
                             ClipData mClipData = data.getClipData();
                             Random random = new Random();

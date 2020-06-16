@@ -31,6 +31,12 @@ public class MyApplication extends Application { //35.240.232.218 auth server
 
     private String userId;
 
+    private String email="";
+
+    private  String address="";
+
+    private String phone="";
+
     public String getUserId() {
         return userId;
     }
@@ -95,5 +101,29 @@ public class MyApplication extends Application { //35.240.232.218 auth server
 
     public void setDeviceToken(String deviceToken) {
         this.deviceToken = deviceToken;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 }

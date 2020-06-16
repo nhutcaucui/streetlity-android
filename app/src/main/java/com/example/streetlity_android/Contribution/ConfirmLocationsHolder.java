@@ -145,4 +145,10 @@ public class ConfirmLocationsHolder extends AppCompatActivity implements FuelFra
         transaction.detach(fragment);
         transaction.commit();
     }
+
+    public boolean onOptionsItemSelected(MenuItem item){
+        this.finish();
+
+        return true;
+    }
 }

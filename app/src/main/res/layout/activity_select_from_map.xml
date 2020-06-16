@@ -24,7 +24,7 @@
             android:layout_weight="1"
             android:elevation="10dp"
             android:indeterminate="true"
-            android:indeterminateTint="#000"
+            android:indeterminateTint="@color/colorPrimary"
             android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"

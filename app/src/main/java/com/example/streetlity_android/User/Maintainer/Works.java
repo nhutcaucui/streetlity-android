@@ -6,7 +6,6 @@ import android.os.Bundle;
 
 import com.example.streetlity_android.MapFragment.ATMFragment;
 import com.example.streetlity_android.MapFragment.FuelFragment;
-import com.example.streetlity_android.MapFragment.MaintenanceFragment;
 import com.example.streetlity_android.MapFragment.WCFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;

@@ -67,6 +67,8 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+import static com.example.streetlity_android.MainNavigationHolder.hasPermissions;
+
 public class SignUp extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
 
     ArrayList<Marker> mMarkers = new ArrayList<>();
@@ -126,6 +128,23 @@ public class SignUp extends AppCompatActivity implements OnMapReadyCallback, Goo
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("");
+
+        String[] Permissions = {Manifest.permission.READ_EXTERNAL_STORAGE};
+        if (!hasPermissions(this, Permissions)) {
+            ActivityCompat.requestPermissions(this, Permissions, 4);
+        }
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(this,Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    Activity#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for Activity#requestPermissions for more details.
+            this.finish();
+            return;
+        }
 
         btnNext = findViewById(R.id.btn_next);
         btnPrevious = findViewById(R.id.btn_previous);
@@ -427,6 +446,8 @@ public class SignUp extends AppCompatActivity implements OnMapReadyCallback, Goo
 
                             toast.show();
                         } else{
+                            mName = edtName.getText().toString();
+                            mNote=edtNote.getText().toString();
                             addMaintenance();
                         }
                     }
@@ -1095,6 +1116,7 @@ public class SignUp extends AppCompatActivity implements OnMapReadyCallback, Goo
         super.onActivityResult(requestCode, resultCode, data);
         try {
             if (requestCode == 1) {
+                fileName.clear();
                 int leftLimit = 48; // letter 'a'
                 int rightLimit = 122; // letter 'z'
                 int targetStringLength = 10;

@@ -34,6 +34,8 @@ import androidx.core.content.ContextCompat;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
+import com.example.streetlity_android.MainFragment.BankObject;
+import com.example.streetlity_android.MainFragment.BankObjectAdapter;
 import com.example.streetlity_android.MapAPI;
 import com.example.streetlity_android.MyApplication;
 import com.example.streetlity_android.R;
@@ -67,8 +69,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class AddAnATM extends AppCompatActivity implements OnMapReadyCallback {
 
-    ArrayList<String> arrBank = new ArrayList<>();
-    ArrayAdapter<String> spinnerAdapter;
+    ArrayList<BankObject> arrBank = new ArrayList<>();
+    BankObjectAdapter spinnerAdapter;
     ArrayList<File> arrImg = new ArrayList<>();
     List<MultipartBody.Part> body = new ArrayList<>();
     ArrayList<String> fileName = new ArrayList<>();
@@ -146,9 +148,11 @@ public class AddAnATM extends AppCompatActivity implements OnMapReadyCallback {
 
                 if(step == 0){
                     Spinner spnType = mPager.findViewById(R.id.spinner_type);
+                    EditText edtNote = mPager.findViewById(R.id.edt_atm_note);
                     if(isOther){
                         EditText edtOther = mPager.findViewById(R.id.edt_atm_other);
                         if(!edtOther.getText().toString().equals("")) {
+                            mNote = edtNote.getText().toString();
                             addBank(edtOther.getText().toString());
                         }else{
                             Toast toast = Toast.makeText(AddAnATM.this, R.string.please_select_bank, Toast.LENGTH_LONG);
@@ -159,7 +163,8 @@ public class AddAnATM extends AppCompatActivity implements OnMapReadyCallback {
                         }
                     }else{
                         if(spnType.getSelectedItemPosition()!=0) {
-                            mBankId = spnType.getSelectedItemPosition();
+                            mNote = edtNote.getText().toString();
+                            mBankId = arrBank.get(spnType.getSelectedItemPosition()).getId();
                             isPass = true;
                         }else{
                             Toast toast = Toast.makeText(AddAnATM.this, R.string.please_select_bank, Toast.LENGTH_LONG);
@@ -350,7 +355,7 @@ public class AddAnATM extends AppCompatActivity implements OnMapReadyCallback {
         final MapAPI tour2 = retro2.create(MapAPI.class);
 
         String token = ((MyApplication) this.getApplication()).getToken();
-
+        Log.e("", "addATM: "+ mNote+"-"+mLat+"-"+mLon+"-"+mBankId+"-"+mAddress);
         if(hasImg){
             Call<ResponseBody> call2 = tour2.upload(((MyApplication) this.getApplication()).getDriverURL() + "?f=" + paramMap.get("f"), body);
             call2.enqueue(new Callback<ResponseBody>() {
@@ -654,20 +659,20 @@ public class AddAnATM extends AppCompatActivity implements OnMapReadyCallback {
 
                         if(jsonObject.getBoolean("Status")) {
                             Spinner spinner = view.findViewById(R.id.spinner_type);
-                            arrBank.add(getString(R.string.select_bank_spinner));
+                            arrBank.add( new BankObject(0,getString(R.string.select_bank_spinner)));
 
                             JSONArray jsonArray = jsonObject.getJSONArray("Banks");
 
                             for(int i = 0; i< jsonArray.length(); i ++){
                                 JSONObject jsonObject1 = jsonArray.getJSONObject(i);
-                                arrBank.add(jsonObject1.getString("Name"));
+                                arrBank.add(new BankObject(jsonObject1.getInt("Id"),jsonObject1.getString("Name")));
                             }
-                            arrBank.add(getString(R.string.other));
+                            arrBank.add( new BankObject(-1,getString(R.string.other)));
 
-                            spinnerAdapter = new ArrayAdapter<String>(AddAnATM.this,
-                                    android.R.layout.simple_spinner_item, arrBank);
+                            spinnerAdapter = new BankObjectAdapter(AddAnATM.this,
+                                   android.R.layout.simple_spinner_item, arrBank);
 
-                            spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                            //spinnerAdapter.setDropDownViewResource();
 
                             spinner.setAdapter(spinnerAdapter);
 
@@ -676,13 +681,13 @@ public class AddAnATM extends AppCompatActivity implements OnMapReadyCallback {
                             spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                                 @Override
                                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                                    if(spinner.getSelectedItem().toString().equals(getString(R.string.other))){
-                                        edtOther.setVisibility(View.VISIBLE);
-                                        isOther = true;
+                                        if (arrBank.get(spinner.getSelectedItemPosition()).getId() == -1) {
+                                            edtOther.setVisibility(View.VISIBLE);
+                                            isOther = true;
 
-                                    }else{
-                                        isOther = false;
-                                    }
+                                        } else {
+                                            isOther = false;
+                                        }
                                 }
 
                                 @Override
@@ -735,10 +740,10 @@ public class AddAnATM extends AppCompatActivity implements OnMapReadyCallback {
                         Log.e("", "onResponse: " + jsonObject.toString());
 
                         if(jsonObject.getBoolean("Status")) {
-                            mBankId = arrBank.size()-1;
+                            mBankId = arrBank.get(arrBank.size()-1).getId()+1;
 
-                            arrBank.set(arrBank.size()-1 ,name);
-                            arrBank.add(getString(R.string.other));
+                            arrBank.set(arrBank.size()+1 ,new BankObject(arrBank.get(arrBank.size()-1).getId()+1 ,name));
+                            arrBank.add( new BankObject(-1,getString(R.string.other)));
                             spinnerAdapter.notifyDataSetChanged();
 
                             Spinner spinner = mPager.findViewById(R.id.spinner_type);
@@ -791,6 +796,7 @@ public class AddAnATM extends AppCompatActivity implements OnMapReadyCallback {
         super.onActivityResult(requestCode, resultCode, data);
         try {
             if (requestCode == 1) {
+                fileName.clear();
                 int leftLimit = 48; // letter 'a'
                 int rightLimit = 122; // letter 'z'
                 int targetStringLength = 10;

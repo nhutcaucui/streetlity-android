@@ -315,7 +315,7 @@ public class FuelFragment extends Fragment implements LocationListener {
                                         return Float.compare(o1.getDistance(), o2.getDistance());
                                     }
                                 });
-                                if (items.size() == 0) {
+                                if (items.size() == 0 || displayItems.size() == 0) {
                                     tvNoItem.setVisibility(View.VISIBLE);
                                 }
 

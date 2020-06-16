@@ -114,6 +114,9 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
             ((MyApplication) this.getApplication()).setRefreshToken(s.getString("refreshToken",""));
             ((MyApplication) this.getApplication()).setUsername(s.getString("username",""));
             ((MyApplication) this.getApplication()).setUserType(s.getInt("userType", -1));
+            ((MyApplication) this.getApplication()).setEmail(s.getString("email",""));
+            ((MyApplication) this.getApplication()).setPhone(s.getString("phone",""));
+            ((MyApplication) this.getApplication()).setAddress(s.getString("address",""));
 
             setDrawerForUser(navView);
 
@@ -283,6 +286,9 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
                         ((MyApplication) MainNavigationHolder.this.getApplication()).setToken("");
                         ((MyApplication) MainNavigationHolder.this.getApplication()).setRefreshToken("");
                         ((MyApplication) MainNavigationHolder.this.getApplication()).setUsername("");
+                        ((MyApplication) MainNavigationHolder.this.getApplication()).setEmail("");
+                        ((MyApplication) MainNavigationHolder.this.getApplication()).setPhone("");
+                        ((MyApplication) MainNavigationHolder.this.getApplication()).setAddress("");
                         ((MyApplication) MainNavigationHolder.this.getApplication()).setUserType(-1);
 
                         SharedPreferences s = getSharedPreferences("userPref", Context.MODE_PRIVATE);

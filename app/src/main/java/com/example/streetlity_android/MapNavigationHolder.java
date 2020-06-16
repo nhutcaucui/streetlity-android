@@ -79,7 +79,7 @@ import android.os.Bundle;
 
 import com.example.streetlity_android.MapFragment.ATMFragment;
 import com.example.streetlity_android.MapFragment.FuelFragment;
-import com.example.streetlity_android.MapFragment.MaintenanceFragment;
+
 import com.example.streetlity_android.MapFragment.WCFragment;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -96,7 +96,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 
 public class MapNavigationHolder extends AppCompatActivity implements FuelFragment.OnFragmentInteractionListener,
-        ATMFragment.OnFragmentInteractionListener, MaintenanceFragment.OnFragmentInteractionListener,
+        ATMFragment.OnFragmentInteractionListener,
         WCFragment.OnFragmentInteractionListener {
 
     TextView toolbar_tittle;
@@ -137,7 +137,6 @@ public class MapNavigationHolder extends AppCompatActivity implements FuelFragme
                     fragment = new FuelFragment();
                     break;
                 case R.id.navigation_maintenance:
-                    fragment = new MaintenanceFragment();
                     break;
                 case R.id.navigation_wc:
                     fragment = new WCFragment();

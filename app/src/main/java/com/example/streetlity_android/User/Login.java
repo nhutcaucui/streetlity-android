@@ -24,6 +24,7 @@ import android.widget.Toast;
 
 import com.example.streetlity_android.MyApplication;
 import com.example.streetlity_android.R;
+import com.google.gson.JsonObject;
 
 import org.json.JSONObject;
 
@@ -96,6 +97,7 @@ public class Login extends AppCompatActivity {
         btnForgot.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 if (getCurrentFocus() != null) {
                     InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
@@ -117,6 +119,10 @@ public class Login extends AppCompatActivity {
     }
 
     public void login(final String username, String password){
+        if (getCurrentFocus() != null) {
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+        }
         Retrofit retro = new Retrofit.Builder().baseUrl("http://35.240.232.218/")
                 .addConverterFactory(GsonConverterFactory.create()).build();
         final MapAPI tour = retro.create(MapAPI.class);
@@ -135,6 +141,13 @@ public class Login extends AppCompatActivity {
                             ((MyApplication) Login.this.getApplication()).setRefreshToken(jsonObject.getString("RefreshToken"));
                             ((MyApplication) Login.this.getApplication()).setUsername(username);
 
+                            JSONObject jsonObject1 = jsonObject.getJSONObject("User");
+                            jsonObject1 = jsonObject1.getJSONObject("Info");
+
+                            ((MyApplication) Login.this.getApplication()).setEmail(jsonObject1.getString("Email"));
+                            ((MyApplication) Login.this.getApplication()).setPhone(jsonObject1.getString("Phone"));
+                            ((MyApplication) Login.this.getApplication()).setAddress(jsonObject1.getString("Address"));
+
                             jsonObject = jsonObject.getJSONObject("User");
                             if (jsonObject.getInt("Role") != -1) {
                                 ((MyApplication) Login.this.getApplication()).setUserType(jsonObject.getInt("Role"));
@@ -147,6 +160,9 @@ public class Login extends AppCompatActivity {
                                 e.putString("username", username);
                                 e.putString("token", ((MyApplication) Login.this.getApplication()).getToken());
                                 e.putString("refreshToken", ((MyApplication) Login.this.getApplication()).getRefreshToken());
+                                e.putString("email", ((MyApplication) Login.this.getApplication()).getEmail());
+                                e.putString("phone", ((MyApplication) Login.this.getApplication()).getPhone());
+                                e.putString("address", ((MyApplication) Login.this.getApplication()).getAddress());
                                 e.putInt("userType", jsonObject.getInt("Role"));
                                 e.commit();
 
@@ -222,14 +238,14 @@ public class Login extends AppCompatActivity {
         });
     }
 
-    @Override
-    public boolean dispatchTouchEvent(MotionEvent ev) {
-        if (getCurrentFocus() != null) {
-            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
-        }
-        return super.dispatchTouchEvent(ev);
-    }
+//    @Override
+//    public boolean dispatchTouchEvent(MotionEvent ev) {
+//        if (getCurrentFocus() != null) {
+//            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+//            imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+//        }
+//        return super.dispatchTouchEvent(ev);
+//    }
 
 
 }

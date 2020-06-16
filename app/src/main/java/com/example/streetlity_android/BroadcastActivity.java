@@ -22,6 +22,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -203,6 +204,8 @@ public class BroadcastActivity extends AppCompatActivity {
 
 
     public void sendBroadcast(final String reason, final String name, final String phone, final String note, double lat, double lon){
+        RelativeLayout broadcasting = findViewById(R.id.layout_broadcasting);
+        broadcasting.setVisibility(View.VISIBLE);
         Retrofit retro = new Retrofit.Builder().baseUrl("http://35.240.207.83/")
                 .addConverterFactory(GsonConverterFactory.create()).build();
         final MapAPI tour = retro.create(MapAPI.class);
@@ -252,7 +255,8 @@ public class BroadcastActivity extends AppCompatActivity {
 
                         final int fRange = range;
 
-                        Call<ResponseBody> call2 = tour.broadcast("1.0.0", reason, name, phone, note, id, "", "");
+                        Call<ResponseBody> call2 = tour.broadcast("1.0.0", MyApplication.getInstance().getUsername()
+                                ,reason, name, phone, note, id, "", "");
                         call2.enqueue(new Callback<ResponseBody>() {
                             @Override
                             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {

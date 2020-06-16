@@ -187,5 +187,5 @@
         android:layout_marginRight="10dp"
         android:clickable="true"
         android:elevation="5dp"
-        app:srcCompat="@drawable/edit" />
+        app:srcCompat="@drawable/edit_white" />
 </RelativeLayout>

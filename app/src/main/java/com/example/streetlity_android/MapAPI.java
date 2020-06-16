@@ -104,7 +104,7 @@ public interface MapAPI {
 
     @FormUrlEncoded
     @POST("service/maintenance/order")
-    Call<ResponseBody> broadcast(@Header("Version") String version, @Field("reason") String reason, @Field("name") String name,
+    Call<ResponseBody> broadcast(@Header("Version") String version, @Field("commonUser") String username, @Field("reason") String reason, @Field("name") String name,
                                  @Field("phone") String phone, @Field("note") String note,
                                  @Field("id") int[] id, @Field("address") String address, @Field("preferTime") String time);
 
@@ -113,7 +113,7 @@ public interface MapAPI {
     Call<ResponseBody> addDevice(@Header("Version") String version ,@Field("token") String token, @Field("user") String username);
 
     @FormUrlEncoded
-    @POST("service/atm/bank/add")
+    @POST("service/atm/bank/create")
     Call<ResponseBody> addBank(@Header("Version") String version ,@Field("token") String token, @Field("name") String name);
 
     @GET("service/atm/bank/all")
@@ -133,69 +133,73 @@ public interface MapAPI {
     Call<ResponseBody> download(@Query("f") String name);
 
     @GET("service/fuel/review/query")
-    Call<ResponseBody> getFuelReview(@Header("Version") String version ,@Query("service_id") int id);
+    Call<ResponseBody> getFuelReview(@Header("Version") String version ,@Query("service_id") int id
+            , @Query("order") int order, @Query("limit") int limit);
 
     @GET("service/atm/review/query")
-    Call<ResponseBody> getAtmReview(@Header("Version") String version ,@Query("service_id") int id);
+    Call<ResponseBody> getAtmReview(@Header("Version") String version ,@Query("service_id") int id
+            , @Query("order") int order, @Query("limit") int limit);
 
     @GET("service/maintenance/review/query")
-    Call<ResponseBody> getMaintenanceReview(@Header("Version") String version ,@Query("service_id") int id);
+    Call<ResponseBody> getMaintenanceReview(@Header("Version") String version ,@Query("service_id") int id
+            , @Query("order") int order, @Query("limit") int limit);
 
     @GET("service/toilet/review/query")
-    Call<ResponseBody> getWCReview(@Header("Version") String version ,@Query("service_id") int id);
+    Call<ResponseBody> getWCReview(@Header("Version") String version ,@Query("service_id") int id
+            , @Query("order") int order, @Query("limit") int limit);
 
     @FormUrlEncoded
-    @POST("service/fuel/review")
+    @POST("service/fuel/review/create")
     Call<ResponseBody> createFuelReview(@Header("Version") String version ,@Field("service_id") int id
                                         ,@Field("reviewer") String username, @Field("score") float rating,
                                         @Field("body") String comment);
     @FormUrlEncoded
-    @POST("service/atm/review")
+    @POST("service/atm/review/create")
     Call<ResponseBody> createAtmReview(@Header("Version") String version ,@Field("service_id") int id
             ,@Field("reviewer") String username, @Field("score") float rating,
                                         @Field("body") String comment);
     @FormUrlEncoded
-    @POST("service/maintenance/review")
+    @POST("service/maintenance/review/create")
     Call<ResponseBody> createMaintenanceReview(@Header("Version") String version ,@Field("service_id") int id
             ,@Field("reviewer") String username, @Field("score") float rating,
                                         @Field("body") String comment);
     @FormUrlEncoded
-    @POST("service/toilet/review")
+    @POST("service/toilet/review/create")
     Call<ResponseBody> createWCReview(@Header("Version") String version ,@Field("service_id") int id
             ,@Field("reviewer") String username, @Field("score") float rating,
                                                @Field("body") String comment);
 
     @FormUrlEncoded
-    @POST("service/fuel/review")
+    @POST("service/fuel/review/")
     Call<ResponseBody> updateFuelReview(@Header("Version") String version ,@Field("review_id") int id,
             @Field("score") float rating,
                                         @Field("new_body") String comment);
     @FormUrlEncoded
-    @POST("service/atm/review")
+    @POST("service/atm/review/")
     Call<ResponseBody> updateATMReview(@Header("Version") String version ,@Field("review_id") int id,
                                         @Field("score") float rating,
                                         @Field("new_body") String comment);
     @FormUrlEncoded
-    @POST("service/maintenance/review")
+    @POST("service/maintenance/review/")
     Call<ResponseBody> updateMaintenanceReview(@Header("Version") String version ,@Field("review_id") int id,
                                         @Field("score") float rating,
                                         @Field("new_body") String comment);
     @FormUrlEncoded
-    @POST("service/toilet/review")
+    @POST("service/toilet/review/")
     Call<ResponseBody> updateWCReview(@Header("Version") String version ,@Field("review_id") int id,
                                         @Field("score") float rating,
                                         @Field("new_body") String comment);
 
     @FormUrlEncoded
-    @DELETE("service/fuel/review")
+    @DELETE("service/fuel/review/")
     Call<ResponseBody> deleteFuelReview(@Header("Version") String version ,@Field("review_id") int id);
     @FormUrlEncoded
-    @DELETE("service/atm/review")
+    @DELETE("service/atm/review/")
     Call<ResponseBody> deleteATMReview(@Header("Version") String version ,@Field("review_id") int id);
     @FormUrlEncoded
-    @DELETE("service/maintenance/review")
+    @DELETE("service/maintenance/review/")
     Call<ResponseBody> deleteMaintenanceReview(@Header("Version") String version ,@Field("review_id") int id);
     @FormUrlEncoded
-    @DELETE("service/toilet/review")
+    @DELETE("service/toilet/review/")
     Call<ResponseBody> deleteWCReview(@Header("Version") String version ,@Field("review_id") int id);
 }

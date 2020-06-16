@@ -55,13 +55,22 @@ public class UserInfo extends AppCompatActivity {
         EditText edtAddress = findViewById(R.id.edt_address);
         EditText edtPhone = findViewById(R.id.edt_phone);
 
+        edtAddress.setText(MyApplication.getInstance().getAddress());
+        edtPhone.setText(MyApplication.getInstance().getPhone());
+
+        EditText tvUsername = findViewById(R.id.edt_username);
+        tvUsername.setText((MyApplication.getInstance().getUsername()));
+
+        EditText tvEmail = findViewById(R.id.edt_email);
+        tvEmail.setText((MyApplication.getInstance().getEmail()));
+
         FloatingActionButton fabEdit = findViewById(R.id.fab_edit);
         fabEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(!edtState){
                     edtState = true;
-                    fabEdit.setImageResource(R.drawable.checkmark_black);
+                    fabEdit.setImageResource(R.drawable.checkmark_white);
 
                     edtAddress.setFocusable(true);
                     edtAddress.setFocusableInTouchMode(true);
@@ -80,8 +89,13 @@ public class UserInfo extends AppCompatActivity {
                     InputMethodManager imm = (InputMethodManager)   getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
                 }else {
+                    if (getCurrentFocus() != null) {
+                        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+                    }
+
                     edtState = false;
-                    fabEdit.setImageResource(R.drawable.edit);
+                    fabEdit.setImageResource(R.drawable.edit_white);
 
                     edtAddress.setFocusable(false);
                     edtAddress.setFocusableInTouchMode(false);

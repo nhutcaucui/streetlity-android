@@ -273,7 +273,7 @@ public class ATMFragment extends Fragment implements LocationListener {
     public void callATM(double lat, double lon, float range){
         items.removeAll(items);
         if(atcpBank!= null)
-        atcpBank.setSelection(0);
+            atcpBank.setSelection(0);
         if(isNetworkAvailable()) {
             loading.setIndeterminate(true);
             loading.setVisibility(View.VISIBLE);
@@ -330,7 +330,7 @@ public class ATMFragment extends Fragment implements LocationListener {
                                         return Float.compare(o1.getDistance(), o2.getDistance());
                                     }
                                 });
-                                if (items.size() == 0) {
+                                if (items.size() == 0 || displayItems.size() == 0) {
                                     tvNoItem.setVisibility(View.VISIBLE);
                                 }
                                 loading.setIndeterminate(false);

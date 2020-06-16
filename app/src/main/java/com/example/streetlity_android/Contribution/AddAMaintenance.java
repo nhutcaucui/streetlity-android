@@ -150,7 +150,7 @@ public class AddAMaintenance extends AppCompatActivity implements OnMapReadyCall
                     else{
                         mName = edtName.getText().toString();
                         EditText edtNote = findViewById(R.id.edt_store_note);
-                        mNote = edtNote.toString();
+                        mNote = edtNote.getText().toString();
                         isPass = true;
                     }
                 }
@@ -332,6 +332,8 @@ public class AddAMaintenance extends AppCompatActivity implements OnMapReadyCall
         final MapAPI tour2 = retro2.create(MapAPI.class);
 
         String token = ((MyApplication) this.getApplication()).getToken();
+
+        Log.e("", "addATM: "+ mNote+"-"+mLat+"-"+mLon+"-"+mName+"-"+mAddress);
 
         if(hasImg){
             Call<ResponseBody> call2 = tour2.upload(((MyApplication) this.getApplication()).getDriverURL() + "?f=" + paramMap.get("f"), body);
@@ -616,6 +618,7 @@ public class AddAMaintenance extends AppCompatActivity implements OnMapReadyCall
         super.onActivityResult(requestCode, resultCode, data);
         try {
             if (requestCode == 1) {
+                fileName.clear();
                 int leftLimit = 48; // letter 'a'
                 int rightLimit = 122; // letter 'z'
                 int targetStringLength = 10;

@@ -75,6 +75,26 @@ public class MapsActivityConfirmation extends AppCompatActivity implements OnMap
         LinearLayout llReview = findViewById(R.id.ll_review);
         llReview.setVisibility(View.GONE);
 
+        LinearLayout confirmingLayout = findViewById(R.id.layout_confirming);
+        confirmingLayout.setVisibility(View.VISIBLE);
+
+        Button btnExist = findViewById(R.id.btn_exist);
+        Button btnNonExist = findViewById(R.id.btn_non_exist);
+
+        btnExist.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+        btnNonExist.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
         BottomSheetBehavior sheetBehavior;
         LinearLayout bottom_sheet;
         bottom_sheet = findViewById(R.id.bottom_sheet);

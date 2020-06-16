@@ -32,6 +32,7 @@ import com.example.streetlity_android.BroadcastActivity;
 import com.example.streetlity_android.MainNavigationHolder;
 import com.example.streetlity_android.MapAPI;
 import com.example.streetlity_android.MapsActivity;
+import com.example.streetlity_android.MyApplication;
 import com.example.streetlity_android.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -191,16 +192,21 @@ public class MaintenanceFragment extends Fragment implements LocationListener {
 
         FloatingActionButton fab = rootView.findViewById(R.id.fab_broadcast);
 
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent t = new Intent(getActivity(), BroadcastActivity.class);
-                t.putExtra("currLat", currLat);
-                t.putExtra("currLon", currLon);
+        if(MyApplication.getInstance().getUsername().equals("")){
+            fab.hide();
+        }else {
 
-                getActivity().startActivityForResult(t, 5);
-            }
-        });
+            fab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent t = new Intent(getActivity(), BroadcastActivity.class);
+                    t.putExtra("currLat", currLat);
+                    t.putExtra("currLon", currLon);
+
+                    getActivity().startActivityForResult(t, 5);
+                }
+            });
+        }
 
 
         final SeekBar sb = rootView.findViewById(R.id.sb_range);
@@ -323,7 +329,7 @@ public class MaintenanceFragment extends Fragment implements LocationListener {
                                         return Float.compare(o1.getDistance(), o2.getDistance());
                                     }
                                 });
-                                if (items.size() == 0) {
+                                if (items.size() == 0 || displayItems.size() == 0) {
                                     tvNoItem.setVisibility(View.VISIBLE);
                                 }
 
