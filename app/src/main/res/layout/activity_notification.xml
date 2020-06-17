@@ -4,20 +4,22 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorBackground"
-    tools:context=".BankSelection">
+    android:background="@drawable/gradient_background"
+    tools:context=".User.ChangePassword">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbarlayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay">
+        android:background="@android:color/transparent"
+        android:theme="@style/AppTheme.AppBarOverlay"
+        app:elevation="0dp">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="@color/colorPrimary"
+            android:background="@android:color/transparent"
             android:theme="@style/Theme.BlackBackArrow"
             app:popupTheme="@style/AppTheme.PopupOverlay">
 
@@ -26,33 +28,18 @@
                 android:layout_height="match_parent"
                 android:gravity="center"
                 android:paddingLeft="-50dp"
-                android:text="@string/select_bank"
+                android:text="@string/notifications"
                 android:textColor="#000000"
                 android:textSize="32sp"/>
         </androidx.appcompat.widget.Toolbar>
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <EditText
-        android:id="@+id/search_edit"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/appbarlayout"
-        android:layout_marginLeft="15dp"
-        android:layout_marginRight="15dp"
-        android:gravity="start"
-        android:hint="@string/search"
-        android:inputType="text"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        android:textColor="#000" />
-
     <ListView
-        android:id="@+id/listview"
+        android:id="@+id/lv"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/search_edit"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp" />
+        android:layout_below="@id/appbarlayout" />
+
 
 </RelativeLayout>

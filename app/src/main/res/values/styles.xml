@@ -6,6 +6,17 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:textViewStyle">@style/helveticaTV</item>
+        <item name="buttonStyle">@style/helveticaBtn</item>
+    </style>
+
+    <style name="helveticaTV" parent="android:Widget.TextView">
+        <item name="android:fontFamily">helvetica</item>
+    </style>
+
+    <style name="helveticaBtn" parent="android:Widget.Holo.Button">
+        <item name="android:fontFamily">helvetica</item>
+        <item name="android:textColor">@color/blue</item>
     </style>
 
     <style name="AppTheme.NoActionBar">

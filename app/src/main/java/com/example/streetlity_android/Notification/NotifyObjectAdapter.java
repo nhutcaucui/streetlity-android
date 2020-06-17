@@ -1,34 +1,28 @@
-package com.example.streetlity_android.MainFragment;
+package com.example.streetlity_android.Notification;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
-import android.graphics.drawable.LayerDrawable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Filter;
 import android.widget.Filterable;
-import android.widget.RatingBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.example.streetlity_android.MainFragment.BankObject;
 import com.example.streetlity_android.R;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 
-public class BankObjectAdapter extends ArrayAdapter implements Filterable {
+public class NotifyObjectAdapter extends ArrayAdapter implements Filterable {
 
     Context context;
-    private ArrayList<BankObject> mDisplayedValues;
+    private ArrayList<NotifyObject> mDisplayedValues;
 
-    public BankObjectAdapter(@NonNull Context context, int resource, @NonNull ArrayList<BankObject> objects) {
+    public NotifyObjectAdapter(@NonNull Context context, int resource, @NonNull ArrayList<NotifyObject> objects) {
         super(context, resource, objects);
         this.context = context;
         this.mDisplayedValues = objects;
@@ -45,7 +39,8 @@ public class BankObjectAdapter extends ArrayAdapter implements Filterable {
     }
 
     private class ViewHolder {
-        TextView tvName;
+        TextView tvTitle;
+        TextView tvBody;
     }
 
     @NonNull
@@ -58,28 +53,19 @@ public class BankObjectAdapter extends ArrayAdapter implements Filterable {
         if (convertView == null) {
 
             holder = new ViewHolder();
-            convertView = inflater.inflate(R.layout.spinner_item_broadcast, null);
+            convertView = inflater.inflate(R.layout.lv_item_notification, null);
 
-            holder.tvName = convertView.findViewById(R.id.tv_name);
+            holder.tvTitle = convertView.findViewById(R.id.tv_tittle);
+
+            holder.tvBody = convertView.findViewById(R.id.tv_body);
 
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        holder.tvName.setText(this.mDisplayedValues.get(position).getName());
-
-        return convertView;
-    }
-
-    @Override
-    public View getDropDownView(int position, View convertView, ViewGroup parent) {
-        if(convertView == null){
-            LayoutInflater inflater = ((Activity) context).getLayoutInflater();
-            convertView = inflater.inflate(R.layout.spinner_item_broadcast,parent, false);
-        }
-        TextView tvName = (TextView) convertView.findViewById(R.id.tv_name);
-        tvName.setText(mDisplayedValues.get(position).getName());
+        holder.tvTitle.setText(this.mDisplayedValues.get(position).getTitle());
+        holder.tvBody.setText(this.mDisplayedValues.get(position).getBody());
 
         return convertView;
     }

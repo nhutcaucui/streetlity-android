@@ -403,14 +403,14 @@ public class SelectFromMap extends AppCompatActivity implements OnMapReadyCallba
     public void addWC(){
         ConstraintLayout csLayout = findViewById(R.id.layout_cant_find_loca);
         csLayout.setVisibility(View.VISIBLE);
-        //HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
 // set your desired log level
-        //logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
 
-        //OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
-        //httpClient.addInterceptor(logging);
+        OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
+        httpClient.addInterceptor(logging);
         Retrofit retro = new Retrofit.Builder().baseUrl(((MyApplication) this.getApplication()).getServiceURL())
-                .addConverterFactory(GsonConverterFactory.create()).build();
+                .addConverterFactory(GsonConverterFactory.create()).client(httpClient.build()).build();
         Retrofit retro2 = new Retrofit.Builder().baseUrl(((MyApplication) this.getApplication()).getDriverURL())
                 .addConverterFactory(GsonConverterFactory.create()).build();
         final MapAPI tour = retro.create(MapAPI.class);

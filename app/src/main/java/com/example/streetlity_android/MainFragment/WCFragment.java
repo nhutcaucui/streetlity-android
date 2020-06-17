@@ -134,7 +134,7 @@ public class WCFragment extends Fragment implements LocationListener {
                 Intent t = new Intent(getActivity(), MapsActivity.class);
                 t.putExtra("currLat", currLat);
                 t.putExtra("currLon", currLon);
-                t.putExtra("item", items.get(position));
+                t.putExtra("item", displayItems.get(position));
 
                 startActivity(t);
             }
@@ -173,10 +173,10 @@ public class WCFragment extends Fragment implements LocationListener {
                     ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                 Location location = locationManager.getLastKnownLocation(locationManager
                         .NETWORK_PROVIDER);
+                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME, MIN_DISTANCE, this);
                 if (location == null) {
                     loading.setVisibility(View.GONE);
                     ((MainNavigationHolder) getActivity()).getCantFind().setVisibility(View.VISIBLE);
-                    locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME, MIN_DISTANCE, this);
                     Log.e("", "onMapReady: MULL");
                 } else {
                     currLat = (float) location.getLatitude();
@@ -259,6 +259,7 @@ public class WCFragment extends Fragment implements LocationListener {
 
     public void callWC(double lat, double lon, float range){
         items.removeAll(items);
+        displayItems.clear();
         if(isNetworkAvailable()) {
             loading.setIndeterminate(true);
             loading.setVisibility(View.VISIBLE);
@@ -278,8 +279,8 @@ public class WCFragment extends Fragment implements LocationListener {
                         try {
                             jsonObject = new JSONObject(response.body().string());
                             Log.e("", "onResponse: " + jsonObject.toString());
-                            if (jsonObject.getJSONArray("Toilets").toString() != "null") {
-                                jsonArray = jsonObject.getJSONArray("Toilets");
+                            if (jsonObject.getJSONArray("Services").toString() != "null") {
+                                jsonArray = jsonObject.getJSONArray("Services");
 
                                 for (int i = 0; i < jsonArray.length(); i++) {
                                     JSONObject jsonObject1 = jsonArray.getJSONObject(i);
@@ -289,6 +290,8 @@ public class WCFragment extends Fragment implements LocationListener {
                                             (float) jsonObject1.getDouble("Lon"), jsonObject1.getString("Note"), 2);
 
                                     float distance = distance(item.getLat(), item.getLon(), currLat, currLon);
+
+                                    item.setImages(jsonObject1.getString("Images"));
 
                                     item.setDistance(distance);
                                     items.add(item);

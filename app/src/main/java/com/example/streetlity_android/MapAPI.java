@@ -16,6 +16,7 @@ import retrofit2.http.Field;
 import retrofit2.http.FieldMap;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
+import retrofit2.http.HTTP;
 import retrofit2.http.Header;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
@@ -59,22 +60,22 @@ public interface MapAPI {
                                          @Query("range") float range);
 
     @FormUrlEncoded
-    @POST("service/fuel/add")
+    @POST("service/fuel/create")
     Call<ResponseBody> addFuel(@Header("Version") String version, @Header("Auth") String token, @Field("location") float lat, @Field("location" )float lon,
                                @Field("address") String address, @Field("note") String note, @Field("images") String[] images);
 
     @FormUrlEncoded
-    @POST("service/atm/add")
+    @POST("service/atm/create")
     Call<ResponseBody> addATM(@Header("Version") String version, @Header("Auth") String token,@Field("location") float lat, @Field("location" )float lon,
-                              @Field("bank") int bankId, @Field("address") String address, @Field("note") String note, @Field("images") String[] images);
+                              @Field("bank_id") int bankId, @Field("address") String address, @Field("note") String note, @Field("images") String[] images);
 
     @FormUrlEncoded
-    @POST("service/toilet/add")
+    @POST("service/toilet/create")
     Call<ResponseBody> addWC(@Header("Version") String version, @Header("Auth") String token,@Field("location") float lat, @Field("location" )float lon,
                              @Field("address") String address, @Field("note") String note, @Field("images") String[] images);
 
     @FormUrlEncoded
-    @POST("service/maintenance/add")
+    @POST("service/maintenance/create")
     Call<ResponseBody> addMaintenance(@Header("Version") String version, @Header("Auth") String token,@Field("location") float lat, @Field("location" )float lon,
                                       @Field("address") String address, @Field("name") String name, @Field("note") String note);
 
@@ -129,7 +130,7 @@ public interface MapAPI {
     @POST()
     Call<ResponseBody> upload(@Url String url,@Part List<MultipartBody.Part> body);
 
-    @GET("")
+    @GET("/")
     Call<ResponseBody> download(@Query("f") String name);
 
     @GET("service/fuel/review/query")
@@ -190,16 +191,12 @@ public interface MapAPI {
                                         @Field("score") float rating,
                                         @Field("new_body") String comment);
 
-    @FormUrlEncoded
-    @DELETE("service/fuel/review/")
+    @HTTP(method="DELETE", path="service/fuel/review/", hasBody = true)
     Call<ResponseBody> deleteFuelReview(@Header("Version") String version ,@Field("review_id") int id);
-    @FormUrlEncoded
     @DELETE("service/atm/review/")
-    Call<ResponseBody> deleteATMReview(@Header("Version") String version ,@Field("review_id") int id);
-    @FormUrlEncoded
+    Call<ResponseBody> deleteATMReview(@Header("Version") String version ,@Query("review_id") int id);
     @DELETE("service/maintenance/review/")
-    Call<ResponseBody> deleteMaintenanceReview(@Header("Version") String version ,@Field("review_id") int id);
-    @FormUrlEncoded
+    Call<ResponseBody> deleteMaintenanceReview(@Header("Version") String version ,@Query("review_id") int id);
     @DELETE("service/toilet/review/")
-    Call<ResponseBody> deleteWCReview(@Header("Version") String version ,@Field("review_id") int id);
+    Call<ResponseBody> deleteWCReview(@Header("Version") String version ,@Query("review_id") int id);
 }

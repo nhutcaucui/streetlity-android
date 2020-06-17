@@ -48,7 +48,7 @@
             android:paddingLeft="15dp"
             android:paddingRight="15dp"
             android:textColor="#000"
-            android:textSize="30sp" />
+            android:textSize="32sp" />
 
         <TextView
             android:id="@+id/tv_address"

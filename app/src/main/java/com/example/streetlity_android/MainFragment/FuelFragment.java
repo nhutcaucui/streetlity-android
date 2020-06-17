@@ -139,8 +139,8 @@ public class FuelFragment extends Fragment implements LocationListener {
                 Intent t = new Intent(getActivity(), MapsActivity.class);
                 t.putExtra("currLat", currLat);
                 t.putExtra("currLon", currLon);
-                t.putExtra("item", items.get(position));
-
+                t.putExtra("item", displayItems.get(position));
+                Log.e("", "onItemClick: " + displayItems.get(position).getId() );
                 startActivity(t);
             }
         });
@@ -179,10 +179,10 @@ public class FuelFragment extends Fragment implements LocationListener {
                     ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                 Location location = locationManager.getLastKnownLocation(locationManager
                         .NETWORK_PROVIDER);
+                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME, MIN_DISTANCE, this);
                 if (location == null) {
                     loading.setVisibility(View.GONE);
                     ((MainNavigationHolder) getActivity()).getCantFind().setVisibility(View.VISIBLE);
-                    locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME, MIN_DISTANCE, this);
                     Log.e("", "onMapReady: MULL");
                 } else {
                     currLat = (float) location.getLatitude();
@@ -266,6 +266,7 @@ public class FuelFragment extends Fragment implements LocationListener {
 
     public void callFuel(double lat, double lon, float range){
         items.removeAll(items);
+        displayItems.clear();
         if(isNetworkAvailable()) {
             loading.setIndeterminate(true);
             loading.setVisibility(View.VISIBLE);
@@ -285,17 +286,20 @@ public class FuelFragment extends Fragment implements LocationListener {
                         try {
                             jsonObject = new JSONObject(response.body().string());
                             Log.e("", "onResponse: " + jsonObject.toString());
-                            if (jsonObject.getJSONArray("Fuels").toString() != "null") {
-                                jsonArray = jsonObject.getJSONArray("Fuels");
+                            if (jsonObject.getJSONArray("Services").toString() != "null") {
+                                jsonArray = jsonObject.getJSONArray("Services");
 
                                 for (int i = 0; i < jsonArray.length(); i++) {
                                     JSONObject jsonObject1 = jsonArray.getJSONObject(i);
                                     Log.e("", "onResponse: " + jsonObject1.toString());
+                                    Log.e("", "onResponse: " + jsonObject1.getInt("Id"));
                                     MapObject item = new MapObject(jsonObject1.getInt("Id"), "Fuel Station", 3,
                                             jsonObject1.getString("Address"), (float) jsonObject1.getDouble("Lat"),
                                             (float) jsonObject1.getDouble("Lon"), jsonObject1.getString("Note"), 1);
 
                                     float distance = distance(item.getLat(), item.getLon(), currLat, currLon);
+
+                                    item.setImages(jsonObject1.getString("Images"));
 
                                     item.setDistance(distance);
                                     items.add(item);
@@ -424,9 +428,9 @@ public class FuelFragment extends Fragment implements LocationListener {
     }
 
     private boolean isNetworkAvailable() {
-        ConnectivityManager connectivityManager
-                = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+            ConnectivityManager connectivityManager
+                    = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+            return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 }

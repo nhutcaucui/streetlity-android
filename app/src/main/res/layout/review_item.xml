@@ -22,10 +22,10 @@
         android:id="@+id/textView8"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
         android:layout_toRightOf="@id/tv_username"
         android:text=":"
         android:textStyle="bold"
-        tools:layout_marginTop="10dp"
         tools:textColor="#000" />
 
     <RatingBar

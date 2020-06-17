@@ -14,6 +14,7 @@ public class MapObject implements Serializable {
     float distance;
     int type; //1=fuel; 2=wc; 3=mainte; 4=atm
     int bankId;
+    String images;
 
     public MapObject(int id, String name, float rating, String address, float lat, float lon, String note, int type) {
         this.id = id;
@@ -100,5 +101,13 @@ public class MapObject implements Serializable {
 
     public int getBankId() {
         return bankId;
+    }
+
+    public void setImages(String images) {
+        this.images = images;
+    }
+
+    public String getImages() {
+        return images;
     }
 }

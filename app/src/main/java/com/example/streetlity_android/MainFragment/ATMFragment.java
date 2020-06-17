@@ -145,7 +145,7 @@ public class ATMFragment extends Fragment implements LocationListener {
                 Intent t = new Intent(getActivity(), MapsActivity.class);
                 t.putExtra("currLat", currLat);
                 t.putExtra("currLon", currLon);
-                t.putExtra("item", items.get(position));
+                t.putExtra("item", displayItems.get(position));
 
                 startActivity(t);
             }
@@ -272,6 +272,7 @@ public class ATMFragment extends Fragment implements LocationListener {
 
     public void callATM(double lat, double lon, float range){
         items.removeAll(items);
+        displayItems.clear();
         if(atcpBank!= null)
             atcpBank.setSelection(0);
         if(isNetworkAvailable()) {
@@ -293,8 +294,8 @@ public class ATMFragment extends Fragment implements LocationListener {
                         try {
                             jsonObject = new JSONObject(response.body().string());
                             Log.e("", "onResponse: " + jsonObject.toString());
-                            if (jsonObject.getJSONArray("Atms").toString() != "null") {
-                                jsonArray = jsonObject.getJSONArray("Atms");
+                            if (jsonObject.getJSONArray("Services").toString() != "null") {
+                                jsonArray = jsonObject.getJSONArray("Services");
 
                                 for (int i = 0; i < jsonArray.length(); i++) {
                                     JSONObject jsonObject1 = jsonArray.getJSONObject(i);
@@ -310,6 +311,8 @@ public class ATMFragment extends Fragment implements LocationListener {
                                             (float) jsonObject1.getDouble("Lon"), jsonObject1.getString("Note"), 4);
 
                                     item.setBankId(jsonObject1.getInt("BankId"));
+
+                                    item.setImages(jsonObject1.getString("Images"));
 
                                     float distance = distance(item.getLat(), item.getLon(), currLat, currLon);
 
@@ -487,10 +490,10 @@ public class ATMFragment extends Fragment implements LocationListener {
                         ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                     Location location = locationManager.getLastKnownLocation(locationManager
                             .NETWORK_PROVIDER);
+                    locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME, MIN_DISTANCE, this);
                     if (location == null) {
                         loading.setVisibility(View.GONE);
                         ((MainNavigationHolder) getActivity()).getCantFind().setVisibility(View.VISIBLE);
-                        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME, MIN_DISTANCE, this);
                         Log.e("", "onMapReady: MULL");
                     } else {
                         currLat = (float) location.getLatitude();

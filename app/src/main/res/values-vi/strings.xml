@@ -166,4 +166,7 @@
     <string name="in_range">trong</string>
     <string name="delete_review">Xóa review</string>
     <string name="update">Cập nhật</string>
+    <string name="notifications">Thông báo</string>
+    <string name="no_image">Không có hình ảnh</string>
+    <string name="please_gib_email">Xin nhập email để nhận mã bảo mật và đặt lại mật khẩu</string>
 </resources>

@@ -4,7 +4,7 @@
     android:id="@+id/bottom_sheet"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@android:color/white"
+    android:background="@drawable/gradient_background"
     android:orientation="vertical"
     app:behavior_hideable="false"
     app:behavior_peekHeight="150dp"
@@ -136,34 +136,18 @@
             android:id="@+id/img_holder"
             android:layout_width="wrap_content"
             android:layout_height="100dp"
+            android:gravity="center"
             android:orientation="horizontal">
 
-            <ImageView
-                android:id="@+id/imageView5"
-                android:layout_width="wrap_content"
+            <TextView
+                android:id="@+id/tv_no_img"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:srcCompat="@drawable/temp_avatar" />
-
-            <ImageView
-                android:id="@+id/imageView6"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                app:srcCompat="@drawable/temp_avatar" />
-
-            <ImageView
-                android:id="@+id/imageView7"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                app:srcCompat="@drawable/temp_avatar" />
-
-            <ImageView
-                android:id="@+id/imageView8"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                app:srcCompat="@drawable/temp_avatar" />
+                android:paddingLeft="50dp"
+                android:text="@string/no_image"
+                android:textColor="@color/black"
+                android:textSize="24sp"
+                android:visibility="gone" />
         </LinearLayout>
     </HorizontalScrollView>
 
@@ -172,6 +156,32 @@
         android:layout_width="match_parent"
         android:layout_height="2dp"
         android:background="?android:attr/listDivider" />
+
+    <LinearLayout
+        android:id="@+id/layout_note"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:paddingLeft="15dp"
+            android:text="@string/note"
+            android:textColor="#000"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/tv_note"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:text="TextView"
+            android:textColor="#000" />
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/ll_review"

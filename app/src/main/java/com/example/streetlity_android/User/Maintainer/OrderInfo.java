@@ -33,7 +33,6 @@ public class OrderInfo extends AppCompatActivity {
         TextView tvName = findViewById(R.id.tv_name);
         TextView tvPhone = findViewById(R.id.tv_phone);
         TextView tvAddress = findViewById(R.id.tv_address);
-        TextView tvTime = findViewById(R.id.tv_time);
         TextView tvNote = findViewById(R.id.tv_note);
 
         Button btnGot = findViewById(R.id.btn_goto);

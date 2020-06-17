@@ -30,7 +30,7 @@
                 android:paddingLeft="-50dp"
                 android:text="@string/confirming_location"
                 android:textColor="#000000"
-                android:textSize="30sp" />
+                android:textSize="32sp" />
         </androidx.appcompat.widget.Toolbar>
 
     </com.google.android.material.appbar.AppBarLayout>

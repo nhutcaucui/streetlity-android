@@ -185,7 +185,9 @@
         android:layout_alignTop="@id/layout_container"
         android:layout_alignParentRight="true"
         android:layout_marginRight="10dp"
+        android:background="@color/button_background"
+        android:backgroundTint="@color/button_background"
         android:clickable="true"
         android:elevation="5dp"
-        app:srcCompat="@drawable/edit_white" />
+        app:srcCompat="@drawable/edit" />
 </RelativeLayout>

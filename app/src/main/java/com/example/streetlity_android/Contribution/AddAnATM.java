@@ -144,6 +144,10 @@ public class AddAnATM extends AppCompatActivity implements OnMapReadyCallback {
         btnNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (getCurrentFocus() != null) {
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+                }
                 boolean isPass = false;
 
                 if(step == 0){
@@ -201,10 +205,7 @@ public class AddAnATM extends AppCompatActivity implements OnMapReadyCallback {
                 }
 
                 if(isPass) {
-                    if (getCurrentFocus() != null) {
-                        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                        imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
-                    }
+
                     int current = getItem(+1);
                     if (current < layouts.size()) {
                         // move to next screen
@@ -335,14 +336,14 @@ public class AddAnATM extends AppCompatActivity implements OnMapReadyCallback {
         });
     }
 
-    @Override
-    public boolean dispatchTouchEvent(MotionEvent ev) {
-        if (getCurrentFocus() != null) {
-            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
-        }
-        return super.dispatchTouchEvent(ev);
-    }
+//    @Override
+//    public boolean dispatchTouchEvent(MotionEvent ev) {
+//        if (getCurrentFocus() != null) {
+//            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+//            imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+//        }
+//        return super.dispatchTouchEvent(ev);
+//    }
 
     public void addATM(){
         ConstraintLayout csLayout = findViewById(R.id.layout_cant_find_loca);
@@ -740,9 +741,10 @@ public class AddAnATM extends AppCompatActivity implements OnMapReadyCallback {
                         Log.e("", "onResponse: " + jsonObject.toString());
 
                         if(jsonObject.getBoolean("Status")) {
+                            JSONObject jsonObject1=jsonObject.getJSONObject("Bank");
                             mBankId = arrBank.get(arrBank.size()-1).getId()+1;
 
-                            arrBank.set(arrBank.size()+1 ,new BankObject(arrBank.get(arrBank.size()-1).getId()+1 ,name));
+                            arrBank.set(arrBank.size()-1 ,new BankObject(jsonObject1.getInt("Id") ,name));
                             arrBank.add( new BankObject(-1,getString(R.string.other)));
                             spinnerAdapter.notifyDataSetChanged();
 

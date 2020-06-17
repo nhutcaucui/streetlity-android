@@ -176,4 +176,7 @@
     <string name="in_range">in</string>
     <string name="delete_review">Delete review</string>
     <string name="update">Update</string>
-    </resources>
+    <string name="notifications">Notifications</string>
+    <string name="no_image">No images</string>
+    <string name="please_gib_email">Please fill in your email to receive the OTP to reset the password</string>
+</resources>

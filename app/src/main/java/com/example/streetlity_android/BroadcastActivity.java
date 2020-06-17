@@ -1,9 +1,13 @@
 package com.example.streetlity_android;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -11,6 +15,7 @@ import com.google.android.material.snackbar.Snackbar;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 
 import android.util.Log;
 import android.view.MenuItem;
@@ -58,8 +63,18 @@ public class BroadcastActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("");
 
-        currLat = getIntent().getFloatExtra("currLat", -500);
-        currLon = getIntent().getFloatExtra("currLon", -500);
+        LocationManager locationManager = (LocationManager)
+                this.getSystemService(Context.LOCATION_SERVICE);
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
+                ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            Location location = locationManager.getLastKnownLocation(locationManager
+                    .NETWORK_PROVIDER);
+                currLat = (float) location.getLatitude();
+                currLon = (float) location.getLongitude();
+            }
+            Log.e("", "onMapReady: " + currLat + " , " + currLon);
+
 
         final EditText edtName = findViewById(R.id.edt_name);
         final EditText edtPhone = findViewById(R.id.edt_phone);

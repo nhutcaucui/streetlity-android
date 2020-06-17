@@ -45,7 +45,7 @@
                 android:paddingLeft="-50dp"
                 android:text="@string/broadcast"
                 android:textColor="#000000"
-                android:textSize="30sp"/>
+                android:textSize="32sp"/>
         </androidx.appcompat.widget.Toolbar>
 
     </com.google.android.material.appbar.AppBarLayout>
@@ -120,18 +120,6 @@
 
 
             <EditText
-                android:id="@+id/edt_name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginRight="10dp"
-                android:ems="10"
-                android:hint="@string/name_order"
-                android:inputType="textPersonName"
-                android:textColor="#000" />
-
-            <EditText
                 android:id="@+id/edt_phone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -141,18 +129,6 @@
                 android:ems="10"
                 android:hint="@string/phone"
                 android:inputType="phone"
-                android:textColor="#000" />
-
-            <EditText
-                android:id="@+id/edt_address"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginRight="10dp"
-                android:ems="10"
-                android:hint="@string/address"
-                android:inputType="text"
                 android:textColor="#000" />
 
             <EditText

@@ -22,6 +22,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.LayerDrawable;
 import android.location.Criteria;
 import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.media.Rating;
 import android.os.Bundle;
@@ -72,8 +73,10 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.InputStream;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.List;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -82,17 +85,23 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
+public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, LocationListener {
 
     private GoogleMap mMap;
 
-    ArrayList<MarkerOptions> mMarkers = new ArrayList<MarkerOptions>();
     ArrayList<Review> reviewItems = new ArrayList<Review>();
     ReviewAdapter adapter;
     MapObject item;
     RatingBar rb;
     TextView tvRating;
     DecimalFormat df = new DecimalFormat("#.#");
+
+    Marker currMarker;
+
+    Polyline polyline;
+
+    private static final long MIN_TIME = 1000;
+    private static final float MIN_DISTANCE = 1000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,6 +120,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         sheetBehavior = BottomSheetBehavior.from(bottom_sheet);
 
         item = (MapObject) getIntent().getSerializableExtra("item");
+
+        LinearLayout layoutNote = findViewById(R.id.layout_note);
+        TextView tvNote =findViewById(R.id.tv_note);
+        if(!item.getNote().equals("")) {
+            layoutNote.setVisibility(View.VISIBLE);
+            tvNote.setText(item.getNote());
+        }
 
         TextView tvName = findViewById(R.id.tv_name);
         tvName.setText(item.getName());
@@ -141,7 +157,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         reviewList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if(MyApplication.getInstance().getUsername().equals(reviewItems.get(position).getUsername())){
+                if(reviewItems.get(position).getUsername().equals(MyApplication.getInstance().getUsername()));
                     Dialog dialogUpdate = new Dialog(MapsActivity.this);
 
                     final LayoutInflater inflater2 = LayoutInflater.from(MapsActivity.this.getApplicationContext());
@@ -165,22 +181,26 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         @Override
                         public void onClick(View v) {
                             updateReviews(position, reviewItems.get(position).getId(), rtReview.getRating(),
-                                    edtComment.getText().toString());
+                                    edtComment.getText().toString(), dialogUpdate);
                         }
                     });
 
                     deleteReview.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            deleteReviews(position, reviewItems.get(position).getId());
+                            deleteReviews(position, reviewItems.get(position).getId(), dialogUpdate);
                         }
                     });
 
+                    dialogUpdate.setContentView(dialogView2);
+                    dialogUpdate.show();
                 }
-            }
+
         });
 
-        LinearLayout imgContainer = findViewById(R.id.layout_container);
+        LinearLayout imgContainer = findViewById(R.id.img_holder);
+
+        addImages(imgContainer);
 
         Button leaveReview = findViewById(R.id.btn_leave_comment);
 
@@ -230,15 +250,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 dialogComment.setContentView(dialogView2);
 
                 dialogComment.show();
-            }
-        });
-
-        ImageView imgView = findViewById(R.id.imageView5);
-        imgView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Bitmap bitmap = ((BitmapDrawable)imgView.getDrawable()).getBitmap();
-                new PhotoFullPopupWindow(MapsActivity.this, R.layout.popup_photo_full, imgView, "", bitmap);
             }
         });
 
@@ -325,7 +336,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                             Leg leg = route.getLegList().get(0);
                             ArrayList<LatLng> directionPositionList = leg.getDirectionPoint();
                             PolylineOptions polylineOptions = DirectionConverter.createPolyline(MapsActivity.this, directionPositionList, 5, Color.RED);
-                            mMap.addPolyline(polylineOptions);
+                            polyline=mMap.addPolyline(polylineOptions);
 
                         } else if(status.equals(RequestResult.NOT_FOUND)) {
                             Toast toast = Toast.makeText(MapsActivity.this, R.string.cant_go, Toast.LENGTH_LONG);
@@ -350,7 +361,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         MarkerOptions currOption = new MarkerOptions();
         currOption.position(new LatLng(latitude,longitude));
         currOption.title(getString(R.string.you_r_here));
-        Marker currMarker = mMap.addMarker(currOption);
+        currMarker = mMap.addMarker(currOption);
 
         MarkerOptions desOption = new MarkerOptions();
         desOption.position(new LatLng(item.getLat(),item.getLon()));
@@ -377,6 +388,16 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 int padding = 50; // offset from edges of the map in pixels
                 CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
                 googleMap.animateCamera(cu);
+
+                if (ContextCompat.checkSelfPermission(MapsActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
+                        ContextCompat.checkSelfPermission(MapsActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+
+
+                    LocationManager locationManager = (LocationManager)
+                            MapsActivity.this.getSystemService(Context.LOCATION_SERVICE);
+                    ;
+                    locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME, MIN_DISTANCE, MapsActivity.this);
+                }
             }
         });
 
@@ -402,19 +423,58 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         return temp;
     }
 
-    public void addImage(LinearLayout imgContainer){
-        ImageView img = new ImageView(this);
-        File file = new File("/");
-        Bitmap myBitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
-        img.setImageBitmap(myBitmap);
-        img.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Bitmap bitmap = ((BitmapDrawable)img.getDrawable()).getBitmap();
-                new PhotoFullPopupWindow(MapsActivity.this, R.layout.popup_photo_full, img, "", bitmap);
+    public void addImages(LinearLayout imgContainer){
+        if(!item.getImages().equals("")) {
+            String[] split = item.getImages().split(";");
+            Retrofit retro = new Retrofit.Builder().baseUrl(((MyApplication) this.getApplication()).getDriverURL())
+                    .addConverterFactory(GsonConverterFactory.create()).build();
+            final MapAPI tour = retro.create(MapAPI.class);
+            for (int i = 0; i < split.length; i++) {
+                Log.e("", "addImages: " + split[i]);
+                Call<ResponseBody> call = tour.download(split[i]);
+                call.enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        if (response.code() == 200) {
+                            try {
+
+                                Bitmap bmp = BitmapFactory.decodeStream(response.body().byteStream());
+                                ImageView img = new ImageView(MapsActivity.this);
+                                img.setImageBitmap(bmp);
+                                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                                        100,
+                                        100
+                                );
+                                  lp.setMargins(5,0,5,0);
+                                img.setLayoutParams(lp);
+                                img.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        Bitmap bitmap = ((BitmapDrawable)img.getDrawable()).getBitmap();
+                                        new PhotoFullPopupWindow(MapsActivity.this, R.layout.popup_photo_full, img, "", bitmap);
+                                    }
+                                });
+                                imgContainer.addView(img);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                    }
+                });
             }
-        });
-        imgContainer.addView(img);
+
+//        File file = new File("/");
+//        Bitmap myBitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
+
+        }else{
+            TextView tvNoImg = findViewById(R.id.tv_no_img);
+            tvNoImg.setVisibility(View.VISIBLE);
+        }
     }
 
     public void createReviews(float rating,String comment){
@@ -459,7 +519,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                             Review review = new Review(((MyApplication) MapsActivity.this.getApplication()).getUsername(),
                                     comment,
                                     rating);
-                            review.setId(jsonObject.getInt("Id"));
+                            review.setId(jsonObject.getJSONObject("Review").getInt("Id"));
                             reviewItems.add(0, review);
 
                             adapter.notifyDataSetChanged();
@@ -482,7 +542,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         });
     }
-    public void updateReviews(int pos,int id, float rating, String comment){
+    public void updateReviews(int pos,int id, float rating, String comment, Dialog dialog){
         //MapObject item = (MapObject) getIntent().getSerializableExtra("item");
         Retrofit retro = new Retrofit.Builder().baseUrl(((MyApplication) this.getApplication()).getServiceURL())
                 .addConverterFactory(GsonConverterFactory.create()).build();
@@ -526,6 +586,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                             rb.setRating(calculateRating(reviewItems));
 
                             tvRating.setText("("+ df.format(item.getRating()) +")");
+                            dialog.cancel();
                         }
                     }catch (Exception e){
                         e.printStackTrace();
@@ -542,7 +603,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         });
     }
 
-    public void deleteReviews(int pos, int id){
+    public void deleteReviews(int pos, int id, Dialog dialog){
        // MapObject item = (MapObject) getIntent().getSerializableExtra("item");
         Retrofit retro = new Retrofit.Builder().baseUrl(((MyApplication) this.getApplication()).getServiceURL())
                 .addConverterFactory(GsonConverterFactory.create()).build();
@@ -585,6 +646,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                             rb.setRating(calculateRating(reviewItems));
 
                             tvRating.setText("("+ df.format(item.getRating()) +")");
+                            dialog.cancel();
                         }
                     }catch (Exception e){
                         e.printStackTrace();
@@ -617,8 +679,21 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                             final JSONObject jsonObject;
                             try {
                                 jsonObject = new JSONObject(response.body().string());
-                                Log.e("", "onResponse: " + jsonObject.toString() + " reviewload");
+                                Log.e("", "onResponse: " + jsonObject.toString() + " reviewload" + item.getId());
                                 if (jsonObject.getBoolean("Status")) {
+
+                                    JSONArray jsonArray = jsonObject.getJSONArray("Reviews");
+                                    for(int i =0 ;i < jsonArray.length(); i++) {
+                                        JSONObject jsonObject1 = jsonArray.getJSONObject(i);
+                                        Review review = new Review(jsonObject1.getString("Reviewer"),
+                                                jsonObject1.getString("Body"),
+                                                (float) jsonObject1.getDouble("Score"));
+                                        review.setId(jsonObject1.getInt("Id"));
+                                        reviewItems.add(review);
+                                    }
+
+                                    adapter.notifyDataSetChanged();
+
                                     item.setRating(calculateRating(reviewItems));
                                     rb.setRating(item.getRating());
 
@@ -757,5 +832,24 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 break;
             }
         }
+    }
+
+    public void onLocationChanged(Location location) {
+        currMarker.remove();
+        MarkerOptions currOption = new MarkerOptions();
+        currOption.position(new LatLng(location.getLatitude(),location.getLongitude()));
+        currOption.title(getString(R.string.you_r_here));
+        currMarker = mMap.addMarker(currOption);
+    }
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
     }
 }

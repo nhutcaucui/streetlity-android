@@ -55,17 +55,17 @@
             android:layout_alignParentRight="true"
             android:layout_marginRight="15dp"
             android:layout_marginBottom="10dp"
-            android:background="#000"
-            android:backgroundTint="#000"
+            android:background="@color/button_background"
+            android:backgroundTint="@color/button_background"
             android:clickable="true"
-            android:src="@android:drawable/ic_dialog_alert" />
+            android:src="@drawable/signal" />
 
         <ListView
             android:id="@+id/list_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_above="@id/layout_range"
-            android:divider="@color/colorPrimaryDark"
+            android:divider="@color/listview_divider"
             android:dividerHeight="1sp">
 
         </ListView>
@@ -106,7 +106,10 @@
                 android:layout_height="wrap_content"
                 android:background="@null"
                 android:foreground="?android:attr/selectableItemBackground"
-                android:padding="10dp"
+                android:paddingLeft="10dp"
+                android:paddingTop="10dp"
+                android:paddingRight="20dp"
+                android:paddingBottom="10dp"
                 android:src="@drawable/checkmark_black" />
 
         </LinearLayout>

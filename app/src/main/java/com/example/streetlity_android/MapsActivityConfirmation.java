@@ -55,6 +55,7 @@ public class MapsActivityConfirmation extends AppCompatActivity implements OnMap
     private GoogleMap mMap;
 
     Marker currentPosition;
+    MapObject item;
 
     ArrayList<MarkerOptions> mMarkers = new ArrayList<MarkerOptions>();;
 
@@ -100,6 +101,16 @@ public class MapsActivityConfirmation extends AppCompatActivity implements OnMap
         bottom_sheet = findViewById(R.id.bottom_sheet);
         sheetBehavior = BottomSheetBehavior.from(bottom_sheet);
 
+        item = (MapObject) getIntent().getSerializableExtra("item");
+
+        LinearLayout layoutNote = findViewById(R.id.layout_note);
+        TextView tvNote =findViewById(R.id.tv_note);
+        if(!item.getNote().equals("")) {
+            layoutNote.setVisibility(View.VISIBLE);
+            tvNote.setText(item.getNote());
+        }
+
+
         MapObject item = (MapObject) getIntent().getSerializableExtra("item");
 
         TextView tvName = findViewById(R.id.tv_name);
@@ -129,15 +140,6 @@ public class MapsActivityConfirmation extends AppCompatActivity implements OnMap
         stars.getDrawable(1).setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP);
 
         LinearLayout imgContainer = findViewById(R.id.layout_container);
-
-        ImageView imgView = findViewById(R.id.imageView5);
-        imgView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Bitmap bitmap = ((BitmapDrawable)imgView.getDrawable()).getBitmap();
-                new PhotoFullPopupWindow(MapsActivityConfirmation.this, R.layout.popup_photo_full, imgView, "", bitmap);
-            }
-        });
 
         LinearLayout peekLayout = findViewById(R.id.layout_peek);
         peekLayout.setOnClickListener(new View.OnClickListener() {

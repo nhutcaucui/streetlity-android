@@ -31,7 +31,7 @@
                 android:paddingLeft="-50dp"
                 android:text="@string/my_works"
                 android:textColor="#000000"
-                android:textSize="30sp"></TextView>
+                android:textSize="32sp"></TextView>
         </androidx.appcompat.widget.Toolbar>
 
     </com.google.android.material.appbar.AppBarLayout>

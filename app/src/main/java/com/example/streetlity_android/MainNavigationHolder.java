@@ -11,6 +11,7 @@ import android.os.Bundle;
 import com.example.streetlity_android.Contribution.ContributeToService;
 import com.example.streetlity_android.MainFragment.ATMFragment;
 import com.example.streetlity_android.MainFragment.FuelFragment;
+import com.example.streetlity_android.MainFragment.HomeFragment;
 import com.example.streetlity_android.MainFragment.MaintenanceFragment;
 import com.example.streetlity_android.MainFragment.WCFragment;
 import com.example.streetlity_android.User.ChangePassword;
@@ -38,6 +39,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -52,7 +54,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainNavigationHolder extends AppCompatActivity implements FuelFragment.OnFragmentInteractionListener,
         ATMFragment.OnFragmentInteractionListener, MaintenanceFragment.OnFragmentInteractionListener,
-        WCFragment.OnFragmentInteractionListener{
+        WCFragment.OnFragmentInteractionListener, HomeFragment.OnFragmentInteractionListener{
     Fragment fragment;
     @Override
     public void onFragmentInteraction(Uri uri){
@@ -62,6 +64,8 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
     DrawerLayout drawer;
 
     ConstraintLayout cantFind;
+
+    BottomNavigationView navigation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -127,10 +131,10 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
             setDrawerForNonUser(navView);
         }
 
-        fragment = new FuelFragment();
+        fragment = new HomeFragment();
         loadFragment(fragment);
 
-        BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
+        navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
     }
 
@@ -140,16 +144,24 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
+                case R.id.navigation_home:
+                    if (!navigation.getMenu().getItem(0).isChecked())
+                    fragment = new HomeFragment();
+                    break;
                 case R.id.navigation_fuel:
+                    if (!navigation.getMenu().getItem(1).isChecked())
                     fragment = new FuelFragment();
                     break;
                 case R.id.nav_atm:
+                    if (!navigation.getMenu().getItem(2).isChecked())
                     fragment = new ATMFragment();
                     break;
                 case R.id.navigation_wc:
+                    if (!navigation.getMenu().getItem(3).isChecked())
                     fragment = new WCFragment();
                     break;
                 case R.id.navigation_maintenance:
+                    if (!navigation.getMenu().getItem(4).isChecked())
                     fragment = new MaintenanceFragment();
                     break;
             }
@@ -174,6 +186,11 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
                 View header=navView.getHeaderView(0);
                 TextView tvUsername = header.findViewById(R.id.username);
                 tvUsername.setText(((MyApplication) this.getApplication()).getUsername());
+
+                Button btnBroadcast = findViewById(R.id.btn_broadcast);
+                if(btnBroadcast != null){
+                    btnBroadcast.setVisibility(View.VISIBLE);
+                }
 
             }else if (requestCode == 2 && resultCode == RESULT_OK) {
                 Toast toast = Toast.makeText(MainNavigationHolder.this, R.string.location_added, Toast.LENGTH_LONG);
@@ -227,6 +244,7 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
                 int id=menuItem.getItemId();
                 switch (id){
                     case R.id.user_info:
+
                         startActivity(new Intent(MainNavigationHolder.this, UserInfo.class));
                         break;
                     case  R.id.logout:
@@ -355,5 +373,9 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
 
     public ConstraintLayout getCantFind() {
         return cantFind;
+    }
+
+    public BottomNavigationView getNavigation(){
+        return navigation;
     }
 }
