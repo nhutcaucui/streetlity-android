@@ -105,9 +105,9 @@ public interface MapAPI {
 
     @FormUrlEncoded
     @POST("service/maintenance/order")
-    Call<ResponseBody> broadcast(@Header("Version") String version, @Field("commonUser") String username, @Field("reason") String reason, @Field("name") String name,
+    Call<ResponseBody> broadcast(@Header("Version") String version, @Field("common_user") String username, @Field("reason") String reason, @Field("name") String name,
                                  @Field("phone") String phone, @Field("note") String note,
-                                 @Field("id") int[] id, @Field("address") String address, @Field("preferTime") String time);
+                                 @Field("service_id") int[] id, @Field("address") String address, @Field("preferTime") String time);
 
     @FormUrlEncoded
     @POST("user/device")

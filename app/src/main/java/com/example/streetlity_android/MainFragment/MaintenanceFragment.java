@@ -24,6 +24,7 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -134,6 +135,7 @@ public class MaintenanceFragment extends Fragment implements LocationListener {
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                ((MainNavigationHolder) getActivity()).getLoading().setVisibility(View.VISIBLE);
                 Intent t = new Intent(getActivity(), MapsActivity.class);
                 t.putExtra("currLat", currLat);
                 t.putExtra("currLon", currLon);
@@ -201,11 +203,15 @@ public class MaintenanceFragment extends Fragment implements LocationListener {
             fab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent t = new Intent(getActivity(), BroadcastActivity.class);
-                    t.putExtra("currLat", currLat);
-                    t.putExtra("currLon", currLon);
+                    if(((MainNavigationHolder)getActivity()).isCanBroadcast()) {
+                        getActivity().startActivityForResult(new Intent(getActivity(), BroadcastActivity.class), 5);
+                    }
+                    else{
+                        Toast toast = Toast.makeText(getActivity(), R.string.retry_later, Toast.LENGTH_LONG);
+                        TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
 
-                    getActivity().startActivityForResult(t, 5);
+                        toast.show();
+                    }
                 }
             });
         }

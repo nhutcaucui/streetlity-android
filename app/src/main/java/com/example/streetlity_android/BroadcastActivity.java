@@ -76,7 +76,6 @@ public class BroadcastActivity extends AppCompatActivity {
             Log.e("", "onMapReady: " + currLat + " , " + currLon);
 
 
-        final EditText edtName = findViewById(R.id.edt_name);
         final EditText edtPhone = findViewById(R.id.edt_phone);
         final Spinner spnReason = findViewById(R.id.spn_reason);
         final EditText edtReason = findViewById(R.id.edt_reason);
@@ -144,7 +143,7 @@ public class BroadcastActivity extends AppCompatActivity {
 
                         toast.show();
                     }else{
-                        sendBroadcast( edtReason.getText().toString(), edtName.getText().toString(),
+                        sendBroadcast( edtReason.getText().toString(),
                                 edtPhone.getText().toString(),edtNote.getText().toString(), currLat, currLon);
                     }
                 }else {
@@ -155,7 +154,7 @@ public class BroadcastActivity extends AppCompatActivity {
 
                         toast.show();
                     } else {
-                        sendBroadcast(spnReason.getSelectedItem().toString(), edtName.getText().toString(),
+                        sendBroadcast(spnReason.getSelectedItem().toString(),
                                 edtPhone.getText().toString(), edtNote.getText().toString(), currLat, currLon);
                     }
                 }
@@ -218,7 +217,7 @@ public class BroadcastActivity extends AppCompatActivity {
     }
 
 
-    public void sendBroadcast(final String reason, final String name, final String phone, final String note, double lat, double lon){
+    public void sendBroadcast(final String reason, final String phone, final String note, double lat, double lon){
         RelativeLayout broadcasting = findViewById(R.id.layout_broadcasting);
         broadcasting.setVisibility(View.VISIBLE);
         Retrofit retro = new Retrofit.Builder().baseUrl("http://35.240.207.83/")
@@ -235,7 +234,7 @@ public class BroadcastActivity extends AppCompatActivity {
                     try {
                         jsonObject = new JSONObject(response.body().string());
                         Log.e("", "onResponse: " + jsonObject.toString());
-                        jsonArray = jsonObject.getJSONArray("Maintenances");
+                        jsonArray = jsonObject.getJSONArray("Services");
 
                         final ArrayList<Integer> idList = new ArrayList<>();
 
@@ -250,7 +249,8 @@ public class BroadcastActivity extends AppCompatActivity {
 
                             for (int i = 0; i< jsonArray.length();i++){
                                 JSONObject jsonObject1 = jsonArray.getJSONObject(i);
-                                if(distance(lat, lon, jsonObject1.getDouble("Lat"), jsonObject1.getDouble("Lon")) < range) {
+                                if(distance(lat, lon, jsonObject1.getDouble("Lat"), jsonObject1.getDouble("Lon")) < range
+                                && !jsonObject1.getString("Owner").equals("")) {
                                     idList.add(jsonObject1.getInt("Id"));
                                     count ++;
                                 }
@@ -271,7 +271,7 @@ public class BroadcastActivity extends AppCompatActivity {
                         final int fRange = range;
 
                         Call<ResponseBody> call2 = tour.broadcast("1.0.0", MyApplication.getInstance().getUsername()
-                                ,reason, name, phone, note, id, "", "");
+                                ,reason, "", phone, note, id, "", "");
                         call2.enqueue(new Callback<ResponseBody>() {
                             @Override
                             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {

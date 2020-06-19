@@ -22,6 +22,14 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
+            android:name=".AboutUs"
+            android:label="@string/title_activity_about_us"
+            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity
+            android:name=".Notification.Notification"
+            android:label="@string/notifications"
+            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity
             android:name=".Contribution.AddSuccess"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity

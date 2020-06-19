@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -18,6 +19,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -26,6 +29,7 @@ import com.example.streetlity_android.BroadcastActivity;
 import com.example.streetlity_android.MainNavigationHolder;
 import com.example.streetlity_android.MyApplication;
 import com.example.streetlity_android.R;
+import com.example.streetlity_android.User.Login;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import static android.view.View.GONE;
@@ -121,7 +125,15 @@ public class HomeFragment extends Fragment{
         btnBroadcast.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivityForResult(new Intent(getActivity(), BroadcastActivity.class),5);
+                if(((MainNavigationHolder)getActivity()).isCanBroadcast()) {
+                    getActivity().startActivityForResult(new Intent(getActivity(), BroadcastActivity.class), 5);
+                }
+                else{
+                    Toast toast = Toast.makeText(getActivity(), R.string.retry_later, Toast.LENGTH_LONG);
+                    TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
+
+                    toast.show();
+                }
             }
         });
 

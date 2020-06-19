@@ -136,13 +136,14 @@ public class FuelFragment extends Fragment implements LocationListener {
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                ((MainNavigationHolder) getActivity()).getLoading().setVisibility(View.VISIBLE);
                 Intent t = new Intent(getActivity(), MapsActivity.class);
                 t.putExtra("currLat", currLat);
                 t.putExtra("currLon", currLon);
                 t.putExtra("item", displayItems.get(position));
                 Log.e("", "onItemClick: " + displayItems.get(position).getId() );
                 startActivity(t);
-            }
+                }
         });
 
         locationManager = (LocationManager)

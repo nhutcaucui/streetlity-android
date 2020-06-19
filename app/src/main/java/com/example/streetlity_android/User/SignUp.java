@@ -246,6 +246,12 @@ public class SignUp extends AppCompatActivity implements OnMapReadyCallback, Goo
                         tv.setTextColor(Color.RED);
 
                         toast.show();
+                    }else if(!isValid(edtEmail.getText().toString())){
+                        Toast toast = Toast.makeText(SignUp.this, R.string.invalid_email, Toast.LENGTH_LONG);
+                        TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
+                        tv.setTextColor(Color.RED);
+
+                        toast.show();
                     }
                     else if(edtPassword.getText().toString().equals("")){
                         Toast toast = Toast.makeText(SignUp.this, R.string.empty_pass, Toast.LENGTH_LONG);
@@ -1332,5 +1338,10 @@ public class SignUp extends AppCompatActivity implements OnMapReadyCallback, Goo
         this.finish();
 
         return true;
+    }
+
+    static boolean isValid(String email) {
+        String regex = "^[\\w-_\\.+]*[\\w-_\\.]\\@([\\w]+\\.)+[\\w]+[\\w]$";
+        return email.matches(regex);
     }
 }

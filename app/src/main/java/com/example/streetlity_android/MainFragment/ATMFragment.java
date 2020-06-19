@@ -142,6 +142,7 @@ public class ATMFragment extends Fragment implements LocationListener {
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                ((MainNavigationHolder) getActivity()).getLoading().setVisibility(View.VISIBLE);
                 Intent t = new Intent(getActivity(), MapsActivity.class);
                 t.putExtra("currLat", currLat);
                 t.putExtra("currLon", currLon);

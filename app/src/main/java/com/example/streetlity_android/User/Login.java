@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 
+import com.example.streetlity_android.AboutUs;
 import com.example.streetlity_android.MapAPI;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -19,6 +20,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -56,13 +58,13 @@ public class Login extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (edtUser.getText().toString().equals("")) {
-                    Toast toast = Toast.makeText(Login.this, "Empty Username", Toast.LENGTH_LONG);
+                    Toast toast = Toast.makeText(Login.this, R.string.empty_user_name, Toast.LENGTH_LONG);
                     TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
                     tv.setTextColor(Color.RED);
 
                     toast.show();
                 } else if (edtPass.getText().toString().equals("")) {
-                    Toast toast = Toast.makeText(Login.this, "Empty Password", Toast.LENGTH_LONG);
+                    Toast toast = Toast.makeText(Login.this, R.string.empty_pass, Toast.LENGTH_LONG);
                     TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
                     tv.setTextColor(Color.RED);
 
@@ -110,6 +112,13 @@ public class Login extends AppCompatActivity {
         btnSignup.setText(Html.fromHtml(getString(R.string.underline_signup)));
         btnForgot.setText(Html.fromHtml(getString(R.string.underline_forgotpass)));
 
+        ImageButton imgAbout = findViewById(R.id.img_about);
+        imgAbout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(Login.this, AboutUs.class));
+            }
+        });
     }
 
     public boolean onOptionsItemSelected(MenuItem item){

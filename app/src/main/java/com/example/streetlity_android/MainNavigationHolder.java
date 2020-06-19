@@ -14,6 +14,7 @@ import com.example.streetlity_android.MainFragment.FuelFragment;
 import com.example.streetlity_android.MainFragment.HomeFragment;
 import com.example.streetlity_android.MainFragment.MaintenanceFragment;
 import com.example.streetlity_android.MainFragment.WCFragment;
+import com.example.streetlity_android.Notification.Notification;
 import com.example.streetlity_android.User.ChangePassword;
 import com.example.streetlity_android.User.Login;
 import com.example.streetlity_android.User.Maintainer.Works;
@@ -40,6 +41,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -65,7 +67,11 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
 
     ConstraintLayout cantFind;
 
+    ConstraintLayout loading;
+
     BottomNavigationView navigation;
+
+    boolean canBroadcast = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,6 +98,8 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
         }
         cantFind = findViewById(R.id.layout_cant_find_loca);
 
+        loading = findViewById(R.id.layout_loading);
+
         drawer = findViewById(R.id.drawer_layout);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -102,6 +110,14 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
         drawer.addDrawerListener(toggle);
 
         NavigationView navView = findViewById(R.id.nav_view);
+
+        ImageButton imgNotify = findViewById(R.id.img_notify);
+        imgNotify.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainNavigationHolder.this, Notification.class));
+            }
+        });
 
         SharedPreferences s = getSharedPreferences("userPref", Context.MODE_PRIVATE);
         if (s.contains("token")){
@@ -127,6 +143,8 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
             View header=navView.getHeaderView(0);
             TextView tvUsername = header.findViewById(R.id.username);
             tvUsername.setText(((MyApplication) this.getApplication()).getUsername());
+
+            imgNotify.setVisibility(View.VISIBLE);
         }else{
             setDrawerForNonUser(navView);
         }
@@ -192,19 +210,37 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
                     btnBroadcast.setVisibility(View.VISIBLE);
                 }
 
+                ImageButton imgNotify = findViewById(R.id.img_notify);
+                imgNotify.setVisibility(View.VISIBLE);
             }else if (requestCode == 2 && resultCode == RESULT_OK) {
                 Toast toast = Toast.makeText(MainNavigationHolder.this, R.string.location_added, Toast.LENGTH_LONG);
                 toast.show();
             } else if (requestCode == 5 && resultCode == RESULT_OK && null != data) {
+
                 String temp = getString(R.string.contacted);
                 temp += " " + data.getIntExtra("numStore", 0);
                 temp += " " + getString(R.string.nearby_store);
 
                 int range = data.getIntExtra("range", 0);
-                temp += " " + getString(R.string.in_range)+ " " + (range/1000)+ "km";
+                temp += " " + getString(R.string.in_range) + " " + (range / 1000) + "km";
 
                 Toast toast = Toast.makeText(MainNavigationHolder.this, temp, Toast.LENGTH_LONG);
                 toast.show();
+
+                canBroadcast = false;
+                Thread thread = new Thread(new Runnable () {
+                    @Override
+                    public void run(){
+                        for (int i = 300 ; i >= 0; i--) {
+                            try{
+                                Thread.sleep(1000);
+                            }catch (InterruptedException e) {}
+
+                        }
+                        canBroadcast=true;
+                    }
+                });
+                thread.start();
             }
 
         } catch (Exception e) {
@@ -314,6 +350,8 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
                         e.clear();
                         e.apply();
 
+                        ImageButton imgNotify = findViewById(R.id.img_notify);
+                        imgNotify.setVisibility(View.GONE);
                     } catch (Exception e){
                         e.printStackTrace();
                     }
@@ -377,5 +415,20 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
 
     public BottomNavigationView getNavigation(){
         return navigation;
+    }
+
+    public ConstraintLayout getLoading() {
+        return loading;
+    }
+
+    public boolean isCanBroadcast() {
+        return canBroadcast;
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+
+        this.getLoading().setVisibility(View.GONE);
     }
 }

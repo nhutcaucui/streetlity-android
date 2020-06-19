@@ -89,7 +89,7 @@
     <string name="please_select_type">Xin chọn loại người dùng</string>
     <string name="previous">Lùi</string>
     <string name="range">Phạm vi:</string>
-    <string name="reason">Lí do:</string>
+    <string name="reason">Lí do</string>
     <string name="reset_pass">Đặt lại mật khẩu</string>
     <string name="review">Các đánh giá:</string>
     <string name="save">Lưu</string>
@@ -169,4 +169,6 @@
     <string name="notifications">Thông báo</string>
     <string name="no_image">Không có hình ảnh</string>
     <string name="please_gib_email">Xin nhập email để nhận mã bảo mật và đặt lại mật khẩu</string>
+    <string name="invalid_email">Email không hợp lệ</string>
+    <string name="retry_later">Xin hãy thử lại sau</string>
 </resources>
