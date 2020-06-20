@@ -80,6 +80,8 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        cantFind = findViewById(R.id.layout_cant_find_loca);
+
         String[] Permissions = {Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION ,Manifest.permission.READ_EXTERNAL_STORAGE};
         if (!hasPermissions(this, Permissions)) {
             ActivityCompat.requestPermissions(this, Permissions, 4);
@@ -96,7 +98,6 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
             this.finish();
             return;
         }
-        cantFind = findViewById(R.id.layout_cant_find_loca);
 
         loading = findViewById(R.id.layout_loading);
 
@@ -256,6 +257,7 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
                     .beginTransaction()
                     .replace(R.id.frame_container, fragment)
                     .commit();
+            //Thread.sleep(1000);
             return true;
         }
         return false;

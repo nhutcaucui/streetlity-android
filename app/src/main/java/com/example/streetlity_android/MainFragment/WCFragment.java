@@ -351,9 +351,11 @@ public class WCFragment extends Fragment implements LocationListener {
         currLat = (float) location.getLatitude();
         currLon = (float) location.getLongitude();
         loading.setVisibility(View.VISIBLE);
-        ((MainNavigationHolder) getActivity()).getCantFind().setVisibility(View.GONE);
-        callWC(location.getLatitude(),location.getLongitude(),0);
-        locationManager.removeUpdates(this);
+        if(getActivity()!= null) {
+            ((MainNavigationHolder) getActivity()).getCantFind().setVisibility(View.GONE);
+            callWC(location.getLatitude(), location.getLongitude(), 0);
+            locationManager.removeUpdates(this);
+        }
     }
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {

@@ -129,6 +129,7 @@ public class ATMFragment extends Fragment implements LocationListener {
         // Inflate the layout for this fragment
 
         View rootView = inflater.inflate(R.layout.fragment_atm, container, false);
+
         getBank(rootView);
         ListView lv = rootView.findViewById(R.id.list_view);
 
@@ -160,26 +161,27 @@ public class ATMFragment extends Fragment implements LocationListener {
 
         try {
             gps_enabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-        } catch(Exception ex) {}
+        } catch (Exception ex) {
+        }
 
         try {
             network_enabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-        } catch(Exception ex) {}
+        } catch (Exception ex) {
+        }
 
-        if(!gps_enabled && !network_enabled) {
+        if (!gps_enabled && !network_enabled) {
             // notify user
             new AlertDialog.Builder(getActivity())
                     .setMessage(R.string.location_services_off)
                     .setPositiveButton(R.string.open_settings, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface paramDialogInterface, int paramInt) {
-                            getActivity().startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                            startActivityForResult(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS), 1);
                         }
                     })
                     .setCancelable(false)
                     .show();
-        }
-        else {
+        } else {
 
             if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
                     ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
@@ -207,11 +209,13 @@ public class ATMFragment extends Fragment implements LocationListener {
             @Override
             public void onClick(View v) {
                 tvNoItem.setVisibility(View.GONE);
-                changeRange(sb.getProgress()+1);
+                changeRange(sb.getProgress() + 1);
             }
         });
 
+
         return rootView;
+    
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -441,9 +445,11 @@ public class ATMFragment extends Fragment implements LocationListener {
         currLat = (float) location.getLatitude();
         currLon = (float) location.getLongitude();
         loading.setVisibility(View.VISIBLE);
-        ((MainNavigationHolder) getActivity()).getCantFind().setVisibility(View.GONE);
-        callATM(location.getLatitude(),location.getLongitude(),0);
-        locationManager.removeUpdates(this);
+        if(getActivity()!= null) {
+            ((MainNavigationHolder) getActivity()).getCantFind().setVisibility(View.GONE);
+            callATM(location.getLatitude(), location.getLongitude(), 0);
+            locationManager.removeUpdates(this);
+        }
     }
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {

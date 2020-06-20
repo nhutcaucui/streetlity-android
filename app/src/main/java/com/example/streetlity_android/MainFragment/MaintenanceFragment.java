@@ -380,9 +380,11 @@ public class MaintenanceFragment extends Fragment implements LocationListener {
         currLat = (float) location.getLatitude();
         currLon = (float) location.getLongitude();
         loading.setVisibility(View.VISIBLE);
-        ((MainNavigationHolder) getActivity()).getCantFind().setVisibility(View.GONE);
-        callMaintenance(location.getLatitude(),location.getLongitude(),0);
-        locationManager.removeUpdates(this);
+        if(getActivity()!= null) {
+            ((MainNavigationHolder) getActivity()).getCantFind().setVisibility(View.GONE);
+            callMaintenance(location.getLatitude(), location.getLongitude(), 0);
+            locationManager.removeUpdates(this);
+        }
     }
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {
