@@ -90,6 +90,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private GoogleMap mMap;
 
     ArrayList<Review> reviewItems = new ArrayList<Review>();
+    ArrayList<Review> displayReviewItems = new ArrayList<Review>();
     ReviewAdapter adapter;
     MapObject item;
     RatingBar rb;
@@ -102,6 +103,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private static final long MIN_TIME = 1000;
     private static final float MIN_DISTANCE = 1000;
+
+    boolean isExpanded = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -150,7 +153,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         //reviewItems.add(new Review("nhut", "i donek know kaahfeeefffffffeijkla jkl ja klj akljfklajj kajkljw klj lkaj eklwaj elkjwa kljela ej l", (float)2.5));
 
-        adapter = new ReviewAdapter(this, R.layout.review_item, reviewItems);
+        adapter = new ReviewAdapter(this, R.layout.review_item, displayReviewItems);
 
         reviewList.setAdapter(adapter);
 
@@ -520,7 +523,15 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                     comment,
                                     rating);
                             review.setId(jsonObject.getJSONObject("Review").getInt("Id"));
-                            reviewItems.add(0, review);
+                            displayReviewItems.add(0, review);
+                            reviewItems.add(review);
+
+                            if(displayReviewItems.size()>3 && !isExpanded){
+                                displayReviewItems.remove(3);
+                                Button btnShowHide = findViewById(R.id.btn_show_hide);
+                                btnShowHide.setVisibility(View.VISIBLE);
+                            }
+                            adapter.notifyDataSetChanged();
 
                             adapter.notifyDataSetChanged();
                             item.setRating(calculateRating(reviewItems));
@@ -580,7 +591,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                     comment,
                                     rating);
                             review.setId(id);
-                            reviewItems.set(pos, review);
+                            displayReviewItems.set(pos, review);
+                            reviewItems.set(reviewItems.size()-1-pos, review);
                             adapter.notifyDataSetChanged();
                             item.setRating(calculateRating(reviewItems));
                             rb.setRating(calculateRating(reviewItems));
@@ -640,10 +652,17 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         jsonObject = new JSONObject(response.body().string());
                         Log.e("", "onResponse: " + jsonObject.toString());
                         if (jsonObject.getBoolean("Status")) {
-                            reviewItems.remove(pos);
+                            displayReviewItems.remove(pos);
+                            reviewItems.remove(reviewItems.size()-1-pos);
                             adapter.notifyDataSetChanged();
                             item.setRating(calculateRating(reviewItems));
                             rb.setRating(calculateRating(reviewItems));
+
+                            if(reviewItems.size()<=3){
+                                Button btnShowHide= findViewById(R.id.btn_show_hide);
+                                btnShowHide.setVisibility(View.GONE);
+                            }
+                            adapter.notifyDataSetChanged();
 
                             tvRating.setText("("+ df.format(item.getRating()) +")");
                             dialog.cancel();
@@ -665,6 +684,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     public void loadReviews(){
         reviewItems.clear();
+        displayReviewItems.clear();
        // MapObject item = (MapObject) getIntent().getSerializableExtra("item");
         Retrofit retro = new Retrofit.Builder().baseUrl(((MyApplication) this.getApplication()).getServiceURL())
                 .addConverterFactory(GsonConverterFactory.create()).build();
@@ -683,13 +703,22 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                 if (jsonObject.getBoolean("Status")) {
 
                                     JSONArray jsonArray = jsonObject.getJSONArray("Reviews");
-                                    for(int i =0 ;i < jsonArray.length(); i++) {
+                                    for (int i = 0; i < jsonArray.length(); i++) {
                                         JSONObject jsonObject1 = jsonArray.getJSONObject(i);
                                         Review review = new Review(jsonObject1.getString("Reviewer"),
                                                 jsonObject1.getString("Body"),
                                                 (float) jsonObject1.getDouble("Score"));
                                         review.setId(jsonObject1.getInt("Id"));
                                         reviewItems.add(review);
+                                    }
+                                    int number = 0;
+                                    if (reviewItems.size() > 3) {
+                                        number = reviewItems.size() - 3;
+
+                                    }
+
+                                    for (int i = reviewItems.size() - 1; i >= number; i--) {
+                                        displayReviewItems.add(reviewItems.get(i));
                                     }
 
                                     adapter.notifyDataSetChanged();
@@ -698,12 +727,39 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                     rb.setRating(item.getRating());
 
                                     tvRating = findViewById(R.id.tv_rating);
-                                    tvRating.setText("("+ df.format(item.getRating()) +")");
+                                    tvRating.setText("(" + df.format(item.getRating()) + ")");
 
                                     LayerDrawable stars = (LayerDrawable) rb.getProgressDrawable();
                                     stars.getDrawable(2).setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP);
                                     stars.getDrawable(0).setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP);
                                     stars.getDrawable(1).setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP);
+
+                                    Button btnShowHide = findViewById(R.id.btn_show_hide);
+
+                                    if (reviewItems.size() <= 3) {
+                                        btnShowHide.setVisibility(View.GONE);
+                                    }
+                                    btnShowHide.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            if (isExpanded) {
+                                                isExpanded = false;
+                                                btnShowHide.setText(R.string.show_more);
+                                                for (int i = 3; i < reviewItems.size(); i++) {
+                                                    displayReviewItems.remove(3);
+                                                }
+                                                adapter.notifyDataSetChanged();
+                                            } else {
+                                                isExpanded = true;
+                                                displayReviewItems.clear();
+                                                for (int i = reviewItems.size() - 1; i >= 0; i--) {
+                                                    displayReviewItems.add(reviewItems.get(i));
+                                                }
+                                                btnShowHide.setText(R.string.show_less);
+                                                adapter.notifyDataSetChanged();
+                                            }
+                                        }
+                                    });
                                 }
                             }catch (Exception e){
                                 e.printStackTrace();

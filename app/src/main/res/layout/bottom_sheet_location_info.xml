@@ -6,6 +6,7 @@
     android:layout_height="wrap_content"
     android:background="@drawable/gradient_background"
     android:orientation="vertical"
+    android:paddingBottom="15dp"
     app:behavior_hideable="false"
     app:behavior_peekHeight="150dp"
     app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
@@ -70,7 +71,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
                 android:numStars="5"
-                android:progressTint="@color/colorPrimary"
+                android:progressTint="@color/black"
                 android:rating="3" />
 
             <TextView
@@ -225,5 +226,13 @@
             android:id="@+id/lv_review"
             android:layout_width="match_parent"
             android:layout_height="150dp" />
+
+        <Button
+            android:id="@+id/btn_show_hide"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:text="@string/show_more"
+            android:textStyle="bold" />
     </LinearLayout>
 </LinearLayout>

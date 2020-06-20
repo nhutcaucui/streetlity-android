@@ -171,4 +171,6 @@
     <string name="please_gib_email">Xin nhập email để nhận mã bảo mật và đặt lại mật khẩu</string>
     <string name="invalid_email">Email không hợp lệ</string>
     <string name="retry_later">Xin hãy thử lại sau</string>
+    <string name="show_more">Hiện thêm</string>
+    <string name="show_less">Ẩn bớt</string>
 </resources>

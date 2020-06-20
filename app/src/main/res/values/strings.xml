@@ -182,4 +182,6 @@
     <string name="title_activity_about_us" translatable="false">about_us</string>
     <string name="invalid_email">Invalid email</string>
     <string name="retry_later">Please try again later</string>
+    <string name="show_more">Show more</string>
+    <string name="show_less">Show less</string>
 </resources>
