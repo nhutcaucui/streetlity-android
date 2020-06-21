@@ -101,13 +101,14 @@ public interface MapAPI {
     @FormUrlEncoded
     @POST("user/logout")
     Call<ResponseBody> logout(@Header("Auth") String token, @Field("username") String username,
-                              @Field("deviceToken") String deviceToken);
+                              @Field("rtoken") String refreshToken,@Field("deviceToken") String deviceToken);
 
     @FormUrlEncoded
     @POST("service/maintenance/order")
-    Call<ResponseBody> broadcast(@Header("Version") String version, @Field("common_user") String username, @Field("reason") String reason, @Field("name") String name,
+    //@POST("order/request")
+    Call<ResponseBody> broadcast(@Header("Version") String version, @Field("common_user") String username, @Field("reason") String reason,
                                  @Field("phone") String phone, @Field("note") String note,
-                                 @Field("service_id") int[] id, @Field("address") String address, @Field("preferTime") String time);
+                                 @Field("maintenance_users") String[] maintenance, @Field("service_id") int[] id);
 
     @FormUrlEncoded
     @POST("user/device")
@@ -123,8 +124,9 @@ public interface MapAPI {
     @GET("user/validate/email")
     Call<ResponseBody> validateEmail(@Query("email") String email);
 
-    @GET("user/validate/user")
-    Call<ResponseBody> validateUser(@Query("username") String username);
+    @GET("user/validate/")
+    Call<ResponseBody> validateUser(@Query("username") String username, @Query("email") String email,
+                                    @Query("case") int cases);
 
     @Multipart
     @POST()

@@ -98,7 +98,7 @@
     <string name="send">Gửi</string>
     <string name="signup">Đăng kí</string>
     <string name="signup_success">Đăng kí thành công</string>
-    <string name="signup_success_owner">Đăng kí thành công\\nXin đợi xác nhận</string>
+    <string name="signup_success_owner">Đăng kí thành công\nXin đợi xác nhận</string>
     <string name="something_wrong">Có gì đó sai sai</string>
     <string name="store_info">Thông tin tiệm</string>
     <string name="store_location">Địa điểm tiệm</string>
@@ -149,6 +149,7 @@
     <string name="empty_comment">Bình luận trống</string>
     <string name="email_exist">Email đã tồn tại</string>
     <string name="username_existed">Tên tài khoản đã tồn tại</string>
+    <string name="usermail_existed">Tên tài khoản và Email đã tồn tại</string>
     <string name="no_atm">Không tìm được ATM gần đây</string>
     <string name="no_fuel">Không tìm được trạm xăng gần đây</string>
     <string name="no_wc">Không tìm được nhà vệ sinh gần đâyy</string>
@@ -173,4 +174,7 @@
     <string name="retry_later">Xin hãy thử lại sau</string>
     <string name="show_more">Hiện thêm</string>
     <string name="show_less">Ẩn bớt</string>
+    <string name="maintainer_location">Vị trí thợ</string>
+    <string name="no_available">Không tìm được thợ sửa</string>
+    <string name="empty_phone">Số điện thoại trống</string>
 </resources>

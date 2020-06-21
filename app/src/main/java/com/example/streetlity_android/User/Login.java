@@ -136,6 +136,7 @@ public class Login extends AppCompatActivity {
                 .addConverterFactory(GsonConverterFactory.create()).build();
         final MapAPI tour = retro.create(MapAPI.class);
         Call<ResponseBody> call = tour.login(username, password, ((MyApplication) getApplication()).getDeviceToken());
+        Log.e("", "login: " + ((MyApplication) getApplication()).getDeviceToken());
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {

@@ -215,7 +215,7 @@ public class ATMFragment extends Fragment implements LocationListener {
 
 
         return rootView;
-    
+
     }
 
     // TODO: Rename method, update argument and hook method into UI event

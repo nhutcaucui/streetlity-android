@@ -22,13 +22,21 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
+            android:name=".Chat.Chat"
+            android:label="@string/title_activity_chat"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity
+            android:name=".MaintainerLocation"
+            android:label="@string/title_activity_maintainer_location"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
             android:name=".AboutUs"
             android:label="@string/title_activity_about_us"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".Notification.Notification"
             android:label="@string/notifications"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".Contribution.AddSuccess"
             android:theme="@style/AppTheme.NoActionBar" />

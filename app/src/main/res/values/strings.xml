@@ -159,6 +159,7 @@
     <string name="empty_comment">Empty comment</string>
     <string name="email_exist">Email existed</string>
     <string name="username_existed">Username existed</string>
+    <string name="usermail_existed">Username and Email existed</string>
     <string name="no_atm">No atm nearby</string>
     <string name="no_fuel">No fuel station nearby</string>
     <string name="no_wc">No public toilet nearby</string>
@@ -184,4 +185,9 @@
     <string name="retry_later">Please try again later</string>
     <string name="show_more">Show more</string>
     <string name="show_less">Show less</string>
+    <string name="title_activity_maintainer_location" translatable="false">MaintainerLocation</string>
+    <string name="maintainer_location">Maintainer location</string>
+    <string name="title_activity_chat" translatable="false">Chat</string>
+    <string name="no_available">No available maintainers</string>
+    <string name="empty_phone">Empty phone number</string>
 </resources>

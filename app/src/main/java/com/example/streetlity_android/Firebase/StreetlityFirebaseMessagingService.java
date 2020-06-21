@@ -3,6 +3,7 @@ package com.example.streetlity_android.Firebase;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.util.Log;
@@ -23,7 +24,7 @@ public class StreetlityFirebaseMessagingService extends FirebaseMessagingService
         super.onNewToken(token);
 
         ((MyApplication) getApplication()).setDeviceToken(token);
-
+        getSharedPreferences("firebase", MODE_PRIVATE).edit().putString("fb", token).apply();
         Log.println(Log.INFO,TAG,"Token: " + token );
     }
 
@@ -45,5 +46,9 @@ public class StreetlityFirebaseMessagingService extends FirebaseMessagingService
             manager.createNotificationChannel(channel);
         }
         manager.notify(0, builder.build());
+    }
+
+    public static String getToken(Context context) {
+        return context.getSharedPreferences("firebase", MODE_PRIVATE).getString("fb", "empty");
     }
 }

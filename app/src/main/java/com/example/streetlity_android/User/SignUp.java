@@ -47,6 +47,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.gson.JsonObject;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -180,6 +181,10 @@ public class SignUp extends AppCompatActivity implements OnMapReadyCallback, Goo
             public void onClick(View v) {
                 boolean isPass = false;
 
+                if (getCurrentFocus() != null) {
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+                }
                 // checking for last page
                 // if last page home screen will be launched
                 if(step == 0){
@@ -292,18 +297,31 @@ public class SignUp extends AppCompatActivity implements OnMapReadyCallback, Goo
                     EditText edtAddress = mPager.findViewById(R.id.edt_address);
                     EditText edtPhone = mPager.findViewById(R.id.edt_phone);
 
-                    address = edtAddress.getText().toString();
-                    phone = edtPhone.getText().toString();
+                    if(edtPhone.getText().toString().equals("")){
+                        Toast toast = Toast.makeText(SignUp.this, R.string.phone, Toast.LENGTH_LONG);
+                        TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
+                        tv.setTextColor(Color.RED);
 
-                    isPass = true;
+                        toast.show();
+                    }else {
+
+                        address = edtAddress.getText().toString();
+                        phone = edtPhone.getText().toString();
+
+                        Log.e("", "onClick: "+phone);
+
+                        isPass = true;
+                    }
                 }
 
                 if(step == 2 && type == 0){
+                    isPass=false;
+                    Log.e("", "onClick: "+phone);
                     Retrofit retro = new Retrofit.Builder().baseUrl("http://35.240.232.218/")
                             .addConverterFactory(GsonConverterFactory.create()).build();
                     final MapAPI tour = retro.create(MapAPI.class);
 
-                    Call<ResponseBody> call = tour.signUpCommon(username,pass,mail,address,phone);
+                    Call<ResponseBody> call = tour.signUpCommon(username,pass,mail,phone,address);
 
                     call.enqueue(new Callback<ResponseBody>() {
                         @Override
@@ -482,7 +500,7 @@ public class SignUp extends AppCompatActivity implements OnMapReadyCallback, Goo
                             toast.show();
                         }else{
                             signUpMaintain();
-                            isPass = true;
+                           // isPass = true;
                         }
                     }
                     if (step == 5){
@@ -502,10 +520,6 @@ public class SignUp extends AppCompatActivity implements OnMapReadyCallback, Goo
                 }
 
                 if(isPass){
-                    if (getCurrentFocus() != null) {
-                         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                        imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
-                    }
                     int current = getItem(+1);
                     if (current < layouts.size()) {
                         // move to next screen
@@ -722,7 +736,7 @@ public class SignUp extends AppCompatActivity implements OnMapReadyCallback, Goo
         Retrofit retro = new Retrofit.Builder().baseUrl("http://35.240.207.83/")
                 .addConverterFactory(GsonConverterFactory.create()).build();
         final MapAPI tour = retro.create(MapAPI.class);
-        Call<ResponseBody> call = tour.getMaintenanceInRange("1.0.0",(float)lat,(float)lon,(float)15);
+        Call<ResponseBody> call = tour.getMaintenanceInRange("1.0.0",(float)lat,(float)lon,(float)0.1);
         //Call<ResponseBody> call = tour.getAllATM();
         call.enqueue(new Callback<ResponseBody>() {
             @Override
@@ -734,7 +748,7 @@ public class SignUp extends AppCompatActivity implements OnMapReadyCallback, Goo
                         jsonObject = new JSONObject(response.body().string());
                         Log.e("", "onResponse: " + jsonObject.toString());
                         if(jsonObject.getBoolean("Status")) {
-                            jsonArray = jsonObject.getJSONArray("Maintenances");
+                            jsonArray = jsonObject.getJSONArray("Services");
 
                             for (int i = 0; i < jsonArray.length(); i++) {
                                 JSONObject jsonObject1 = jsonArray.getJSONObject(i);
@@ -872,7 +886,7 @@ public class SignUp extends AppCompatActivity implements OnMapReadyCallback, Goo
         final MapAPI tour = retro.create(MapAPI.class);
 
         Call<ResponseBody> call = tour.signUpMaintainer(username, pass, mail,phone,address, id);
-
+        Log.e("", "signUpMaintain: "+"-"+username+ "-"+pass +"-"+mail+"-"+id);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -1291,19 +1305,54 @@ public class SignUp extends AppCompatActivity implements OnMapReadyCallback, Goo
                 .addConverterFactory(GsonConverterFactory.create()).build();
         final MapAPI tour = retro.create(MapAPI.class);
 
-        Call<ResponseBody> call = tour.validateUser(username);
+        Call<ResponseBody> call = tour.validateUser(username, email, 3);
 
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 if (response.code() == 200) {
                     try {
+                        boolean validUsername = true;
+                        boolean validEmail = true;
                         JSONObject jsonObject = new JSONObject(response.body().string());
                         Log.e("", "onResponse: " + jsonObject.toString());
                         if (jsonObject.getBoolean("Status")) {
-                            validateEmail(email, tour);
+                            JSONObject jsonObject1 = jsonObject.getJSONObject("Username");
+                            if(!jsonObject1.getBoolean("Status")){
+                                validUsername = false;
+                            }
+                             jsonObject1 = jsonObject.getJSONObject("Email");
+                            if(!jsonObject1.getBoolean("Status")){
+                                validEmail = false;
+                            }
                         } else {
+                            Toast toast = Toast.makeText(SignUp.this, R.string.something_wrong, Toast.LENGTH_LONG);
+                            TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
+                            tv.setTextColor(Color.RED);
+
+                            toast.show();
+                        }
+                        if(validEmail && validUsername){
+                            int current = getItem(+1);
+                            if (current < layouts.size()) {
+                                // move to next screen
+                                mPager.setCurrentItem(current);
+                                step++;
+                            }
+                        } else if(!validUsername && !validEmail){
+                            Toast toast = Toast.makeText(SignUp.this, R.string.usermail_existed, Toast.LENGTH_LONG);
+                            TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
+                            tv.setTextColor(Color.RED);
+
+                            toast.show();
+                        } else if(!validUsername){
                             Toast toast = Toast.makeText(SignUp.this, R.string.username_existed, Toast.LENGTH_LONG);
+                            TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
+                            tv.setTextColor(Color.RED);
+
+                            toast.show();
+                        }else if(!validEmail){
+                            Toast toast = Toast.makeText(SignUp.this, R.string.email_exist, Toast.LENGTH_LONG);
                             TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
                             tv.setTextColor(Color.RED);
 

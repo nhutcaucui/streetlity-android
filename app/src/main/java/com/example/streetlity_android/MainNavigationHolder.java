@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.Bundle;
 
 import com.example.streetlity_android.Contribution.ContributeToService;
+import com.example.streetlity_android.Firebase.StreetlityFirebaseMessagingService;
 import com.example.streetlity_android.MainFragment.ATMFragment;
 import com.example.streetlity_android.MainFragment.FuelFragment;
 import com.example.streetlity_android.MainFragment.HomeFragment;
@@ -81,6 +82,8 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
         setSupportActionBar(toolbar);
 
         cantFind = findViewById(R.id.layout_cant_find_loca);
+
+        MyApplication.getInstance().setDeviceToken(StreetlityFirebaseMessagingService.getToken(this));
 
         String[] Permissions = {Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION ,Manifest.permission.READ_EXTERNAL_STORAGE};
         if (!hasPermissions(this, Permissions)) {
@@ -331,7 +334,7 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
         final MapAPI tour = retro.create(MapAPI.class);
         String token = ((MyApplication) this.getApplication()).getToken();
         Call<ResponseBody> call = tour.logout(token, ((MyApplication) this.getApplication()).getUsername(),
-                ((MyApplication) getApplication()).getDeviceToken());
+                MyApplication.getInstance().getRefreshToken(),((MyApplication) getApplication()).getDeviceToken());
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -339,21 +342,39 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
                     try {
                         JSONObject jsonObject = new JSONObject(response.body().string());
                         Log.e("", "onResponse: " + jsonObject );
-                        ((MyApplication) MainNavigationHolder.this.getApplication()).setToken("");
-                        ((MyApplication) MainNavigationHolder.this.getApplication()).setRefreshToken("");
-                        ((MyApplication) MainNavigationHolder.this.getApplication()).setUsername("");
-                        ((MyApplication) MainNavigationHolder.this.getApplication()).setEmail("");
-                        ((MyApplication) MainNavigationHolder.this.getApplication()).setPhone("");
-                        ((MyApplication) MainNavigationHolder.this.getApplication()).setAddress("");
-                        ((MyApplication) MainNavigationHolder.this.getApplication()).setUserType(-1);
+                        if (jsonObject.getBoolean("Status")) {
+                            ((MyApplication) MainNavigationHolder.this.getApplication()).setToken("");
+                            ((MyApplication) MainNavigationHolder.this.getApplication()).setRefreshToken("");
+                            ((MyApplication) MainNavigationHolder.this.getApplication()).setUsername("");
+                            ((MyApplication) MainNavigationHolder.this.getApplication()).setEmail("");
+                            ((MyApplication) MainNavigationHolder.this.getApplication()).setPhone("");
+                            ((MyApplication) MainNavigationHolder.this.getApplication()).setAddress("");
+                            ((MyApplication) MainNavigationHolder.this.getApplication()).setUserType(-1);
 
-                        SharedPreferences s = getSharedPreferences("userPref", Context.MODE_PRIVATE);
-                        SharedPreferences.Editor e = s.edit();
-                        e.clear();
-                        e.apply();
+                            SharedPreferences s = getSharedPreferences("userPref", Context.MODE_PRIVATE);
+                            SharedPreferences.Editor e = s.edit();
+                            e.clear();
+                            e.apply();
 
-                        ImageButton imgNotify = findViewById(R.id.img_notify);
-                        imgNotify.setVisibility(View.GONE);
+                            ImageButton imgNotify = findViewById(R.id.img_notify);
+                            imgNotify.setVisibility(View.GONE);
+
+                            navView.getMenu().clear();
+                            navView.inflateMenu(R.menu.drawer_menu_user_not_login);
+
+                            View header=navView.getHeaderView(0);
+                            TextView tvUsername = header.findViewById(R.id.username);
+                            tvUsername.setText(R.string.not_login);
+
+                            drawer.closeDrawers();
+
+                            setDrawerForNonUser(navView);
+
+                            Toast toast = Toast.makeText(MainNavigationHolder.this, R.string.logged_out, Toast.LENGTH_LONG);
+                            toast.show();
+                        }else{
+
+                        }
                     } catch (Exception e){
                         e.printStackTrace();
                     }
@@ -375,20 +396,6 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
                 Log.e("", "onFailure: " + t.toString());
             }
         });
-
-        navView.getMenu().clear();
-        navView.inflateMenu(R.menu.drawer_menu_user_not_login);
-
-        View header=navView.getHeaderView(0);
-        TextView tvUsername = header.findViewById(R.id.username);
-        tvUsername.setText(R.string.not_login);
-
-        drawer.closeDrawers();
-
-        setDrawerForNonUser(navView);
-
-        Toast toast = Toast.makeText(MainNavigationHolder.this, R.string.logged_out, Toast.LENGTH_LONG);
-        toast.show();
     }
 
     public static boolean hasPermissions(Context context, String... permissions) {

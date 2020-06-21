@@ -51,6 +51,8 @@ public class MyApplication extends Application { //35.240.232.218 auth server
 
     private String driverURL = "http://34.87.144.190/";
 
+    private String maintenanceURL = "http://35.240.207.83:9002/";
+
     public String getDriverURL() {
         return driverURL;
     }
@@ -125,5 +127,9 @@ public class MyApplication extends Application { //35.240.232.218 auth server
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public String getMaintenanceURL() {
+        return maintenanceURL;
     }
 }
