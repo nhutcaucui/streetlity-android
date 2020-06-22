@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -18,12 +19,15 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -31,6 +35,7 @@ import androidx.fragment.app.Fragment;
 import com.example.streetlity_android.MainNavigationHolder;
 import com.example.streetlity_android.MapAPI;
 import com.example.streetlity_android.MapsActivity;
+import com.example.streetlity_android.MyApplication;
 import com.example.streetlity_android.R;
 
 import org.json.JSONArray;
@@ -46,6 +51,8 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+
+import static androidx.constraintlayout.widget.Constraints.TAG;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -68,6 +75,7 @@ public class WCFragment extends Fragment implements LocationListener {
     private OnFragmentInteractionListener mListener;
     ArrayList<MapObject> items= new ArrayList<>();
     ArrayList<MapObject> displayItems= new ArrayList<>();
+    ArrayList<MapObject> searchItems= new ArrayList<>();
     MapObjectAdapter adapter;
 
     ProgressBar loading;
@@ -200,7 +208,166 @@ public class WCFragment extends Fragment implements LocationListener {
             }
         });
 
+        EditText edtFind = rootView.findViewById(R.id.edt_find);
+        ImageButton imgFind = rootView.findViewById(R.id.img_btn_find);
+
+        imgFind.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (getActivity().getCurrentFocus() != null) {
+                    InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), 0);
+                }
+                if(!edtFind.getText().toString().equals("")) {
+                    findLocation(edtFind.getText().toString());
+                }else{
+                    Toast toast = Toast.makeText(getActivity(), R.string.address_not_found, Toast.LENGTH_LONG);
+                    TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
+                    tv.setTextColor(Color.RED);
+
+                    toast.show();
+                }
+            }
+        });
+
         return rootView;
+    }
+
+    public void findLocation(String address){
+        searchItems.clear();
+        Retrofit retro = new Retrofit.Builder().baseUrl("https://maps.googleapis.com/maps/api/geocode/")
+                .addConverterFactory(GsonConverterFactory.create()).build();
+        Retrofit retro2 = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getServiceURL())
+                .addConverterFactory(GsonConverterFactory.create()).build();
+        final MapAPI tour = retro.create(MapAPI.class);
+        final MapAPI tour2 = retro2.create(MapAPI.class);
+        Call<ResponseBody> call = tour.geocode(address, "AIzaSyB56CeF7ccQ9ZeMn0O4QkwlAQVX7K97-Ss");
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                final JSONObject jsonObject;
+                if(response.code() == 0 || response.code() == 200) {
+
+                    JSONArray jsonArray;
+                    try {
+                        jsonObject = new JSONObject(response.body().string());
+                        Log.e("", "onResponse: " + jsonObject.toString());
+
+                        if(jsonObject.getString("status").equals("ZERO_RESULTS")){
+                            Toast toast = Toast.makeText(getActivity(), R.string.address_not_found, Toast.LENGTH_LONG);
+                            TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
+                            tv.setTextColor(Color.RED);
+
+                            toast.show();
+                        }
+                        else{
+                            jsonArray = jsonObject.getJSONArray("results");
+
+                            JSONObject jsonObject1;
+                            jsonObject1 = jsonArray.getJSONObject(0);
+
+                            JSONObject jsonObjectGeomertry = jsonObject1.getJSONObject("geometry");
+                            JSONObject jsonLatLng = jsonObjectGeomertry.getJSONObject("location");
+
+                            double mLat = jsonLatLng.getDouble("lat");
+                            double mLon = jsonLatLng.getDouble("lng");
+
+                            EditText edtFind = getActivity().findViewById(R.id.edt_find);
+                            edtFind.setText(jsonObject1.getString("formatted_address"));
+
+                            Call<ResponseBody> call2 = tour2.getWCInRange("1.0.0", (float)mLat, (float)mLon,(float)0.1);
+                            call2.enqueue(new Callback<ResponseBody>() {
+                                @Override
+                                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                    if(response.code()==200){
+                                        final JSONObject jsonObject;
+                                        JSONArray jsonArray;
+                                        try {
+                                            jsonObject = new JSONObject(response.body().string());
+                                            Log.e("", "onResponse: " + jsonObject.toString());
+                                            if (jsonObject.getJSONArray("Services").toString() != "null") {
+                                                jsonArray = jsonObject.getJSONArray("Services");
+
+                                                for (int i = 0; i < jsonArray.length(); i++) {
+                                                    JSONObject jsonObject1 = jsonArray.getJSONObject(i);
+                                                    Log.e("", "onResponse: " + jsonObject1.toString());
+                                                    Log.e("", "onResponse: " + jsonObject1.getInt("Id"));
+                                                    MapObject item = new MapObject(jsonObject1.getInt("Id"), "Public Toilet", 3,
+                                                            jsonObject1.getString("Address"), (float) jsonObject1.getDouble("Lat"),
+                                                            (float) jsonObject1.getDouble("Lon"), jsonObject1.getString("Note"), 2);
+
+                                                    float distance = distance(item.getLat(), item.getLon(), currLat, currLon);
+
+                                                    item.setImages(jsonObject1.getString("Images"));
+
+                                                    item.setDistance(distance);
+                                                    searchItems.add(item);
+                                                }
+
+                                                if(searchItems.size()>0){
+                                                    Collections.sort(searchItems, new Comparator<MapObject>() {
+                                                        @Override
+                                                        public int compare(MapObject o1, MapObject o2) {
+                                                            return Float.compare(o1.getDistance(), o2.getDistance());
+                                                        }
+                                                    });
+
+                                                    ((MainNavigationHolder) getActivity()).getLoading().setVisibility(View.VISIBLE);
+                                                    Intent t = new Intent(getActivity(), MapsActivity.class);
+                                                    t.putExtra("currLat", currLat);
+                                                    t.putExtra("currLon", currLon);
+                                                    t.putExtra("item", searchItems.get(0));
+                                                    Log.e("", "onItemClick: " + searchItems.get(0).getId());
+                                                    startActivity(t);
+                                                }
+                                                else{
+                                                    Toast toast = Toast.makeText(getActivity(), R.string.no_result, Toast.LENGTH_LONG);
+                                                    TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
+                                                    tv.setTextColor(Color.RED);
+
+                                                    toast.show();
+                                                }
+
+                                            }
+                                        }catch (Exception e){
+                                            e.printStackTrace();
+                                        }
+                                    }else{
+                                        Log.e(TAG, "onResponse: " + response.code());
+                                        Toast toast = Toast.makeText(getActivity(), R.string.something_wrong, Toast.LENGTH_LONG);
+                                        TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
+                                        tv.setTextColor(Color.RED);
+
+                                        toast.show();
+                                    }
+                                }
+
+                                @Override
+                                public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                                }
+                            });
+                        }
+                    } catch (Exception e){
+                        e.printStackTrace();
+                    }
+                }
+                else{
+                    try {
+                        Log.e(", ",response.errorBody().toString() + response.code());
+                        Log.e("", "onResponse: " + response.errorBody());
+
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+            }
+        });
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -298,6 +465,13 @@ public class WCFragment extends Fragment implements LocationListener {
                                     items.add(item);
                                 }
 
+                                Collections.sort(items, new Comparator<MapObject>() {
+                                    @Override
+                                    public int compare(MapObject o1, MapObject o2) {
+                                        return Float.compare(o1.getDistance(), o2.getDistance());
+                                    }
+                                });
+
                                 for(MapObject item: items){
                                     if (item.getDistance() <= 1000){
                                         displayItems.add(item);
@@ -306,12 +480,6 @@ public class WCFragment extends Fragment implements LocationListener {
 
                                 adapter.notifyDataSetChanged();
 
-                                Collections.sort(items, new Comparator<MapObject>() {
-                                    @Override
-                                    public int compare(MapObject o1, MapObject o2) {
-                                        return Float.compare(o1.getDistance(), o2.getDistance());
-                                    }
-                                });
                                 if (items.size() == 0 || displayItems.size() == 0) {
                                     tvNoItem.setVisibility(View.VISIBLE);
                                 }

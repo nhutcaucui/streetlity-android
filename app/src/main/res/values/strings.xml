@@ -190,4 +190,8 @@
     <string name="title_activity_chat" translatable="false">Chat</string>
     <string name="no_available">No available maintainers</string>
     <string name="empty_phone">Empty phone number</string>
+    <string name="find_by_address">Find location by address</string>
+    <string name="find_by_name">Find location by address or name</string>
+    <string name="no_result">No result found</string>
+    <string name="wait_for_maintainer">Waiting for someone to accept the order</string>
 </resources>

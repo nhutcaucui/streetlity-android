@@ -177,4 +177,8 @@
     <string name="maintainer_location">Vị trí thợ</string>
     <string name="no_available">Không tìm được thợ sửa</string>
     <string name="empty_phone">Số điện thoại trống</string>
+    <string name="find_by_address">Tìm kiếm bằng địa chỉ</string>
+    <string name="find_by_name">Tìm kiếm bằng địa chỉ hoặc tên</string>
+    <string name="no_result">Không có kết quả</string>
+    <string name="wait_for_maintainer">Chờ người chấp nhận yêu cầu</string>
 </resources>

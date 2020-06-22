@@ -99,6 +99,15 @@ public interface MapAPI {
                                         @Field("address") String address, @Field("serviceId") int id);
 
     @FormUrlEncoded
+    @POST("user/maintenance/register")
+    Call<ResponseBody> signUpMaintainerNonService(@Field("username") String username, @Field("passwd") String password,
+                                        @Field("email") String email, @Field("phone") String phone,
+                                        @Field("address") String address, @Field("service_name") String serviceName,
+                                                  @Field("location") double lat, @Field("location") double lon,
+                                                  @Field("service_address") String serviceAddress,
+                                                  @Field("note") String note, @Field("images") String[] img, @Field("serviceId") int id);
+
+    @FormUrlEncoded
     @POST("user/logout")
     Call<ResponseBody> logout(@Header("Auth") String token, @Field("username") String username,
                               @Field("rtoken") String refreshToken,@Field("deviceToken") String deviceToken);

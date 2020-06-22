@@ -10,10 +10,12 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 
 import com.example.streetlity_android.MapAPI;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -473,7 +475,8 @@ public class SignUp extends AppCompatActivity implements OnMapReadyCallback, Goo
                         } else{
                             mName = edtName.getText().toString();
                             mNote=edtNote.getText().toString();
-                            addMaintenance();
+                            //addMaintenance();
+                            signUpMaintainNonService();
                         }
                     }
                     if (step == 6){
@@ -936,6 +939,63 @@ public class SignUp extends AppCompatActivity implements OnMapReadyCallback, Goo
         });
     }
 
+    public void signUpMaintainNonService(){
+        Retrofit retro = new Retrofit.Builder().baseUrl("http://35.240.232.218/")
+                .addConverterFactory(GsonConverterFactory.create()).build();
+        final MapAPI tour = retro.create(MapAPI.class);
+
+        Call<ResponseBody> call = tour.signUpMaintainerNonService(username, pass, mail,phone,address, mName
+                ,mLat,mLon,mAddress,mNote,mImages, -1);
+        Log.e("", "signUpMaintainNon: "+"-"+username+ "-"+pass +"-"+mail+"-"+id);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                JSONObject jsonObject;
+                if (response.code() == 200) {
+                    try {
+                        jsonObject = new JSONObject(response.body().string());
+                        Log.e("", "onResponse: "+ jsonObject.toString() + response.code());
+                        if(jsonObject.getBoolean("Status")) {
+                            btnNext.setText(R.string.finish);
+
+                            int current = getItem(+1);
+                            if (current < layouts.size()) {
+                                // move to next screen
+                                mPager.setCurrentItem(current);
+                                step++;
+                            }
+                        }else{
+                            Toast toast = Toast.makeText(SignUp.this, jsonObject.getString("Message"), Toast.LENGTH_LONG);
+                            TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
+                            tv.setTextColor(Color.RED);
+
+                            toast.show();
+                        }
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                } else {
+                    try {
+                        Log.e("", "onResponse: "+  response.code());
+                        Toast toast = Toast.makeText(SignUp.this, R.string.something_wrong, Toast.LENGTH_LONG);
+                        TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
+                        tv.setTextColor(Color.RED);
+
+                        toast.show();
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Log.e("", "onFailure: " + t.toString());
+            }
+        });
+    }
+
     public void addMaintenance(){
         ConstraintLayout csLayout = findViewById(R.id.layout_cant_find_loca);
         csLayout.setVisibility(View.VISIBLE);
@@ -1133,6 +1193,7 @@ public class SignUp extends AppCompatActivity implements OnMapReadyCallback, Goo
 
 
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         try {

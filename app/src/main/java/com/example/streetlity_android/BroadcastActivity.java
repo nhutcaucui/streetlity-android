@@ -214,6 +214,15 @@ public class BroadcastActivity extends AppCompatActivity {
                 }
             }
         });
+
+        Button btnCancel = findViewById(R.id.btn_cancel);
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                RelativeLayout broadcasting = findViewById(R.id.layout_broadcasting);
+                broadcasting.setVisibility(View.GONE);
+            }
+        });
     }
 
 
@@ -290,11 +299,11 @@ public class BroadcastActivity extends AppCompatActivity {
                                             jsonObject = new JSONObject(response.body().string());
                                             Log.e("", "onResponse: " + jsonObject.toString());
                                             if (jsonObject.getBoolean("Status")) {
-                                                Intent data = new Intent();
-                                                data.putExtra("numStore", idList.size());
-                                                data.putExtra("range", fRange);
-                                                setResult(RESULT_OK, data);
-                                                finish();
+//                                                Intent data = new Intent();
+//                                                data.putExtra("numStore", idList.size());
+//                                                data.putExtra("range", fRange);
+//                                                setResult(RESULT_OK, data);
+//                                                finish();
                                             }
                                         } catch (Exception e) {
                                             e.printStackTrace();
