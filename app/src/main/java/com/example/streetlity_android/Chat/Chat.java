@@ -78,14 +78,15 @@ public class Chat extends AppCompatActivity {
         Log.e("", "onCreate: " + room );
         MaintenanceOrder socket = new MaintenanceOrder(room);
         socket.create();
-        socket.Information = new InformationListener<MaintenanceOrder>() {
+        socket.InformationListener = new InformationListener<MaintenanceOrder>() {
             @Override
             public void onReceived(MaintenanceOrder sender, Information info) {
                 infomation = info;
             }
         };
-        socket.sendInformation(MyApplication.getInstance().getUsername(),"", phone,"","");
-        socket.Message = new MessageListener<MaintenanceOrder>() {
+        Information myInfo = new Information(MyApplication.getInstance().getUsername(), phone);
+        socket.sendInformation(myInfo);
+        socket.MessageListener = new MessageListener<MaintenanceOrder>() {
             @Override
             public void onReceived(MaintenanceOrder sender, String message) {
                 ChatObject object = new ChatObject(infomation.Username, message, new Date());
@@ -93,7 +94,7 @@ public class Chat extends AppCompatActivity {
                 adapter.notifyDataSetChanged();
             }
         };
-        socket.Location = new LocationListener<MaintenanceOrder>() {
+        socket.LocationListener = new LocationListener<MaintenanceOrder>() {
             @Override
             public void onReceived(MaintenanceOrder sender, float lat, float lon) {
                 lat = lat;
