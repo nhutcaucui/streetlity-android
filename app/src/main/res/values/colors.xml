@@ -7,7 +7,7 @@
     <color name="black">#000</color>
     <color name="colorBackground">#E1E2E1</color>
     <color name="tint">#8F8F8F</color>
-    <color name="blue">#000036</color>
+    <color name="blue">#00006D</color>
     <color name="button_background">#B7E4C7</color>
     <color name="listview_divider">#56ACACAC</color>
 </resources>
