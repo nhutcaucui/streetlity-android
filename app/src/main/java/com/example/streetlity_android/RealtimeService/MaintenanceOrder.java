@@ -68,7 +68,7 @@ public class MaintenanceOrder {
         }
     };
 
-    public void Create(String room) {
+    public void create(String room) {
         mSocket.connect();
         mSocket.emit("join");
         mSocket.on("chat", onChat);
@@ -77,7 +77,7 @@ public class MaintenanceOrder {
         mSocket.on("decline", onDecline);
     }
 
-    public void SendMessage(String message) {
+    public void sendMessage(String message) {
         mSocket.emit("chat", message);
     }
 
@@ -89,7 +89,7 @@ public class MaintenanceOrder {
      * @param address
      * @param avatar
      */
-    public void SendInformation(String name, String email, String phone, String address, String avatar) {
+    public void sendInformation(String name, String email, String phone, String address, String avatar) {
         mSocket.emit("information", name, email, phone, address, avatar);
     }
 
@@ -97,10 +97,10 @@ public class MaintenanceOrder {
      * Send the current location to others
      * @param location
      */
-    public void UpdateLocation(Location location) {
+    public void updateLocation(Location location) {
         double lat = location.getLatitude();
         double lon = location.getLongitude();
-        UpdateLocation(lat, lon);
+        updateLocation(lat, lon);
     }
 
     /**
@@ -108,14 +108,14 @@ public class MaintenanceOrder {
      * @param lat
      * @param lon
      */
-    public void UpdateLocation(double lat, double lon) {
+    public void updateLocation(double lat, double lon) {
         mSocket.emit("update-location", lat, lon);
     }
 
     /**
      * Deny send a request to decline the order.
      */
-    public void Decline() {
+    public void decline() {
         mSocket.emit("decline", "Cancel the order");
     }
 
@@ -123,14 +123,14 @@ public class MaintenanceOrder {
      * Deny send a request to decline the order
      * @param reason the reason of the
      */
-    public void Decline(String reason) {
+    public void decline(String reason) {
         mSocket.emit("decline", reason);
     }
 
     /**
      * Close the current connection.
      */
-    public void Close() {
+    public void close() {
         mSocket.disconnect();
         mSocket.off("chat", onChat);
     }
