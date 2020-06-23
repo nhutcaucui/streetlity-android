@@ -47,7 +47,10 @@ MyOrders.OnFragmentInteractionListener, OrderHistory.OnFragmentInteractionListen
         setSupportActionBar(toolbar);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle(R.string.order);
+
+        if(getIntent().getIntExtra("isRoot",0) == 1){
+            moveTaskToBack(true);
+        }
 
         fragment_name = findViewById(R.id.tv_toolbar_tittle);
 
@@ -68,15 +71,12 @@ MyOrders.OnFragmentInteractionListener, OrderHistory.OnFragmentInteractionListen
             switch (item.getItemId()) {
                 case R.id.order:
                     fragment = new Orders();
-                    fragment_name.setText(R.string.order);
                     break;
                 case R.id.my_order:
                     fragment = new MyOrders();
-                    fragment_name.setText(R.string.my_order);
                     break;
                 case R.id.order_history:
                     fragment = new OrderHistory();
-                    fragment_name.setText(R.string.history);
                     break;
             }
             return loadFragment(fragment);

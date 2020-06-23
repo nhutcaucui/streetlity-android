@@ -17,11 +17,13 @@ import com.example.streetlity_android.MainFragment.MaintenanceFragment;
 import com.example.streetlity_android.MainFragment.WCFragment;
 import com.example.streetlity_android.Notification.Notification;
 import com.example.streetlity_android.User.ChangePassword;
+import com.example.streetlity_android.User.Common.MyOrders;
 import com.example.streetlity_android.User.Login;
 import com.example.streetlity_android.User.Maintainer.Works;
 import com.example.streetlity_android.User.SignUp;
 import com.example.streetlity_android.User.UserInfo;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 
 import androidx.annotation.NonNull;
@@ -43,6 +45,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -80,6 +83,10 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
         setContentView(R.layout.activity_main_navigation_holder);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        if(getIntent().getIntExtra("isRoot",0) == 1){
+            moveTaskToBack(true);
+        }
 
         cantFind = findViewById(R.id.layout_cant_find_loca);
 
@@ -209,7 +216,7 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
                 TextView tvUsername = header.findViewById(R.id.username);
                 tvUsername.setText(((MyApplication) this.getApplication()).getUsername());
 
-                Button btnBroadcast = findViewById(R.id.btn_broadcast);
+                LinearLayout btnBroadcast = findViewById(R.id.btn_broadcast);
                 if(btnBroadcast != null){
                     btnBroadcast.setVisibility(View.VISIBLE);
                 }
@@ -294,6 +301,9 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
                     case R.id.works:
                         startActivity(new Intent(MainNavigationHolder.this, Works.class));
                         break;
+                    case R.id.my_order:
+                        startActivity(new Intent(MainNavigationHolder.this, MyOrders.class));
+                        break;
                     case R.id.contribute:
                         startActivity(new Intent(MainNavigationHolder.this, ContributeToService.class));
                         break;
@@ -369,6 +379,16 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
                             drawer.closeDrawers();
 
                             setDrawerForNonUser(navView);
+
+                            LinearLayout btnBroadcast = findViewById(R.id.btn_broadcast);
+                            if(btnBroadcast != null){
+                                btnBroadcast.setVisibility(View.GONE);
+                            }
+
+                            FloatingActionButton fab = findViewById(R.id.fab_broadcast);
+                            if(fab != null){
+                                fab.hide();
+                            }
 
                             Toast toast = Toast.makeText(MainNavigationHolder.this, R.string.logged_out, Toast.LENGTH_LONG);
                             toast.show();

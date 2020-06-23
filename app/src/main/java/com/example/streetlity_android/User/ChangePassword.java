@@ -17,6 +17,7 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.example.streetlity_android.R;
+import com.google.android.material.textfield.TextInputEditText;
 
 public class ChangePassword extends AppCompatActivity {
 
@@ -31,9 +32,9 @@ public class ChangePassword extends AppCompatActivity {
         getSupportActionBar().setTitle("");
 
         Button btnChange = findViewById(R.id.btn_change_pass);
-        EditText edtOld = findViewById(R.id.edt_old_pass);
-        EditText edtNew = findViewById(R.id.edt_new_pass);
-        EditText edtCF = findViewById(R.id.edt_cf_new_pass);
+        TextInputEditText edtOld = findViewById(R.id.edt_old_pass);
+        TextInputEditText edtNew = findViewById(R.id.edt_new_pass);
+        TextInputEditText edtCF = findViewById(R.id.edt_cf_new_pass);
     }
 
     public boolean onOptionsItemSelected(MenuItem item){

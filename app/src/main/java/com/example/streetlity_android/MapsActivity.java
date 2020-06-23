@@ -167,7 +167,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                     final android.view.View dialogView2 = inflater2.inflate(R.layout.dialog_edit_review, null);
 
-                    EditText edtComment = dialogView2.findViewById(R.id.edt_comment);
+                    com.google.android.material.textfield.TextInputEditText edtComment = dialogView2.findViewById(R.id.edt_comment);
                     edtComment.setText(reviewItems.get(position).getReviewBody());
                     RatingBar rtReview = dialogView2.findViewById(R.id.rating_review);
                     rtReview.setRating(reviewItems.get(position).getRating());
@@ -220,7 +220,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                 final android.view.View dialogView2 = inflater2.inflate(R.layout.dialog_review, null);
 
-                EditText edtComment = dialogView2.findViewById(R.id.edt_comment);
+                com.google.android.material.textfield.TextInputEditText edtComment = dialogView2.findViewById(R.id.edt_comment);
                 RatingBar rtReview = dialogView2.findViewById(R.id.rating_review);
 
                 LayerDrawable stars = (LayerDrawable) rtReview.getProgressDrawable();

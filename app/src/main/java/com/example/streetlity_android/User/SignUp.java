@@ -49,6 +49,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.material.textfield.TextInputEditText;
 import com.google.gson.JsonObject;
 
 import org.json.JSONArray;
@@ -230,10 +231,10 @@ public class SignUp extends AppCompatActivity implements OnMapReadyCallback, Goo
                 }
 
                 if(step ==1){
-                    EditText edtUsername = mPager.findViewById(R.id.edt_username);
-                    EditText edtEmail = mPager.findViewById(R.id.edt_email);
-                    EditText edtPassword = mPager.findViewById(R.id.edt_password);
-                    EditText edtCFPassword = mPager.findViewById(R.id.edt_cfpassword);
+                    com.google.android.material.textfield.TextInputEditText edtUsername = mPager.findViewById(R.id.edt_username);
+                    com.google.android.material.textfield.TextInputEditText edtEmail = mPager.findViewById(R.id.edt_email);
+                    TextInputEditText edtPassword = mPager.findViewById(R.id.edt_password);
+                    TextInputEditText edtCFPassword = mPager.findViewById(R.id.edt_cfpassword);
 
                     if(edtUsername.getText().toString().equals("")){
                         Toast toast = Toast.makeText(SignUp.this, R.string.empty_user_name, Toast.LENGTH_LONG);
@@ -460,7 +461,7 @@ public class SignUp extends AppCompatActivity implements OnMapReadyCallback, Goo
                         else{
                             mAddress = edtStoreAddress.getText().toString();
                             Log.e("", "onClick: " + mAddress );
-                            isPass = true;
+                            signUpMaintainNonService();
                         }
                     }
                     if (step == 4){
@@ -476,7 +477,7 @@ public class SignUp extends AppCompatActivity implements OnMapReadyCallback, Goo
                             mName = edtName.getText().toString();
                             mNote=edtNote.getText().toString();
                             //addMaintenance();
-                            signUpMaintainNonService();
+                            isPass = true;
                         }
                     }
                     if (step == 6){
@@ -946,7 +947,7 @@ public class SignUp extends AppCompatActivity implements OnMapReadyCallback, Goo
 
         Call<ResponseBody> call = tour.signUpMaintainerNonService(username, pass, mail,phone,address, mName
                 ,mLat,mLon,mAddress,mNote,mImages, -1);
-        Log.e("", "signUpMaintainNon: "+"-"+username+ "-"+pass +"-"+mail+"-"+id);
+        Log.e("", "signUpMaintainNon: "+"-"+username+ "-"+pass +"-"+mail+"-"+id+"-"+mLat+"-"+mLon);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {

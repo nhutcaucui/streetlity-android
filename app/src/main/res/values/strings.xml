@@ -194,4 +194,8 @@
     <string name="find_by_name">Find location by address or name</string>
     <string name="no_result">No result found</string>
     <string name="wait_for_maintainer">Waiting for someone to accept the order</string>
+    <string name="order_info_description">Order received from a customer, accept if you want to do the job</string>
+    <string name="reason_with">Reason:</string>
+    <string name="mark_complete">Mark as completed</string>
+    <string name="message">Message</string>
 </resources>

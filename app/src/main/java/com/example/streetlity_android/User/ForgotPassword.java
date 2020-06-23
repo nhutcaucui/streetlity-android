@@ -17,6 +17,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 
 import com.example.streetlity_android.R;
+import com.google.android.material.textfield.TextInputEditText;
 
 public class ForgotPassword extends AppCompatActivity {
 
@@ -34,10 +35,10 @@ public class ForgotPassword extends AppCompatActivity {
         final Button btnResetPassword = findViewById(R.id.btn_reset_pass);
         final LinearLayout resetLayout = findViewById(R.id.layout_reset_pass);
 
-        EditText edtMail = findViewById(R.id.edt_email);
-        EditText edtOTP = findViewById(R.id.edt_OTP);
-        EditText edtNewPass = findViewById(R.id.edt_new_pass);
-        EditText edtCF = findViewById(R.id.edt_cf_new_pass);
+        com.google.android.material.textfield.TextInputEditText edtMail = findViewById(R.id.edt_email);
+        com.google.android.material.textfield.TextInputEditText edtOTP = findViewById(R.id.edt_OTP);
+        TextInputEditText edtNewPass = findViewById(R.id.edt_new_pass);
+        TextInputEditText edtCF = findViewById(R.id.edt_cf_new_pass);
 
         btnSendOTP.setOnClickListener(new View.OnClickListener() {
             @Override

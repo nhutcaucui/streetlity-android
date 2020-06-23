@@ -1,6 +1,7 @@
 package com.example.streetlity_android.User.Maintainer;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -13,9 +14,14 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.example.streetlity_android.MapAPI;
+import com.example.streetlity_android.MyApplication;
 import com.example.streetlity_android.R;
 
 import java.util.ArrayList;
+
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -35,8 +41,9 @@ public class MyOrders extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    ArrayList<NormalOrderObject> itemNormal = new ArrayList<>();
-    ArrayList<EmergencyOrderObject> itemEmer = new ArrayList<>();
+    ArrayList<NormalOrderObject> items = new ArrayList<>();
+
+    NormalOrderApdater normalOrderAdapter;
 
     private OnFragmentInteractionListener mListener;
 
@@ -77,45 +84,28 @@ public class MyOrders extends Fragment {
         // Inflate the layout for this fragment
         // Inflate the layout for this fragment
 
-        View rootView = inflater.inflate(R.layout.fragment_my_orders, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_orders, container, false);
 
-        //TextView tvNoOrderNorm =  rootView.findViewById(R.id.tv_normal_no_order);
-        //TextView tvNoOrderEmer = rootView.findViewById(R.id.tv_emer_no_order);
+        TextView tvNoOrderNorm =  rootView.findViewById(R.id.tv_no_order);
 
         ListView lvNormal = rootView.findViewById(R.id.lv_order);
-        //ListView lvEmergency = rootView.findViewById(R.id.lv_emergency);
 
-        NormalOrderApdater normalOrderAdapter = new NormalOrderApdater(getActivity(), R.layout.lv_item_order,
-                itemNormal);
+        normalOrderAdapter = new NormalOrderApdater(getActivity(), R.layout.lv_item_order,
+                items);
 
         lvNormal.setAdapter(normalOrderAdapter);
-
-        EmergencyOrderApdater emerOrderAdapter = new EmergencyOrderApdater(getActivity(), R.layout.lv_item_order,
-                itemEmer);
-
-        //lvEmergency.setAdapter(emerOrderAdapter);
 
         lvNormal.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
+                Intent t = new Intent(getActivity(), OrderInfo.class);
+                t.putExtra("from", 2);
+                t.putExtra("item", items.get(position));
+                startActivity(t);
             }
         });
 
-//        lvEmergency.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//
-//            }
-//        });
-//
-//        if(lvNormal.getAdapter().getCount()==0){
-//            tvNoOrderNorm.setVisibility(View.VISIBLE);
-//        }
-//
-//        if(lvEmergency.getAdapter().getCount()==0){
-//            tvNoOrderEmer.setVisibility(View.VISIBLE);
-//        }
+        loadOrders();
 
         return rootView;
     }
@@ -157,5 +147,26 @@ public class MyOrders extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    public void loadOrders(){
+        Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getServiceURL())
+                .addConverterFactory(GsonConverterFactory.create()).build();
+
+        final MapAPI tour = retro.create(MapAPI.class);
+
+        //Call<ResponseBody> call = tour.signUpCommon(username,pass,mail,phone,address);
+
+//        call.enqueue(new Callback<ResponseBody>() {
+//            @Override
+//            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+//
+//            }
+//
+//            @Override
+//            public void onFailure(Call<ResponseBody> call, Throwable t) {
+//
+//            }
+//        });
     }
 }

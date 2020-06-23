@@ -1,20 +1,24 @@
 package com.example.streetlity_android.User.Maintainer;
 
-public class NormalOrderObject {
+import java.io.Serializable;
+
+public class NormalOrderObject implements Serializable {
     private int id;
+    private String reason;
     private String name;
     private String address;
     private String phone;
     private String note;
     private String time;
 
-    public NormalOrderObject(int id, String name, String address, String phone, String note, String time) {
+    public NormalOrderObject(int id, String name, String reason) {
         this.id = id;
         this.name = name;
-        this.address = address;
-        this.phone = phone;
-        this.note = note;
-        this.time = time;
+        this.reason = reason;
+    }
+
+    public NormalOrderObject() {
+
     }
 
     public int getId() {
@@ -63,5 +67,13 @@ public class NormalOrderObject {
 
     public void setTime(String time) {
         this.time = time;
+    }
+
+    public void setReason(String reason) {
+        this.reason = reason;
+    }
+
+    public String getReason() {
+        return reason;
     }
 }

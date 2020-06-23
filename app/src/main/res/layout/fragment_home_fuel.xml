@@ -17,7 +17,7 @@
             android:layout_marginRight="15dp"
             android:orientation="horizontal">
 
-            <EditText
+            <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/edt_find"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"

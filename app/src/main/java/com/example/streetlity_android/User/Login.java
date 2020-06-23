@@ -11,6 +11,7 @@ import com.example.streetlity_android.MapAPI;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.text.Html;
 import android.util.Log;
@@ -26,6 +27,7 @@ import android.widget.Toast;
 
 import com.example.streetlity_android.MyApplication;
 import com.example.streetlity_android.R;
+import com.google.android.material.textfield.TextInputEditText;
 import com.google.gson.JsonObject;
 
 import org.json.JSONObject;
@@ -39,6 +41,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class Login extends AppCompatActivity {
 
+    ConstraintLayout layout;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,7 +55,10 @@ public class Login extends AppCompatActivity {
         getSupportActionBar().setTitle("");
 
         final EditText edtUser = findViewById(R.id.edt_username);
-        final EditText edtPass = findViewById(R.id.edt_password);
+        final TextInputEditText edtPass = findViewById(R.id.edt_password);
+
+        layout = findViewById(R.id.layout_cant_find_loca);
+
 
         Button btnLogin = findViewById(R.id.btn_login);
         btnLogin.setOnClickListener(new View.OnClickListener() {
@@ -128,6 +135,7 @@ public class Login extends AppCompatActivity {
     }
 
     public void login(final String username, String password){
+        layout.setVisibility(View.VISIBLE);
         if (getCurrentFocus() != null) {
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
@@ -207,6 +215,7 @@ public class Login extends AppCompatActivity {
                                 setResult(RESULT_OK);
                                 finish();
                             } else {
+                                layout.setVisibility(View.GONE);
                                 Toast toast = Toast.makeText(Login.this, R.string.user_wait_approval, Toast.LENGTH_LONG);
                                 TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
                                 tv.setTextColor(Color.RED);
@@ -215,6 +224,7 @@ public class Login extends AppCompatActivity {
                             }
                         }
                         else{
+                            layout.setVisibility(View.GONE);
                             Toast toast = Toast.makeText(Login.this, R.string.user_not_exist, Toast.LENGTH_LONG);
                             TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
                             tv.setTextColor(Color.RED);

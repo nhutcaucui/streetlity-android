@@ -181,4 +181,8 @@
     <string name="find_by_name">Tìm kiếm bằng địa chỉ hoặc tên</string>
     <string name="no_result">Không có kết quả</string>
     <string name="wait_for_maintainer">Chờ người chấp nhận yêu cầu</string>
+    <string name="order_info_description">Yêu cầu từ một khách hàng, chấp nhận nếu bạn đồng ý làm việc</string>
+    <string name="reason_with">Lí do:</string>
+    <string name="mark_complete">Đánh dấu hoàn thành</string>
+    <string name="message">Tin nhắn</string>
 </resources>

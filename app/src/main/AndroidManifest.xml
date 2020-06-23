@@ -11,6 +11,7 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.VIBRATE"/>
 
     <application
         android:name=".MyApplication"
@@ -24,7 +25,13 @@
         <activity
             android:name=".Chat.Chat"
             android:label="@string/title_activity_chat"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar"
+            android:parentActivityName=".MaintainerLocation">
+            <intent-filter>
+                <action android:name="MaintenanceAcceptNotification" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".MaintainerLocation"
             android:label="@string/title_activity_maintainer_location"
@@ -60,7 +67,13 @@
             android:name=".User.Maintainer.OrderInfo"
             android:label="@string/title_activity_order_info"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="adjustResize" />
+            android:windowSoftInputMode="adjustResize"
+            android:parentActivityName=".User.Maintainer.Works">
+            <intent-filter>
+                <action android:name="MaintenanceOrderNotification" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".MapsActivity"
             android:label="@string/find_direction"
@@ -69,6 +82,7 @@
             android:name=".User.Maintainer.Works"
             android:label="@string/title_activity_works"
             android:theme="@style/AppTheme.NoActionBar"
+            android:parentActivityName=".MainNavigationHolder"
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".User.EditProfile"

@@ -18,6 +18,11 @@
         android:title="@string/my_works" />
 
     <item
+        android:id="@+id/my_orders"
+        android:icon="@drawable/order_icon"
+        android:title="@string/my_order" />
+
+    <item
         android:id="@+id/contribute"
         android:icon="@drawable/contribute"
         android:title="@string/contribute" />

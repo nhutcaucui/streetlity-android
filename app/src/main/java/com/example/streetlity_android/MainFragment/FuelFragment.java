@@ -529,11 +529,11 @@ public class FuelFragment extends Fragment implements LocationListener {
         currLat = (float) location.getLatitude();
         currLon = (float) location.getLongitude();
         loading.setVisibility(View.VISIBLE);
-        if(getActivity()!= null){
-                ((MainNavigationHolder) getActivity()).getCantFind().setVisibility(View.GONE);
-                callFuel(location.getLatitude(), location.getLongitude(), 0);
-                locationManager.removeUpdates(this);
+        if(getActivity()!= null) {
+            ((MainNavigationHolder) getActivity()).getCantFind().setVisibility(View.GONE);
+            callFuel(location.getLatitude(), location.getLongitude(), 0);
         }
+                locationManager.removeUpdates(this);
     }
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {

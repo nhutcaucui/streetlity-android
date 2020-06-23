@@ -549,8 +549,8 @@ public class MaintenanceFragment extends Fragment implements LocationListener {
         if(getActivity()!= null) {
             ((MainNavigationHolder) getActivity()).getCantFind().setVisibility(View.GONE);
             callMaintenance(location.getLatitude(), location.getLongitude(), 0);
-            locationManager.removeUpdates(this);
         }
+            locationManager.removeUpdates(this);
     }
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {

@@ -30,7 +30,7 @@
                 android:paddingLeft="-50dp"
                 android:text="@string/order_info"
                 android:textColor="#000000"
-                android:textSize="32sp"></TextView>
+                android:textSize="24sp"></TextView>
         </androidx.appcompat.widget.Toolbar>
 
     </com.google.android.material.appbar.AppBarLayout>
@@ -47,11 +47,13 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/tv_name2"
+                android:id="@+id/tv_describe"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:gravity="center"
                 android:paddingLeft="15dp"
                 android:paddingRight="15dp"
+                android:text="@string/order_info_description"
                 android:textColor="#000" />
 
             <TextView
@@ -67,6 +69,26 @@
 
             <TextView
                 android:id="@+id/tv_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="15dp"
+                android:paddingRight="15dp"
+                android:text="sadddddddddddddddddddddddddddddddddddddd ajkdsaa hkajhakjahkjahskjdhakjdhakjdhkjd ahjk sahk jah dkj hakjdddddddddd"
+                android:textColor="#000" />
+
+            <TextView
+                android:id="@+id/textView30"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:text="@string/reason_with"
+                android:textColor="#000"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tv_reason"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingLeft="15dp"
@@ -158,6 +180,7 @@
                 android:layout_weight="1"
                 android:background="@drawable/button_background_negative"
                 android:elevation="5dp"
+                android:foreground="?android:attr/selectableItemBackground"
                 android:text="@string/decline" />
 
             <Button
@@ -167,6 +190,7 @@
                 android:layout_weight="1"
                 android:background="@drawable/button_background"
                 android:elevation="5dp"
+                android:foreground="?android:attr/selectableItemBackground"
                 android:text="@string/accept" />
         </LinearLayout>
     </LinearLayout>

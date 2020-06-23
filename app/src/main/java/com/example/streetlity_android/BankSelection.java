@@ -21,7 +21,7 @@ import java.util.ArrayList;
 
 public class BankSelection extends AppCompatActivity {
 
-    EditText search;
+    com.google.android.material.textfield.TextInputEditText search;
     ArrayList<String> items = new ArrayList<String>();
 
     private ListView lv;
@@ -55,7 +55,7 @@ public class BankSelection extends AppCompatActivity {
 
         lv.setTextFilterEnabled(true);
 
-        search = (EditText) findViewById(R.id.search_edit);
+        search = findViewById(R.id.search_edit);
         search.addTextChangedListener(new TextWatcher() {
 
             @Override

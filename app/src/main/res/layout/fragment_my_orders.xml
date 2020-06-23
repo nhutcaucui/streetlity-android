@@ -6,12 +6,28 @@
     android:background="@android:color/transparent"
     tools:context=".User.Maintainer.MyOrders">
 
-    <!-- TODO: Update blank fragment layout -->
-    <ListView
-        android:id="@+id/lv_order"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:divider="@color/black"
-        android:dividerHeight="1dp" />
+        android:layout_height="match_parent">
 
+        <TextView
+            android:id="@+id/tv_no_order"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="@string/no_order"
+            android:textAlignment="center"
+            android:textColor="#000"
+            android:textSize="24sp"
+            android:visibility="gone" />
+
+        <ListView
+            android:id="@+id/lv_order"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:divider="@color/black"
+            android:dividerHeight="1dp">
+
+        </ListView>
+    </RelativeLayout>
 </FrameLayout>

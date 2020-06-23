@@ -17,7 +17,7 @@
         android:progressTint="#CCB002"
         android:rating="3" />
 
-    <EditText
+    <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/edt_comment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

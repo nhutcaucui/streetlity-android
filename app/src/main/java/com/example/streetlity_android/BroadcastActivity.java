@@ -53,6 +53,8 @@ public class BroadcastActivity extends AppCompatActivity {
     float currLat;
     float currLon;
 
+    int broadcastId=-1;
+
     boolean isOther = false;
 
     @Override
@@ -78,10 +80,12 @@ public class BroadcastActivity extends AppCompatActivity {
         Log.e("", "onMapReady: " + currLat + " , " + currLon);
 
 
-        final EditText edtPhone = findViewById(R.id.edt_phone);
+        final com.google.android.material.textfield.TextInputEditText edtPhone = findViewById(R.id.edt_phone);
         final Spinner spnReason = findViewById(R.id.spn_reason);
-        final EditText edtReason = findViewById(R.id.edt_reason);
-        final EditText edtNote = findViewById(R.id.edt_note);
+        final com.google.android.material.textfield.TextInputEditText edtReason = findViewById(R.id.edt_reason);
+        final com.google.android.material.textfield.TextInputEditText edtNote = findViewById(R.id.edt_note);
+
+        edtPhone.setText(MyApplication.getInstance().getPhone());
 
         ArrayList<String> arrReason = new ArrayList<>();
 
@@ -219,12 +223,47 @@ public class BroadcastActivity extends AppCompatActivity {
         btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                RelativeLayout broadcasting = findViewById(R.id.layout_broadcasting);
-                broadcasting.setVisibility(View.GONE);
+                //denyOrder();
             }
         });
     }
 
+    public void denyOrder(){
+        Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getMaintenanceURL())
+                .addConverterFactory(GsonConverterFactory.create()).build();
+        final MapAPI tour = retro.create(MapAPI.class);
+        Call<ResponseBody> call = tour.denyOrder(broadcastId, 1, "");
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.code() == 200) {
+                    final JSONObject jsonObject;
+                    try {
+                        jsonObject = new JSONObject(response.body().string());
+                        Log.e("", "onResponse: " + jsonObject.toString());
+                        if(jsonObject.getBoolean("Status")){
+                            RelativeLayout broadcasting = findViewById(R.id.layout_broadcasting);
+                            broadcasting.setVisibility(View.GONE);
+                        }
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                }
+                else{
+                    Toast toast = Toast.makeText(BroadcastActivity.this, R.string.no_available, Toast.LENGTH_LONG);
+                    TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
+                    tv.setTextColor(Color.RED);
+
+                    toast.show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+            }
+        });
+    }
 
     public void sendBroadcast(final String reason, final String phone, final String note, double lat, double lon) {
         RelativeLayout broadcasting = findViewById(R.id.layout_broadcasting);

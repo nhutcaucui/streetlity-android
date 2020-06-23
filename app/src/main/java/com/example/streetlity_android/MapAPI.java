@@ -210,4 +210,12 @@ public interface MapAPI {
     Call<ResponseBody> deleteMaintenanceReview(@Header("Version") String version ,@Query("review_id") int id);
     @DELETE("service/toilet/review/")
     Call<ResponseBody> deleteWCReview(@Header("Version") String version ,@Query("review_id") int id);
+
+    @FormUrlEncoded
+    @POST("order/deny")
+    Call<ResponseBody> denyOrder(@Field("order_id") int id, @Field("deny_type") int type, @Field("reason") String reason);
+
+    @FormUrlEncoded
+    @POST("order/accept")
+    Call<ResponseBody> acceptOrder(@Field("maintenance_user") String maintenance_name, @Field("order_id") int id);
 }

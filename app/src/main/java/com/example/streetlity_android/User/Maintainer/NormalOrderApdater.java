@@ -37,7 +37,7 @@ public class NormalOrderApdater extends ArrayAdapter {
     }
 
     private class ViewHolder {
-        TextView id,name,phone,address;
+        TextView reason,name;
     }
 
     @NonNull
@@ -51,20 +51,16 @@ public class NormalOrderApdater extends ArrayAdapter {
 
             holder = new NormalOrderApdater.ViewHolder();
             convertView = inflater.inflate(R.layout.lv_item_order, null);
-            holder.id = (TextView) convertView.findViewById(R.id.id_order);
+            holder.reason = (TextView) convertView.findViewById(R.id.tv_order_reason);
             holder.name = (TextView) convertView.findViewById(R.id.tv_name);
-            holder.phone = (TextView) convertView.findViewById(R.id.tv_phone);
-            holder.address = (TextView) convertView.findViewById(R.id.tv_address);
             convertView.setTag(holder);
         } else {
             holder = (NormalOrderApdater.ViewHolder) convertView.getTag();
         }
 
 
-        holder.id.setText(Integer.toString(this.mOriginalValues.get(position).getId()));
+        holder.reason.setText(this.mOriginalValues.get(position).getReason());
         holder.name.setText(this.mOriginalValues.get(position).getName());
-        holder.phone.setText(this.mOriginalValues.get(position).getPhone());
-        holder.address.setText(this.mOriginalValues.get(position).getAddress());
 
         return convertView;
     }

@@ -1,7 +1,10 @@
 package com.example.streetlity_android;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 
+import com.example.streetlity_android.Chat.Chat;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -13,6 +16,8 @@ import androidx.appcompat.widget.Toolbar;
 
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.ImageButton;
 
 public class MaintainerLocation extends AppCompatActivity implements OnMapReadyCallback {
 
@@ -31,6 +36,25 @@ public class MaintainerLocation extends AppCompatActivity implements OnMapReadyC
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        ImageButton btnCall = findViewById(R.id.btn_call);
+        ImageButton btnChat = findViewById(R.id.btn_chat);
+
+        btnChat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MaintainerLocation.this, Chat.class));
+            }
+        });
+
+        btnCall.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Intent.ACTION_DIAL);
+                intent.setData(Uri.parse("tel:0123456789"));
+                startActivity(intent);
+            }
+        });
     }
 
     public boolean onOptionsItemSelected(MenuItem item){

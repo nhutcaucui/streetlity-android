@@ -33,7 +33,7 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <EditText
+    <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/search_edit"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

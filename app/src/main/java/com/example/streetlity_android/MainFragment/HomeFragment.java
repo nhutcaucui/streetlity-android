@@ -84,7 +84,7 @@ public class HomeFragment extends Fragment{
         View rootView = inflater.inflate(R.layout.fragment_home, container, false);
 
         if(MyApplication.getInstance().getToken().equals("")){
-            Button btnBroadcast = rootView.findViewById(R.id.btn_broadcast);
+            LinearLayout btnBroadcast = rootView.findViewById(R.id.btn_broadcast);
             btnBroadcast.setVisibility(GONE);
         }
 
@@ -92,7 +92,7 @@ public class HomeFragment extends Fragment{
         LinearLayout btnWC = rootView.findViewById(R.id.btn_wc);
         LinearLayout btnATM = rootView.findViewById(R.id.btn_atm);
         LinearLayout btnMaintenance = rootView.findViewById(R.id.btn_maintenance);
-        Button btnBroadcast = rootView.findViewById(R.id.btn_broadcast);
+        LinearLayout btnBroadcast = rootView.findViewById(R.id.btn_broadcast);
 
         btnFuel.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -27,7 +27,7 @@
                 android:textSize="24sp"
                 android:textStyle="bold" />
 
-            <EditText
+            <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/edt_store_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -39,7 +39,7 @@
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp" />
 
-            <EditText
+            <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/edt_store_note"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -51,7 +51,7 @@
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp" />
 
-            <EditText
+            <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/edt_select_img"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"

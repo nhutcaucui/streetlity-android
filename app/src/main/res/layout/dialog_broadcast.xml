@@ -54,7 +54,7 @@
         android:layout_marginTop="10dp"
         android:layout_marginRight="10dp">
 
-        <EditText
+        <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/edt_reason"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -76,7 +76,7 @@
 
 
 
-    <EditText
+    <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/edt_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -89,7 +89,7 @@
         android:textColor="#000"
         android:textColorHint="#A3A3A3" />
 
-    <EditText
+    <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/edt_phone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -102,7 +102,7 @@
         android:textColor="#000"
         android:textColorHint="#A3A3A3" />
 
-    <EditText
+    <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/edt_note"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

@@ -45,6 +45,7 @@ import com.example.streetlity_android.R;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -593,6 +594,19 @@ public class ATMFragment extends Fragment implements LocationListener {
                                 }
                             });
 
+                            try {
+                                Field popup = Spinner.class.getDeclaredField("mPopup");
+                                popup.setAccessible(true);
+
+                                // Get private mPopup member variable and try cast to ListPopupWindow
+                                android.widget.ListPopupWindow popupWindow = (android.widget.ListPopupWindow) popup.get(atcpBank);
+
+                                // Set popupWindow height to 500px
+                                popupWindow.setHeight(500);
+                            }
+                            catch (NoClassDefFoundError | ClassCastException | NoSuchFieldException | IllegalAccessException e) {
+                                // silently fail...
+                            }
                         }
                     } catch (Exception e){
                         e.printStackTrace();
@@ -621,8 +635,9 @@ public class ATMFragment extends Fragment implements LocationListener {
         if(getActivity()!= null) {
             ((MainNavigationHolder) getActivity()).getCantFind().setVisibility(View.GONE);
             callATM(location.getLatitude(), location.getLongitude(), 0);
-            locationManager.removeUpdates(this);
         }
+            locationManager.removeUpdates(this);
+
     }
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {

@@ -212,15 +212,36 @@
             android:background="@android:color/transparent"
             android:orientation="vertical">
 
-            <Button
+            <LinearLayout
                 android:id="@+id/btn_broadcast"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:background="@android:color/transparent"
+                android:clickable="true"
                 android:foreground="?android:attr/selectableItemBackground"
+                android:gravity="center"
+                android:orientation="horizontal"
                 android:paddingTop="15dp"
                 android:paddingBottom="15dp"
-                android:text="@string/broadcast" />
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toRightOf="@id/guideline3"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:srcCompat="@drawable/signal" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:text="@string/broadcast"
+                    android:textColor="#000"
+                    android:textSize="18sp" />
+
+            </LinearLayout>
         </LinearLayout>
 
     </RelativeLayout>

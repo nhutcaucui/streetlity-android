@@ -522,8 +522,8 @@ public class WCFragment extends Fragment implements LocationListener {
         if(getActivity()!= null) {
             ((MainNavigationHolder) getActivity()).getCantFind().setVisibility(View.GONE);
             callWC(location.getLatitude(), location.getLongitude(), 0);
-            locationManager.removeUpdates(this);
         }
+            locationManager.removeUpdates(this);
     }
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {

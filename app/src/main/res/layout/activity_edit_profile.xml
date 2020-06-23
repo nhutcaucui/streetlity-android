@@ -58,8 +58,11 @@
                     android:text="@string/address_short_with"
                     android:textColor="#000"
                     android:textSize="18sp" />
-
-                <EditText
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    >
+                <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/edt_address"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -68,6 +71,7 @@
                     android:inputType="textPersonName"
                     android:paddingLeft="10dp"
                     android:paddingRight="10dp" />
+                </com.google.android.material.textfield.TextInputLayout>
             </LinearLayout>
 
             <LinearLayout
@@ -83,8 +87,11 @@
                     android:text="@string/phone_short_with"
                     android:textColor="#000"
                     android:textSize="18sp" />
-
-                <EditText
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    >
+                <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/edt_phone"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -93,6 +100,7 @@
                     android:inputType="number"
                     android:paddingLeft="10dp"
                     android:paddingRight="10dp" />
+                </com.google.android.material.textfield.TextInputLayout>
             </LinearLayout>
 
             <LinearLayout
