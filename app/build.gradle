@@ -51,4 +51,5 @@ dependencies {
     implementation 'com.squareup.okhttp3:logging-interceptor:3.8.0'
     implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.19'
     implementation 'com.github.nkzawa:socket.io-client:0.6.0'
+    implementation 'com.google.android.material:material:1.0.0-beta01'
 }

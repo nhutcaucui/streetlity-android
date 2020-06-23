@@ -224,6 +224,8 @@ public class BroadcastActivity extends AppCompatActivity {
         btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                RelativeLayout broadcasting = findViewById(R.id.layout_broadcasting);
+                broadcasting.setVisibility(View.GONE);
                 //denyOrder();
             }
         });
