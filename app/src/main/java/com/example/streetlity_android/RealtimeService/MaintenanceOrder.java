@@ -1,16 +1,9 @@
 package com.example.streetlity_android.RealtimeService;
 
-import android.content.Intent;
 import android.location.Location;
-import android.net.Uri;
 import android.util.Log;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
-
-import com.example.streetlity_android.MainActivity;
-import com.example.streetlity_android.User.Common.Orders;
+import com.example.streetlity_android.MyApplication;
 import com.github.nkzawa.emitter.Emitter;
 import com.github.nkzawa.socketio.client.IO;
 import com.github.nkzawa.socketio.client.Socket;
@@ -19,28 +12,27 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.net.URISyntaxException;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
 
 public class MaintenanceOrder {
-    public final String Endpoint = "http://35.240.207.83:9002";
+    public final String Endpoint = MyApplication.getInstance().getMaintenanceURL();
     public final String Tag = "[MaintenanceOrder]";
     public static HashMap<String, MaintenanceOrder> Orders = new HashMap<String, MaintenanceOrder>();
 
-    public String Room;
+    public String room;
+    public Information information;
+    public Location location;
     /**
      * Listener for event Message
      */
-    public MessageListener<MaintenanceOrder> Message;
+    public MessageListener<MaintenanceOrder> MessageListener;
     private Emitter.Listener onChat = new Emitter.Listener() {
         @Override
         public void call(Object... args) {
             String message = (String)args[0];
             Log.println(Log.INFO, Tag, "OnChat: " + message);
-            if (Message != null) {
-                Message.onReceived(self, message);
+            if (MessageListener != null) {
+                MessageListener.onReceived(self, message);
             }
         }
     };
@@ -48,7 +40,7 @@ public class MaintenanceOrder {
     /**
      * Listener for event location
      */
-    public LocationListener<MaintenanceOrder> Location;
+    public LocationListener<MaintenanceOrder> LocationListener;
     private Emitter.Listener onUpdateLocation = new Emitter.Listener() {
         @Override
         public void call(Object... args) {
@@ -58,16 +50,23 @@ public class MaintenanceOrder {
 
             float lat = Float.parseFloat(slat);
             float lon = Float.parseFloat(slon);
-            if (Location != null) {
-                Location.onReceived(self, lat, lon);
+            if (LocationListener != null) {
+                LocationListener.onReceived(self, lat, lon);
             }
         }
     };
 
+    private Emitter.Listener onPullLocation = new Emitter.Listener() {
+        @Override
+        public void call(Object... args) {
+            updateLocation(location);
+        }
+    };
+    
     /**
      * Listener for event Information
      */
-    public InformationListener<MaintenanceOrder> Information;
+    public InformationListener<MaintenanceOrder> InformationListener;
     private Emitter.Listener onInformation = new Emitter.Listener() {
         @Override
         public void call(Object... args) {
@@ -76,8 +75,8 @@ public class MaintenanceOrder {
                 String username = data.getString("username");
                 String phone = data.getString("phone");
 
-                if (Information != null) {
-                    Information.onReceived(self, new Information(username, phone));
+                if (InformationListener != null) {
+                    InformationListener.onReceived(self, new Information(username, phone));
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -116,6 +115,13 @@ public class MaintenanceOrder {
         }
     };
 
+    private Emitter.Listener onPullInformation = new Emitter.Listener() {
+        @Override
+        public void call(Object... args) {
+            sendInformation(information);
+        }
+    };
+
     private Socket mSocket;
     {
         try {
@@ -130,8 +136,8 @@ public class MaintenanceOrder {
      * @param room
      */
     public MaintenanceOrder(String room) {
-        Room = room;
-        Orders.put(Room, this);
+        this.room = room;
+        Orders.put(this.room, this);
         self = this;
     }
 
@@ -143,22 +149,37 @@ public class MaintenanceOrder {
         mSocket.on("information", onInformation);
         mSocket.on("decline", onDecline);
         mSocket.on("complete", onComplete);
+        mSocket.on("pull-information", onPullInformation);
+        mSocket.on("pull-location", onPullLocation);
     }
 
     public void sendMessage(String message) {
         mSocket.emit("chat", message);
     }
 
+
     /**
      * Send information to others
-     * @param name
-     * @param email
-     * @param phone
-     * @param address
-     * @param avatar
+     * @param information
      */
-    public void sendInformation(String name, String email, String phone, String address, String avatar) {
-        mSocket.emit("information", name, email, phone, address, avatar);
+    public void sendInformation(Information information) {
+        this.information = information;
+        JSONObject json = new JSONObject();
+        try {
+            json.put("username", information.Username);
+            json.put("phone", this.information.Phone);
+        } catch (JSONException e) {
+            Log.e("[MaintenanceOrder]","Cannot put new information " + e.getMessage());
+        }
+
+        mSocket.emit("information", json.toString());
+    }
+
+    /**
+     * Pull information from others
+     */
+    public void pullInformation() {
+
     }
 
     /**
@@ -172,11 +193,22 @@ public class MaintenanceOrder {
     }
 
     /**
+     * Pull new location from other
+     * @param location
+     */
+    public void pullLocation(Location location) {
+        mSocket.emit("pull-location");
+    }
+
+    /**
      * Send the current location to others by specified latitude and longitude
      * @param lat
      * @param lon
      */
     public void updateLocation(double lat, double lon) {
+        Location location = new Location("");
+        location.setLatitude(lat);
+        location.setLongitude(lon);
         mSocket.emit("update-location", lat, lon);
     }
 
