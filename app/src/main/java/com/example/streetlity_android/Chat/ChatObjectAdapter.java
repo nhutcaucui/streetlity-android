@@ -12,6 +12,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.example.streetlity_android.MyApplication;
 import com.example.streetlity_android.R;
 
 import java.text.SimpleDateFormat;
@@ -70,8 +71,12 @@ public class ChatObjectAdapter extends ArrayAdapter implements Filterable {
         holder.tvName.setText(this.mDisplayedValues.get(position).getName());
         holder.tvBody.setText(this.mDisplayedValues.get(position).getBody());
 
-        SimpleDateFormat sdf = new SimpleDateFormat("DD/MM/yyyy hh:mm:ss");
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
         holder.tvTime.setText(sdf.format(this.mDisplayedValues.get(position).getTime()));
+
+        if(holder.tvName.getText().toString().equals(MyApplication.getInstance().getUsername())){
+            holder.tvName.setTextColor(context.getResources().getColor(R.color.blue));
+        }
 
         return convertView;
     }
