@@ -5,9 +5,12 @@ import android.location.Location;
 import android.net.Uri;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 
 import com.example.streetlity_android.MainActivity;
+import com.example.streetlity_android.User.Common.Orders;
 import com.github.nkzawa.emitter.Emitter;
 import com.github.nkzawa.socketio.client.IO;
 import com.github.nkzawa.socketio.client.Socket;
@@ -16,20 +19,17 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.net.URISyntaxException;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 public class MaintenanceOrder {
     public final String Endpoint = "http://35.240.207.83:9002";
     public final String Tag = "[MaintenanceOrder]";
-//    public String PhoneNumber;
-    private Socket mSocket;
-    {
-        try {
-            mSocket = IO.socket(Endpoint);
-        }catch (URISyntaxException e) {}
-    }
+    public static HashMap<String, MaintenanceOrder> Orders = new HashMap<String, MaintenanceOrder>();
 
-    private MaintenanceOrder self = this;
-
+    public String Room;
     /**
      * Listener for event Message
      */
@@ -116,7 +116,23 @@ public class MaintenanceOrder {
         }
     };
 
-    public void Create(String room) {
+    private Socket mSocket;
+    {
+        try {
+            mSocket = IO.socket(Endpoint);
+        }catch (URISyntaxException e) {}
+    }
+
+    private MaintenanceOrder self;
+
+    public MaintenanceOrder(String room) {
+        Room = room;
+        Orders.put(Room, this);
+        self = this;
+    }
+
+    public void Create() {
+
         mSocket.connect();
         mSocket.emit("join");
         mSocket.on("chat", onChat);
