@@ -22,12 +22,12 @@
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_weight="0.8"
                 >
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/edt_find"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="0.8"
                 android:hint="@string/find_by_address"
                 android:inputType="text"
                 android:paddingLeft="10dp"

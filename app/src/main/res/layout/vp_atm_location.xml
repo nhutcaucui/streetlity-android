@@ -34,12 +34,13 @@
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 >
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/edt_atm_address"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+
                 android:hint="@string/address_short"
                 android:inputType="text"
                 android:paddingLeft="10dp"
