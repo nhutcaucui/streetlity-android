@@ -17,6 +17,10 @@
         android:progressTint="#CCB002"
         android:rating="3" />
 
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
     <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/edt_comment"
         android:layout_width="match_parent"
@@ -30,6 +34,7 @@
         android:paddingRight="5dp"
         android:textColor="#000"
         android:textColorHint="#8D8D8D" />
+    </com.google.android.material.textfield.TextInputLayout>
 
     <Button
         android:id="@+id/btn_confrim_review"

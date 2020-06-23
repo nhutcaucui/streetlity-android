@@ -184,6 +184,7 @@ public class BroadcastActivity extends AppCompatActivity {
                         e.putString("reason" + i, arrReason.get(i));
                     }
                     e.commit();
+                    edtReason.setText("");
                 } else {
                     Toast toast = Toast.makeText(BroadcastActivity.this, R.string.empty_reason, Toast.LENGTH_LONG);
                     TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
