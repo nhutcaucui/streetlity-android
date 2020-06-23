@@ -14,6 +14,7 @@ import androidx.annotation.Nullable;
 
 import com.example.streetlity_android.R;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 public class ChatObjectAdapter extends ArrayAdapter implements Filterable {
@@ -40,6 +41,7 @@ public class ChatObjectAdapter extends ArrayAdapter implements Filterable {
     private class ViewHolder {
         TextView tvName;
         TextView tvBody;
+        TextView tvTime;
     }
 
     @NonNull
@@ -58,6 +60,8 @@ public class ChatObjectAdapter extends ArrayAdapter implements Filterable {
 
             holder.tvBody = convertView.findViewById(R.id.tv_body);
 
+            holder.tvTime = convertView.findViewById(R.id.tv_time);
+
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
@@ -65,6 +69,9 @@ public class ChatObjectAdapter extends ArrayAdapter implements Filterable {
 
         holder.tvName.setText(this.mDisplayedValues.get(position).getName());
         holder.tvBody.setText(this.mDisplayedValues.get(position).getBody());
+
+        SimpleDateFormat sdf = new SimpleDateFormat("DD/MM/yyyy hh:mm:ss");
+        holder.tvTime.setText(sdf.format(this.mDisplayedValues.get(position).getTime()));
 
         return convertView;
     }

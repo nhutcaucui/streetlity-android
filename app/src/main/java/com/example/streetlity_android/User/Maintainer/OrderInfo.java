@@ -2,6 +2,7 @@ package com.example.streetlity_android.User.Maintainer;
 
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 
@@ -134,6 +135,8 @@ public class OrderInfo extends AppCompatActivity {
                                     if (jsonObject.getBoolean("Status")) {
                                         finish();
                                         startActivity(new Intent( OrderInfo.this, Chat.class));
+                                        SharedPreferences s = getSharedPreferences("Room", MODE_PRIVATE);
+                                        s.edit().putString("room",Integer.toString(item1.getId())).apply();
 
                                     }
                                 } catch (Exception e) {
