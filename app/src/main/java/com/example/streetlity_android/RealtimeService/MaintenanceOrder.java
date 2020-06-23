@@ -20,7 +20,7 @@ import java.net.URISyntaxException;
 public class MaintenanceOrder {
     public final String Endpoint = "http://35.240.207.83:9002";
     public final String Tag = "[MaintenanceOrder]";
-    public String PhoneNumber;
+//    public String PhoneNumber;
     private Socket mSocket;
     {
         try {
@@ -28,43 +28,91 @@ public class MaintenanceOrder {
         }catch (URISyntaxException e) {}
     }
 
-    public Emitter.Listener onChat = new Emitter.Listener() {
+    private MaintenanceOrder self = this;
+
+    /**
+     * Listener for event Message
+     */
+    public MessageListener<MaintenanceOrder> Message;
+    private Emitter.Listener onChat = new Emitter.Listener() {
         @Override
         public void call(Object... args) {
             String message = (String)args[0];
             Log.println(Log.INFO, Tag, "OnChat: " + message);
+            if (Message != null) {
+                Message.onReceived(self, message);
+            }
         }
     };
 
-    public Emitter.Listener onUpdateLocation = new Emitter.Listener() {
+    /**
+     * Listener for event location
+     */
+    public LocationListener<MaintenanceOrder> Location;
+    private Emitter.Listener onUpdateLocation = new Emitter.Listener() {
         @Override
         public void call(Object... args) {
-            String lat = (String)args[0];
-            String lon = (String)args[1];
-            Log.println(Log.INFO, Tag, "OnUpdateLocation: " + lat + ":" + lon);
+            String slat = (String)args[0];
+            String slon = (String)args[1];
+            Log.println(Log.INFO, Tag, "OnUpdateLocation: " + slat + ":" + slon);
 
+            float lat = Float.parseFloat(slat);
+            float lon = Float.parseFloat(slon);
+            if (Location != null) {
+                Location.onReceived(self, lat, lon);
+            }
         }
     };
 
-    public Emitter.Listener onInformation = new Emitter.Listener() {
+    /**
+     * Listener for event Information
+     */
+    public InformationListener<MaintenanceOrder> Information;
+    private Emitter.Listener onInformation = new Emitter.Listener() {
         @Override
         public void call(Object... args) {
             JSONObject data = (JSONObject) args[0];
             try {
-                PhoneNumber = data.getString("phone");
+                String username = data.getString("username");
+                String phone = data.getString("phone");
+
+                if (Information != null) {
+                    Information.onReceived(self, new Information(username, phone));
+                }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
     };
 
-    public Emitter.Listener onDecline = new Emitter.Listener() {
+    /**
+     * Listener for event Decline
+     */
+    public Listener<MaintenanceOrder> Decline;
+    private Emitter.Listener onDecline = new Emitter.Listener() {
         @Override
         public void call(Object... args) {
             String message = (String)args[0];
             Log.println(Log.INFO, Tag, "OnDecline: " + message);
 
             mSocket.close();
+
+            if (Decline != null) {
+                Decline.call(self);
+            }
+        }
+    };
+
+    /**
+     * Listener for event Complete
+     */
+    public Listener<MaintenanceOrder> Complete;
+    private Emitter.Listener onComplete = new Emitter.Listener() {
+        @Override
+        public void call(Object... args) {
+            if (Complete != null) {
+                Complete.call(self);
+            }
         }
     };
 
@@ -75,6 +123,7 @@ public class MaintenanceOrder {
         mSocket.on("update-location", onUpdateLocation);
         mSocket.on("information", onInformation);
         mSocket.on("decline", onDecline);
+        mSocket.on("complete", onComplete);
     }
 
     public void SendMessage(String message) {
