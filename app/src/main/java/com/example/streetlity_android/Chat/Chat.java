@@ -5,9 +5,15 @@ import android.os.Bundle;
 
 import com.example.streetlity_android.MyApplication;
 import com.example.streetlity_android.R;
+import com.example.streetlity_android.RealtimeService.Information;
+import com.example.streetlity_android.RealtimeService.InformationListener;
+import com.example.streetlity_android.RealtimeService.Listener;
+import com.example.streetlity_android.RealtimeService.LocationListener;
 import com.example.streetlity_android.RealtimeService.MaintenanceOrder;
+import com.example.streetlity_android.RealtimeService.MessageListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.textfield.TextInputEditText;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -15,14 +21,21 @@ import androidx.appcompat.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 public class Chat extends AppCompatActivity {
 
     ArrayList<ChatObject> items = new ArrayList<>();
+
+    Information infomation;
+
+    double lat;
+    double lon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,11 +67,69 @@ public class Chat extends AppCompatActivity {
             }
         }
         room = s.getString("room", "noroom");
-
+        String phone="";
+        if(getSharedPreferences("broadcastPhone", MODE_PRIVATE).contains("phone")) {
+            phone = getSharedPreferences("broadcastPhone", MODE_PRIVATE).getString("phone", "no");
+        }
+        if(phone.equals("")){
+            phone = MyApplication.getInstance().getPhone();
+        }
 
         Log.e("", "onCreate: " + room );
-        MaintenanceOrder socket = new MaintenanceOrder();
-        socket.create(room);
+        MaintenanceOrder socket = new MaintenanceOrder(room);
+        socket.create();
+        socket.Information = new InformationListener<MaintenanceOrder>() {
+            @Override
+            public void onReceived(MaintenanceOrder sender, Information info) {
+                infomation = info;
+            }
+        };
+        socket.sendInformation(MyApplication.getInstance().getUsername(),"", phone,"","");
+        socket.Message = new MessageListener<MaintenanceOrder>() {
+            @Override
+            public void onReceived(MaintenanceOrder sender, String message) {
+                ChatObject object = new ChatObject(infomation.Username, message, new Date());
+                items.add(object);
+                adapter.notifyDataSetChanged();
+            }
+        };
+        socket.Location = new LocationListener<MaintenanceOrder>() {
+            @Override
+            public void onReceived(MaintenanceOrder sender, float lat, float lon) {
+                lat = lat;
+                lon = lon;
+            }
+        };
+        socket.Decline = new Listener<MaintenanceOrder>() {
+            @Override
+            public void call(MaintenanceOrder sender) {
+
+            }
+        };
+        socket.Complete = new Listener<MaintenanceOrder>() {
+            @Override
+            public void call(MaintenanceOrder sender) {
+                Log.e("", "call: completed" );
+            }
+        };
+
+        TextInputEditText edtMessage = findViewById(R.id.edt_body);
+
+        ImageButton imgBtnSend = findViewById(R.id.btn_send);
+        imgBtnSend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(!edtMessage.getText().toString().equals("")) {
+                    socket.sendMessage(edtMessage.getText().toString());
+                    Log.e("", "onClick: " + edtMessage.getText().toString() );
+                    ChatObject object = new ChatObject(MyApplication.getInstance().getUsername(), edtMessage.getText().toString(), new Date());
+                    items.add(object);
+                    adapter.notifyDataSetChanged();
+                    edtMessage.setText("");
+
+                }
+            }
+        });
     }
 
     public boolean onOptionsItemSelected(MenuItem item){

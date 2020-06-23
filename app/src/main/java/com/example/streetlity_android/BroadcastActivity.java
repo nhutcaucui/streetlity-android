@@ -346,6 +346,8 @@ public class BroadcastActivity extends AppCompatActivity {
 //                                                data.putExtra("range", fRange);
 //                                                setResult(RESULT_OK, data);
 //                                                finish();
+                                                getSharedPreferences("broadcastPhone", MODE_PRIVATE).edit()
+                                                        .putString("phone", phone).apply();
                                             }
                                         } catch (Exception e) {
                                             e.printStackTrace();
