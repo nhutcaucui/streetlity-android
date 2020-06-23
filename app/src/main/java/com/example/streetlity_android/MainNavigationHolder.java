@@ -347,6 +347,7 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
     }
 
     public void logout(NavigationView navView){
+        drawer.closeDrawers();
         ConstraintLayout layoutTop = findViewById(R.id.layout_loading_top);
         layoutTop.setVisibility(View.VISIBLE);
         Retrofit retro = new Retrofit.Builder().baseUrl("http://35.240.232.218/")
@@ -385,8 +386,6 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
                             View header=navView.getHeaderView(0);
                             TextView tvUsername = header.findViewById(R.id.username);
                             tvUsername.setText(R.string.not_login);
-
-                            drawer.closeDrawers();
 
                             setDrawerForNonUser(navView);
 

@@ -48,7 +48,7 @@
         android:fitsSystemWindows="true"
         app:headerLayout="@layout/nav_header_main"
         app:itemBackground="?attr/selectableItemBackground"
-        app:menu="@menu/drawer_menu_user_not_login" >
+        app:menu="@menu/drawer_menu_user_not_login">
 
         <LinearLayout
             android:layout_width="match_parent"
