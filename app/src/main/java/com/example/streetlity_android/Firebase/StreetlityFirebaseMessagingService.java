@@ -43,6 +43,7 @@ public class StreetlityFirebaseMessagingService extends FirebaseMessagingService
         Log.d("msg", "onMessageReceived: " + remoteMessage.getData().get("message"));
         RemoteMessage.Notification notification = remoteMessage.getNotification();
         String intentName = notification.getClickAction();
+        Log.e(TAG, "onMessageReceived: " + notification.getClickAction());
         Intent intent = new Intent(intentName);
         Map<String, String> data = remoteMessage.getData();
         intent.putExtra("id", data.get("id"));

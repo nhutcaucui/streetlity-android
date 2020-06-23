@@ -347,7 +347,8 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
     }
 
     public void logout(NavigationView navView){
-
+        ConstraintLayout layoutTop = findViewById(R.id.layout_loading_top);
+        layoutTop.setVisibility(View.VISIBLE);
         Retrofit retro = new Retrofit.Builder().baseUrl("http://35.240.232.218/")
                 .addConverterFactory(GsonConverterFactory.create()).build();
         final MapAPI tour = retro.create(MapAPI.class);
@@ -399,6 +400,7 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
                                 fab.hide();
                             }
 
+                            layoutTop.setVisibility(View.GONE);
                             Toast toast = Toast.makeText(MainNavigationHolder.this, R.string.logged_out, Toast.LENGTH_LONG);
                             toast.show();
                         }else{

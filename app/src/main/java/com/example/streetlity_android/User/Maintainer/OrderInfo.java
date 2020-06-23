@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 
+import com.example.streetlity_android.Chat.Chat;
 import com.example.streetlity_android.MainNavigationHolder;
 import com.example.streetlity_android.MapAPI;
 import com.example.streetlity_android.MyApplication;
@@ -129,9 +130,10 @@ public class OrderInfo extends AppCompatActivity {
                             if(response.code()==200) {
                                 try {
                                     jsonObject = new JSONObject(response.body().string());
+                                    Log.e("", "onResponse: " + jsonObject.toString());
                                     if (jsonObject.getBoolean("Status")) {
-
-                                        Log.e("", "onResponse: " + jsonObject.toString());
+                                        finish();
+                                        startActivity(new Intent( OrderInfo.this, Chat.class));
 
                                     }
                                 } catch (Exception e) {
@@ -161,7 +163,7 @@ public class OrderInfo extends AppCompatActivity {
 
                     final LayoutInflater inflater = LayoutInflater.from(OrderInfo.this);
 
-                    final android.view.View dialogView = inflater.inflate(R.layout.dialog_decline, null);
+                    final View dialogView = View.inflate(OrderInfo.this ,R.layout.dialog_decline, null);
 
                     EditText edtReason = dialogView.findViewById(R.id.edt_reason);
 

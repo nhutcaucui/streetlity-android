@@ -218,7 +218,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                 final LayoutInflater inflater2 = LayoutInflater.from(MapsActivity.this.getApplicationContext());
 
-                final android.view.View dialogView2 = inflater2.inflate(R.layout.dialog_review, null);
+                final View dialogView2 = View.inflate(MapsActivity.this,R.layout.dialog_review ,null);
 
                 com.google.android.material.textfield.TextInputEditText edtComment = dialogView2.findViewById(R.id.edt_comment);
                 RatingBar rtReview = dialogView2.findViewById(R.id.rating_review);
