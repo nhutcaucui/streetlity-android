@@ -15,7 +15,7 @@ import java.net.URISyntaxException;
 import java.util.HashMap;
 
 public class MaintenanceOrder {
-    public final String Endpoint = MyApplication.getInstance().getMaintenanceURL();
+    public final String Endpoint = MyApplication.getInstance().getMaintenanceURL() + "socket.io/order";
     public final String Tag = "[MaintenanceOrder]";
     public static HashMap<String, MaintenanceOrder> Orders = new HashMap<String, MaintenanceOrder>();
 

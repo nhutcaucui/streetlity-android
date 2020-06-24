@@ -18,6 +18,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,6 +31,7 @@ import com.example.streetlity_android.MapAPI;
 import com.example.streetlity_android.MyApplication;
 import com.example.streetlity_android.R;
 import com.example.streetlity_android.Util.ImageFilePath;
+import com.example.streetlity_android.Util.RandomString;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -66,6 +68,7 @@ public class SelectFromMap extends AppCompatActivity implements OnMapReadyCallba
 
     ArrayList<File> arrImg = new ArrayList<>();
     ArrayList<String> fileName = new ArrayList<>();
+    String random = "";
     boolean hasImg = false;
 
     private GoogleMap mMap;
@@ -617,30 +620,26 @@ public class SelectFromMap extends AppCompatActivity implements OnMapReadyCallba
         super.onActivityResult(requestCode, resultCode, data);
         try {
             if (requestCode == 1) {
-                int leftLimit = 48; // letter 'a'
-                int rightLimit = 122; // letter 'z'
-                int targetStringLength = 10;
+                LinearLayout imgHolder= findViewById(R.id.img_holder);
                 if(null == data) {
-                    arrImg.clear();
-                    paramMap.clear();
-                    bodyMap.clear();
-                    fileName.clear();
+//                    arrImg.clear();
+//                    paramMap.clear();
+//                    bodyMap.clear();
+//                    fileName.clear();
                     EditText edtSelectImg = findViewById(R.id.edt_select_img);
                     edtSelectImg.setHint(R.string.select_img);
                 }else {
                     if (data.getData() != null) {
-                        arrImg.clear();
-                        paramMap.clear();
-                        bodyMap.clear();
-                        body.clear();
-                        //Uri mImageUri = data.getData();
-                        fileName.clear();
+//                        arrImg.clear();
+//                        paramMap.clear();
+//                        bodyMap.clear();
+//                        body.clear();
+//                        //Uri mImageUri = data.getData();
+//                        fileName.clear();
 
                         String path = ImageFilePath.getPath(SelectFromMap.this, data.getData());
 
                         File file = new File(path);
-
-
 
                         arrImg.add(file);
 
@@ -652,23 +651,20 @@ public class SelectFromMap extends AppCompatActivity implements OnMapReadyCallba
                         edtSelectImg.setHint(temp);
                         hasImg = true;
 
-                        Random random = new Random();
-
-                        String generatedString = random.ints(leftLimit, rightLimit + 1)
-                                .filter(i -> (i <= 57 || i >= 65) && (i <= 90 || i >= 97))
-                                .limit(targetStringLength)
-                                .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
-                                .toString();
+                        if(random.equals("")) {
+                            String generatedString = RandomString.getAlphaNumericString(10);
+                            random = generatedString;
+                        }
 
                         RequestBody fbody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
                         MultipartBody.Part mBody =
-                                MultipartBody.Part.createFormData(generatedString+0, file.getName(), fbody);
+                                MultipartBody.Part.createFormData(random+0, file.getName(), fbody);
 
                         body.add(mBody);
 
-                        fileName.add(generatedString);
+                        fileName.add(random);
 
-                        paramMap.put("f", generatedString+0);
+                        paramMap.put("f", random+0);
                         //bodyMap.put(generatedString+0, body);
                     } else {
                         if (data.getClipData() != null) {
@@ -678,15 +674,14 @@ public class SelectFromMap extends AppCompatActivity implements OnMapReadyCallba
                             fileName.clear();
 
                             ClipData mClipData = data.getClipData();
-                            Random random = new Random();
 
                             body.clear();
 
-                            String generatedString = random.ints(leftLimit, rightLimit + 1)
-                                    .filter(i -> (i <= 57 || i >= 65) && (i <= 90 || i >= 97))
-                                    .limit(targetStringLength)
-                                    .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
-                                    .toString();
+                            if(random.equals("")) {
+                                String generatedString = RandomString.getAlphaNumericString(10);
+                                random = generatedString;
+                            }
+
                             for (int i = 0; i < mClipData.getItemCount(); i++) {
 
                                 ClipData.Item item = mClipData.getItemAt(i);
@@ -697,20 +692,20 @@ public class SelectFromMap extends AppCompatActivity implements OnMapReadyCallba
                                 String paramValue;
                                 if(paramMap.containsKey("f")){
                                     paramValue = paramMap.get("f");
-                                    paramValue += "&" + "f" + "=" + (generatedString+i);
+                                    paramValue += "&" + "f" + "=" + (random+i);
                                 }else{
-                                    paramValue = generatedString+i;
+                                    paramValue = random+i;
                                 }
 
                                 paramMap.put("f", paramValue);
 
                                 RequestBody fbody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
                                 MultipartBody.Part mBody =
-                                        MultipartBody.Part.createFormData(generatedString+i, file.getName(), fbody);
+                                        MultipartBody.Part.createFormData(random+i, file.getName(), fbody);
 
                                 body.add(mBody);
 
-                                fileName.add(generatedString);
+                                fileName.add(random);
 
                                 arrImg.add(file);
                             }

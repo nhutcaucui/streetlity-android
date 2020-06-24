@@ -66,7 +66,13 @@ public class Chat extends AppCompatActivity {
                 s.edit().putString("room", getIntent().getStringExtra("id")).apply();
             }
         }
-        room = s.getString("room", "noroom");
+        if(getIntent().getStringExtra("id") != null) {
+            Log.e("", "onCreate: " + getIntent().getStringExtra("id"));
+            room = getIntent().getStringExtra("id");
+        }else {
+            room = s.getString("room", "noroom");
+        }
+        s.edit().clear().apply();
         String phone="";
         if(getSharedPreferences("broadcastPhone", MODE_PRIVATE).contains("phone")) {
             phone = getSharedPreferences("broadcastPhone", MODE_PRIVATE).getString("phone", "no");
