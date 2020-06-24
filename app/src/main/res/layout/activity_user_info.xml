@@ -22,7 +22,18 @@
             android:layout_height="?attr/actionBarSize"
             android:background="@android:color/transparent"
             android:theme="@style/Theme.BlackBackArrow"
-            app:popupTheme="@style/AppTheme.PopupOverlay" />
+            app:popupTheme="@style/AppTheme.PopupOverlay" >
+            <TextView
+                android:id="@+id/textView21"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:gravity="center"
+                android:text="@string/user_info"
+                android:textColor="#000"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+        </androidx.appcompat.widget.Toolbar>
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -37,69 +48,59 @@
         android:elevation="6dp"
         android:focusable="true"
         android:focusableInTouchMode="true"
+        android:gravity="center_horizontal"
         android:orientation="vertical"
         android:padding="10dp">
 
 
-        <TextView
-            android:id="@+id/textView21"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:gravity="center"
-            android:text="@string/user_info"
-            android:textColor="#000"
-            android:textSize="24sp"
-            android:textStyle="bold" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/img_avatar"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_margin="10dp"
+                android:background="#00000000"
+                android:clickable="true"
+                android:foreground="?android:attr/selectableItemBackground"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/avatar" />
+
+            <ImageView
+                android:id="@+id/img_editable"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:background="#B5000000"
+                android:visibility="gone"
+                app:layout_constraintRight_toRightOf="@id/img_avatar"
+                app:layout_constraintTop_toTopOf="@id/img_avatar"
+                app:srcCompat="@drawable/edit_white" />
+
+            <LinearLayout
+                android:id="@+id/prevent_click"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:clickable="true"
+                android:elevation="5dp"
+                android:orientation="horizontal"
+                android:visibility="visible"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
             android:orientation="horizontal">
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-
-                <ImageView
-                    android:id="@+id/img_avatar"
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    android:layout_margin="10dp"
-                    android:background="#00000000"
-                    android:clickable="true"
-                    android:foreground="?android:attr/selectableItemBackground"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@drawable/avatar" />
-
-                <ImageView
-                    android:id="@+id/img_editable"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:background="#B5000000"
-                    android:visibility="gone"
-                    app:layout_constraintRight_toRightOf="@id/img_avatar"
-                    app:layout_constraintTop_toTopOf="@id/img_avatar"
-                    app:srcCompat="@drawable/edit_white" />
-
-                <LinearLayout
-                    android:id="@+id/prevent_click"
-                    android:layout_width="120dp"
-                    android:layout_height="120dp"
-                    android:clickable="true"
-                    android:elevation="5dp"
-                    android:orientation="horizontal"
-                    android:visibility="invisible"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"

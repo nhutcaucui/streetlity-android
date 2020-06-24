@@ -131,7 +131,7 @@ public class UserInfo extends AppCompatActivity {
 
                     edtState = false;
                     imgEditable.setVisibility(View.GONE);
-                    preventClick.setVisibility(View.INVISIBLE);
+                    preventClick.setVisibility(View.VISIBLE);
 
                     fabEdit.setImageResource(R.drawable.edit_white);
 
