@@ -14,7 +14,7 @@
         android:background="#7C000000"
         android:clickable="true"
         android:elevation="10dp"
-        android:visibility="visible">
+        android:visibility="gone">
 
         <ProgressBar
             android:id="@+id/loading3"
