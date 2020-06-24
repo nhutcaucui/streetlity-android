@@ -16,6 +16,7 @@ import com.example.streetlity_android.MainFragment.HomeFragment;
 import com.example.streetlity_android.MainFragment.MaintenanceFragment;
 import com.example.streetlity_android.MainFragment.WCFragment;
 import com.example.streetlity_android.Notification.Notification;
+import com.example.streetlity_android.RealtimeService.MaintenanceOrder;
 import com.example.streetlity_android.User.ChangePassword;
 import com.example.streetlity_android.User.Common.MyOrders;
 import com.example.streetlity_android.User.Login;
@@ -83,6 +84,9 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
         setContentView(R.layout.activity_main_navigation_holder);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        MaintenanceOrder socket = new MaintenanceOrder("himom");
+        socket.join();
 
         if(getIntent().getIntExtra("isRoot",0) == 1){
             moveTaskToBack(true);

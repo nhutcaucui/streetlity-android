@@ -5,7 +5,10 @@ import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
@@ -18,6 +21,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -28,7 +32,9 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 
 import com.example.streetlity_android.MapAPI;
+import com.example.streetlity_android.MapsActivity;
 import com.example.streetlity_android.MyApplication;
+import com.example.streetlity_android.PhotoFullPopupWindow;
 import com.example.streetlity_android.R;
 import com.example.streetlity_android.Util.ImageFilePath;
 import com.example.streetlity_android.Util.RandomString;
@@ -438,7 +444,7 @@ public class SelectFromMap extends AppCompatActivity implements OnMapReadyCallba
                                 JSONObject jsonObject1 = jsonObject.getJSONObject("Paths");
                                 mImages = new String[fileName.size()];
                                 for (int i = 0; i < fileName.size(); i++) {
-                                    JSONObject jsonObject2 = jsonObject1.getJSONObject(fileName.get(i)+ i);
+                                    JSONObject jsonObject2 = jsonObject1.getJSONObject(fileName.get(i));
                                     mImages[i] = jsonObject2.getString("Message");
                                 }
 
@@ -620,7 +626,7 @@ public class SelectFromMap extends AppCompatActivity implements OnMapReadyCallba
         super.onActivityResult(requestCode, resultCode, data);
         try {
             if (requestCode == 1) {
-                LinearLayout imgHolder= findViewById(R.id.img_holder);
+                LinearLayout imgContainer= findViewById(R.id.img_holder);
                 if(null == data) {
 //                    arrImg.clear();
 //                    paramMap.clear();
@@ -641,14 +647,12 @@ public class SelectFromMap extends AppCompatActivity implements OnMapReadyCallba
 
                         File file = new File(path);
 
-                        arrImg.add(file);
+
 
                         Log.e("", "onActivityResult: " + arrImg.size());
 
                         EditText edtSelectImg = findViewById(R.id.edt_select_img);
-                        String temp = getString(R.string.selected);
-                        temp = temp + " 1 " + getString(R.string.images);
-                        edtSelectImg.setHint(temp);
+
                         hasImg = true;
 
                         if(random.equals("")) {
@@ -658,24 +662,48 @@ public class SelectFromMap extends AppCompatActivity implements OnMapReadyCallba
 
                         RequestBody fbody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
                         MultipartBody.Part mBody =
-                                MultipartBody.Part.createFormData(random+0, file.getName(), fbody);
+                                MultipartBody.Part.createFormData(random+arrImg.size(), file.getName(), fbody);
 
                         body.add(mBody);
 
-                        fileName.add(random);
+                        fileName.add(random+arrImg.size());
 
-                        paramMap.put("f", random+0);
+                        paramMap.put("f", random+arrImg.size());
+
+                        Bitmap bmp = BitmapFactory.decodeFile(file.getAbsolutePath());
+                        ImageView img = new ImageView(SelectFromMap.this);
+                        img.setImageBitmap(bmp);
+                        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                                300,
+                                300
+                        );
+                        lp.setMargins(5,0,5,0);
+                        img.setLayoutParams(lp);
+                        img.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+
+                            }
+                        });
+                        img.setTag(arrImg.size());
+                        imgContainer.addView(img);
+
+                        arrImg.add(file);
+
+                        String temp = getString(R.string.selected);
+                        temp = temp + " "+arrImg.size()+" " + getString(R.string.images);
+                        edtSelectImg.setHint(temp);
                         //bodyMap.put(generatedString+0, body);
                     } else {
                         if (data.getClipData() != null) {
-                            arrImg.clear();
-                            paramMap.clear();
-                            bodyMap.clear();
-                            fileName.clear();
+//                            arrImg.clear();
+//                            paramMap.clear();
+//                            bodyMap.clear();
+//                            fileName.clear();
 
                             ClipData mClipData = data.getClipData();
 
-                            body.clear();
+                            //body.clear();
 
                             if(random.equals("")) {
                                 String generatedString = RandomString.getAlphaNumericString(10);
@@ -692,20 +720,38 @@ public class SelectFromMap extends AppCompatActivity implements OnMapReadyCallba
                                 String paramValue;
                                 if(paramMap.containsKey("f")){
                                     paramValue = paramMap.get("f");
-                                    paramValue += "&" + "f" + "=" + (random+i);
+                                    paramValue += "&" + "f" + "=" + (random+arrImg.size());
                                 }else{
-                                    paramValue = random+i;
+                                    paramValue = random+arrImg.size();
                                 }
 
                                 paramMap.put("f", paramValue);
 
                                 RequestBody fbody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
                                 MultipartBody.Part mBody =
-                                        MultipartBody.Part.createFormData(random+i, file.getName(), fbody);
+                                        MultipartBody.Part.createFormData(random+arrImg.size(), file.getName(), fbody);
 
                                 body.add(mBody);
 
-                                fileName.add(random);
+                                fileName.add(random+arrImg.size());
+
+                                Bitmap bmp = BitmapFactory.decodeFile(file.getAbsolutePath());
+                                ImageView img = new ImageView(SelectFromMap.this);
+                                img.setImageBitmap(bmp);
+                                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                                        100,
+                                        100
+                                );
+                                lp.setMargins(5,0,5,0);
+                                img.setLayoutParams(lp);
+                                img.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+
+                                    }
+                                });
+                                img.setTag(arrImg.size());
+                                imgContainer.addView(img);
 
                                 arrImg.add(file);
                             }

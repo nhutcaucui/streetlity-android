@@ -105,7 +105,7 @@ public class UserInfo extends AppCompatActivity {
                     edtState = true;
                     imgEditable.setVisibility(View.VISIBLE);
                     preventClick.setVisibility(View.GONE);
-                    fabEdit.setImageResource(R.drawable.checkmark_white);
+                    fabEdit.setImageResource(R.drawable.checkmark_black);
 
                     edtAddress.setFocusable(true);
                     edtAddress.setFocusableInTouchMode(true);
@@ -133,7 +133,7 @@ public class UserInfo extends AppCompatActivity {
                     imgEditable.setVisibility(View.GONE);
                     preventClick.setVisibility(View.VISIBLE);
 
-                    fabEdit.setImageResource(R.drawable.edit_white);
+                    fabEdit.setImageResource(R.drawable.edit);
 
                     edtAddress.setFocusable(false);
                     edtAddress.setFocusableInTouchMode(false);
@@ -166,7 +166,7 @@ public class UserInfo extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         try {
-            if (requestCode == 1) {
+            if (requestCode == 1 && data != null) {
                 int leftLimit = 48; // letter 'a'
                 int rightLimit = 122; // letter 'z'
                 int targetStringLength = 10;

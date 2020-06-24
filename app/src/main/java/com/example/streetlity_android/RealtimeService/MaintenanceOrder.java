@@ -140,11 +140,14 @@ public class MaintenanceOrder {
         try {
             Uri.Builder builder = new Uri.Builder();
             builder.scheme("http")
-                    .authority(Endpoint)
+                    .encodedAuthority(Endpoint)
                     .appendPath("socket.io")
                     .appendPath(room);
+            //mSocket = IO.socket(builder.build().toString());
             mSocket = IO.socket(builder.build().toString());
-        }catch (URISyntaxException e) {}
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**

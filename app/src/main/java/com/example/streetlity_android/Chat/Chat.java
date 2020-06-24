@@ -92,9 +92,11 @@ public class Chat extends AppCompatActivity {
         socket.MessageListener = new MessageListener<MaintenanceOrder>() {
             @Override
             public void onReceived(MaintenanceOrder sender, String message) {
+                Log.e("", "onReceived:  this is america" );
                 ChatObject object = new ChatObject(infomation.Username, message, new Date());
                 items.add(object);
                 adapter.notifyDataSetChanged();
+
             }
         };
         socket.LocationListener = new LocationListener<MaintenanceOrder>() {
