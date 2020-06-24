@@ -739,8 +739,8 @@ public class SelectFromMap extends AppCompatActivity implements OnMapReadyCallba
                                 ImageView img = new ImageView(SelectFromMap.this);
                                 img.setImageBitmap(bmp);
                                 LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                                        100,
-                                        100
+                                        300,
+                                        300
                                 );
                                 lp.setMargins(5,0,5,0);
                                 img.setLayoutParams(lp);

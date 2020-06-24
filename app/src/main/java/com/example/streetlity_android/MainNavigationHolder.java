@@ -85,10 +85,7 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        MaintenanceOrder socket = new MaintenanceOrder("himom");
-        socket.join();
-
-        if(getIntent().getIntExtra("isRoot",0) == 1){
+        if(getIntent().getIntExtra("isRoot",    0) == 1){
             moveTaskToBack(true);
         }
 
