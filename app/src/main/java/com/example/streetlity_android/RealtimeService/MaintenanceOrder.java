@@ -5,7 +5,6 @@ import android.net.Uri;
 import android.util.Log;
 
 import com.github.nkzawa.emitter.Emitter;
-import com.github.nkzawa.socketio.client.IO;
 import com.github.nkzawa.socketio.client.Manager;
 import com.github.nkzawa.socketio.client.Socket;
 
@@ -14,6 +13,7 @@ import org.json.JSONObject;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Date;
 import java.util.HashMap;
 
 public class MaintenanceOrder {
@@ -24,10 +24,36 @@ public class MaintenanceOrder {
     public String room;
     public Information information;
     public Location location;
+
     /**
-     * Listener for event Message
+     * Listener for event Joined. Trigger when joined successfully.
+     */
+    public Listener<MaintenanceOrder> JoinedListener;
+    /**
+     * Listener for event Ready. Ready trigger when every prerequisite conditions is satisfied.
+     */
+    public Listener<MaintenanceOrder> ReadyListener;
+    /**
+     * Listener for event Message. Trigger everytime a message from others is sent
      */
     public MessageListener<MaintenanceOrder> MessageListener;
+    /**
+     * Listener for event location.
+     */
+    public LocationListener<MaintenanceOrder> LocationListener;
+    /**
+     * Listener for event Information
+     */
+    public InformationListener<MaintenanceOrder> InformationListener;
+    /**
+     * Listener for event Decline
+     */
+    public Listener<MaintenanceOrder> DeclineListener;
+    /**
+     * Listener for event Complete
+     */
+    public Listener<MaintenanceOrder> CompleteListener;
+
     private Emitter.Listener onChat = new Emitter.Listener() {
         @Override
         public void call(Object... args) {
@@ -39,10 +65,6 @@ public class MaintenanceOrder {
         }
     };
 
-    /**
-     * Listener for event location
-     */
-    public LocationListener<MaintenanceOrder> LocationListener;
     private Emitter.Listener onUpdateLocation = new Emitter.Listener() {
         @Override
         public void call(Object... args) {
@@ -65,10 +87,6 @@ public class MaintenanceOrder {
         }
     };
 
-    /**
-     * Listener for event Information
-     */
-    public InformationListener<MaintenanceOrder> InformationListener;
     private Emitter.Listener onUpdateInformation = new Emitter.Listener() {
         @Override
         public void call(Object... args) {
@@ -87,10 +105,6 @@ public class MaintenanceOrder {
         }
     };
 
-    /**
-     * Listener for event Decline
-     */
-    public Listener<MaintenanceOrder> Decline;
     private Emitter.Listener onDecline = new Emitter.Listener() {
         @Override
         public void call(Object... args) {
@@ -99,21 +113,18 @@ public class MaintenanceOrder {
 
             mSocket.close();
 
-            if (Decline != null) {
-                Decline.call(self);
+            if (DeclineListener != null) {
+                DeclineListener.call(self);
             }
         }
     };
 
-    /**
-     * Listener for event Complete
-     */
-    public Listener<MaintenanceOrder> Complete;
+
     private Emitter.Listener onComplete = new Emitter.Listener() {
         @Override
         public void call(Object... args) {
-            if (Complete != null) {
-                Complete.call(self);
+            if (CompleteListener != null) {
+                CompleteListener.call(self);
             }
         }
     };
@@ -125,9 +136,14 @@ public class MaintenanceOrder {
         }
     };
 
+    private Emitter.Listener onJoined = new Emitter.Listener() {
+        @Override
+        public void call(Object... args) {
+            JoinedListener.call(self);
+        }
+    };
+
     private Socket mSocket;
-
-
     private MaintenanceOrder self;
 
     /**
@@ -163,6 +179,7 @@ public class MaintenanceOrder {
         mSocket.on("pull-location", onPullLocation);
         mSocket.on("decline", onDecline);
         mSocket.on("complete", onComplete);
+        mSocket.on("joined", onJoined);
     }
 
     /**
@@ -170,7 +187,8 @@ public class MaintenanceOrder {
      * @param message
      */
     public void sendMessage(String message) {
-        mSocket.emit("chat", message);
+        Date now = new Date();
+        mSocket.emit("chat", message, now.toString());
     }
 
 
@@ -195,7 +213,7 @@ public class MaintenanceOrder {
      * Pull information from others
      */
     public void pullInformation() {
-        mSocket.emit("pull-information");
+//        mSocket.emit("pull-information");
     }
 
     /**
@@ -203,9 +221,13 @@ public class MaintenanceOrder {
      * @param location
      */
     public void updateLocation(Location location) {
-        double lat = location.getLatitude();
-        double lon = location.getLongitude();
-        updateLocation(lat, lon);
+        JSONObject json = new JSONObject();
+        try {
+            json.put("Location", location);
+        } catch (JSONException e) {
+            Log.e(Tag, "updateLocation: " + e.getMessage());
+        }
+        mSocket.emit("update-location", json.toString());
     }
 
     /**
@@ -213,11 +235,12 @@ public class MaintenanceOrder {
      * @param lat
      * @param lon
      */
-    public void updateLocation(double lat, double lon) {
+    public void updateLocation(double lat, double lon, float bearing) {
         Location location = new Location("");
         location.setLatitude(lat);
         location.setLongitude(lon);
-        mSocket.emit("update-location", lat, lon);
+        location.setBearing(bearing);
+        updateLocation(location);
     }
 
     /**

@@ -98,7 +98,7 @@ public class Chat extends AppCompatActivity {
             @Override
             public void onReceived(MaintenanceOrder sender, String message) {
                 Log.e("", "onReceived:  this is america" );
-                ChatObject object = new ChatObject(infomation.Username, message, new Date());
+                ChatObject object = new ChatObject("", message, new Date());
                 items.add(object);
                 adapter.notifyDataSetChanged();
 
@@ -111,13 +111,14 @@ public class Chat extends AppCompatActivity {
                 lon = lon;
             }
         };
-        socket.Decline = new Listener<MaintenanceOrder>() {
+
+        socket.DeclineListener = new Listener<MaintenanceOrder>() {
             @Override
             public void call(MaintenanceOrder sender) {
 
             }
         };
-        socket.Complete = new Listener<MaintenanceOrder>() {
+        socket.CompleteListener = new Listener<MaintenanceOrder>() {
             @Override
             public void call(MaintenanceOrder sender) {
                 Log.e("", "call: completed" );
