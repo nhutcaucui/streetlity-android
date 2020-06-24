@@ -85,8 +85,14 @@ public class Chat extends AppCompatActivity {
         socket.InformationListener = new InformationListener<MaintenanceOrder>() {
             @Override
             public void onReceived(MaintenanceOrder sender, Information info) {
-                infomation = info;
-                Log.e("", "onReceived: " + info.toString() );
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        infomation = info;
+                        Log.e("", "onReceived: " + info.toString() );
+                    }
+                });
+
             }
         };
         Information myInfo = new Information(MyApplication.getInstance().getUsername(), phone);
@@ -97,10 +103,15 @@ public class Chat extends AppCompatActivity {
         socket.MessageListener = new MessageListener<MaintenanceOrder>() {
             @Override
             public void onReceived(MaintenanceOrder sender, String message) {
-                Log.e("", "onReceived:  this is america" );
-                ChatObject object = new ChatObject("", message, new Date());
-                items.add(object);
-                adapter.notifyDataSetChanged();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.e("", "onReceived:  this is america" );
+                        ChatObject object = new ChatObject("", message, new Date());
+                        items.add(object);
+                        adapter.notifyDataSetChanged();
+                    }
+                });
 
             }
         };
