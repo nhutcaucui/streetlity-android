@@ -138,8 +138,8 @@ public interface MapAPI {
                                     @Query("case") int cases);
 
     @Multipart
-    @POST()
-    Call<ResponseBody> upload(@Url String url,@Part List<MultipartBody.Part> body);
+    @POST("/")
+    Call<ResponseBody> upload(@Query("f") String[] name,@Part List<MultipartBody.Part> body);
 
     @GET("/")
     Call<ResponseBody> download(@Query("f") String name);

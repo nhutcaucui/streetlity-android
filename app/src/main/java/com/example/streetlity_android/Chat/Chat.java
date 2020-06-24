@@ -16,6 +16,7 @@ import com.google.android.material.textfield.TextInputEditText;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.os.Handler;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -34,6 +35,8 @@ public class Chat extends AppCompatActivity {
     double lat;
     double lon;
 
+    ChatObjectAdapter adapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,16 +48,9 @@ public class Chat extends AppCompatActivity {
         getSupportActionBar().setTitle("");
 
         ListView lv = findViewById(R.id.lv);
-        ChatObjectAdapter adapter = new ChatObjectAdapter(this, R.layout.lv_item_chat, items);
+        adapter = new ChatObjectAdapter(this, R.layout.lv_item_chat, items);
         lv.setAdapter(adapter);
 
-        ImageButton btnChat = findViewById(R.id.btn_send);
-        btnChat.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
         String room = "";
 
         SharedPreferences s = getSharedPreferences("Room", MODE_PRIVATE);
@@ -86,6 +82,7 @@ public class Chat extends AppCompatActivity {
             @Override
             public void onReceived(MaintenanceOrder sender, Information info) {
                 infomation = info;
+                Log.e("", "onReceived:  this is america" );
                 Log.e("", "onReceived: " + info.toString() );
             }
         };
@@ -100,8 +97,14 @@ public class Chat extends AppCompatActivity {
                 Log.e("", "onReceived:  this is america" );
                 ChatObject object = new ChatObject(infomation.Username, message, new Date());
                 items.add(object);
-                adapter.notifyDataSetChanged();
+                Chat.this.runOnUiThread(new Runnable() {
 
+                    @Override
+                    public void run() {
+                        adapter.notifyDataSetChanged();
+                        lv.setSelection(adapter.getCount() - 1);
+                    }
+                });
             }
         };
         socket.LocationListener = new LocationListener<MaintenanceOrder>() {
@@ -148,4 +151,8 @@ public class Chat extends AppCompatActivity {
 
         return true;
     }
+
+//    private  void test(){
+//        adapter.notifyDataSetChanged();
+//    }
 }

@@ -34,17 +34,22 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import static android.view.View.GONE;
 
-public class HomeFragment extends Fragment{
+public class HomeFragment extends Fragment implements LocationListener{
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+
+    private static final long MIN_TIME = 400;
+    private static final float MIN_DISTANCE=1000;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
+
+    LocationManager locationManager;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -137,6 +142,46 @@ public class HomeFragment extends Fragment{
             }
         });
 
+        locationManager = (LocationManager)
+                getActivity().getSystemService(Context.LOCATION_SERVICE);
+        boolean gps_enabled = false;
+        boolean network_enabled = false;
+
+        try {
+            gps_enabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        } catch(Exception ex) {}
+
+        try {
+            network_enabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+        } catch(Exception ex) {}
+
+        if(!gps_enabled && !network_enabled) {
+            // notify user
+            new AlertDialog.Builder(getActivity())
+                    .setMessage(R.string.location_services_off)
+                    .setPositiveButton(R.string.open_settings, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+                            startActivityForResult(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS),1);
+                            paramDialogInterface.dismiss();
+                        }
+                    })
+                    .setCancelable(false)
+                    .show();
+        }else {
+            if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
+                    ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                Location location = locationManager.getLastKnownLocation(locationManager
+                        .NETWORK_PROVIDER);
+                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME, MIN_DISTANCE, this);
+                if (location == null) {
+                    ((MainNavigationHolder) getActivity()).getCantFind().setVisibility(View.VISIBLE);
+                    Log.e("", "onMapReady: MULL");
+                }
+            }
+
+        }
+
         return rootView;
     }
 
@@ -177,5 +222,70 @@ public class HomeFragment extends Fragment{
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    public void onLocationChanged(Location location) {
+        if(getActivity()!= null) {
+            ((MainNavigationHolder) getActivity()).getCantFind().setVisibility(View.GONE);
+        }
+        locationManager.removeUpdates(this);
+    }
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == 1) {
+            boolean gps_enabled = false;
+            boolean network_enabled = false;
+
+            try {
+                gps_enabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+            } catch(Exception ex) {}
+
+            try {
+                network_enabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+            } catch(Exception ex) {}
+
+            if(!gps_enabled && !network_enabled) {
+                // notify user
+                AlertDialog al =new AlertDialog.Builder(getActivity())
+                        .setMessage(R.string.location_services_off)
+                        .setPositiveButton(R.string.open_settings, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+                                getActivity().startActivityForResult(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS),1);
+                                paramDialogInterface.dismiss();
+                            }
+                        })
+                        .setCancelable(false)
+                        .show();
+            }
+            else {
+
+                if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
+                        ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                    Location location = locationManager.getLastKnownLocation(locationManager
+                            .NETWORK_PROVIDER);
+                    if (location == null) {
+
+                        ((MainNavigationHolder) getActivity()).getCantFind().setVisibility(View.VISIBLE);
+                        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME, MIN_DISTANCE, this);
+                        Log.e("", "onMapReady: MULL");
+                    }
+                }
+
+            }
+        }
     }
 }

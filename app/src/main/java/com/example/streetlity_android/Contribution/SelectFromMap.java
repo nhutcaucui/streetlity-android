@@ -1,8 +1,10 @@
 package com.example.streetlity_android.Contribution;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.content.ClipData;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -23,6 +25,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,8 +39,10 @@ import com.example.streetlity_android.MapsActivity;
 import com.example.streetlity_android.MyApplication;
 import com.example.streetlity_android.PhotoFullPopupWindow;
 import com.example.streetlity_android.R;
+import com.example.streetlity_android.User.Common.OrderInfo;
 import com.example.streetlity_android.Util.ImageFilePath;
 import com.example.streetlity_android.Util.RandomString;
+import com.example.streetlity_android.WorkaroundMapFragment;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -76,6 +81,7 @@ public class SelectFromMap extends AppCompatActivity implements OnMapReadyCallba
     ArrayList<String> fileName = new ArrayList<>();
     String random = "";
     boolean hasImg = false;
+    int size =0;
 
     private GoogleMap mMap;
 
@@ -89,8 +95,7 @@ public class SelectFromMap extends AppCompatActivity implements OnMapReadyCallba
     String mNote, mAddress;
     String[] mImages;
 
-    Map<String,String> paramMap = new HashMap<>();
-    Map<String,MultipartBody.Part> bodyMap = new HashMap<>();
+    ArrayList<String> paramMap = new ArrayList<>();
     List<MultipartBody.Part> body = new ArrayList<>();
 
     @Override
@@ -169,7 +174,7 @@ public class SelectFromMap extends AppCompatActivity implements OnMapReadyCallba
 
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+        SupportMapFragment mapFragment = (WorkaroundMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
@@ -202,6 +207,19 @@ public class SelectFromMap extends AppCompatActivity implements OnMapReadyCallba
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         //ArrayList<MarkerOptions> markList = new ArrayList<MarkerOptions>();
+
+        mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+        mMap.getUiSettings().setZoomControlsEnabled(true);
+
+        final ScrollView mScrollView = findViewById(R.id.scrollMap); //parent scrollview in xml, give your scrollview id value
+        ((WorkaroundMapFragment) getSupportFragmentManager().findFragmentById(R.id.map))
+                .setListener(new WorkaroundMapFragment.OnTouchListener() {
+                    @Override
+                    public void onTouch()
+                    {
+                        mScrollView.requestDisallowInterceptTouchEvent(true);
+                    }
+                });
 
         LocationManager locationManager = (LocationManager)
                 getSystemService(Context.LOCATION_SERVICE);
@@ -261,7 +279,12 @@ public class SelectFromMap extends AppCompatActivity implements OnMapReadyCallba
 
         if(hasImg) {
 
-            Call<ResponseBody> call2 = tour2.upload(((MyApplication) this.getApplication()).getDriverURL() + "?f=" + paramMap.get("f"), body);
+            String[] f = new String[paramMap.size()];
+            for(int i=0;i<paramMap.size();i++){
+                f[i] = paramMap.get(i);
+            }
+
+            Call<ResponseBody> call2 = tour2.upload(f, body);
             call2.enqueue(new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -275,7 +298,7 @@ public class SelectFromMap extends AppCompatActivity implements OnMapReadyCallba
                                 JSONObject jsonObject1 = jsonObject.getJSONObject("Paths");
                                 mImages = new String[fileName.size()];
                                 for (int i = 0; i < fileName.size(); i++) {
-                                    JSONObject jsonObject2 = jsonObject1.getJSONObject(fileName.get(i)+ i);
+                                    JSONObject jsonObject2 = jsonObject1.getJSONObject(fileName.get(i));
                                     mImages[i] = jsonObject2.getString("Message");
                                 }
 
@@ -429,7 +452,14 @@ public class SelectFromMap extends AppCompatActivity implements OnMapReadyCallba
 
         String token = ((MyApplication) this.getApplication()).getToken();
         if(hasImg) {
-            Call<ResponseBody> call2 = tour2.upload(((MyApplication) this.getApplication()).getDriverURL() + "?f=" + paramMap.get("f"), body);
+
+            String[] f = new String[paramMap.size()];
+            for(int i=0;i<paramMap.size();i++){
+                f[i] = paramMap.get(i);
+            }
+
+
+            Call<ResponseBody> call2 = tour2.upload(f, body);
 
             call2.enqueue(new Callback<ResponseBody>() {
                 @Override
@@ -632,8 +662,8 @@ public class SelectFromMap extends AppCompatActivity implements OnMapReadyCallba
 //                    paramMap.clear();
 //                    bodyMap.clear();
 //                    fileName.clear();
-                    EditText edtSelectImg = findViewById(R.id.edt_select_img);
-                    edtSelectImg.setHint(R.string.select_img);
+                    //EditText edtSelectImg = findViewById(R.id.edt_select_img);
+                    //edtSelectImg.setHint(R.string.select_img);
                 }else {
                     if (data.getData() != null) {
 //                        arrImg.clear();
@@ -662,13 +692,13 @@ public class SelectFromMap extends AppCompatActivity implements OnMapReadyCallba
 
                         RequestBody fbody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
                         MultipartBody.Part mBody =
-                                MultipartBody.Part.createFormData(random+arrImg.size(), file.getName(), fbody);
+                                MultipartBody.Part.createFormData(random+size, file.getName(), fbody);
 
                         body.add(mBody);
 
-                        fileName.add(random+arrImg.size());
+                        fileName.add(random+size);
 
-                        paramMap.put("f", random+arrImg.size());
+                        paramMap.add(random+size);
 
                         Bitmap bmp = BitmapFactory.decodeFile(file.getAbsolutePath());
                         ImageView img = new ImageView(SelectFromMap.this);
@@ -682,14 +712,56 @@ public class SelectFromMap extends AppCompatActivity implements OnMapReadyCallba
                         img.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-
+                                Bitmap bitmap = ((BitmapDrawable)img.getDrawable()).getBitmap();
+                                new PhotoFullPopupWindow(SelectFromMap.this, R.layout.popup_photo_full, img, "", bitmap);
                             }
                         });
-                        img.setTag(arrImg.size());
+                        img.setOnLongClickListener(new View.OnLongClickListener() {
+                            @Override
+                            public boolean onLongClick(View v) {
+                                AlertDialog alertDialog = new AlertDialog.Builder(SelectFromMap.this).create();
+                                alertDialog.setTitle(getString(R.string.remove)+"?");
+                                alertDialog.setMessage(getString(R.string.remove_pic));
+                                alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, getString(android.R.string.yes),
+                                        new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                int idToDel = ((LinearLayout) img.getParent()).indexOfChild(img);
+                                                arrImg.remove(idToDel);
+                                                fileName.remove(idToDel);
+                                                paramMap.remove(idToDel);
+                                                body.remove(idToDel);
+                                                if(arrImg.size()==0){
+                                                    hasImg=false;
+                                                    EditText edtSelectImg = findViewById(R.id.edt_select_img);
+                                                    edtSelectImg.setHint(R.string.select_img);
+                                                }else{
+                                                    String temp = getString(R.string.selected);
+                                                    temp = temp + " "+arrImg.size()+" " + getString(R.string.images);
+                                                    edtSelectImg.setHint(temp);
+                                                }
+
+                                                imgContainer.removeViewAt(idToDel);
+
+                                                dialog.dismiss();
+                                            }
+                                        });
+
+                                alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, getString(android.R.string.no),
+                                        new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                dialog.dismiss();
+                                            }
+                                        });
+                                alertDialog.show();
+                                return false;
+                            }
+                        });
+                        img.setTag(size);
                         imgContainer.addView(img);
 
                         arrImg.add(file);
 
+                        size++;
                         String temp = getString(R.string.selected);
                         temp = temp + " "+arrImg.size()+" " + getString(R.string.images);
                         edtSelectImg.setHint(temp);
@@ -710,6 +782,8 @@ public class SelectFromMap extends AppCompatActivity implements OnMapReadyCallba
                                 random = generatedString;
                             }
 
+                            EditText edtSelectImg = findViewById(R.id.edt_select_img);
+
                             for (int i = 0; i < mClipData.getItemCount(); i++) {
 
                                 ClipData.Item item = mClipData.getItemAt(i);
@@ -717,23 +791,16 @@ public class SelectFromMap extends AppCompatActivity implements OnMapReadyCallba
                                 String path = ImageFilePath.getPath(SelectFromMap.this, uri);
 
                                 File file = new File(path);
-                                String paramValue;
-                                if(paramMap.containsKey("f")){
-                                    paramValue = paramMap.get("f");
-                                    paramValue += "&" + "f" + "=" + (random+arrImg.size());
-                                }else{
-                                    paramValue = random+arrImg.size();
-                                }
 
-                                paramMap.put("f", paramValue);
+                                paramMap.add(random+size);
 
                                 RequestBody fbody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
                                 MultipartBody.Part mBody =
-                                        MultipartBody.Part.createFormData(random+arrImg.size(), file.getName(), fbody);
+                                        MultipartBody.Part.createFormData(random+size, file.getName(), fbody);
 
                                 body.add(mBody);
 
-                                fileName.add(random+arrImg.size());
+                                fileName.add(random+size);
 
                                 Bitmap bmp = BitmapFactory.decodeFile(file.getAbsolutePath());
                                 ImageView img = new ImageView(SelectFromMap.this);
@@ -747,18 +814,58 @@ public class SelectFromMap extends AppCompatActivity implements OnMapReadyCallba
                                 img.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
-
+                                        Bitmap bitmap = ((BitmapDrawable)img.getDrawable()).getBitmap();
+                                        new PhotoFullPopupWindow(SelectFromMap.this, R.layout.popup_photo_full, img, "", bitmap);
                                     }
                                 });
-                                img.setTag(arrImg.size());
+                                img.setOnLongClickListener(new View.OnLongClickListener() {
+                                    @Override
+                                    public boolean onLongClick(View v) {
+                                        AlertDialog alertDialog = new AlertDialog.Builder(SelectFromMap.this).create();
+                                        alertDialog.setTitle(getString(R.string.remove)+"?");
+                                        alertDialog.setMessage(getString(R.string.remove_pic));
+                                        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, getString(android.R.string.yes),
+                                                new DialogInterface.OnClickListener() {
+                                                    public void onClick(DialogInterface dialog, int which) {
+                                                        int idToDel = ((LinearLayout) img.getParent()).indexOfChild(img);
+                                                        arrImg.remove(idToDel);
+                                                        fileName.remove(idToDel);
+                                                        paramMap.remove(idToDel);
+                                                        body.remove(idToDel);
+                                                        if(arrImg.size()==0){
+                                                            hasImg=false;
+                                                            EditText edtSelectImg = findViewById(R.id.edt_select_img);
+                                                            edtSelectImg.setHint(R.string.select_img);
+                                                        }else{
+                                                            String temp = getString(R.string.selected);
+                                                            temp = temp + " "+arrImg.size()+" " + getString(R.string.images);
+                                                            edtSelectImg.setHint(temp);
+                                                        }
+                                                        imgContainer.removeViewAt(idToDel);
+
+                                                        dialog.dismiss();
+                                                    }
+                                                });
+
+                                        alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, getString(android.R.string.no),
+                                                new DialogInterface.OnClickListener() {
+                                                    public void onClick(DialogInterface dialog, int which) {
+                                                        dialog.dismiss();
+                                                    }
+                                                });
+                                        alertDialog.show();
+                                        return false;
+                                    }
+                                });
+                                img.setTag(size);
                                 imgContainer.addView(img);
 
                                 arrImg.add(file);
+                                size++;
                             }
 
                             Log.e("", "onActivityResult: " + arrImg.size());
 
-                            EditText edtSelectImg = findViewById(R.id.edt_select_img);
                             String temp = getString(R.string.selected);
                             temp = temp + " " + arrImg.size() + " " + getString(R.string.images);
                             edtSelectImg.setHint(temp);
