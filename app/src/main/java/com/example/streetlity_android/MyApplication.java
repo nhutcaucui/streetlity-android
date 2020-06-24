@@ -1,6 +1,7 @@
 package com.example.streetlity_android;
 
 import android.app.Application;
+import android.graphics.Bitmap;
 
 //eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1OTQ0NDUzMzIsImlkIjoibXJYWVpaemFidiJ9.0Hd4SpIELulSuTxGAeuCPl_A33X-KoPUpRmgK4dTphk
 
@@ -36,6 +37,8 @@ public class MyApplication extends Application { //35.240.232.218 auth server
     private  String address="";
 
     private String phone="";
+
+    private Bitmap image;
 
     public String getUserId() {
         return userId;
@@ -131,5 +134,13 @@ public class MyApplication extends Application { //35.240.232.218 auth server
 
     public String getMaintenanceURL() {
         return maintenanceURL;
+    }
+
+    public Bitmap getImage() {
+        return image;
+    }
+
+    public void setImage(Bitmap image) {
+        this.image = image;
     }
 }

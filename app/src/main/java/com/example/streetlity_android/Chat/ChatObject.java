@@ -1,11 +1,14 @@
 package com.example.streetlity_android.Chat;
 
+import android.graphics.Bitmap;
+
 import java.util.Date;
 
 public class ChatObject {
     private String name;
     private String body;
     private Date time;
+    private Bitmap image;
 
     public ChatObject(String name, String body, Date time){
         this.name = name;
@@ -35,5 +38,13 @@ public class ChatObject {
 
     public Date getTime() {
         return time;
+    }
+
+    public void setImage(Bitmap image) {
+        this.image = image;
+    }
+
+    public Bitmap getImage() {
+        return image;
     }
 }

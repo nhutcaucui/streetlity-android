@@ -40,6 +40,7 @@ import com.example.streetlity_android.MapAPI;
 import com.example.streetlity_android.MyApplication;
 import com.example.streetlity_android.R;
 import com.example.streetlity_android.Util.ImageFilePath;
+import com.example.streetlity_android.Util.RandomString;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -834,11 +835,7 @@ public class AddAnATM extends AppCompatActivity implements OnMapReadyCallback {
 
                         Random random = new Random();
 
-                        String generatedString = random.ints(leftLimit, rightLimit + 1)
-                                .filter(i -> (i <= 57 || i >= 65) && (i <= 90 || i >= 97))
-                                .limit(targetStringLength)
-                                .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
-                                .toString();
+                        String generatedString = RandomString.getAlphaNumericString(10);
 
                         RequestBody fbody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
                         MultipartBody.Part mBody =
@@ -861,11 +858,7 @@ public class AddAnATM extends AppCompatActivity implements OnMapReadyCallback {
 
                             body.clear();
 
-                            String generatedString = random.ints(leftLimit, rightLimit + 1)
-                                    .filter(i -> (i <= 57 || i >= 65) && (i <= 90 || i >= 97))
-                                    .limit(targetStringLength)
-                                    .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
-                                    .toString();
+                            String generatedString = RandomString.getAlphaNumericString(10);
                             for (int i = 0; i < mClipData.getItemCount(); i++) {
 
                                 ClipData.Item item = mClipData.getItemAt(i);
