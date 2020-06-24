@@ -53,6 +53,14 @@ public class MaintenanceOrder {
      * Listener for event Complete
      */
     public Listener<MaintenanceOrder> CompleteListener;
+    /**
+     * Listener for event Typing Message. Trigger when an user start to type
+     */
+    public TypeMessageListener<MaintenanceOrder> TypingListener;
+    /**
+     * Listener for event Typed Message. Trigger when an user is complete to type
+     */
+    public TypeMessageListener<MaintenanceOrder> TypedListener;
 
     private Emitter.Listener onChat = new Emitter.Listener() {
         @Override
@@ -139,7 +147,32 @@ public class MaintenanceOrder {
     private Emitter.Listener onJoined = new Emitter.Listener() {
         @Override
         public void call(Object... args) {
-            JoinedListener.call(self);
+            Log.d(Tag, "onJoined: joined");
+            if (JoinedListener != null) {
+                JoinedListener.call(self);
+            }
+        }
+    };
+
+    private Emitter.Listener onTypingChat = new Emitter.Listener() {
+        @Override
+        public void call(Object... args) {
+            String typingUser = (String)args[0];
+            Log.d(Tag, "onTypingChat: " + typingUser);
+            if (TypingListener != null) {
+                TypingListener.trigger(self, typingUser);
+            }
+        }
+    };
+
+    private Emitter.Listener onTypedChat = new Emitter.Listener() {
+        @Override
+        public void call(Object... args) {
+            String typedUser = (String)args[0];
+            Log.d(Tag, "onTypedChat: " + typedUser);
+            if (TypedListener != null) {
+                TypedListener.trigger(self, typedUser);
+            }
         }
     };
 
@@ -151,7 +184,6 @@ public class MaintenanceOrder {
      * @param room
      */
     public MaintenanceOrder(String room) {
-
         this.room = room;
         Orders.put(this.room, this);
         self = this;
@@ -164,14 +196,6 @@ public class MaintenanceOrder {
             Manager manager = new Manager(new URI(builder.build().toString()));
             mSocket = manager.socket("/" + room);
         }catch (URISyntaxException e) {}
-    }
-
-    /**
-     * Join to initial room and ready for working on it.
-     */
-    public void join() {
-        mSocket.connect();
-        mSocket.emit("join");
         mSocket.on("chat", onChat);
         mSocket.on("update-location", onUpdateLocation);
         mSocket.on("update-information", onUpdateInformation);
@@ -180,6 +204,15 @@ public class MaintenanceOrder {
         mSocket.on("decline", onDecline);
         mSocket.on("complete", onComplete);
         mSocket.on("joined", onJoined);
+        mSocket.on("typing-chat", onTypingChat);
+        mSocket.on("typed-chat", onTypedChat);
+    }
+
+    /**
+     * Join to initial room and ready for working on it.
+     */
+    public void join() {
+        mSocket.connect();
     }
 
     /**
