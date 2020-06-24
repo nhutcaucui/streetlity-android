@@ -12,6 +12,8 @@ import com.example.streetlity_android.RealtimeService.LocationListener;
 import com.example.streetlity_android.RealtimeService.MaintenanceOrder;
 import com.example.streetlity_android.RealtimeService.MessageListener;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -22,6 +24,7 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ListView;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -33,6 +36,8 @@ public class Chat extends AppCompatActivity {
 
     double lat;
     double lon;
+
+    String room = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +60,6 @@ public class Chat extends AppCompatActivity {
 
             }
         });
-        String room = "";
 
         SharedPreferences s = getSharedPreferences("Room", MODE_PRIVATE);
         if (getIntent().getExtras() != null) {
@@ -79,6 +83,7 @@ public class Chat extends AppCompatActivity {
         }
 
         Log.e("", "onCreate: " + room );
+
         MaintenanceOrder socket = new MaintenanceOrder("himom");
         socket.close();
         socket.join();
@@ -160,5 +165,24 @@ public class Chat extends AppCompatActivity {
         this.finish();
 
         return true;
+    }
+
+    public  void saveToSharedPref(){
+        Gson gson = new Gson();
+        String jsonText = gson.toJson(items);
+        getSharedPreferences("chatLog",MODE_PRIVATE).edit().putString(room, jsonText).apply();
+    }
+
+    public void getSharedPref(){
+        Gson gson = new Gson();
+        String jsonText = getSharedPreferences("chatLog",MODE_PRIVATE).getString(room, null);
+        if(jsonText!= null) {
+            Type type = new TypeToken<ArrayList<ChatObject>>() {}.getType();
+            items = gson.fromJson(jsonText, type);
+        }
+    }
+
+    public void clearSharedPrefs(){
+        getSharedPreferences("chatLog",MODE_PRIVATE).edit().clear().apply();
     }
 }
