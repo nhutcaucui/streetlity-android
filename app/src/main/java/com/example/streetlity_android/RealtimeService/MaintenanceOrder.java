@@ -1,9 +1,9 @@
 package com.example.streetlity_android.RealtimeService;
 
 import android.location.Location;
+import android.net.Uri;
 import android.util.Log;
 
-import com.example.streetlity_android.MyApplication;
 import com.github.nkzawa.emitter.Emitter;
 import com.github.nkzawa.socketio.client.IO;
 import com.github.nkzawa.socketio.client.Socket;
@@ -15,7 +15,7 @@ import java.net.URISyntaxException;
 import java.util.HashMap;
 
 public class MaintenanceOrder {
-    public final String Endpoint = MyApplication.getInstance().getMaintenanceURL();
+    public final String Endpoint = "35.240.207.83:6182";
     public final String Tag = "[MaintenanceOrder]";
     public static HashMap<String, MaintenanceOrder> Orders = new HashMap<String, MaintenanceOrder>();
 
@@ -62,12 +62,12 @@ public class MaintenanceOrder {
             updateLocation(location);
         }
     };
-    
+
     /**
      * Listener for event Information
      */
     public InformationListener<MaintenanceOrder> InformationListener;
-    private Emitter.Listener onInformation = new Emitter.Listener() {
+    private Emitter.Listener onUpdateInformation = new Emitter.Listener() {
         @Override
         public void call(Object... args) {
             JSONObject data = (JSONObject) args[0];
@@ -123,11 +123,7 @@ public class MaintenanceOrder {
     };
 
     private Socket mSocket;
-    {
-        try {
-            mSocket = IO.socket(Endpoint);
-        }catch (URISyntaxException e) {}
-    }
+
 
     private MaintenanceOrder self;
 
@@ -136,23 +132,40 @@ public class MaintenanceOrder {
      * @param room
      */
     public MaintenanceOrder(String room) {
+
         this.room = room;
         Orders.put(this.room, this);
         self = this;
+
+        try {
+            Uri.Builder builder = new Uri.Builder();
+            builder.scheme("http")
+                    .authority(Endpoint)
+                    .appendPath("socket.io")
+                    .appendPath(room);
+            mSocket = IO.socket(builder.build().toString());
+        }catch (URISyntaxException e) {}
     }
 
-    public void create() {
+    /**
+     * Join to initial room and ready for working on it.
+     */
+    public void join() {
         mSocket.connect();
         mSocket.emit("join");
         mSocket.on("chat", onChat);
         mSocket.on("update-location", onUpdateLocation);
-        mSocket.on("information", onInformation);
-        mSocket.on("decline", onDecline);
-        mSocket.on("complete", onComplete);
+        mSocket.on("update-information", onUpdateInformation);
         mSocket.on("pull-information", onPullInformation);
         mSocket.on("pull-location", onPullLocation);
+        mSocket.on("decline", onDecline);
+        mSocket.on("complete", onComplete);
     }
 
+    /**
+     * Send a specified message to others
+     * @param message
+     */
     public void sendMessage(String message) {
         mSocket.emit("chat", message);
     }
@@ -179,7 +192,7 @@ public class MaintenanceOrder {
      * Pull information from others
      */
     public void pullInformation() {
-
+        mSocket.emit("pull-information");
     }
 
     /**
@@ -193,14 +206,6 @@ public class MaintenanceOrder {
     }
 
     /**
-     * Pull new location from other
-     * @param location
-     */
-    public void pullLocation(Location location) {
-        mSocket.emit("pull-location");
-    }
-
-    /**
      * Send the current location to others by specified latitude and longitude
      * @param lat
      * @param lon
@@ -210,6 +215,14 @@ public class MaintenanceOrder {
         location.setLatitude(lat);
         location.setLongitude(lon);
         mSocket.emit("update-location", lat, lon);
+    }
+
+    /**
+     * Pull new location from other
+     * @param location
+     */
+    public void pullLocation(Location location) {
+        mSocket.emit("pull-location");
     }
 
     /**

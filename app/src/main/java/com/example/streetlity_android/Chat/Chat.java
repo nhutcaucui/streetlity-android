@@ -11,8 +11,6 @@ import com.example.streetlity_android.RealtimeService.Listener;
 import com.example.streetlity_android.RealtimeService.LocationListener;
 import com.example.streetlity_android.RealtimeService.MaintenanceOrder;
 import com.example.streetlity_android.RealtimeService.MessageListener;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -21,7 +19,6 @@ import androidx.appcompat.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
 
@@ -77,7 +74,7 @@ public class Chat extends AppCompatActivity {
 
         Log.e("", "onCreate: " + room );
         MaintenanceOrder socket = new MaintenanceOrder(room);
-        socket.create();
+        socket.join();
         socket.InformationListener = new InformationListener<MaintenanceOrder>() {
             @Override
             public void onReceived(MaintenanceOrder sender, Information info) {
