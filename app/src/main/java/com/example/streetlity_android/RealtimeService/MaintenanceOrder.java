@@ -6,11 +6,13 @@ import android.util.Log;
 
 import com.github.nkzawa.emitter.Emitter;
 import com.github.nkzawa.socketio.client.IO;
+import com.github.nkzawa.socketio.client.Manager;
 import com.github.nkzawa.socketio.client.Socket;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
 
@@ -140,10 +142,10 @@ public class MaintenanceOrder {
         try {
             Uri.Builder builder = new Uri.Builder();
             builder.scheme("http")
-                    .authority(Endpoint)
-                    .appendPath("socket.io")
-                    .appendPath(room);
-            mSocket = IO.socket(builder.build().toString());
+                    .encodedAuthority(Endpoint)
+                    .appendPath("socket.io");
+            Manager manager = new Manager(new URI(builder.build().toString()));
+            mSocket = manager.socket("/" + room);
         }catch (URISyntaxException e) {}
     }
 
