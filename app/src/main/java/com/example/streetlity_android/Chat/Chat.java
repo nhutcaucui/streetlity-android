@@ -16,7 +16,6 @@ import com.google.android.material.textfield.TextInputEditText;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-import android.os.Handler;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -35,8 +34,6 @@ public class Chat extends AppCompatActivity {
     double lat;
     double lon;
 
-    ChatObjectAdapter adapter;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,9 +45,16 @@ public class Chat extends AppCompatActivity {
         getSupportActionBar().setTitle("");
 
         ListView lv = findViewById(R.id.lv);
-        adapter = new ChatObjectAdapter(this, R.layout.lv_item_chat, items);
+        ChatObjectAdapter adapter = new ChatObjectAdapter(this, R.layout.lv_item_chat, items);
         lv.setAdapter(adapter);
 
+        ImageButton btnChat = findViewById(R.id.btn_send);
+        btnChat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
         String room = "";
 
         SharedPreferences s = getSharedPreferences("Room", MODE_PRIVATE);
@@ -81,9 +85,14 @@ public class Chat extends AppCompatActivity {
         socket.InformationListener = new InformationListener<MaintenanceOrder>() {
             @Override
             public void onReceived(MaintenanceOrder sender, Information info) {
-                infomation = info;
-                Log.e("", "onReceived:  this is america" );
-                Log.e("", "onReceived: " + info.toString() );
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        infomation = info;
+                        Log.e("", "onReceived: " + info.toString() );
+                    }
+                });
+
             }
         };
         Information myInfo = new Information(MyApplication.getInstance().getUsername(), phone);
@@ -94,17 +103,16 @@ public class Chat extends AppCompatActivity {
         socket.MessageListener = new MessageListener<MaintenanceOrder>() {
             @Override
             public void onReceived(MaintenanceOrder sender, String message) {
-                Log.e("", "onReceived:  this is america" );
-                ChatObject object = new ChatObject(infomation.Username, message, new Date());
-                items.add(object);
-                Chat.this.runOnUiThread(new Runnable() {
-
+                runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        Log.e("", "onReceived:  this is america" );
+                        ChatObject object = new ChatObject("", message, new Date());
+                        items.add(object);
                         adapter.notifyDataSetChanged();
-                        lv.setSelection(adapter.getCount() - 1);
                     }
                 });
+
             }
         };
         socket.LocationListener = new LocationListener<MaintenanceOrder>() {
@@ -114,13 +122,14 @@ public class Chat extends AppCompatActivity {
                 lon = lon;
             }
         };
-        socket.Decline = new Listener<MaintenanceOrder>() {
+
+        socket.DeclineListener = new Listener<MaintenanceOrder>() {
             @Override
             public void call(MaintenanceOrder sender) {
 
             }
         };
-        socket.Complete = new Listener<MaintenanceOrder>() {
+        socket.CompleteListener = new Listener<MaintenanceOrder>() {
             @Override
             public void call(MaintenanceOrder sender) {
                 Log.e("", "call: completed" );
@@ -151,8 +160,4 @@ public class Chat extends AppCompatActivity {
 
         return true;
     }
-
-//    private  void test(){
-//        adapter.notifyDataSetChanged();
-//    }
 }
