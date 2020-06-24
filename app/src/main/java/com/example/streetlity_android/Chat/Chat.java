@@ -110,6 +110,7 @@ public class Chat extends AppCompatActivity {
                         ChatObject object = new ChatObject("", message, new Date());
                         items.add(object);
                         adapter.notifyDataSetChanged();
+                        lv.setSelection(adapter.getCount()-1);
                     }
                 });
 
