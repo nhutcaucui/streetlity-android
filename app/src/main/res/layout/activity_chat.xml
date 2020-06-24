@@ -66,7 +66,35 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@id/layout_send"
-        android:layout_below="@id/appbarlayout" />
+        android:layout_below="@id/appbarlayout" >
+
+    </ListView>
+
+    <LinearLayout
+        android:id="@+id/layout_is_typing"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/layout_send"
+        android:background="#fff"
+        android:orientation="horizontal"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/tv_chat_username"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="15dp"
+            android:textColor="@color/black"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/textView32"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:text="@string/is_typing" />
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/layout_send"
