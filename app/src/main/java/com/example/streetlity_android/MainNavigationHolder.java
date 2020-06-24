@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 
+import com.example.streetlity_android.Chat.Chat;
 import com.example.streetlity_android.Contribution.ContributeToService;
 import com.example.streetlity_android.Firebase.StreetlityFirebaseMessagingService;
 import com.example.streetlity_android.MainFragment.ATMFragment;
@@ -88,6 +89,14 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
         if(getIntent().getIntExtra("isRoot",    0) == 1){
             moveTaskToBack(true);
         }
+
+        FloatingActionButton fab = findViewById(R.id.chat_btn);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainNavigationHolder.this, Chat.class));
+            }
+        });
 
         cantFind = findViewById(R.id.layout_cant_find_loca);
 

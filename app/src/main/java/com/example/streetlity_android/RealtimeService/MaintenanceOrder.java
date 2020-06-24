@@ -72,8 +72,9 @@ public class MaintenanceOrder {
     private Emitter.Listener onUpdateInformation = new Emitter.Listener() {
         @Override
         public void call(Object... args) {
-            JSONObject data = (JSONObject) args[0];
+
             try {
+                JSONObject data = new JSONObject(args[0].toString());
                 String username = data.getString("username");
                 String phone = data.getString("phone");
 
@@ -187,7 +188,7 @@ public class MaintenanceOrder {
             Log.e("[MaintenanceOrder]","Cannot put new information " + e.getMessage());
         }
 
-        mSocket.emit("information", json.toString());
+        mSocket.emit("update-information", json.toString());
     }
 
     /**

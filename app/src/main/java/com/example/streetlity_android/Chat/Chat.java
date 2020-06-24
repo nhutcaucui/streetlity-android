@@ -79,16 +79,21 @@ public class Chat extends AppCompatActivity {
         }
 
         Log.e("", "onCreate: " + room );
-        MaintenanceOrder socket = new MaintenanceOrder(room);
+        MaintenanceOrder socket = new MaintenanceOrder("himom");
+        socket.close();
         socket.join();
         socket.InformationListener = new InformationListener<MaintenanceOrder>() {
             @Override
             public void onReceived(MaintenanceOrder sender, Information info) {
                 infomation = info;
+                Log.e("", "onReceived: " + info.toString() );
             }
         };
         Information myInfo = new Information(MyApplication.getInstance().getUsername(), phone);
+
         socket.sendInformation(myInfo);
+        socket.pullInformation();
+
         socket.MessageListener = new MessageListener<MaintenanceOrder>() {
             @Override
             public void onReceived(MaintenanceOrder sender, String message) {
