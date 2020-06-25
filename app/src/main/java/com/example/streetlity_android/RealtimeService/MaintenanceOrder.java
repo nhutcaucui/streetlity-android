@@ -224,7 +224,21 @@ public class MaintenanceOrder {
         mSocket.emit("chat", message, now.toString());
     }
 
+    /**
+     * Send message to others to inform typing
+     * @param typing_user
+     */
+    public void sendTyping(String typing_user) {
+        mSocket.emit("typing-chat", typing_user);
+    }
 
+    /**
+     * Send message to others to inform typed
+     * @param typed_user
+     */
+    public void sendTyped(String typed_user) {
+        mSocket.emit("typed-chat", typed_user);
+    }
     /**
      * Send information to others
      * @param information
