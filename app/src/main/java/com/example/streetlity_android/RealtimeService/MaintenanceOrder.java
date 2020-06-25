@@ -227,6 +227,7 @@ public class MaintenanceOrder {
      */
     public void join() {
         if (mSocket.connected()) {
+            JoinedListener.call(self);
             Log.i(Tag, "join in " + room + ": already connected");
             return;
         }
@@ -287,6 +288,13 @@ public class MaintenanceOrder {
      */
     public void pullInformation() {
 //        mSocket.emit("pull-information");
+    }
+
+    /**
+     * Pull previous chat
+     */
+    public void pullChat() {
+        mSocket.emit("pull-chat");
     }
 
     /**

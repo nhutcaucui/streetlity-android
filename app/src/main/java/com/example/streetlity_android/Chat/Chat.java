@@ -95,8 +95,6 @@ public class Chat extends AppCompatActivity {
         Log.e("", "onCreate: " + room );
 
         MaintenanceOrder socket = MaintenanceOrder.Create("himom");
-        socket.close();
-
 
         socket.InformationListener = new InformationListener<MaintenanceOrder>() {
             @Override
@@ -160,6 +158,7 @@ public class Chat extends AppCompatActivity {
                     public void run() {
                         ConstraintLayout layoutLoading = findViewById(R.id.layout_loading_top);
                         layoutLoading.setVisibility(GONE);
+                        sender.pullChat();
                     }
                 });
             }
