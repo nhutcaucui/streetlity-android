@@ -118,13 +118,12 @@ public class Chat extends AppCompatActivity {
 
         socket.MessageListener = new MessageListener<MaintenanceOrder>() {
             @Override
-            public void onReceived(MaintenanceOrder sender, String message) {
+            public void onReceived(MaintenanceOrder sender, ChatObject message) {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         Log.e("", "onReceived:  this is america" );
-                        ChatObject object = new ChatObject("", message, new Date());
-                        items.add(object);
+                        items.add(message);
                         adapter.notifyDataSetChanged();
                         lv.setSelection(adapter.getCount()-1);
                     }
@@ -175,9 +174,10 @@ public class Chat extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(!edtMessage.getText().toString().equals("")) {
-                    socket.sendMessage(edtMessage.getText().toString());
+
                     Log.e("", "onClick: " + edtMessage.getText().toString() );
                     ChatObject object = new ChatObject(MyApplication.getInstance().getUsername(), edtMessage.getText().toString(), new Date());
+                    socket.sendMessage(object);
                     items.add(object);
                     adapter.notifyDataSetChanged();
                     lv.setSelection(adapter.getCount()-1);
