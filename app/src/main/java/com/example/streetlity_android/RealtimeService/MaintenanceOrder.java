@@ -4,6 +4,7 @@ import android.location.Location;
 import android.net.Uri;
 import android.util.Log;
 
+import com.example.streetlity_android.Chat.ChatObject;
 import com.github.nkzawa.emitter.Emitter;
 import com.github.nkzawa.socketio.client.Manager;
 import com.github.nkzawa.socketio.client.Socket;
@@ -13,6 +14,8 @@ import org.json.JSONObject;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -65,11 +68,20 @@ public class MaintenanceOrder {
     private Emitter.Listener onChat = new Emitter.Listener() {
         @Override
         public void call(Object... args) {
-            String message = (String)args[0];
-            Log.println(Log.INFO, Tag, "OnChat: " + message);
-            if (MessageListener != null) {
-                MessageListener.onReceived(self, message);
+            try{
+                JSONObject json = new JSONObject(args[0].toString());
+                String name = json.getString("name");
+                String body = json.getString("body");
+                String date = json.getString("date");
+                ChatObject message = new ChatObject(name, body, date);
+                Log.println(Log.INFO, Tag, "OnChat: " + message);
+                if (MessageListener != null) {
+                    MessageListener.onReceived(self, message);
+                }
+            } catch (JSONException e) {
+                Log.e(Tag, "onChat: " + e.getMessage());
             }
+
         }
     };
 
@@ -224,9 +236,16 @@ public class MaintenanceOrder {
      * Send a specified message to others
      * @param message
      */
-    public void sendMessage(String message) {
-        Date now = new Date();
-        mSocket.emit("chat", message, now.toString());
+    public void sendMessage(ChatObject message) {
+        JSONObject json = new JSONObject();
+        try {
+            json.put("name", message.getName());
+            json.put("body", message.getBody());
+            json.put("date", message.getTime());
+        } catch (JSONException e) {
+            Log.e(Tag,"Cannot put new message " + e.getMessage());
+        }
+        mSocket.emit("chat", json.toString());
     }
 
     /**
