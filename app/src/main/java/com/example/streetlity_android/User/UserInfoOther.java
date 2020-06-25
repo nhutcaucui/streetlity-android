@@ -13,6 +13,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -23,6 +24,7 @@ import com.example.streetlity_android.R;
 import com.example.streetlity_android.Util.ImageFilePath;
 import com.example.streetlity_android.Util.RandomString;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.textfield.TextInputEditText;
 
 import org.json.JSONObject;
 
@@ -57,17 +59,17 @@ public class UserInfoOther extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("");
 
-        EditText edtAddress = findViewById(R.id.edt_address);
-        EditText edtPhone = findViewById(R.id.edt_phone);
-        EditText tvUsername = findViewById(R.id.edt_username);
-        EditText tvEmail = findViewById(R.id.edt_email);
+        TextInputEditText edtAddress = findViewById(R.id.edt_address);
+        TextInputEditText edtPhone = findViewById(R.id.edt_phone);
+        TextInputEditText tvUsername = findViewById(R.id.edt_username);
+        TextInputEditText tvEmail = findViewById(R.id.edt_email);
 
         imgAvatar = findViewById(R.id.img_avatar);
 
         FloatingActionButton fabEdit = findViewById(R.id.fab_edit);
 
         fabEdit.hide();
-        getInfo();
+        getInfo(tvUsername, tvEmail, edtPhone, edtAddress);
     }
 
     public boolean onOptionsItemSelected(MenuItem item){
@@ -76,7 +78,8 @@ public class UserInfoOther extends AppCompatActivity {
         return true;
     }
 
-    public void getInfo(){
+    public void getInfo(TextInputEditText username, TextInputEditText mail, TextInputEditText phone,
+                        TextInputEditText address){
         Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getAuthURL())
                 .addConverterFactory(GsonConverterFactory.create()).build();
 
@@ -91,6 +94,11 @@ public class UserInfoOther extends AppCompatActivity {
                     try {
                         jsonObject = new JSONObject(response.body().string());
                         Log.e("", "onResponse: " + jsonObject.toString());
+                        JSONObject jsonObject1 = jsonObject.getJSONObject("Info");
+                        username.setText(jsonObject1.getString("Id"));
+                        mail.setText(jsonObject1.getString("Email"));
+                        phone.setText(jsonObject1.getString("Phone"));
+                        address.setText(jsonObject1.getString("Address"));
 
                     }catch (Exception e){
                     e.printStackTrace();
