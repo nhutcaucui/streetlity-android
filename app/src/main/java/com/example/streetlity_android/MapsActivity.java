@@ -710,6 +710,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                                 (float) jsonObject1.getDouble("Score"));
                                         review.setId(jsonObject1.getInt("Id"));
                                         reviewItems.add(review);
+                                        if(review.getUsername().equals(MyApplication.getInstance().getUsername())){
+                                            Button leaveReview = findViewById(R.id.btn_leave_comment);
+                                            leaveReview.setVisibility(View.GONE);
+                                        }
                                     }
                                     int number = 0;
                                     if (reviewItems.size() > 3) {
