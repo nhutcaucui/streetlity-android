@@ -1,11 +1,16 @@
 package com.example.streetlity_android.User;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.content.ClipData;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -33,14 +38,18 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.streetlity_android.MapFragment.MaintenanceObject;
 import com.example.streetlity_android.MyApplication;
+import com.example.streetlity_android.PhotoFullPopupWindow;
 import com.example.streetlity_android.R;
 import com.example.streetlity_android.Util.ImageFilePath;
+import com.example.streetlity_android.Util.RandomString;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -99,6 +108,8 @@ public class SignUp extends AppCompatActivity implements OnMapReadyCallback, Goo
     String mNote= "";
     String mAddress = "";
     String mImages[];
+    String random = "";
+    int size = 0;
 
     int exist=-1;
 
@@ -109,8 +120,7 @@ public class SignUp extends AppCompatActivity implements OnMapReadyCallback, Goo
     private ArrayList<Integer> layouts;
     private Button btnPrevious, btnNext;
 
-    Map<String,String> paramMap = new HashMap<>();
-    Map<String,File> bodyMap = new HashMap<>();
+    ArrayList<String> paramMap = new ArrayList<>();
 
     int step = 0;
     /**
@@ -1010,7 +1020,11 @@ public class SignUp extends AppCompatActivity implements OnMapReadyCallback, Goo
         String token = ((MyApplication) this.getApplication()).getToken();
 
         if(hasImg){
-            Call<ResponseBody> call2 = tour2.upload(((MyApplication) this.getApplication()).getDriverURL() + "?f=" + paramMap.get("f"), body);
+            String[] f = new String[paramMap.size()];
+            for(int i=0;i<paramMap.size();i++){
+                f[i] = paramMap.get(i);
+            }
+            Call<ResponseBody> call2 = tour2.upload(f, body);
             call2.enqueue(new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -1024,7 +1038,7 @@ public class SignUp extends AppCompatActivity implements OnMapReadyCallback, Goo
                                 JSONObject jsonObject1 = jsonObject.getJSONObject("Paths");
                                 mImages = new String[fileName.size()];
                                 for (int i = 0; i < fileName.size(); i++) {
-                                    JSONObject jsonObject2 = jsonObject1.getJSONObject(fileName.get(i)+ i);
+                                    JSONObject jsonObject2 = jsonObject1.getJSONObject(fileName.get(i));
                                     mImages[i] = jsonObject2.getString("Message");
                                 }
 
@@ -1194,28 +1208,26 @@ public class SignUp extends AppCompatActivity implements OnMapReadyCallback, Goo
 
 
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         try {
             if (requestCode == 1) {
-                fileName.clear();
-                int leftLimit = 48; // letter 'a'
-                int rightLimit = 122; // letter 'z'
-                int targetStringLength = 10;
+                LinearLayout imgContainer= findViewById(R.id.img_holder);
                 if(null == data) {
-                    arrImg.clear();
-                    paramMap.clear();
-                    bodyMap.clear();
-                    EditText edtSelectImg = findViewById(R.id.edt_select_img);
-                    edtSelectImg.setHint(R.string.select_img);
+//                    arrImg.clear();
+//                    paramMap.clear();
+//                    bodyMap.clear();
+//                    fileName.clear();
+                    //EditText edtSelectImg = findViewById(R.id.edt_select_img);
+                    //edtSelectImg.setHint(R.string.select_img);
                 }else {
                     if (data.getData() != null) {
-                        arrImg.clear();
-                        paramMap.clear();
-                        bodyMap.clear();
-                        body.clear();
-                        //Uri mImageUri = data.getData();
+//                        arrImg.clear();
+//                        paramMap.clear();
+//                        bodyMap.clear();
+//                        body.clear();
+//                        //Uri mImageUri = data.getData();
+//                        fileName.clear();
 
                         String path = ImageFilePath.getPath(SignUp.this, data.getData());
 
@@ -1223,50 +1235,111 @@ public class SignUp extends AppCompatActivity implements OnMapReadyCallback, Goo
 
 
 
-                        arrImg.add(file);
-
                         Log.e("", "onActivityResult: " + arrImg.size());
 
                         EditText edtSelectImg = findViewById(R.id.edt_select_img);
-                        String temp = getString(R.string.selected);
-                        temp = temp + " 1 " + getString(R.string.images);
-                        edtSelectImg.setHint(temp);
+
                         hasImg = true;
 
-                        Random random = new Random();
-
-                        String generatedString = random.ints(leftLimit, rightLimit + 1)
-                                .filter(i -> (i <= 57 || i >= 65) && (i <= 90 || i >= 97))
-                                .limit(targetStringLength)
-                                .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
-                                .toString();
+                        if(random.equals("")) {
+                            String generatedString = RandomString.getAlphaNumericString(10);
+                            random = generatedString;
+                        }
 
                         RequestBody fbody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
                         MultipartBody.Part mBody =
-                                MultipartBody.Part.createFormData(generatedString+0, file.getName(), fbody);
+                                MultipartBody.Part.createFormData(random+size, file.getName(), fbody);
 
                         body.add(mBody);
 
-                        fileName.add(generatedString);
+                        fileName.add(random+size);
 
-                        paramMap.put("f", generatedString+0);
+                        paramMap.add(random+size);
+
+                        Bitmap bmp = BitmapFactory.decodeFile(file.getAbsolutePath());
+                        ImageView img = new ImageView(SignUp.this);
+                        img.setImageBitmap(bmp);
+                        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                                300,
+                                300
+                        );
+                        lp.setMargins(5,0,5,0);
+                        img.setLayoutParams(lp);
+                        img.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Bitmap bitmap = ((BitmapDrawable)img.getDrawable()).getBitmap();
+                                new PhotoFullPopupWindow(SignUp.this, R.layout.popup_photo_full, img, "", bitmap);
+                            }
+                        });
+                        img.setOnLongClickListener(new View.OnLongClickListener() {
+                            @Override
+                            public boolean onLongClick(View v) {
+                                AlertDialog alertDialog = new AlertDialog.Builder(SignUp.this).create();
+                                alertDialog.setTitle(getString(R.string.remove)+"?");
+                                alertDialog.setMessage(getString(R.string.remove_pic));
+                                alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, getString(android.R.string.yes),
+                                        new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                int idToDel = ((LinearLayout) img.getParent()).indexOfChild(img);
+                                                arrImg.remove(idToDel);
+                                                fileName.remove(idToDel);
+                                                paramMap.remove(idToDel);
+                                                body.remove(idToDel);
+                                                if(arrImg.size()==0){
+                                                    hasImg=false;
+                                                    EditText edtSelectImg = findViewById(R.id.edt_select_img);
+                                                    edtSelectImg.setHint(R.string.select_img);
+                                                }else{
+                                                    String temp = getString(R.string.selected);
+                                                    temp = temp + " "+arrImg.size()+" " + getString(R.string.images);
+                                                    edtSelectImg.setHint(temp);
+                                                }
+
+                                                imgContainer.removeViewAt(idToDel);
+
+                                                dialog.dismiss();
+                                            }
+                                        });
+
+                                alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, getString(android.R.string.no),
+                                        new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                dialog.dismiss();
+                                            }
+                                        });
+                                alertDialog.show();
+                                return false;
+                            }
+                        });
+                        img.setTag(size);
+                        imgContainer.addView(img);
+
+                        arrImg.add(file);
+
+                        size++;
+                        String temp = getString(R.string.selected);
+                        temp = temp + " "+arrImg.size()+" " + getString(R.string.images);
+                        edtSelectImg.setHint(temp);
                         //bodyMap.put(generatedString+0, body);
                     } else {
                         if (data.getClipData() != null) {
-                            arrImg.clear();
-                            paramMap.clear();
-                            bodyMap.clear();
+//                            arrImg.clear();
+//                            paramMap.clear();
+//                            bodyMap.clear();
+//                            fileName.clear();
 
                             ClipData mClipData = data.getClipData();
-                            Random random = new Random();
 
-                            body.clear();
+                            //body.clear();
 
-                            String generatedString = random.ints(leftLimit, rightLimit + 1)
-                                    .filter(i -> (i <= 57 || i >= 65) && (i <= 90 || i >= 97))
-                                    .limit(targetStringLength)
-                                    .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
-                                    .toString();
+                            if(random.equals("")) {
+                                String generatedString = RandomString.getAlphaNumericString(10);
+                                random = generatedString;
+                            }
+
+                            EditText edtSelectImg = findViewById(R.id.edt_select_img);
+
                             for (int i = 0; i < mClipData.getItemCount(); i++) {
 
                                 ClipData.Item item = mClipData.getItemAt(i);
@@ -1274,30 +1347,81 @@ public class SignUp extends AppCompatActivity implements OnMapReadyCallback, Goo
                                 String path = ImageFilePath.getPath(SignUp.this, uri);
 
                                 File file = new File(path);
-                                String paramValue;
-                                if(paramMap.containsKey("f")){
-                                    paramValue = paramMap.get("f");
-                                    paramValue += "&" + "f" + "=" + (generatedString+i);
-                                }else{
-                                    paramValue = generatedString+i;
-                                }
 
-                                paramMap.put("f", paramValue);
+                                paramMap.add(random+size);
 
                                 RequestBody fbody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
                                 MultipartBody.Part mBody =
-                                        MultipartBody.Part.createFormData(generatedString+i, file.getName(), fbody);
+                                        MultipartBody.Part.createFormData(random+size, file.getName(), fbody);
 
                                 body.add(mBody);
 
-                                fileName.add(generatedString);
+                                fileName.add(random+size);
+
+                                Bitmap bmp = BitmapFactory.decodeFile(file.getAbsolutePath());
+                                ImageView img = new ImageView(SignUp.this);
+                                img.setImageBitmap(bmp);
+                                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                                        300,
+                                        300
+                                );
+                                lp.setMargins(5,0,5,0);
+                                img.setLayoutParams(lp);
+                                img.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        Bitmap bitmap = ((BitmapDrawable)img.getDrawable()).getBitmap();
+                                        new PhotoFullPopupWindow(SignUp.this, R.layout.popup_photo_full, img, "", bitmap);
+                                    }
+                                });
+                                img.setOnLongClickListener(new View.OnLongClickListener() {
+                                    @Override
+                                    public boolean onLongClick(View v) {
+                                        AlertDialog alertDialog = new AlertDialog.Builder(SignUp.this).create();
+                                        alertDialog.setTitle(getString(R.string.remove)+"?");
+                                        alertDialog.setMessage(getString(R.string.remove_pic));
+                                        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, getString(android.R.string.yes),
+                                                new DialogInterface.OnClickListener() {
+                                                    public void onClick(DialogInterface dialog, int which) {
+                                                        int idToDel = ((LinearLayout) img.getParent()).indexOfChild(img);
+                                                        arrImg.remove(idToDel);
+                                                        fileName.remove(idToDel);
+                                                        paramMap.remove(idToDel);
+                                                        body.remove(idToDel);
+                                                        if(arrImg.size()==0){
+                                                            hasImg=false;
+                                                            EditText edtSelectImg = findViewById(R.id.edt_select_img);
+                                                            edtSelectImg.setHint(R.string.select_img);
+                                                        }else{
+                                                            String temp = getString(R.string.selected);
+                                                            temp = temp + " "+arrImg.size()+" " + getString(R.string.images);
+                                                            edtSelectImg.setHint(temp);
+                                                        }
+                                                        imgContainer.removeViewAt(idToDel);
+
+                                                        dialog.dismiss();
+                                                    }
+                                                });
+
+                                        alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, getString(android.R.string.no),
+                                                new DialogInterface.OnClickListener() {
+                                                    public void onClick(DialogInterface dialog, int which) {
+                                                        dialog.dismiss();
+                                                    }
+                                                });
+                                        alertDialog.show();
+                                        return false;
+                                    }
+                                });
+                                img.setTag(size);
+                                imgContainer.addView(img);
 
                                 arrImg.add(file);
+                                size++;
                             }
 
                             Log.e("", "onActivityResult: " + arrImg.size());
 
-                            EditText edtSelectImg = findViewById(R.id.edt_select_img);
                             String temp = getString(R.string.selected);
                             temp = temp + " " + arrImg.size() + " " + getString(R.string.images);
                             edtSelectImg.setHint(temp);
@@ -1308,6 +1432,7 @@ public class SignUp extends AppCompatActivity implements OnMapReadyCallback, Goo
             }
         } catch (Exception e) {
             Toast.makeText(this, R.string.something_wrong, Toast.LENGTH_LONG).show();
+            e.printStackTrace();
         }
 
     }

@@ -66,6 +66,7 @@
         android:visibility="gone" />
 
     <ScrollView
+        android:id="@+id/scrollMap"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/appbarlayout">
@@ -174,12 +175,12 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
-                        android:orientation="horizontal"></LinearLayout>
+                        android:orientation="horizontal"/>
                 </HorizontalScrollView>
 
                 <fragment
                     android:id="@+id/map"
-                    android:name="com.google.android.gms.maps.SupportMapFragment"
+                    android:name="com.example.streetlity_android.WorkaroundMapFragment"
                     android:layout_width="match_parent"
                     android:layout_height="400dp"
                     android:layout_marginTop="10dp" />

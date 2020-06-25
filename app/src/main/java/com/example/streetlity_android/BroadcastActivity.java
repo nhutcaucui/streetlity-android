@@ -348,6 +348,25 @@ public class BroadcastActivity extends AppCompatActivity {
 //                                                finish();
                                                 getSharedPreferences("broadcastPhone", MODE_PRIVATE).edit()
                                                         .putString("phone", phone).apply();
+
+                                                runOnUiThread(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        for (int i = 300 ; i >= 0; i--) {
+                                                            try{
+                                                                Thread.sleep(1000);
+                                                            }catch (InterruptedException e) {}
+
+                                                        }
+                                                        broadcasting.setVisibility(View.GONE);
+                                                        Toast toast = Toast.makeText(BroadcastActivity.this, R.string.no_available, Toast.LENGTH_LONG);
+                                                        TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
+                                                        tv.setTextColor(Color.RED);
+
+                                                        toast.show();
+                                                    }
+                                                });
+                                                //thread.start();
                                             }
                                         } catch (Exception e) {
                                             e.printStackTrace();
@@ -414,4 +433,6 @@ public class BroadcastActivity extends AppCompatActivity {
 
         return true;
     }
+
+
 }

@@ -186,4 +186,7 @@
     <string name="mark_complete">Đánh dấu hoàn thành</string>
     <string name="message">Tin nhắn</string>
     <string name="at">lúc</string>
+    <string name="remove">Xóa</string>
+    <string name="remove_pic">Xóa ảnh khỏi danh sách?</string>
+    <string name="is_typing">đang nhập...</string>
 </resources>

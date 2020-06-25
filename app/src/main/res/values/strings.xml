@@ -199,4 +199,7 @@
     <string name="mark_complete">Mark as completed</string>
     <string name="message">Message</string>
     <string name="at">at</string>
+    <string name="remove">Remove</string>
+    <string name="remove_pic">Remove this picture from the list?</string>
+    <string name="is_typing">is typing...</string>
 </resources>
