@@ -1,5 +1,7 @@
 package com.example.streetlity_android;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -16,6 +18,7 @@ import androidx.appcompat.widget.Toolbar;
 
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.LinearLayout;
 
 public class AboutUs extends AppCompatActivity{
 
@@ -46,6 +49,16 @@ public class AboutUs extends AppCompatActivity{
             }
         });
 
+
+        LinearLayout phone = findViewById(R.id.layout_phone);
+        phone.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Intent.ACTION_DIAL);
+                intent.setData(Uri.parse("tel:+84945293024"));
+                startActivity(intent);
+            }
+        });
     }
 
     public boolean onOptionsItemSelected(MenuItem item){

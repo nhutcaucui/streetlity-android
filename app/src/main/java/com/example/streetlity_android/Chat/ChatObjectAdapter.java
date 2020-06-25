@@ -2,6 +2,7 @@ package com.example.streetlity_android.Chat;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +19,7 @@ import com.example.streetlity_android.R;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Random;
 
 public class ChatObjectAdapter extends ArrayAdapter implements Filterable {
 
@@ -72,12 +74,17 @@ public class ChatObjectAdapter extends ArrayAdapter implements Filterable {
         holder.tvName.setText(this.mDisplayedValues.get(position).getName());
         holder.tvBody.setText(this.mDisplayedValues.get(position).getBody());
 
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
+        SimpleDateFormat sdf = new SimpleDateFormat("hh:mm");
         holder.tvTime.setText(sdf.format(this.mDisplayedValues.get(position).getTime()));
 
+        Random rnd = new Random();
+        int color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256));
+
         if(this.mDisplayedValues.get(position).getName().equals(MyApplication.getInstance().getUsername())){
-            Log.e("", "getView: " + this.mDisplayedValues.get(position).getName() +  MyApplication.getInstance().getUsername());
+            Log.e("", position+"getView: " + this.mDisplayedValues.get(position).getName() +  MyApplication.getInstance().getUsername());
             holder.tvName.setTextColor(context.getResources().getColor(R.color.blue));
+        }else{
+            holder.tvName.setTextColor(context.getResources().getColor(R.color.black));
         }
 
         return convertView;

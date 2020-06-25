@@ -387,6 +387,10 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
                         break;
                     case R.id.change_pass:
                         startActivity(new Intent(MainNavigationHolder.this, ChangePassword.class));
+                        break;
+                    case R.id.about:
+                        startActivity(new Intent(MainNavigationHolder.this, AboutUs.class));
+                        break;
                 }
 
                 return true;
@@ -411,6 +415,9 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
                         Intent t = new Intent(MainNavigationHolder.this, SignUp.class);
                         t.putExtra("from", 1);
                         startActivityForResult(t, 1);
+                        break;
+                    case R.id.about:
+                        startActivity(new Intent(MainNavigationHolder.this, AboutUs.class));
                         break;
                 }
 

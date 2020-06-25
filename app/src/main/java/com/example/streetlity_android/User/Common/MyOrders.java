@@ -40,7 +40,7 @@ com.example.streetlity_android.User.Maintainer.MyOrders.OnFragmentInteractionLis
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        fragment_name = findViewById(R.id.tv_toolbar_tittle);
+        //fragment_name = findViewById(R.id.tv_toolbar_tittle);
 
         firstLoad = true;
 

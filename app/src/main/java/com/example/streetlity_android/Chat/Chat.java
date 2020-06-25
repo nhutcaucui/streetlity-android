@@ -2,6 +2,7 @@ package com.example.streetlity_android.Chat;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 
 import com.example.streetlity_android.MyApplication;
@@ -45,6 +46,8 @@ public class Chat extends AppCompatActivity {
     double lon;
 
     String room = "";
+    ListView lv;
+    ChatObjectAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,14 +59,14 @@ public class Chat extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("");
 
-        ListView lv = findViewById(R.id.lv);
-        ChatObjectAdapter adapter = new ChatObjectAdapter(this, R.layout.lv_item_chat, items);
+        lv= findViewById(R.id.lv);
+        adapter = new ChatObjectAdapter(this, R.layout.lv_item_chat, items);
         lv.setAdapter(adapter);
 
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if(!items.get(position).getName().equals(MyApplication.getInstance().getUsername())) {
+                if (!items.get(position).getName().equals(MyApplication.getInstance().getUsername())) {
                     Intent t = new Intent(Chat.this, UserInfoOther.class);
                     t.putExtra("user", items.get(position).getName());
                     startActivity(t);
@@ -77,22 +80,22 @@ public class Chat extends AppCompatActivity {
                 s.edit().putString("room", getIntent().getStringExtra("id")).apply();
             }
         }
-        if(getIntent().getStringExtra("id") != null) {
+        if (getIntent().getStringExtra("id") != null) {
             Log.e("", "onCreate: " + getIntent().getStringExtra("id"));
             room = getIntent().getStringExtra("id");
-        }else {
+        } else {
             room = s.getString("room", "noroom");
         }
         s.edit().clear().apply();
-        String phone="";
-        if(getSharedPreferences("broadcastPhone", MODE_PRIVATE).contains("phone")) {
+        String phone = "";
+        if (getSharedPreferences("broadcastPhone", MODE_PRIVATE).contains("phone")) {
             phone = getSharedPreferences("broadcastPhone", MODE_PRIVATE).getString("phone", "no");
         }
-        if(phone.equals("")){
+        if (phone.equals("")) {
             phone = MyApplication.getInstance().getPhone();
         }
 
-        Log.e("", "onCreate: " + room );
+        Log.e("", "onCreate: " + room);
 
         MaintenanceOrder socket = MaintenanceOrder.Create("himom");
 
@@ -103,7 +106,7 @@ public class Chat extends AppCompatActivity {
                     @Override
                     public void run() {
                         infomation = info;
-                        Log.e("", "onReceived: " + info.toString() );
+                        Log.e("", "onReceived: " + info.toString());
                     }
                 });
 
@@ -117,16 +120,8 @@ public class Chat extends AppCompatActivity {
         socket.MessageListener = new MessageListener<MaintenanceOrder>() {
             @Override
             public void onReceived(MaintenanceOrder sender, ChatObject message) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Log.e("", "onReceived:  this is america" );
-                        items.add(message);
-                        adapter.notifyDataSetChanged();
-                        lv.setSelection(adapter.getCount()-1);
-                    }
-                });
-
+                Log.e("", "onReceived:  this is america");
+                new Task().execute(message);
             }
         };
         socket.LocationListener = new LocationListener<MaintenanceOrder>() {
@@ -146,7 +141,7 @@ public class Chat extends AppCompatActivity {
         socket.CompleteListener = new Listener<MaintenanceOrder>() {
             @Override
             public void call(MaintenanceOrder sender) {
-                Log.e("", "call: completed" );
+                Log.e("", "call: completed");
             }
         };
 
@@ -172,14 +167,14 @@ public class Chat extends AppCompatActivity {
         imgBtnSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!edtMessage.getText().toString().equals("")) {
+                if (!edtMessage.getText().toString().equals("")) {
 
-                    Log.e("", "onClick: " + edtMessage.getText().toString() );
+                    Log.e("", "onClick: " + edtMessage.getText().toString());
                     ChatObject object = new ChatObject(MyApplication.getInstance().getUsername(), edtMessage.getText().toString(), new Date());
                     socket.sendMessage(object);
                     items.add(object);
                     adapter.notifyDataSetChanged();
-                    lv.setSelection(adapter.getCount()-1);
+                    lv.setSelection(adapter.getCount() - 1);
                     edtMessage.setText("");
 
                 }
@@ -189,28 +184,52 @@ public class Chat extends AppCompatActivity {
 
     }
 
-    public boolean onOptionsItemSelected(MenuItem item){
+    public boolean onOptionsItemSelected(MenuItem item) {
         this.finish();
 
         return true;
     }
 
-    public  void saveToSharedPref(){
+    public void saveToSharedPref() {
         Gson gson = new Gson();
         String jsonText = gson.toJson(items);
-        getSharedPreferences("chatLog",MODE_PRIVATE).edit().putString(room, jsonText).apply();
+        getSharedPreferences("chatLog", MODE_PRIVATE).edit().putString(room, jsonText).apply();
     }
 
-    public void getSharedPref(){
+    public void getSharedPref() {
         Gson gson = new Gson();
-        String jsonText = getSharedPreferences("chatLog",MODE_PRIVATE).getString(room, null);
-        if(jsonText!= null) {
-            Type type = new TypeToken<ArrayList<ChatObject>>() {}.getType();
+        String jsonText = getSharedPreferences("chatLog", MODE_PRIVATE).getString(room, null);
+        if (jsonText != null) {
+            Type type = new TypeToken<ArrayList<ChatObject>>() {
+            }.getType();
             items = gson.fromJson(jsonText, type);
         }
     }
 
-    public void clearSharedPrefs(){
-        getSharedPreferences("chatLog",MODE_PRIVATE).edit().clear().apply();
+    public void clearSharedPrefs() {
+        getSharedPreferences("chatLog", MODE_PRIVATE).edit().clear().apply();
+    }
+
+
+    class Task extends AsyncTask<ChatObject, Void, ArrayList<ChatObject>> {
+        private Exception exception;
+
+        @Override
+        protected ArrayList<ChatObject> doInBackground(ChatObject... message) {
+            try {
+                items.add(message[0]);
+                return null;
+            } catch (Exception e) {
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(ArrayList<ChatObject> a) {
+            //add the tours from internet to the array
+            adapter.notifyDataSetChanged();
+            lv.setSelection(adapter.getCount()-1);
+        }
     }
 }
+

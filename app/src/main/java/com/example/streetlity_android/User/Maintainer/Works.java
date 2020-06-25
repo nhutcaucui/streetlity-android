@@ -52,7 +52,7 @@ MyOrders.OnFragmentInteractionListener, OrderHistory.OnFragmentInteractionListen
             moveTaskToBack(true);
         }
 
-        fragment_name = findViewById(R.id.tv_toolbar_tittle);
+        // fragment_name = findViewById(R.id.tv_toolbar_tittle);
 
         firstLoad = true;
 

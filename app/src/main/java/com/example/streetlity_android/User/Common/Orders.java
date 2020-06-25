@@ -96,10 +96,10 @@ public class Orders extends Fragment {
         lvNormal.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent t = new Intent(getActivity(), OrderInfo.class);
-                t.putExtra("from", 1);
-                t.putExtra("item", items.get(position));
-                startActivity(t);
+//                Intent t = new Intent(getActivity(), OrderInfo.class);
+//                t.putExtra("from", 1);
+//                t.putExtra("item", items.get(position));
+//                startActivity(t);
             }
         });
 

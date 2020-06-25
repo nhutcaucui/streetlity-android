@@ -39,7 +39,7 @@ import com.example.streetlity_android.MapsActivity;
 import com.example.streetlity_android.MyApplication;
 import com.example.streetlity_android.PhotoFullPopupWindow;
 import com.example.streetlity_android.R;
-import com.example.streetlity_android.User.Common.OrderInfo;
+
 import com.example.streetlity_android.Util.ImageFilePath;
 import com.example.streetlity_android.Util.RandomString;
 import com.example.streetlity_android.WorkaroundMapFragment;
