@@ -445,8 +445,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                 ImageView img = new ImageView(MapsActivity.this);
                                 img.setImageBitmap(bmp);
                                 LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                                        100,
-                                        100
+                                        300,
+                                        300
                                 );
                                   lp.setMargins(5,0,5,0);
                                 img.setLayoutParams(lp);
@@ -710,6 +710,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                                 (float) jsonObject1.getDouble("Score"));
                                         review.setId(jsonObject1.getInt("Id"));
                                         reviewItems.add(review);
+                                        if(review.getUsername().equals(MyApplication.getInstance().getUsername())){
+                                            Button leaveReview = findViewById(R.id.btn_leave_comment);
+                                            leaveReview.setVisibility(View.GONE);
+                                        }
                                     }
                                     int number = 0;
                                     if (reviewItems.size() > 3) {

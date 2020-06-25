@@ -1233,7 +1233,7 @@ public class SignUp extends AppCompatActivity implements OnMapReadyCallback, Goo
 
                         File file = new File(path);
 
-
+                        String extension = path.substring(path.lastIndexOf("."));
 
                         Log.e("", "onActivityResult: " + arrImg.size());
 
@@ -1248,13 +1248,13 @@ public class SignUp extends AppCompatActivity implements OnMapReadyCallback, Goo
 
                         RequestBody fbody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
                         MultipartBody.Part mBody =
-                                MultipartBody.Part.createFormData(random+size, file.getName(), fbody);
+                                MultipartBody.Part.createFormData(random+size+extension, file.getName(), fbody);
 
                         body.add(mBody);
 
-                        fileName.add(random+size);
+                        fileName.add(random+size+extension);
 
-                        paramMap.add(random+size);
+                        paramMap.add(random+size+extension);
 
                         Bitmap bmp = BitmapFactory.decodeFile(file.getAbsolutePath());
                         ImageView img = new ImageView(SignUp.this);
@@ -1348,15 +1348,17 @@ public class SignUp extends AppCompatActivity implements OnMapReadyCallback, Goo
 
                                 File file = new File(path);
 
-                                paramMap.add(random+size);
+                                String extension = path.substring(path.lastIndexOf("."));
+
+                                paramMap.add(random+size+extension);
 
                                 RequestBody fbody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
                                 MultipartBody.Part mBody =
-                                        MultipartBody.Part.createFormData(random+size, file.getName(), fbody);
+                                        MultipartBody.Part.createFormData(random+size+extension, file.getName(), fbody);
 
                                 body.add(mBody);
 
-                                fileName.add(random+size);
+                                fileName.add(random+size+extension);
 
                                 Bitmap bmp = BitmapFactory.decodeFile(file.getAbsolutePath());
                                 ImageView img = new ImageView(SignUp.this);

@@ -173,6 +173,7 @@ public class Chat extends AppCompatActivity {
                     ChatObject object = new ChatObject(MyApplication.getInstance().getUsername(), edtMessage.getText().toString(), new Date());
                     items.add(object);
                     adapter.notifyDataSetChanged();
+                    lv.setSelection(adapter.getCount()-1);
                     edtMessage.setText("");
 
                 }

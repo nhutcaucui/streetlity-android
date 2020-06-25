@@ -26,7 +26,8 @@
             android:name=".Chat.Chat"
             android:label="@string/title_activity_chat"
             android:theme="@style/AppTheme.NoActionBar"
-            android:parentActivityName=".MaintainerLocation">
+            android:parentActivityName=".MaintainerLocation"
+            android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="MaintenanceAcceptNotification" />
                 <category android:name="android.intent.category.DEFAULT" />

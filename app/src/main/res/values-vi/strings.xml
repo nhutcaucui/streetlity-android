@@ -194,4 +194,6 @@
     <string name="maintainer_accept">MỘT THỢ SỬA CHẤP NHẬN YÊU CẦU CỦA BẠN</string>
     <string name="mark_spam">Đánh dấu spam</string>
     <string name="seconds">giây</string>
+    <string name="cant_broadcast_while_active">Không thể broadcast khi có yêu cầu chưa hoàn thành</string>
+
 </resources>

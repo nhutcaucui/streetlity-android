@@ -655,9 +655,9 @@ public class AddAMaintenance extends AppCompatActivity implements OnMapReadyCall
 
                         File file = new File(path);
 
+                        String extension = path.substring(path.lastIndexOf("."));
 
-
-                        Log.e("", "onActivityResult: " + arrImg.size());
+                        Log.e("", "onActivityResult: " + arrImg.size()+extension);
 
                         EditText edtSelectImg = findViewById(R.id.edt_select_img);
 
@@ -670,13 +670,13 @@ public class AddAMaintenance extends AppCompatActivity implements OnMapReadyCall
 
                         RequestBody fbody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
                         MultipartBody.Part mBody =
-                                MultipartBody.Part.createFormData(random+size, file.getName(), fbody);
+                                MultipartBody.Part.createFormData(random+size+extension, file.getName(), fbody);
 
                         body.add(mBody);
 
-                        fileName.add(random+size);
+                        fileName.add(random+size+extension);
 
-                        paramMap.add(random+size);
+                        paramMap.add(random+size+extension);
 
                         Bitmap bmp = BitmapFactory.decodeFile(file.getAbsolutePath());
                         ImageView img = new ImageView(AddAMaintenance.this);
@@ -770,15 +770,17 @@ public class AddAMaintenance extends AppCompatActivity implements OnMapReadyCall
 
                                 File file = new File(path);
 
-                                paramMap.add(random+size);
+                                String extension = path.substring(path.lastIndexOf("."));
+
+                                paramMap.add(random+size+extension);
 
                                 RequestBody fbody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
                                 MultipartBody.Part mBody =
-                                        MultipartBody.Part.createFormData(random+size, file.getName(), fbody);
+                                        MultipartBody.Part.createFormData(random+size+extension, file.getName(), fbody);
 
                                 body.add(mBody);
 
-                                fileName.add(random+size);
+                                fileName.add(random+size+extension);
 
                                 Bitmap bmp = BitmapFactory.decodeFile(file.getAbsolutePath());
                                 ImageView img = new ImageView(AddAMaintenance.this);
