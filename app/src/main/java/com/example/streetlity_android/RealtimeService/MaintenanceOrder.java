@@ -212,6 +212,11 @@ public class MaintenanceOrder {
      * Join to initial room and ready for working on it.
      */
     public void join() {
+        if (mSocket.connected()) {
+            Log.i(Tag, "join in " + room + ": already connected");
+            return;
+        }
+
         mSocket.connect();
     }
 
@@ -317,8 +322,28 @@ public class MaintenanceOrder {
      * Close the current connection.
      */
     public void close() {
+        if (!mSocket.connected()) {
+            Log.i(Tag, "close " + room + ": is already closed");
+
+            if (Orders.containsKey(room)) {
+                Orders.remove(room);
+            }
+
+            return;
+        }
+
         mSocket.disconnect();
         mSocket.off("chat", onChat);
+        mSocket.off("update-location", onUpdateLocation);
+        mSocket.off("update-information", onUpdateInformation);
+        mSocket.off("pull-information", onPullInformation);
+        mSocket.off("pull-location", onPullLocation);
+        mSocket.off("decline", onDecline);
+        mSocket.off("complete", onComplete);
+        mSocket.off("joined", onJoined);
+        mSocket.off("typing-chat", onTypingChat);
+        mSocket.off("typed-chat", onTypedChat);
+        Orders.remove(room);
     }
 
     /**
