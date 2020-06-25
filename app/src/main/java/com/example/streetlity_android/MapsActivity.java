@@ -445,8 +445,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                 ImageView img = new ImageView(MapsActivity.this);
                                 img.setImageBitmap(bmp);
                                 LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                                        100,
-                                        100
+                                        300,
+                                        300
                                 );
                                   lp.setMargins(5,0,5,0);
                                 img.setLayoutParams(lp);
