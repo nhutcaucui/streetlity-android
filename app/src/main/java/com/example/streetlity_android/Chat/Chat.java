@@ -23,6 +23,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
+import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -32,6 +33,8 @@ import android.widget.ListView;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 
 import static android.view.View.GONE;
@@ -154,6 +157,17 @@ public class Chat extends AppCompatActivity {
                         ConstraintLayout layoutLoading = findViewById(R.id.layout_loading_top);
                         layoutLoading.setVisibility(GONE);
                         sender.pullChat();
+
+                        new CountDownTimer(5000,1000){
+                            public void onTick(long millisUntilFinished) {
+                                //here you can have your logic to set text to edittext
+                            }
+
+                            public void onFinish() {
+                                sortChat();
+                            }
+
+                        }.start();
                     }
                 });
             }
@@ -230,6 +244,18 @@ public class Chat extends AppCompatActivity {
             adapter.notifyDataSetChanged();
             lv.setSelection(adapter.getCount()-1);
         }
+    }
+
+    public void sortChat(){
+        Collections.sort(items, new Comparator<ChatObject>() {
+            @Override
+            public int compare(ChatObject o1, ChatObject o2) {
+                Log.e("", "compare: "+o1.getTime() +"-"+ o2.getTime());
+                return Long.compare(o1.getTime().getTime(), o2.getTime().getTime());
+            }
+        });
+        adapter.notifyDataSetChanged();
+        lv.setSelection(adapter.getCount()-1);
     }
 }
 
