@@ -195,5 +195,5 @@
     <string name="mark_spam">Đánh dấu spam</string>
     <string name="seconds">giây</string>
     <string name="cant_broadcast_while_active">Không thể broadcast khi có yêu cầu chưa hoàn thành</string>
-
+    <string name="cancel_order">Hủy yêu cầu?</string>
 </resources>

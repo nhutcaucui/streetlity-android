@@ -20,7 +20,7 @@ import com.example.streetlity_android.User.Common.Orders;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class MyOrders extends AppCompatActivity implements Orders.OnFragmentInteractionListener,
-com.example.streetlity_android.User.Maintainer.MyOrders.OnFragmentInteractionListener, OrderHistory.OnFragmentInteractionListener{
+ OrderHistory.OnFragmentInteractionListener{
 
     Fragment fragment;
     boolean firstLoad;
