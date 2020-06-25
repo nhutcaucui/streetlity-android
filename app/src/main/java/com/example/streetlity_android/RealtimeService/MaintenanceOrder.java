@@ -75,7 +75,7 @@ public class MaintenanceOrder {
                 String body = json.getString("body");
                 String date = json.getString("date");
 
-                ChatObject message = new ChatObject(name, body, new  SimpleDateFormat("dd/MM/yyyy hh:mm:ss", Locale.ENGLISH).parse(date));
+                ChatObject message = new ChatObject(name, body, new  SimpleDateFormat("hh:mm:ss", Locale.ENGLISH).parse(date));
                 Log.println(Log.INFO, Tag, "OnChat: " + message);
                 if (MessageListener != null) {
                     MessageListener.onReceived(self, message);
@@ -243,7 +243,7 @@ public class MaintenanceOrder {
         try {
             json.put("name", message.getName());
             json.put("body", message.getBody());
-            json.put("date", new  SimpleDateFormat("dd/MM/yyyy hh:mm:ss", Locale.ENGLISH).format(message.getTime()));
+            json.put("date", new  SimpleDateFormat("hh:mm:ss", Locale.ENGLISH).format(message.getTime()));
         } catch (JSONException e) {
             Log.e(Tag,"Cannot put new message " + e.getMessage());
         }

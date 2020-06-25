@@ -74,7 +74,7 @@ public class ChatObjectAdapter extends ArrayAdapter implements Filterable {
         holder.tvName.setText(this.mDisplayedValues.get(position).getName());
         holder.tvBody.setText(this.mDisplayedValues.get(position).getBody());
 
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
+        SimpleDateFormat sdf = new SimpleDateFormat("hh:mm:ss");
         holder.tvTime.setText(sdf.format(this.mDisplayedValues.get(position).getTime()));
 
         Random rnd = new Random();
