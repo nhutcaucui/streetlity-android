@@ -17,6 +17,7 @@ import com.google.gson.reflect.TypeToken;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.util.Log;
 import android.view.MenuItem;
@@ -27,6 +28,8 @@ import android.widget.ListView;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Date;
+
+import static android.view.View.GONE;
 
 public class Chat extends AppCompatActivity {
 
@@ -84,9 +87,10 @@ public class Chat extends AppCompatActivity {
 
         Log.e("", "onCreate: " + room );
 
-        MaintenanceOrder socket = new MaintenanceOrder("himom");
+        MaintenanceOrder socket = MaintenanceOrder.Create("himom");
         socket.close();
-        socket.join();
+
+
         socket.InformationListener = new InformationListener<MaintenanceOrder>() {
             @Override
             public void onReceived(MaintenanceOrder sender, Information info) {
@@ -142,6 +146,21 @@ public class Chat extends AppCompatActivity {
             }
         };
 
+        socket.JoinedListener = new Listener<MaintenanceOrder>() {
+            @Override
+            public void call(MaintenanceOrder sender) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        ConstraintLayout layoutLoading = findViewById(R.id.layout_loading_top);
+                        layoutLoading.setVisibility(GONE);
+                    }
+                });
+            }
+        };
+
+        socket.join();
+
         TextInputEditText edtMessage = findViewById(R.id.edt_body);
 
         ImageButton imgBtnSend = findViewById(R.id.btn_send);
@@ -159,6 +178,8 @@ public class Chat extends AppCompatActivity {
                 }
             }
         });
+
+
     }
 
     public boolean onOptionsItemSelected(MenuItem item){
