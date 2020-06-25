@@ -33,6 +33,8 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+        <activity android:name=".User.Common.MyOrders"
+            android:theme="@style/AppTheme.NoActionBar"/>
         <activity
             android:name=".User.UserInfoOther"
             android:theme="@style/AppTheme.NoActionBar" />
