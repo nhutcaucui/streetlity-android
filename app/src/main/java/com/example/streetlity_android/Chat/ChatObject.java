@@ -2,6 +2,7 @@ package com.example.streetlity_android.Chat;
 
 import android.graphics.Bitmap;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class ChatObject {
@@ -14,6 +15,15 @@ public class ChatObject {
         this.name = name;
         this.body = body;
         this.time = time;
+    }
+
+    public ChatObject(String name, String body, String time){
+            this(name,body, new Date());
+            try {
+                this.time = new SimpleDateFormat("dd/MM/yyyy").parse(time);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
     }
 
     public String getName() {

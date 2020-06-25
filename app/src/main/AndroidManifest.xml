@@ -34,6 +34,9 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".User.UserInfoOther"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
             android:name=".MaintainerLocation"
             android:label="@string/title_activity_maintainer_location"
             android:theme="@style/AppTheme.NoActionBar" />

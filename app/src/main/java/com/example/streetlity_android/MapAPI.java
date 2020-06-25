@@ -218,4 +218,7 @@ public interface MapAPI {
     @FormUrlEncoded
     @POST("order/accept")
     Call<ResponseBody> acceptOrder(@Field("maintenance_user") String maintenance_name, @Field("order_id") int id);
+
+    @GET("user/info")
+    Call<ResponseBody> userInfo(@Query("id") String username);
 }

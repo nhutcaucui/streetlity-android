@@ -1,5 +1,6 @@
 package com.example.streetlity_android.Chat;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
@@ -11,6 +12,8 @@ import com.example.streetlity_android.RealtimeService.Listener;
 import com.example.streetlity_android.RealtimeService.LocationListener;
 import com.example.streetlity_android.RealtimeService.MaintenanceOrder;
 import com.example.streetlity_android.RealtimeService.MessageListener;
+import com.example.streetlity_android.User.UserInfo;
+import com.example.streetlity_android.User.UserInfoOther;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -22,6 +25,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.ListView;
 
@@ -56,11 +60,14 @@ public class Chat extends AppCompatActivity {
         ChatObjectAdapter adapter = new ChatObjectAdapter(this, R.layout.lv_item_chat, items);
         lv.setAdapter(adapter);
 
-        ImageButton btnChat = findViewById(R.id.btn_send);
-        btnChat.setOnClickListener(new View.OnClickListener() {
+        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onClick(View v) {
-
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if(!items.get(position).getName().equals(MyApplication.getInstance().getUsername())) {
+                    Intent t = new Intent(Chat.this, UserInfoOther.class);
+                    t.putExtra("user", items.get(position).getName());
+                    startActivity(t);
+                }
             }
         });
 
