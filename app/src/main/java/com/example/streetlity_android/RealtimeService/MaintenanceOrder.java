@@ -183,7 +183,7 @@ public class MaintenanceOrder {
      * Initialize a new instannce of MaintenanceOrder by a specified room
      * @param room
      */
-    public MaintenanceOrder(String room) {
+    protected MaintenanceOrder(String room) {
         this.room = room;
         Orders.put(this.room, this);
         self = this;
@@ -319,5 +319,18 @@ public class MaintenanceOrder {
     public void close() {
         mSocket.disconnect();
         mSocket.off("chat", onChat);
+    }
+
+    /**
+     * Initialize a new instannce of MaintenanceOrder by a specified room
+     * @param room
+     */
+    public static MaintenanceOrder Create(String room) {
+        if (!Orders.containsKey(room)) {
+            MaintenanceOrder order = new MaintenanceOrder(room);
+            Orders.put(room, order);
+        }
+
+        return Orders.get(room);
     }
 }
