@@ -23,7 +23,7 @@ public class ChatObject {
 //            this(name,body, new Date());
 //            try {
 //                DateFormat formatter;
-//                formatter = new SimpleDateFormat("EEE MMM d HH:mm:ss zzz yyyy", Locale.ENGLISH);
+//                formatter = new SimpleDateFormat("EEE MMM d hh:mm zzz yyyy", Locale.ENGLISH);
 //                this.time = formatter.parse(time);
 //            }catch (Exception e){
 //                e.printStackTrace();

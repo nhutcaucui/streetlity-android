@@ -34,19 +34,19 @@
 
             </androidx.appcompat.widget.Toolbar>
 
-
         </com.google.android.material.appbar.AppBarLayout>
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:id="@+id/textView29"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:gravity="center"
             android:text="Chat"
             android:textColor="#000000"
-            android:textSize="32sp"
+            android:textSize="24sp"
             app:layout_constraintBottom_toBottomOf="@id/appbarlayout"
-            app:layout_constraintLeft_toLeftOf="@id/appbarlayout"
-            app:layout_constraintRight_toRightOf="@id/appbarlayout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@id/appbarlayout" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -83,7 +83,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@id/layout_send"
-        android:layout_below="@id/top_bar">
+        android:layout_below="@id/top_bar"
+        android:divider="@android:color/transparent">
 
     </ListView>
 
