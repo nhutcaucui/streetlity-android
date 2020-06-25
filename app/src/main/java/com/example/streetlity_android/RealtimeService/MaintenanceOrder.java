@@ -18,6 +18,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 
 public class MaintenanceOrder {
     public final String Endpoint = "35.240.207.83:6182";
@@ -73,12 +74,13 @@ public class MaintenanceOrder {
                 String name = json.getString("name");
                 String body = json.getString("body");
                 String date = json.getString("date");
-                ChatObject message = new ChatObject(name, body, date);
+
+                ChatObject message = new ChatObject(name, body, new  SimpleDateFormat("dd/MM/yyyy hh:mm:ss", Locale.ENGLISH).parse(date));
                 Log.println(Log.INFO, Tag, "OnChat: " + message);
                 if (MessageListener != null) {
                     MessageListener.onReceived(self, message);
                 }
-            } catch (JSONException e) {
+            } catch (Exception e) {
                 Log.e(Tag, "onChat: " + e.getMessage());
             }
 
@@ -241,7 +243,7 @@ public class MaintenanceOrder {
         try {
             json.put("name", message.getName());
             json.put("body", message.getBody());
-            json.put("date", message.getTime());
+            json.put("date", new  SimpleDateFormat("dd/MM/yyyy hh:mm:ss", Locale.ENGLISH).format(message.getTime()));
         } catch (JSONException e) {
             Log.e(Tag,"Cannot put new message " + e.getMessage());
         }

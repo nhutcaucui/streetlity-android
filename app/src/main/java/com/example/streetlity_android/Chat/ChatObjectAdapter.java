@@ -2,6 +2,7 @@ package com.example.streetlity_android.Chat;
 
 import android.app.Activity;
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -74,7 +75,8 @@ public class ChatObjectAdapter extends ArrayAdapter implements Filterable {
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
         holder.tvTime.setText(sdf.format(this.mDisplayedValues.get(position).getTime()));
 
-        if(holder.tvName.getText().toString().equals(MyApplication.getInstance().getUsername())){
+        if(this.mDisplayedValues.get(position).getName().equals(MyApplication.getInstance().getUsername())){
+            Log.e("", "getView: " + this.mDisplayedValues.get(position).getName() +  MyApplication.getInstance().getUsername());
             holder.tvName.setTextColor(context.getResources().getColor(R.color.blue));
         }
 

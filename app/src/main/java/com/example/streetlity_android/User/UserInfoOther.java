@@ -67,7 +67,7 @@ public class UserInfoOther extends AppCompatActivity {
         FloatingActionButton fabEdit = findViewById(R.id.fab_edit);
 
         fabEdit.hide();
-
+        getInfo();
     }
 
     public boolean onOptionsItemSelected(MenuItem item){
@@ -95,6 +95,8 @@ public class UserInfoOther extends AppCompatActivity {
                     }catch (Exception e){
                     e.printStackTrace();
                     }
+                }else{
+                    Log.e("", "onResponse: "+ response.code() );
                 }
             }
 
