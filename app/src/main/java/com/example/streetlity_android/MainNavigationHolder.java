@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -39,6 +40,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -79,6 +81,8 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
 
     boolean canBroadcast = true;
 
+    long timeLeft=0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,9 +90,49 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        if(getIntent().getIntExtra("isRoot",    0) == 1){
-            moveTaskToBack(true);
+        if(getSharedPreferences("spam", MODE_PRIVATE).contains("spam")){
+            canBroadcast = false;
+
+//            Thread thread = new Thread(new Runnable () {
+//                @Override
+//                public void run(){
+//                    for (int i = 15 ; i >= 0; i--) {
+//                        try{
+//                            timeLeft = i;
+//                            Thread.sleep(1000);
+//                        }catch (InterruptedException e) {}
+//
+//                    }
+//                    canBroadcast=true;
+//                    getSharedPreferences("spam", MODE_PRIVATE).edit().clear().apply();
+//                }
+//            });
+//            thread.start();
+
+            if(System.currentTimeMillis() -
+                    getSharedPreferences("spam", MODE_PRIVATE).getLong("spam", 0) >= 300000 ){
+                canBroadcast = true;
+                getSharedPreferences("spam", MODE_PRIVATE).edit().clear().apply();
+            }else {
+
+                new CountDownTimer(300000- (System.currentTimeMillis() -
+                        getSharedPreferences("spam", MODE_PRIVATE).getLong("spam", 0)), 1000) {
+
+                    public void onTick(long millisUntilFinished) {
+                        timeLeft = millisUntilFinished / 1000;
+                        //here you can have your logic to set text to edittext
+                    }
+
+                    public void onFinish() {
+                        canBroadcast = true;
+                        getSharedPreferences("spam", MODE_PRIVATE).edit().clear().apply();
+                    }
+
+                }.start();
+            }
         }
+
+
 
         FloatingActionButton fab = findViewById(R.id.chat_btn);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -236,32 +280,49 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
             }else if (requestCode == 2 && resultCode == RESULT_OK) {
                 Toast toast = Toast.makeText(MainNavigationHolder.this, R.string.location_added, Toast.LENGTH_LONG);
                 toast.show();
-            } else if (requestCode == 5 && resultCode == RESULT_OK && null != data) {
+            } else if (requestCode == 5 && resultCode == RESULT_OK) {
 
-                String temp = getString(R.string.contacted);
-                temp += " " + data.getIntExtra("numStore", 0);
-                temp += " " + getString(R.string.nearby_store);
+                Toast toast = Toast.makeText(MainNavigationHolder.this, R.string.mark_spam, Toast.LENGTH_LONG);
+                TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
+                tv.setTextColor(Color.RED);
 
-                int range = data.getIntExtra("range", 0);
-                temp += " " + getString(R.string.in_range) + " " + (range / 1000) + "km";
-
-                Toast toast = Toast.makeText(MainNavigationHolder.this, temp, Toast.LENGTH_LONG);
                 toast.show();
 
-                canBroadcast = false;
-                Thread thread = new Thread(new Runnable () {
-                    @Override
-                    public void run(){
-                        for (int i = 300 ; i >= 0; i--) {
-                            try{
-                                Thread.sleep(1000);
-                            }catch (InterruptedException e) {}
+//                Toast toast = Toast.makeText(MainNavigationHolder.this, temp, Toast.LENGTH_LONG);
+//                toast.show();
 
-                        }
-                        canBroadcast=true;
+                getSharedPreferences("spam", MODE_PRIVATE).edit().putLong("spam",System.currentTimeMillis()).apply();
+                canBroadcast = false;
+
+//                Thread thread = new Thread(new Runnable () {
+//                    @Override
+//                    public void run(){
+//                        for (int i = 300 ; i >= 0; i--) {
+//                            try{
+//                                timeLeft = i;
+//                                Thread.sleep(1000);
+//                            }catch (InterruptedException e) {}
+//
+//                        }
+//                        canBroadcast=true;
+//                        getSharedPreferences("spam", MODE_PRIVATE).edit().clear().apply();
+//                    }
+//                });
+//                thread.start();
+
+                new CountDownTimer(300000, 1000) {
+
+                    public void onTick(long millisUntilFinished) {
+                        timeLeft = millisUntilFinished / 1000;
+                        //here you can have your logic to set text to edittext
                     }
-                });
-                thread.start();
+
+                    public void onFinish() {
+                        canBroadcast=true;
+                        getSharedPreferences("spam", MODE_PRIVATE).edit().clear().apply();
+                    }
+
+                }.start();
             }
 
         } catch (Exception e) {
@@ -479,5 +540,9 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
         super.onResume();
 
         this.getLoading().setVisibility(View.GONE);
+    }
+
+    public long getTimeLeft() {
+        return timeLeft;
     }
 }

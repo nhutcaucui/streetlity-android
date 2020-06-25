@@ -1,8 +1,10 @@
 package com.example.streetlity_android;
 
 import android.Manifest;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -10,6 +12,7 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 
+import com.example.streetlity_android.Chat.Chat;
 import com.example.streetlity_android.User.SignupAsMaintainer;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
@@ -17,6 +20,7 @@ import com.google.android.material.snackbar.Snackbar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import android.util.Log;
 import android.view.MenuItem;
@@ -56,6 +60,10 @@ public class BroadcastActivity extends AppCompatActivity {
     int broadcastId=-1;
 
     boolean isOther = false;
+
+    boolean notFound = false;
+
+    int broadcastCount = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -226,9 +234,25 @@ public class BroadcastActivity extends AppCompatActivity {
             public void onClick(View v) {
                 RelativeLayout broadcasting = findViewById(R.id.layout_broadcasting);
                 broadcasting.setVisibility(View.GONE);
+                TextView tvBroadcastTo = findViewById(R.id.tv_broadcast_to);
+                tvBroadcastTo.setText("");
+                broadcastCount++;
+                if(broadcastCount>=3){
+
+                    setResult(RESULT_OK);
+                    finish();
+                }
                 //denyOrder();
             }
         });
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        LocalBroadcastManager.getInstance(this).registerReceiver((mMessageReceiver),
+                new IntentFilter("MaintenanceAcceptNotification")
+        );
     }
 
     public void denyOrder(){
@@ -349,21 +373,45 @@ public class BroadcastActivity extends AppCompatActivity {
                                                 getSharedPreferences("broadcastPhone", MODE_PRIVATE).edit()
                                                         .putString("phone", phone).apply();
 
-                                                runOnUiThread(new Runnable() {
+                                                TextView tvBroadcastTo = findViewById(R.id.tv_broadcast_to);
+
+                                                String temp = getString(R.string.contacted);
+                                                temp += " " + idList.size();
+                                                temp += " " + getString(R.string.nearby_store);
+
+                                                if(fRange>=1000) {
+                                                    temp += " " + getString(R.string.in_range) + " " + (fRange / 1000) + "km";
+                                                }else{
+                                                    temp += " " + getString(R.string.in_range) + " " + (fRange) + "m";
+                                                }
+
+                                                tvBroadcastTo.setText(temp);
+
+                                                Thread thread = new Thread(new Runnable () {
                                                     @Override
                                                     public void run() {
+                                                        notFound = true;
                                                         for (int i = 300 ; i >= 0; i--) {
                                                             try{
                                                                 Thread.sleep(1000);
-                                                            }catch (InterruptedException e) {}
+                                                            }catch (InterruptedException e) {
+                                                                e.printStackTrace();
+                                                            }
 
                                                         }
-                                                        broadcasting.setVisibility(View.GONE);
-                                                        Toast toast = Toast.makeText(BroadcastActivity.this, R.string.no_available, Toast.LENGTH_LONG);
-                                                        TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
-                                                        tv.setTextColor(Color.RED);
+                                                        if(notFound) {
+                                                            runOnUiThread(new Runnable() {
+                                                                @Override
+                                                                public void run() {
+                                                                    broadcasting.setVisibility(View.GONE);
+                                                                    Toast toast = Toast.makeText(BroadcastActivity.this, R.string.no_available, Toast.LENGTH_LONG);
+                                                                    TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
+                                                                    tv.setTextColor(Color.RED);
 
-                                                        toast.show();
+                                                                    toast.show();
+                                                                }
+                                                            });
+                                                        }
                                                     }
                                                 });
                                                 //thread.start();
@@ -434,5 +482,37 @@ public class BroadcastActivity extends AppCompatActivity {
         return true;
     }
 
+    public void foundAMaintainer(Intent intent){
+        notFound = false;
 
+        RelativeLayout broadcasting = findViewById(R.id.layout_broadcasting);
+
+        broadcasting.setVisibility(View.GONE);
+
+        RelativeLayout found = findViewById(R.id.layout_found);
+        found.setVisibility(View.VISIBLE);
+
+        TextView tvMaintainer= findViewById(R.id.tv_maintainer_name);
+        tvMaintainer.setText(intent.getStringExtra("maintenance_user"));
+
+        Button btnGoChat = findViewById(R.id.btn_go_chat);
+        btnGoChat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent t1 = new Intent(BroadcastActivity.this, MaintainerLocation.class);
+                startActivity(t1);
+
+                startActivity(intent);
+
+                finish();
+            }
+        });
+    }
+
+    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+           foundAMaintainer(intent);
+        }
+    };
 }

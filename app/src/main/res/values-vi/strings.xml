@@ -189,4 +189,9 @@
     <string name="remove">Xóa</string>
     <string name="remove_pic">Xóa ảnh khỏi danh sách?</string>
     <string name="is_typing">đang nhập...</string>
+    <string name="go_to_chat">Đi đến chat</string>
+    <string name="maintainer">Thợ sửa: </string>
+    <string name="maintainer_accept">MỘT THỢ SỬA CHẤP NHẬN YÊU CẦU CỦA BẠN</string>
+    <string name="mark_spam">Đánh dấu spam</string>
+    <string name="seconds">giây</string>
 </resources>

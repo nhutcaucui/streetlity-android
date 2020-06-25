@@ -213,7 +213,9 @@ public class MaintenanceFragment extends Fragment implements LocationListener {
                         getActivity().startActivityForResult(new Intent(getActivity(), BroadcastActivity.class), 5);
                     }
                     else{
-                        Toast toast = Toast.makeText(getActivity(), R.string.retry_later, Toast.LENGTH_LONG);
+                        String builder = getString(R.string.retry_later)+ " "+ ((MainNavigationHolder)getActivity()).getTimeLeft()
+                                + " "+ getString(R.string.seconds);
+                        Toast toast = Toast.makeText(getActivity(), builder, Toast.LENGTH_LONG);
                         TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
 
                         toast.show();

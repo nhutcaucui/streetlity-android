@@ -13,6 +13,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.example.streetlity_android.MainActivity;
 import com.example.streetlity_android.MyApplication;
@@ -47,13 +48,24 @@ public class StreetlityFirebaseMessagingService extends FirebaseMessagingService
         Intent intent = new Intent(intentName);
         Map<String, String> data = remoteMessage.getData();
         intent.putExtra("id", data.get("id"));
-        intent.putExtra("user", data.get("user"));
+        intent.putExtra("common_user", data.get("common_user"));
         intent.putExtra("reason", data.get("reason"));
         intent.putExtra("note", data.get("note"));
+        intent.putExtra("maintenance_user", data.get("maintenance_user"));
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
         stackBuilder.addNextIntentWithParentStack(intent);
         //intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        for (String keys : data.keySet())
+        {
+            System.out.println(keys + ":"+ data.get(keys));
+        }
+
+        if(intentName.equals("MaintenanceAcceptNotification")){
+            LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+        }
+
         String channelId = "Default";
         NotificationCompat.Builder builder = new  NotificationCompat.Builder(this, channelId)
                 .setSmallIcon(R.mipmap.ic_launcher)

@@ -24,10 +24,19 @@
             android:src="@drawable/broadcast" />
 
         <TextView
-            android:id="@+id/textView16"
+            android:id="@+id/tv_broadcast_to"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/gif"
+            android:layout_centerHorizontal="true"
+            android:padding="10dp"
+            android:textColor="#fff" />
+
+        <TextView
+            android:id="@+id/textView16"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv_broadcast_to"
             android:layout_centerHorizontal="true"
             android:padding="10dp"
             android:text="@string/wait_for_maintainer"
@@ -42,6 +51,67 @@
             android:layout_marginTop="10dp"
             android:background="@drawable/button_background"
             android:text="@string/cancel" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/layout_found"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#7C000000"
+        android:clickable="true"
+        android:elevation="5dp"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:background="#fff"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/textView31"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:padding="15dp"
+                android:text="A MAINTAINER ACCEPTED YOUR ORDER"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:padding="5dp">
+
+                <TextView
+                    android:id="@+id/textView33"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/maintainer"
+                    android:textColor="@color/black" />
+
+                <TextView
+                    android:id="@+id/tv_maintainer_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="5dp"
+                    android:text="TextView"
+                    android:textColor="@color/black" />
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btn_go_chat"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:text="@string/go_to_chat"
+                android:textColor="@color/colorPrimaryDark" />
+
+        </LinearLayout>
     </RelativeLayout>
 
     <com.google.android.material.appbar.AppBarLayout
