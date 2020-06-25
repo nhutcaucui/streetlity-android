@@ -61,4 +61,9 @@ public class ChatObject {
     public Bitmap getImage() {
         return image;
     }
+
+    @Override
+    public String toString(){
+        return name + "-" + body;
+    }
 }
