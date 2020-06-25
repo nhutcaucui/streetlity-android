@@ -22,6 +22,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -387,10 +388,40 @@ public class BroadcastActivity extends AppCompatActivity {
 
                                                 tvBroadcastTo.setText(temp);
 
+                                                notFound = true;
+
+                                                new CountDownTimer(300000, 1000) {
+
+                                                    public void onTick(long millisUntilFinished) {
+                                                        if (!notFound) {
+
+                                                            cancel();
+
+                                                        }
+                                                    }
+
+                                                    public void onFinish() {
+                                                        if(notFound) {
+                                                            runOnUiThread(new Runnable() {
+                                                                @Override
+                                                                public void run() {
+                                                                    broadcasting.setVisibility(View.GONE);
+                                                                    Toast toast = Toast.makeText(BroadcastActivity.this, R.string.no_available, Toast.LENGTH_LONG);
+                                                                    TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
+                                                                    tv.setTextColor(Color.RED);
+
+                                                                    toast.show();
+                                                                }
+                                                            });
+                                                        }
+                                                    }
+
+                                                }.start();
+
                                                 Thread thread = new Thread(new Runnable () {
                                                     @Override
                                                     public void run() {
-                                                        notFound = true;
+
                                                         for (int i = 300 ; i >= 0; i--) {
                                                             try{
                                                                 Thread.sleep(1000);
@@ -484,6 +515,8 @@ public class BroadcastActivity extends AppCompatActivity {
 
     public void foundAMaintainer(Intent intent){
         notFound = false;
+
+        getSharedPreferences("activeOrder",MODE_PRIVATE).edit().putInt("activeOrder", 1).apply();
 
         RelativeLayout broadcasting = findViewById(R.id.layout_broadcasting);
 

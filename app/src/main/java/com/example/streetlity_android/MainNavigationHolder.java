@@ -90,6 +90,8 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        getSharedPreferences("activeOrder",MODE_PRIVATE).edit().clear().apply();
+
         if(getSharedPreferences("spam", MODE_PRIVATE).contains("spam")){
             canBroadcast = false;
 

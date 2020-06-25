@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
@@ -32,6 +33,7 @@ import com.example.streetlity_android.R;
 import com.example.streetlity_android.User.Login;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import static android.graphics.Color.RED;
 import static android.view.View.GONE;
 
 public class HomeFragment extends Fragment implements LocationListener{
@@ -130,16 +132,27 @@ public class HomeFragment extends Fragment implements LocationListener{
         btnBroadcast.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(((MainNavigationHolder)getActivity()).isCanBroadcast()) {
+                boolean activeOrder =  getActivity().
+                        getSharedPreferences("activeOrder",Context.MODE_PRIVATE).contains("activeOrder");
+                if(((MainNavigationHolder)getActivity()).isCanBroadcast() && !activeOrder) {
                     getActivity().startActivityForResult(new Intent(getActivity(), BroadcastActivity.class), 5);
                 }
                 else{
-                    String builder = getString(R.string.retry_later)+ " "+ ((MainNavigationHolder)getActivity()).getTimeLeft()
-                            + " "+ getString(R.string.seconds);
-                    Toast toast = Toast.makeText(getActivity(), builder, Toast.LENGTH_LONG);
-                    TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
+                    if(activeOrder){
+                        Toast toast = Toast.makeText(getActivity(), R.string.cant_broadcast_while_active, Toast.LENGTH_LONG);
+                        TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
+                        tv.setTextColor(RED);
 
-                    toast.show();
+                        toast.show();
+                    }else {
+                        String builder = getString(R.string.retry_later) + " " + ((MainNavigationHolder) getActivity()).getTimeLeft()
+                                + " " + getString(R.string.seconds);
+                        Toast toast = Toast.makeText(getActivity(), builder, Toast.LENGTH_LONG);
+                        TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
+                        tv.setTextColor(RED);
+
+                        toast.show();
+                    }
                 }
             }
         });

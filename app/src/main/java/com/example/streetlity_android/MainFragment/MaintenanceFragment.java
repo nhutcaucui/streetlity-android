@@ -54,6 +54,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+import static android.graphics.Color.RED;
 import static androidx.constraintlayout.widget.Constraints.TAG;
 
 /**
@@ -209,16 +210,27 @@ public class MaintenanceFragment extends Fragment implements LocationListener {
             fab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(((MainNavigationHolder)getActivity()).isCanBroadcast()) {
+                    boolean activeOrder =  getActivity().
+                            getSharedPreferences("activeOrder",Context.MODE_PRIVATE).contains("activeOrder");
+                    if(((MainNavigationHolder)getActivity()).isCanBroadcast() && !activeOrder) {
                         getActivity().startActivityForResult(new Intent(getActivity(), BroadcastActivity.class), 5);
                     }
                     else{
-                        String builder = getString(R.string.retry_later)+ " "+ ((MainNavigationHolder)getActivity()).getTimeLeft()
-                                + " "+ getString(R.string.seconds);
-                        Toast toast = Toast.makeText(getActivity(), builder, Toast.LENGTH_LONG);
-                        TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
+                        if(activeOrder){
+                            Toast toast = Toast.makeText(getActivity(), R.string.cant_broadcast_while_active, Toast.LENGTH_LONG);
+                            TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
+                            tv.setTextColor(RED);
 
-                        toast.show();
+                            toast.show();
+                        }else {
+                            String builder = getString(R.string.retry_later) + " " + ((MainNavigationHolder) getActivity()).getTimeLeft()
+                                    + " " + getString(R.string.seconds);
+                            Toast toast = Toast.makeText(getActivity(), builder, Toast.LENGTH_LONG);
+                            TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
+                            tv.setTextColor(RED);
+
+                            toast.show();
+                        }
                     }
                 }
             });
