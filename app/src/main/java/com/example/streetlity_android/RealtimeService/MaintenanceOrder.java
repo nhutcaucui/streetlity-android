@@ -183,7 +183,7 @@ public class MaintenanceOrder {
      * Initialize a new instannce of MaintenanceOrder by a specified room
      * @param room
      */
-    public MaintenanceOrder(String room) {
+    protected MaintenanceOrder(String room) {
         this.room = room;
         Orders.put(this.room, this);
         self = this;
@@ -212,6 +212,11 @@ public class MaintenanceOrder {
      * Join to initial room and ready for working on it.
      */
     public void join() {
+        if (mSocket.connected()) {
+            Log.i(Tag, "join in " + room + ": already connected");
+            return;
+        }
+
         mSocket.connect();
     }
 
@@ -224,7 +229,21 @@ public class MaintenanceOrder {
         mSocket.emit("chat", message, now.toString());
     }
 
+    /**
+     * Send message to others to inform typing
+     * @param typing_user
+     */
+    public void sendTyping(String typing_user) {
+        mSocket.emit("typing-chat", typing_user);
+    }
 
+    /**
+     * Send message to others to inform typed
+     * @param typed_user
+     */
+    public void sendTyped(String typed_user) {
+        mSocket.emit("typed-chat", typed_user);
+    }
     /**
      * Send information to others
      * @param information
@@ -303,7 +322,40 @@ public class MaintenanceOrder {
      * Close the current connection.
      */
     public void close() {
+        if (!mSocket.connected()) {
+            Log.i(Tag, "close " + room + ": is already closed");
+
+            if (Orders.containsKey(room)) {
+                Orders.remove(room);
+            }
+
+            return;
+        }
+
         mSocket.disconnect();
         mSocket.off("chat", onChat);
+        mSocket.off("update-location", onUpdateLocation);
+        mSocket.off("update-information", onUpdateInformation);
+        mSocket.off("pull-information", onPullInformation);
+        mSocket.off("pull-location", onPullLocation);
+        mSocket.off("decline", onDecline);
+        mSocket.off("complete", onComplete);
+        mSocket.off("joined", onJoined);
+        mSocket.off("typing-chat", onTypingChat);
+        mSocket.off("typed-chat", onTypedChat);
+        Orders.remove(room);
+    }
+
+    /**
+     * Initialize a new instannce of MaintenanceOrder by a specified room
+     * @param room
+     */
+    public static MaintenanceOrder Create(String room) {
+        if (!Orders.containsKey(room)) {
+            MaintenanceOrder order = new MaintenanceOrder(room);
+            Orders.put(room, order);
+        }
+
+        return Orders.get(room);
     }
 }
