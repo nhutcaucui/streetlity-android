@@ -246,14 +246,15 @@ public class WCFragment extends Fragment{
                                     items.add(item);
                                 }
 
-                                adapter.notifyDataSetChanged();
-
                                 Collections.sort(items, new Comparator<MapObject>() {
                                     @Override
                                     public int compare(MapObject o1, MapObject o2) {
                                         return Float.compare(o1.getDistance(), o2.getDistance());
                                     }
                                 });
+
+                                adapter.notifyDataSetChanged();
+
                                 if (items.size() == 0) {
                                     tvNoItem.setVisibility(View.VISIBLE);
                                 }
