@@ -254,6 +254,8 @@ public class Chat extends AppCompatActivity {
                 return Long.compare(o1.getTime().getTime(), o2.getTime().getTime());
             }
         });
+        adapter.notifyDataSetChanged();
+        lv.setSelection(adapter.getCount()-1);
     }
 }
 
