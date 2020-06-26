@@ -86,7 +86,7 @@
                             android:layout_marginTop="5dp"
                             android:text="@string/fuel"
                             android:textColor="#000"
-                            android:textSize="18sp" />
+                            android:textSize="16sp" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -116,7 +116,7 @@
                             android:layout_marginTop="5dp"
                             android:text="@string/atm"
                             android:textColor="#000"
-                            android:textSize="18sp" />
+                            android:textSize="16sp" />
 
                     </LinearLayout>
 
@@ -167,7 +167,7 @@
                             android:layout_marginTop="5dp"
                             android:text="@string/fix"
                             android:textColor="#000"
-                            android:textSize="18sp" />
+                            android:textSize="16sp" />
 
                     </LinearLayout>
 
@@ -196,7 +196,7 @@
                             android:layout_marginTop="5dp"
                             android:text="@string/wc"
                             android:textColor="#000"
-                            android:textSize="18sp" />
+                            android:textSize="16sp" />
 
                     </LinearLayout>
                 </androidx.constraintlayout.widget.ConstraintLayout>
@@ -237,9 +237,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="5dp"
-                    android:text="@string/broadcast"
+                    android:text="@string/find_maintainer"
                     android:textColor="#000"
-                    android:textSize="18sp" />
+                    android:textSize="16sp" />
 
             </LinearLayout>
         </LinearLayout>

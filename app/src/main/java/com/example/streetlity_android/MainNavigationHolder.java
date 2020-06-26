@@ -140,7 +140,7 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(MainNavigationHolder.this, Chat.class));
+                startActivity(new Intent(MainNavigationHolder.this, AllServiceMap.class));
             }
         });
 

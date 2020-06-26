@@ -8,8 +8,11 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.RippleDrawable;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 
 import com.example.streetlity_android.Chat.Chat;
@@ -23,6 +26,7 @@ import androidx.core.content.ContextCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import android.os.CountDownTimer;
+import android.os.Handler;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -65,6 +69,14 @@ public class BroadcastActivity extends AppCompatActivity {
     boolean notFound = false;
 
     int broadcastCount = 0;
+
+    boolean isActive = true;
+
+    boolean stopThread = false;
+
+    CountDownTimer countdown;
+
+    Thread thread;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -243,6 +255,7 @@ public class BroadcastActivity extends AppCompatActivity {
                     setResult(RESULT_OK);
                     finish();
                 }
+                stopThread = true;
                 //denyOrder();
             }
         });
@@ -296,6 +309,50 @@ public class BroadcastActivity extends AppCompatActivity {
     public void sendBroadcast(final String reason, final String phone, final String note, double lat, double lon) {
         RelativeLayout broadcasting = findViewById(R.id.layout_broadcasting);
         broadcasting.setVisibility(View.VISIBLE);
+
+        Drawable background = broadcasting.getBackground();
+
+        if(Build.VERSION.SDK_INT >= 21 && background instanceof RippleDrawable)
+        {
+            final RippleDrawable rippleDrawable = (RippleDrawable) background;
+
+            rippleDrawable.setState(new int[]{android.R.attr.state_pressed, android.R.attr.state_enabled});
+
+            stopThread = false;
+
+            thread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        while(!stopThread) {
+                            Thread.sleep(1000);
+                            if (isActive) {
+                                isActive = false;
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        rippleDrawable.setState(new int[]{});
+                                    }
+                                });
+                            } else {
+                                isActive = true;
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        rippleDrawable.setState(new int[]{android.R.attr.state_pressed, android.R.attr.state_enabled});
+                                    }
+                                });
+
+                            }
+                        }
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                }
+            });
+            thread.start();
+        }
+
         Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getServiceURL())
                 .addConverterFactory(GsonConverterFactory.create()).build();
         final MapAPI tour = retro.create(MapAPI.class);
@@ -390,7 +447,7 @@ public class BroadcastActivity extends AppCompatActivity {
 
                                                 notFound = true;
 
-                                                new CountDownTimer(300000, 1000) {
+                                                countdown = new CountDownTimer(300000, 1000) {
 
                                                     public void onTick(long millisUntilFinished) {
                                                         if (!notFound) {
@@ -548,4 +605,15 @@ public class BroadcastActivity extends AppCompatActivity {
            foundAMaintainer(intent);
         }
     };
+
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+
+        if(countdown != null) {
+            countdown.cancel();
+        }
+
+        stopThread = true;
+    }
 }

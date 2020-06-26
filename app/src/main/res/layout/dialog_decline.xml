@@ -10,7 +10,7 @@
         android:padding="10dp"
         android:text="@string/decline_order"
         android:textColor="#000"
-        android:textSize="18sp"
+        android:textSize="16sp"
         android:textStyle="bold" />
 
     <com.google.android.material.textfield.TextInputLayout

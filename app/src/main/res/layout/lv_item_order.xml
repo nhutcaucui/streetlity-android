@@ -22,7 +22,7 @@
         android:paddingBottom="10dp"
         android:text="Fuel Station"
         android:textColor="@color/black"
-        android:textSize="24sp"
+        android:textSize="20sp"
         android:textStyle="bold" />
 
     <LinearLayout

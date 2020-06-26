@@ -36,6 +36,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -76,6 +77,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import okhttp3.ResponseBody;
@@ -427,6 +429,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     public void addImages(LinearLayout imgContainer){
+        ProgressBar loading = findViewById(R.id.loading_img);
+        loading.setVisibility(View.VISIBLE);
         if(!item.getImages().equals("")) {
             String[] split = item.getImages().split(";");
             Retrofit retro = new Retrofit.Builder().baseUrl(((MyApplication) this.getApplication()).getDriverURL())
@@ -470,11 +474,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     }
                 });
             }
-
+            loading.setVisibility(View.GONE);
 //        File file = new File("/");
 //        Bitmap myBitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
 
         }else{
+            loading.setVisibility(View.GONE);
             TextView tvNoImg = findViewById(R.id.tv_no_img);
             tvNoImg.setVisibility(View.VISIBLE);
         }
@@ -685,213 +690,123 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void loadReviews(){
         reviewItems.clear();
         displayReviewItems.clear();
+        ProgressBar loading = findViewById(R.id.loading_review);
+        loading.setVisibility(View.VISIBLE);
        // MapObject item = (MapObject) getIntent().getSerializableExtra("item");
         Retrofit retro = new Retrofit.Builder().baseUrl(((MyApplication) this.getApplication()).getServiceURL())
                 .addConverterFactory(GsonConverterFactory.create()).build();
         final MapAPI tour = retro.create(MapAPI.class);
+        Call<ResponseBody> call = tour.getFuelReview("1.0.0", item.getId(), 0,-1);
         switch (item.getType()){
             case 1:{
-                Call<ResponseBody> call = tour.getFuelReview("1.0.0", item.getId(), 0,-1);
-                call.enqueue(new Callback<ResponseBody>() {
-                    @Override
-                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                        if(response.code() == 200){
-                            final JSONObject jsonObject;
-                            try {
-                                jsonObject = new JSONObject(response.body().string());
-                                Log.e("", "onResponse: " + jsonObject.toString() + " reviewload" + item.getId());
-                                if (jsonObject.getBoolean("Status")) {
-
-                                    JSONArray jsonArray = jsonObject.getJSONArray("Reviews");
-                                    for (int i = 0; i < jsonArray.length(); i++) {
-                                        JSONObject jsonObject1 = jsonArray.getJSONObject(i);
-                                        Review review = new Review(jsonObject1.getString("Reviewer"),
-                                                jsonObject1.getString("Body"),
-                                                (float) jsonObject1.getDouble("Score"));
-                                        review.setId(jsonObject1.getInt("Id"));
-                                        reviewItems.add(review);
-                                        if(review.getUsername().equals(MyApplication.getInstance().getUsername())){
-                                            Button leaveReview = findViewById(R.id.btn_leave_comment);
-                                            leaveReview.setVisibility(View.GONE);
-                                        }
-                                    }
-                                    int number = 0;
-                                    if (reviewItems.size() > 3) {
-                                        number = reviewItems.size() - 3;
-
-                                    }
-
-                                    for (int i = reviewItems.size() - 1; i >= number; i--) {
-                                        displayReviewItems.add(reviewItems.get(i));
-                                    }
-
-                                    adapter.notifyDataSetChanged();
-
-                                    item.setRating(calculateRating(reviewItems));
-                                    rb.setRating(item.getRating());
-
-                                    tvRating = findViewById(R.id.tv_rating);
-                                    tvRating.setText("(" + df.format(item.getRating()) + ")");
-
-                                    LayerDrawable stars = (LayerDrawable) rb.getProgressDrawable();
-                                    stars.getDrawable(2).setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP);
-                                    stars.getDrawable(0).setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP);
-                                    stars.getDrawable(1).setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP);
-
-                                    Button btnShowHide = findViewById(R.id.btn_show_hide);
-
-                                    if (reviewItems.size() <= 3) {
-                                        btnShowHide.setVisibility(View.GONE);
-                                    }
-                                    btnShowHide.setOnClickListener(new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View v) {
-                                            if (isExpanded) {
-                                                isExpanded = false;
-                                                btnShowHide.setText(R.string.show_more);
-                                                for (int i = 3; i < reviewItems.size(); i++) {
-                                                    displayReviewItems.remove(3);
-                                                }
-                                                adapter.notifyDataSetChanged();
-                                            } else {
-                                                isExpanded = true;
-                                                displayReviewItems.clear();
-                                                for (int i = reviewItems.size() - 1; i >= 0; i--) {
-                                                    displayReviewItems.add(reviewItems.get(i));
-                                                }
-                                                btnShowHide.setText(R.string.show_less);
-                                                adapter.notifyDataSetChanged();
-                                            }
-                                        }
-                                    });
-                                }
-                            }catch (Exception e){
-                                e.printStackTrace();
-                            }
-                        }else{
-                            Log.e("", "onResponse: " +response.code() );
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<ResponseBody> call, Throwable t) {
-
-                    }
-                });
+                call = tour.getFuelReview("1.0.0", item.getId(), 0,-1);
                 break;
             }
             case 2:{
-                Call<ResponseBody> call = tour.getWCReview("1.0.0", item.getId(), 0,-1);
-                call.enqueue(new Callback<ResponseBody>() {
-                    @Override
-                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                        if(response.code() == 200){
-                            final JSONObject jsonObject;
-                            try {
-                                jsonObject = new JSONObject(response.body().string());
-                                Log.e("", "onResponse: " + jsonObject.toString());
-                                if (jsonObject.getBoolean("Status")) {
-                                    item.setRating(calculateRating(reviewItems));
-                                    rb.setRating(item.getRating());
-
-                                    tvRating = findViewById(R.id.tv_rating);
-                                    tvRating.setText("("+ df.format(item.getRating()) +")");
-
-                                    LayerDrawable stars = (LayerDrawable) rb.getProgressDrawable();
-                                    stars.getDrawable(2).setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP);
-                                    stars.getDrawable(0).setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP);
-                                    stars.getDrawable(1).setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP);
-                                }
-                            }catch (Exception e){
-                                e.printStackTrace();
-                            }
-                        }else{
-                            Log.e("", "onResponse: " +response.code() );
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<ResponseBody> call, Throwable t) {
-
-                    }
-                });
+                call = tour.getWCReview("1.0.0", item.getId(), 0,-1);
                 break;
             }
             case 3:{
-                Call<ResponseBody> call = tour.getMaintenanceReview("1.0.0", item.getId(), 0,-1);
-                call.enqueue(new Callback<ResponseBody>() {
-                    @Override
-                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                        if(response.code() == 200){
-                            final JSONObject jsonObject;
-                            try {
-                                jsonObject = new JSONObject(response.body().string());
-                                Log.e("", "onResponse: " + jsonObject.toString());
-                                if (jsonObject.getBoolean("Status")) {
-                                    item.setRating(calculateRating(reviewItems));
-                                    rb.setRating(item.getRating());
-
-                                    tvRating = findViewById(R.id.tv_rating);
-                                    tvRating.setText("("+ df.format(item.getRating()) +")");
-
-                                    LayerDrawable stars = (LayerDrawable) rb.getProgressDrawable();
-                                    stars.getDrawable(2).setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP);
-                                    stars.getDrawable(0).setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP);
-                                    stars.getDrawable(1).setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP);
-                                }
-                            }catch (Exception e){
-                                e.printStackTrace();
-                            }
-                        }else{
-                            Log.e("", "onResponse: " +response.code() );
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<ResponseBody> call, Throwable t) {
-
-                    }
-                });
+                call = tour.getMaintenanceReview("1.0.0", item.getId(), 0,-1);
                 break;
             }
             case 4:{
-                Call<ResponseBody> call = tour.getAtmReview("1.0.0", item.getId(), 0, -1);
-                call.enqueue(new Callback<ResponseBody>() {
-                    @Override
-                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                        if(response.code() == 200){
-                            final JSONObject jsonObject;
-                            try {
-                                jsonObject = new JSONObject(response.body().string());
-                                Log.e("", "onResponse: " + jsonObject.toString());
-                                if (jsonObject.getBoolean("Status")) {
-                                    item.setRating(calculateRating(reviewItems));
-                                    rb.setRating(item.getRating());
-
-                                    tvRating = findViewById(R.id.tv_rating);
-                                    tvRating.setText("("+ df.format(item.getRating()) +")");
-
-                                    LayerDrawable stars = (LayerDrawable) rb.getProgressDrawable();
-                                    stars.getDrawable(2).setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP);
-                                    stars.getDrawable(0).setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP);
-                                    stars.getDrawable(1).setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP);
-                                }
-                            }catch (Exception e){
-                                e.printStackTrace();
-                            }
-                        }else{
-                            Log.e("", "onResponse: " +response.code() );
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<ResponseBody> call, Throwable t) {
-
-                    }
-                });
+                call = tour.getAtmReview("1.0.0", item.getId(), 0, -1);
                 break;
             }
         }
+
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if(response.code() == 200){
+                    final JSONObject jsonObject;
+                    try {
+                        jsonObject = new JSONObject(response.body().string());
+                        Log.e("", "onResponse: " + jsonObject.toString() + " reviewload" + item.getId());
+                        if (jsonObject.getBoolean("Status")) {
+
+                            JSONArray jsonArray = jsonObject.getJSONArray("Reviews");
+                            for (int i = 0; i < jsonArray.length(); i++) {
+                                JSONObject jsonObject1 = jsonArray.getJSONObject(i);
+                                Review review = new Review(jsonObject1.getString("Reviewer"),
+                                        jsonObject1.getString("Body"),
+                                        (float) jsonObject1.getDouble("Score"));
+                                review.setId(jsonObject1.getInt("Id"));
+                                reviewItems.add(review);
+                                if(review.getUsername().equals(MyApplication.getInstance().getUsername())){
+                                    Button leaveReview = findViewById(R.id.btn_leave_comment);
+                                    leaveReview.setVisibility(View.GONE);
+                                }
+                            }
+
+                            Collections.reverse(reviewItems);
+
+                            int number = 0;
+                            if (reviewItems.size() > 3) {
+                                number = reviewItems.size() - 3;
+
+                            }
+
+                            for (int i = reviewItems.size() - 1; i >= number; i--) {
+                                displayReviewItems.add(reviewItems.get(i));
+                            }
+
+                            adapter.notifyDataSetChanged();
+
+                            loading.setVisibility(View.GONE);
+
+                            item.setRating(calculateRating(reviewItems));
+                            rb.setRating(item.getRating());
+
+                            tvRating = findViewById(R.id.tv_rating);
+                            tvRating.setText("(" + df.format(item.getRating()) + ")");
+
+                            LayerDrawable stars = (LayerDrawable) rb.getProgressDrawable();
+                            stars.getDrawable(2).setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP);
+                            stars.getDrawable(0).setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP);
+                            stars.getDrawable(1).setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP);
+
+                            Button btnShowHide = findViewById(R.id.btn_show_hide);
+
+                            if (reviewItems.size() <= 3) {
+                                btnShowHide.setVisibility(View.GONE);
+                            }
+                            btnShowHide.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    if (isExpanded) {
+                                        isExpanded = false;
+                                        btnShowHide.setText(R.string.show_more);
+                                        for (int i = 3; i < reviewItems.size(); i++) {
+                                            displayReviewItems.remove(3);
+                                        }
+                                        adapter.notifyDataSetChanged();
+                                    } else {
+                                        isExpanded = true;
+                                        displayReviewItems.clear();
+                                        for (int i = reviewItems.size() - 1; i >= 0; i--) {
+                                            displayReviewItems.add(reviewItems.get(i));
+                                        }
+                                        btnShowHide.setText(R.string.show_less);
+                                        adapter.notifyDataSetChanged();
+                                    }
+                                }
+                            });
+                        }
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                }else{
+                    Log.e("", "onResponse: " +response.code() );
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                t.printStackTrace();
+            }
+        });
     }
 
     public void onLocationChanged(Location location) {

@@ -55,6 +55,38 @@ public interface MapAPI {
     Call<ResponseBody> getMaintenanceInRange(@Header("Version") String version, @Query("location") float lat, @Query("location") float lon,
                                     @Query("range") float range);
 
+    @GET("service/fuel_ucf/range")
+    Call<ResponseBody> getUcfFuelRange(@Header("Version") String version, @Query("location") float lat, @Query("location") float lon,
+                                       @Query("range") float range);
+
+    @GET("service/maintenance_ucf/range")
+    Call<ResponseBody> getUcfMaintenanceRange(@Header("Version") String version, @Query("location") float lat, @Query("location") float lon,
+                                       @Query("range") float range);
+
+    @GET("service/atm_ucf/range")
+    Call<ResponseBody> getUcfATMRange(@Header("Version") String version, @Query("location") float lat, @Query("location") float lon,
+                                       @Query("range") float range);
+
+    @GET("service/toilet_ucf/range")
+    Call<ResponseBody> getUcfWCRange(@Header("Version") String version, @Query("location") float lat, @Query("location") float lon,
+                                       @Query("range") float range);
+
+    @FormUrlEncoded
+    @POST("service/fuel_ucf/upvote")
+    Call<ResponseBody> upvoteFuel(@Header("Version") String version, @Field("id") int id);
+
+    @FormUrlEncoded
+    @POST("service/maintenance_ucf/upvote")
+    Call<ResponseBody> upvoteMaintenance(@Header("Version") String version, @Field("id") int id);
+
+    @FormUrlEncoded
+    @POST("service/toilet_ucf/upvote")
+    Call<ResponseBody> upvoteWC(@Header("Version") String version, @Field("id") int id);
+
+    @FormUrlEncoded
+    @POST("service/atm_ucf/upvote")
+    Call<ResponseBody> upvoteATM(@Header("Version") String version, @Field("id") int id);
+
     @GET("service/range")
     Call<ResponseBody> getServiceInRange(@Query("location") float lat, @Query("location") float lon,
                                          @Query("range") float range);

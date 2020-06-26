@@ -56,7 +56,7 @@
             android:paddingBottom="10dp"
             android:text="Fuel Station"
             android:textColor="@color/black"
-            android:textSize="24sp"
+            android:textSize="20sp"
             android:textStyle="bold" />
 
         <LinearLayout
@@ -72,7 +72,7 @@
                 android:layout_marginLeft="20dp"
                 android:numStars="5"
                 android:progressTint="@color/black"
-                android:rating="3" />
+                android:rating="0" />
 
             <TextView
                 android:id="@+id/tv_rating"
@@ -80,9 +80,8 @@
                 android:layout_height="match_parent"
                 android:layout_marginLeft="5dp"
                 android:gravity="center"
-                android:text="(3)"
                 android:textColor="@color/black"
-                android:textSize="18sp" />
+                android:textSize="16sp" />
         </LinearLayout>
 
         <LinearLayout
@@ -128,29 +127,59 @@
         android:layout_height="2dp"
         android:background="?android:attr/listDivider" />
 
-    <HorizontalScrollView
-        android:id="@+id/hori_scroll_view"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
 
-        <LinearLayout
-            android:id="@+id/img_holder"
-            android:layout_width="wrap_content"
-            android:layout_height="100dp"
+        <ProgressBar
+            android:id="@+id/loading_img"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_weight="1"
+            android:elevation="10dp"
+            android:indeterminate="true"
+            android:indeterminateTint="@color/black"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_no_img"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:gravity="center"
-            android:orientation="horizontal">
+            android:text="@string/no_image"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
-                android:id="@+id/tv_no_img"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingLeft="50dp"
-                android:text="@string/no_image"
-                android:textColor="@color/black"
-                android:textSize="24sp"
-                android:visibility="gone" />
-        </LinearLayout>
-    </HorizontalScrollView>
+        <HorizontalScrollView
+            android:id="@+id/hori_scroll_view"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <LinearLayout
+                android:id="@+id/img_holder"
+                android:layout_width="wrap_content"
+                android:layout_height="100dp"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+            </LinearLayout>
+        </HorizontalScrollView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <View
         android:id="@+id/divider2"
@@ -172,7 +201,7 @@
             android:paddingLeft="15dp"
             android:text="@string/note"
             android:textColor="#000"
-            android:textSize="18sp" />
+            android:textSize="16sp" />
 
         <TextView
             android:id="@+id/tv_note"
@@ -205,7 +234,7 @@
                 android:paddingRight="15dp"
                 android:text="@string/review"
                 android:textColor="#000"
-                android:textSize="24sp" />
+                android:textSize="20sp" />
 
             <Button
                 android:id="@+id/btn_leave_comment"
@@ -222,10 +251,35 @@
                 android:visibility="invisible" />
         </LinearLayout>
 
-        <com.example.streetlity_android.Util.BottomSheetListView
-            android:id="@+id/lv_review"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="150dp" />
+            android:layout_height="match_parent">
+
+            <ProgressBar
+                android:id="@+id/loading_review"
+                style="?android:attr/progressBarStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_weight="1"
+                android:elevation="10dp"
+                android:indeterminate="true"
+                android:indeterminateTint="@color/black"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <com.example.streetlity_android.Util.BottomSheetListView
+                android:id="@+id/lv_review"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <Button
             android:id="@+id/btn_show_hide"

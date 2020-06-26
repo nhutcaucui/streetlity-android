@@ -325,20 +325,20 @@ public class ATMFragment extends Fragment implements LocationListener {
                                                 }
 
                                                 if(searchItems.size()>0){
-                                                    Collections.sort(searchItems, new Comparator<MapObject>() {
-                                                        @Override
-                                                        public int compare(MapObject o1, MapObject o2) {
-                                                            return Float.compare(o1.getDistance(), o2.getDistance());
-                                                        }
-                                                    });
-
-                                                    ((MainNavigationHolder) getActivity()).getLoading().setVisibility(View.VISIBLE);
-                                                    Intent t = new Intent(getActivity(), MapsActivity.class);
-                                                    t.putExtra("currLat", currLat);
-                                                    t.putExtra("currLon", currLon);
-                                                    t.putExtra("item", searchItems.get(0));
-                                                    Log.e("", "onItemClick: " + searchItems.get(0).getId());
-                                                    startActivity(t);
+//                                                    Collections.sort(searchItems, new Comparator<MapObject>() {
+//                                                        @Override
+//                                                        public int compare(MapObject o1, MapObject o2) {
+//                                                            return Float.compare(o1.getDistance(), o2.getDistance());
+//                                                        }
+//                                                    });
+//
+//                                                    ((MainNavigationHolder) getActivity()).getLoading().setVisibility(View.VISIBLE);
+//                                                    Intent t = new Intent(getActivity(), MapsActivity.class);
+//                                                    t.putExtra("currLat", currLat);
+//                                                    t.putExtra("currLon", currLon);
+//                                                    t.putExtra("item", searchItems.get(0));
+//                                                    Log.e("", "onItemClick: " + searchItems.get(0).getId());
+//                                                    startActivity(t);
                                                 }
                                                 else{
                                                     Toast toast = Toast.makeText(getActivity(), R.string.no_result, Toast.LENGTH_LONG);

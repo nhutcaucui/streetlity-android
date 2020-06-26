@@ -38,16 +38,16 @@
 
         <TextView
             android:id="@+id/textView29"
-            map:layout_constraintBottom_toBottomOf="@id/appbarlayout"
-            map:layout_constraintEnd_toEndOf="parent"
-            map:layout_constraintStart_toStartOf="parent"
-            map:layout_constraintTop_toTopOf="@id/appbarlayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:text="@string/my_order"
+            android:text="@string/confirming_location"
             android:textColor="#000000"
-            android:textSize="24sp" />
+            android:textSize="20sp"
+            map:layout_constraintBottom_toBottomOf="@id/appbarlayout"
+            map:layout_constraintEnd_toEndOf="parent"
+            map:layout_constraintStart_toStartOf="parent"
+            map:layout_constraintTop_toTopOf="@id/appbarlayout" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -72,6 +72,6 @@
         map:itemTextAppearanceInactive="@style/navTextInactive"
         map:itemTextColor="#000"
         map:labelVisibilityMode="selected"
-        map:menu="@menu/menu_main" />
+        map:menu="@menu/menu_contribution" />
 
 </RelativeLayout>

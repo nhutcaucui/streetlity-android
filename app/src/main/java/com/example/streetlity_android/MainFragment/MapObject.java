@@ -27,6 +27,8 @@ public class MapObject implements Serializable {
         this.type = type;
     }
 
+    public MapObject(){}
+
     public int getId() {
         return id;
     }

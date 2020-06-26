@@ -19,7 +19,7 @@
             android:text="@string/no_order"
             android:textAlignment="center"
             android:textColor="#000"
-            android:textSize="24sp"
+            android:textSize="20sp"
             android:visibility="gone" />
 
         <ListView

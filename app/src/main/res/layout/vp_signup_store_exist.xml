@@ -19,7 +19,7 @@
             android:padding="15dp"
             android:text="@string/user_store_state"
             android:textColor="@color/black"
-            android:textSize="24sp"
+            android:textSize="20sp"
             android:textStyle="bold" />
 
         <RadioGroup

@@ -43,7 +43,7 @@
             android:gravity="center"
             android:text="@string/contribute"
             android:textColor="#000000"
-            android:textSize="24sp"
+            android:textSize="20sp"
             app:layout_constraintBottom_toBottomOf="@id/appbarlayout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -51,56 +51,32 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@id/confirm_location_layout"
         android:layout_below="@id/top_bar">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/service_layout"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
+            android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <androidx.constraintlayout.widget.Guideline
-                android:id="@+id/guideline2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                app:layout_constraintGuide_percent="0.5" />
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/top_half"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                app:layout_constraintBottom_toTopOf="@id/guideline2"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
-
-                <androidx.constraintlayout.widget.Guideline
-                    android:id="@+id/guideline"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    app:layout_constraintGuide_percent="0.5" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
 
                 <LinearLayout
                     android:id="@+id/btn_fuel"
                     android:layout_width="0dp"
-                    android:layout_height="0dp"
+                    android:layout_height="200dp"
+                    android:layout_weight="1"
                     android:background="@android:color/transparent"
                     android:clickable="true"
                     android:foreground="?android:attr/selectableItemBackground"
                     android:gravity="center"
-                    android:orientation="vertical"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toLeftOf="@id/guideline"
-                    app:layout_constraintTop_toTopOf="parent">
+                    android:orientation="vertical">
 
 
                     <ImageView
@@ -116,22 +92,19 @@
                         android:layout_marginTop="5dp"
                         android:text="@string/fuel"
                         android:textColor="#000"
-                        android:textSize="18sp" />
+                        android:textSize="16sp" />
                 </LinearLayout>
 
                 <LinearLayout
                     android:id="@+id/btn_atm"
                     android:layout_width="0dp"
-                    android:layout_height="0dp"
+                    android:layout_height="200dp"
+                    android:layout_weight="1"
                     android:background="@android:color/transparent"
                     android:clickable="true"
                     android:foreground="?android:attr/selectableItemBackground"
                     android:gravity="center"
-                    android:orientation="vertical"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintLeft_toRightOf="@id/guideline"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toTopOf="parent">
+                    android:orientation="vertical">
 
                     <ImageView
                         android:id="@+id/imageView3"
@@ -146,43 +119,52 @@
                         android:layout_marginTop="5dp"
                         android:text="@string/atm"
                         android:textColor="#000"
-                        android:textSize="18sp" />
+                        android:textSize="16sp" />
 
                 </LinearLayout>
+            </LinearLayout>
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/constraintLayout"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:orientation="horizontal"
-                android:visibility="visible"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/guideline2">
-
-                <androidx.constraintlayout.widget.Guideline
-                    android:id="@+id/guideline3"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    app:layout_constraintGuide_percent="0.5" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
 
                 <LinearLayout
-                    android:id="@+id/btn_maintenance"
+                    android:id="@+id/btn_wc"
                     android:layout_width="0dp"
-                    android:layout_height="0dp"
+                    android:layout_height="200dp"
+                    android:layout_weight="1"
                     android:background="@android:color/transparent"
                     android:clickable="true"
                     android:foreground="?android:attr/selectableItemBackground"
                     android:gravity="center"
-                    android:orientation="vertical"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toLeftOf="@id/guideline3"
-                    app:layout_constraintTop_toTopOf="parent">
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:srcCompat="@drawable/wc_big_icon" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:text="@string/wc"
+                        android:textColor="#000"
+                        android:textSize="16sp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/btn_maintenance"
+                    android:layout_width="0dp"
+                    android:layout_height="200dp"
+                    android:layout_weight="1"
+                    android:background="@android:color/transparent"
+                    android:clickable="true"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:gravity="center"
+                    android:orientation="vertical">
 
                     <ImageView
 
@@ -197,42 +179,66 @@
                         android:layout_marginTop="5dp"
                         android:text="@string/fix"
                         android:textColor="#000"
-                        android:textSize="18sp" />
+                        android:textSize="16sp" />
 
                 </LinearLayout>
+            </LinearLayout>
 
-                <LinearLayout
-                    android:id="@+id/btn_wc"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/service_layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone">
+
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/guideline2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    app:layout_constraintGuide_percent="0.5" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/top_half"
                     android:layout_width="0dp"
                     android:layout_height="0dp"
-                    android:background="@android:color/transparent"
-                    android:clickable="true"
-                    android:foreground="?android:attr/selectableItemBackground"
-                    android:gravity="center"
-                    android:orientation="vertical"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintLeft_toRightOf="@id/guideline3"
-                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintBottom_toTopOf="@id/guideline2"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent">
 
-                    <ImageView
+                    <androidx.constraintlayout.widget.Guideline
+                        android:id="@+id/guideline"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        app:srcCompat="@drawable/wc_big_icon" />
+                        android:orientation="vertical"
+                        app:layout_constraintGuide_percent="0.5" />
 
-                    <TextView
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/constraintLayout"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:orientation="horizontal"
+                    android:visibility="visible"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/guideline2">
+
+                    <androidx.constraintlayout.widget.Guideline
+                        android:id="@+id/guideline3"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
-                        android:text="@string/wc"
-                        android:textColor="#000"
-                        android:textSize="18sp" />
+                        android:orientation="vertical"
+                        app:layout_constraintGuide_percent="0.5" />
 
-                </LinearLayout>
+                </androidx.constraintlayout.widget.ConstraintLayout>
             </androidx.constraintlayout.widget.ConstraintLayout>
-        </androidx.constraintlayout.widget.ConstraintLayout>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
+    </ScrollView>
 
     <LinearLayout
         android:id="@+id/confirm_location_layout"

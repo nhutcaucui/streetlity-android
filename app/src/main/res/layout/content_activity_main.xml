@@ -34,7 +34,7 @@
                 android:padding="15dp"
                 android:text="@string/cant_find_loca"
                 android:textColor="@color/black"
-                android:textSize="24sp" />
+                android:textSize="20sp" />
 
             <ImageView
                 android:id="@+id/imageView9"

@@ -50,6 +50,13 @@ import java.io.File;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
 public class MapsActivityConfirmation extends AppCompatActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
@@ -85,7 +92,7 @@ public class MapsActivityConfirmation extends AppCompatActivity implements OnMap
         btnExist.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                upvote();
             }
         });
 
@@ -207,11 +214,11 @@ public class MapsActivityConfirmation extends AppCompatActivity implements OnMap
         desOption.position(new LatLng(item.getLat(),item.getLon()));
         if(item.getType() == 1)
             desOption.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_fuel));
-        if(item.getType() == 2)
+        else if(item.getType() == 2)
             desOption.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_wc));
-        if(item.getType() == 3)
+        else if(item.getType() == 3)
             desOption.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_maintenance));
-        if(item.getType() == 4)
+        else if(item.getType() == 4)
             desOption.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_atm));
 
         mMap.addMarker(desOption);
@@ -250,5 +257,36 @@ public class MapsActivityConfirmation extends AppCompatActivity implements OnMap
             }
         });
         imgContainer.addView(img);
+    }
+
+    public void upvote(){
+        Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getServiceURL())
+                .addConverterFactory(GsonConverterFactory.create()).build();
+        final MapAPI tour = retro.create(MapAPI.class);
+        Call<ResponseBody> call = tour.upvoteATM("1.0.0", item.getId());
+        if(item.getType()==1){
+            call = tour.upvoteFuel("1.0.0", item.getId());
+        }
+        if(item.getType()==2){
+            call = tour.upvoteWC("1.0.0", item.getId());
+        }
+        if(item.getType()==3){
+            call = tour.upvoteMaintenance("1.0.0", item.getId());
+        }
+        if(item.getType()==4){
+            call = tour.upvoteATM("1.0.0", item.getId());
+        }
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+            }
+        });
+        finish();
     }
 }

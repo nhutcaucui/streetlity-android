@@ -71,6 +71,7 @@
     <string name="alert">Alert! This will notify nearby maintenance stores about your location. ONLY USE IN CASE OF EMERGENCY</string>
     <string name="reason">Reason</string>
     <string name="broadcast">Broadcast</string>
+    <string name="find_maintainer">Find a maintainer</string>
     <string name="my_works">My works</string>
     <string name="normal_order">Normal orders</string>
     <string name="no_order">No order</string>
@@ -209,4 +210,6 @@
     <string name="seconds">seconds</string>
     <string name="cant_broadcast_while_active">Can\'t broadcast while an order is active</string>
     <string name="cancel_order">Cancel order?</string>
+    <string name="title_activity_all_service_map" translatable="false">AllServiceMap</string>
+    <string name="all_service">All services</string>
 </resources>

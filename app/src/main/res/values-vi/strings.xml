@@ -196,4 +196,6 @@
     <string name="seconds">giây</string>
     <string name="cant_broadcast_while_active">Không thể broadcast khi có yêu cầu chưa hoàn thành</string>
     <string name="cancel_order">Hủy yêu cầu?</string>
+    <string name="find_maintainer">Tìm thợ sửa xe</string>
+    <string name="all_service">Tất cả dịch vụ</string>
 </resources>

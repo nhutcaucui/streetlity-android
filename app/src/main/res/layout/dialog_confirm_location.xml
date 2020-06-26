@@ -19,7 +19,7 @@
             android:paddingRight="15dp"
             android:text="TextViewaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
             android:textColor="#000"
-            android:textSize="24sp" />
+            android:textSize="20sp" />
 
         <TextView
             android:id="@+id/edt_address"
@@ -30,7 +30,7 @@
             android:paddingRight="15dp"
             android:text="TextView"
             android:textColor="#000"
-            android:textSize="18sp" />
+            android:textSize="16sp" />
 
         <LinearLayout
             android:layout_width="match_parent"

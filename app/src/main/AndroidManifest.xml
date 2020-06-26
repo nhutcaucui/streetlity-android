@@ -11,7 +11,7 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
         android:name=".MyApplication"
@@ -21,48 +21,65 @@
         android:networkSecurityConfig="@xml/network_security_config"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+>
+        <activity
+            android:name=".AllServiceMap"
+            android:label="@string/title_activity_all_service_map"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".Chat.Chat"
             android:label="@string/title_activity_chat"
-            android:theme="@style/AppTheme.NoActionBar"
             android:parentActivityName=".MaintainerLocation"
-            android:windowSoftInputMode="adjustResize">
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustResize"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="MaintenanceAcceptNotification" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name=".User.Common.MyOrders"
-            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity
+            android:name=".User.Common.MyOrders"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".User.UserInfoOther"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".MaintainerLocation"
             android:label="@string/title_activity_maintainer_location"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".AboutUs"
             android:label="@string/title_activity_about_us"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".Notification.Notification"
             android:label="@string/notifications"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".Contribution.AddSuccess"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".BroadcastActivity"
             android:label="@string/title_activity_broadcast"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="adjustResize" />
+            android:windowSoftInputMode="adjustResize"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".MainNavigationHolder"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="adjustResize">
+            android:windowSoftInputMode="adjustResize"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -72,49 +89,58 @@
         <activity
             android:name=".User.Maintainer.OrderInfo"
             android:label="@string/title_activity_order_info"
+            android:parentActivityName=".User.Maintainer.Works"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="adjustResize"
-            android:parentActivityName=".User.Maintainer.Works">
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="MaintenanceOrderNotification" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
         <activity
             android:name=".MapsActivity"
             android:label="@string/find_direction"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".User.Maintainer.Works"
             android:label="@string/title_activity_works"
-            android:theme="@style/AppTheme.NoActionBar"
             android:parentActivityName=".MainNavigationHolder"
-            android:windowSoftInputMode="adjustResize" />
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustResize"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".User.EditProfile"
             android:label="@string/title_activity_edit_profile"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="adjustResize" />
+            android:windowSoftInputMode="adjustResize"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".User.SignupAsMaintainer"
             android:label="@string/signup_as_maintain"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="adjustResize" />
+            android:windowSoftInputMode="adjustResize"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".User.ForgotPassword"
             android:label="@string/title_activity_forgot_password"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="adjustResize" />
+            android:windowSoftInputMode="adjustResize"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".User.ChangePassword"
             android:label="@string/change_password"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="adjustResize" />
+            android:windowSoftInputMode="adjustResize"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".User.UserInfo"
             android:label="@string/user_info"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="adjustResize" />
+            android:windowSoftInputMode="adjustResize"
+            android:screenOrientation="portrait"/>
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -130,17 +156,20 @@
         <activity
             android:name=".Contribution.ConfirmLocationsHolder"
             android:label="@string/location_confirm_activity_label"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".User.SignUp"
             android:label="@string/signup"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="adjustResize" />
+            android:windowSoftInputMode="adjustResize"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".User.Login"
             android:label="@string/login"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="adjustResize|stateHidden">
+            android:windowSoftInputMode="adjustResize|stateHidden"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="com.example.streetly_android.User.Login" />
 
@@ -150,41 +179,49 @@
         <activity
             android:name=".BankSelection"
             android:label="@string/title_activity_bank_selection"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".MapNavigationHolder"
             android:label="@string/title_activity_service_selection"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="portrait"/>
 
         <meta-data
             android:name="preloaded_fonts"
-            android:resource="@array/preloaded_fonts" />
+            android:resource="@array/preloaded_fonts"
+            android:screenOrientation="portrait"/>
 
         <activity
             android:name=".Contribution.ContributeToService"
             android:label="@string/title_activity_contribute"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="adjustResize" />
+            android:windowSoftInputMode="adjustResize"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".Contribution.SelectFromMap"
             android:label="@string/title_activity_select_from_map"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="adjustResize" />
+            android:windowSoftInputMode="adjustResize"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".Contribution.AddAMaintenance"
             android:label="@string/title_activity_add_maintenance"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="adjustResize|stateHidden" />
+            android:windowSoftInputMode="adjustResize|stateHidden"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".Contribution.AddAnATM"
             android:label="@string/title_activity_add_atm"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="adjustResize" />
+            android:windowSoftInputMode="adjustResize"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="adjustResize" />
+            android:windowSoftInputMode="adjustResize"
+            android:screenOrientation="portrait"/>
 
         <service
             android:name=".Firebase.StreetlityFirebaseMessagingService"

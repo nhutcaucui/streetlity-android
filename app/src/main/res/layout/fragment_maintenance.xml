@@ -67,7 +67,7 @@
             android:paddingRight="25dp"
             android:text="@string/no_maintenance"
             android:textColor="@color/black"
-            android:textSize="24sp"
+            android:textSize="20sp"
             android:visibility="gone" />
 
         <TextView
@@ -80,7 +80,7 @@
             android:paddingRight="25dp"
             android:text="@string/no_internet"
             android:textColor="@color/black"
-            android:textSize="24sp"
+            android:textSize="20sp"
             android:visibility="gone" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -123,7 +123,7 @@
                 android:paddingLeft="10dp"
                 android:text="@string/range"
                 android:textColor="#000"
-                android:textSize="18sp" />
+                android:textSize="16sp" />
 
             <SeekBar
                 android:id="@+id/sb_range"

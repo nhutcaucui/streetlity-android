@@ -57,7 +57,7 @@
                     android:layout_weight="0.25"
                     android:text="@string/address_short_with"
                     android:textColor="#000"
-                    android:textSize="18sp" />
+                    android:textSize="16sp" />
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -86,7 +86,7 @@
                     android:layout_weight="0.25"
                     android:text="@string/phone_short_with"
                     android:textColor="#000"
-                    android:textSize="18sp" />
+                    android:textSize="16sp" />
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

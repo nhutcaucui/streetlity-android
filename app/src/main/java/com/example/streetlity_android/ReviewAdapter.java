@@ -76,8 +76,14 @@ public class ReviewAdapter extends ArrayAdapter implements Filterable {
         stars.getDrawable(0).setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP);
         stars.getDrawable(1).setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP);
 
-        if(MyApplication.getInstance().getUsername().equals(holder.username.getText().toString())){
-            holder.editable.setVisibility(View.VISIBLE);
+        if(context instanceof AllServiceMap){
+
+        }else {
+            if (MyApplication.getInstance().getUsername().equals(holder.username.getText().toString())) {
+                holder.editable.setVisibility(View.VISIBLE);
+            } else {
+                holder.editable.setVisibility(View.GONE);
+            }
         }
 
         return convertView;

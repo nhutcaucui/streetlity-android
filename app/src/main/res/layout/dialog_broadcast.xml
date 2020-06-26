@@ -14,7 +14,7 @@
         android:paddingRight="10dp"
         android:text="@string/alert"
         android:textColor="#000"
-        android:textSize="18sp"
+        android:textSize="16sp"
         android:textStyle="bold" />
 
     <LinearLayout
