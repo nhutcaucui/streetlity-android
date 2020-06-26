@@ -125,7 +125,7 @@ public class WCFragment extends Fragment implements LocationListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View rootView = inflater.inflate(R.layout.fragment_home_fuel, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_wc, container, false);
 
         loading = rootView.findViewById(R.id.loading);
         tvNoItem = rootView.findViewById(R.id.no_item);
@@ -144,6 +144,8 @@ public class WCFragment extends Fragment implements LocationListener {
                 t.putExtra("currLat", currLat);
                 t.putExtra("currLon", currLon);
                 t.putExtra("item", displayItems.get(position));
+
+                locationManager.removeUpdates(WCFragment.this);
 
                 startActivity(t);
             }

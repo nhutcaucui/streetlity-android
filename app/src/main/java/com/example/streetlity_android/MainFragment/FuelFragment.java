@@ -152,6 +152,7 @@ public class FuelFragment extends Fragment implements LocationListener {
                 t.putExtra("currLon", currLon);
                 t.putExtra("item", displayItems.get(position));
                 Log.e("", "onItemClick: " + displayItems.get(position).getId() );
+                locationManager.removeUpdates(FuelFragment.this);
                 startActivity(t);
                 }
         });

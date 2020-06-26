@@ -26,6 +26,7 @@ import android.widget.Toast;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import com.example.streetlity_android.AllServiceMap;
 import com.example.streetlity_android.BroadcastActivity;
 import com.example.streetlity_android.MainNavigationHolder;
 import com.example.streetlity_android.MyApplication;
@@ -100,32 +101,40 @@ public class HomeFragment extends Fragment implements LocationListener{
         LinearLayout btnATM = rootView.findViewById(R.id.btn_atm);
         LinearLayout btnMaintenance = rootView.findViewById(R.id.btn_maintenance);
         LinearLayout btnBroadcast = rootView.findViewById(R.id.btn_broadcast);
+        LinearLayout btnAll = rootView.findViewById(R.id.btn_all);
+
+        btnAll.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getActivity(), AllServiceMap.class));
+            }
+        });
 
         btnFuel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((MainNavigationHolder) getActivity()).getNavigation().setSelectedItemId(R.id.navigation_fuel);
+                getActivity().findViewById(R.id.btn_fuel_bottom).callOnClick();
             }
         });
 
         btnATM.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((MainNavigationHolder) getActivity()).getNavigation().setSelectedItemId(R.id.nav_atm);
+                getActivity().findViewById(R.id.btn_atm_bottom).callOnClick();
             }
         });
 
         btnMaintenance.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((MainNavigationHolder) getActivity()).getNavigation().setSelectedItemId(R.id.navigation_maintenance);
+                getActivity().findViewById(R.id.btn_maintenance_bottom).callOnClick();
             }
         });
 
         btnWC.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((MainNavigationHolder) getActivity()).getNavigation().setSelectedItemId(R.id.navigation_wc);
+                getActivity().findViewById(R.id.btn_wc_bottom).callOnClick();
             }
         });
 
@@ -243,6 +252,7 @@ public class HomeFragment extends Fragment implements LocationListener{
         if(getActivity()!= null) {
             ((MainNavigationHolder) getActivity()).getCantFind().setVisibility(View.GONE);
         }
+        Log.e("", "onLocationChanged: home" );
         locationManager.removeUpdates(this);
     }
     @Override

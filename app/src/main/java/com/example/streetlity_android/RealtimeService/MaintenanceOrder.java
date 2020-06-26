@@ -27,6 +27,17 @@ public class MaintenanceOrder {
     public Information information;
     public Location location;
 
+    private static MaintenanceOrder mySocket;
+    public MaintenanceOrder() {
+        mySocket = this;
+    }
+    public static MaintenanceOrder getInstance() {
+        if(mySocket == null){
+            mySocket = new MaintenanceOrder();
+        }
+        return mySocket;
+    }
+
     /**
      * Listener for event Joined. Trigger when joined successfully.
      */

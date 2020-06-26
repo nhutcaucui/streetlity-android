@@ -8,6 +8,7 @@ import android.os.Bundle;
 
 import com.example.streetlity_android.Chat.Chat;
 import com.example.streetlity_android.MainNavigationHolder;
+import com.example.streetlity_android.MaintainerDirection;
 import com.example.streetlity_android.MapAPI;
 import com.example.streetlity_android.MyApplication;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -134,6 +135,7 @@ public class OrderInfo extends AppCompatActivity {
                                     Log.e("", "onResponse: " + jsonObject.toString());
                                     if (jsonObject.getBoolean("Status")) {
                                         finish();
+                                        startActivity(new Intent(OrderInfo.this, MaintainerDirection.class));
                                         startActivity(new Intent( OrderInfo.this, Chat.class));
                                         SharedPreferences s = getSharedPreferences("Room", MODE_PRIVATE);
                                         s.edit().putString("room",Integer.toString(item1.getId())).apply();

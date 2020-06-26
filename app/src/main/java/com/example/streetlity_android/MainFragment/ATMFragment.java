@@ -156,6 +156,8 @@ public class ATMFragment extends Fragment implements LocationListener {
                 t.putExtra("currLon", currLon);
                 t.putExtra("item", displayItems.get(position));
 
+                locationManager.removeUpdates(ATMFragment.this);
+
                 startActivity(t);
             }
         });

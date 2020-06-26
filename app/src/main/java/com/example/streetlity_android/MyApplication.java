@@ -3,6 +3,8 @@ package com.example.streetlity_android;
 import android.app.Application;
 import android.graphics.Bitmap;
 
+import com.example.streetlity_android.RealtimeService.MaintenanceOrder;
+
 //eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1OTQ0NDUzMzIsImlkIjoibXJYWVpaemFidiJ9.0Hd4SpIELulSuTxGAeuCPl_A33X-KoPUpRmgK4dTphk
 
 //401 refresh
@@ -40,6 +42,8 @@ public class MyApplication extends Application { //35.240.232.218 auth server
 
     private Bitmap image;
 
+    private MaintenanceOrder socket;
+
     public String getUserId() {
         return userId;
     }
@@ -55,6 +59,14 @@ public class MyApplication extends Application { //35.240.232.218 auth server
     private String driverURL = "http://34.87.144.190/";
 
     private String maintenanceURL = "http://35.240.207.83:9002/";
+
+    public MaintenanceOrder getSocket() {
+        return socket;
+    }
+
+    public void setSocket(MaintenanceOrder socket) {
+        this.socket = socket;
+    }
 
     public String getDriverURL() {
         return driverURL;

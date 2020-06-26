@@ -101,10 +101,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     Marker currMarker;
 
+    LocationManager locationManager;
+
     Polyline polyline;
 
     private static final long MIN_TIME = 1000;
-    private static final float MIN_DISTANCE = 1000;
+    private static final float MIN_DISTANCE = 100;
 
     boolean isExpanded = false;
 
@@ -365,6 +367,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         MarkerOptions currOption = new MarkerOptions();
         currOption.position(new LatLng(latitude,longitude));
+        currOption.icon(BitmapDescriptorFactory.fromResource(R.drawable.cursor));
         currOption.title(getString(R.string.you_r_here));
         currMarker = mMap.addMarker(currOption);
 
@@ -387,22 +390,20 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         builder.include(desMarker.getPosition());
         LatLngBounds bounds = builder.build();
 
+        if (ContextCompat.checkSelfPermission(MapsActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
+                ContextCompat.checkSelfPermission(MapsActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            locationManager = (LocationManager)
+                    MapsActivity.this.getSystemService(Context.LOCATION_SERVICE);
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, MIN_TIME, MIN_DISTANCE, this);
+
+        }
+
         mMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
             @Override
             public void onMapLoaded() {
                 int padding = 50; // offset from edges of the map in pixels
                 CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
                 googleMap.animateCamera(cu);
-
-                if (ContextCompat.checkSelfPermission(MapsActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
-                        ContextCompat.checkSelfPermission(MapsActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-
-
-                    LocationManager locationManager = (LocationManager)
-                            MapsActivity.this.getSystemService(Context.LOCATION_SERVICE);
-                    ;
-                    locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME, MIN_DISTANCE, MapsActivity.this);
-                }
             }
         });
 
@@ -824,11 +825,16 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     public void onLocationChanged(Location location) {
-        currMarker.remove();
+        if(currMarker != null) {
+            currMarker.remove();
+        }
         MarkerOptions currOption = new MarkerOptions();
         currOption.position(new LatLng(location.getLatitude(),location.getLongitude()));
+        currOption.icon(BitmapDescriptorFactory.fromResource(R.drawable.cursor));
+        currOption.rotation(location.getBearing()-45);
         currOption.title(getString(R.string.you_r_here));
         currMarker = mMap.addMarker(currOption);
+        Log.e("", "onLocationChanged: updation" );
     }
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {

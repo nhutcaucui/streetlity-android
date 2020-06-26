@@ -214,4 +214,5 @@
     <string name="all_service">All services</string>
     <string name="show_all">Show me all the services</string>
     <string name="no_review">No review</string>
+    <string name="something_wrong_direction">"Something went wrong when trying to find direction"</string>
 </resources>

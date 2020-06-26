@@ -148,6 +148,8 @@ public class MaintenanceFragment extends Fragment implements LocationListener {
                 t.putExtra("currLon", currLon);
                 t.putExtra("item", displayItems.get(position));
 
+                locationManager.removeUpdates(MaintenanceFragment.this);
+
                 startActivity(t);
             }
         });

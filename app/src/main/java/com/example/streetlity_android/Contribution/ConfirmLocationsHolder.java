@@ -28,7 +28,10 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -68,8 +71,10 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ConfirmLocationsHolder extends AppCompatActivity implements FuelFragment.OnFragmentInteractionListener,
         ATMFragment.OnFragmentInteractionListener, MaintenanceFragment.OnFragmentInteractionListener,
-        WCFragment.OnFragmentInteractionListener{
+        WCFragment.OnFragmentInteractionListener, View.OnClickListener {
     Fragment fragment;
+
+    int current =R.id.btn_home_bottom;
     @Override
     public void onFragmentInteraction(Uri uri){
         //you can leave it empty
@@ -90,6 +95,73 @@ public class ConfirmLocationsHolder extends AppCompatActivity implements FuelFra
 
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+        
+        LinearLayout btnFuel = findViewById(R.id.btn_fuel_bottom);
+        LinearLayout btnATM = findViewById(R.id.btn_atm_bottom);
+        LinearLayout btnMaintenance = findViewById(R.id.btn_maintenance_bottom);
+        LinearLayout btnWC = findViewById(R.id.btn_wc_bottom);
+        
+        btnFuel.setOnClickListener(this);
+        btnATM.setOnClickListener(this);
+        btnMaintenance.setOnClickListener(this);
+        btnWC.setOnClickListener(this);
+    }
+
+    @Override
+    public void onClick(View v) {
+        boolean notTheSame = false;
+        if(v.getId() == R.id.btn_fuel_bottom && current != R.id.btn_fuel_bottom){
+            fragment = new  FuelFragment();
+            setToUnselect(current);
+            current= R.id.btn_fuel_bottom;
+            setToSelect(current);
+            notTheSame = true;
+        }else if(v.getId() == R.id.btn_wc_bottom && current != R.id.btn_wc_bottom) {
+            fragment = new  WCFragment();
+            setToUnselect(current);
+            current = R.id.btn_wc_bottom;
+            setToSelect(current);
+            notTheSame = true;
+        }else if(v.getId() == R.id.btn_atm_bottom && current != R.id.btn_atm_bottom) {
+            fragment = new  ATMFragment();
+            setToUnselect(current);
+            current = R.id.btn_atm_bottom;
+            setToSelect(current);
+            notTheSame = true;
+        }
+        else if(v.getId() == R.id.btn_maintenance_bottom && current != R.id.btn_maintenance_bottom) {
+            fragment = new  MaintenanceFragment();
+            setToUnselect(current);
+            current = R.id.btn_maintenance_bottom;
+            setToSelect(current);
+            notTheSame = true;
+        }
+        if(notTheSame) {
+            loadFragment(fragment);
+        }
+    }
+
+    public void setToUnselect(int id){
+        LinearLayout btnCurrent = findViewById(id);
+        if(btnCurrent != null) {
+            btnCurrent.getChildAt(1).setVisibility(View.GONE);
+            Log.e( "setToUnselect: ", btnCurrent.getClass().getName() + btnCurrent.getChildCount());
+            ImageView img = (ImageView)  btnCurrent.getChildAt(0);
+            img.setColorFilter(Color.argb(255, 255, 255, 255));
+        }
+    }
+
+    public void setToSelect(int id){
+        LinearLayout btnCurrent = findViewById(id);
+        btnCurrent.getChildAt(1).setVisibility(View.VISIBLE);
+        Log.e( "setToUnselect: ", btnCurrent.getClass().getName() + btnCurrent.getChildCount());
+        ImageView img = (ImageView) ((LinearLayout) btnCurrent).getChildAt(0);
+        img.setColorFilter(Color.argb(255, 0, 0, 0));
+
+        int[] location = new int[2];
+        btnCurrent.getLocationInWindow(location);
+        HorizontalScrollView scrollView = findViewById(R.id.bottom_horizontal);
+        scrollView.smoothScrollTo(location[0], location[1]);
     }
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener

@@ -100,7 +100,9 @@ public class Chat extends AppCompatActivity {
 
         Log.e("", "onCreate: " + room);
 
-        MaintenanceOrder socket = MaintenanceOrder.Create("himom");
+        MaintenanceOrder socket = MaintenanceOrder.getInstance();
+
+        socket.Create(room);
 
         socket.InformationListener = new InformationListener<MaintenanceOrder>() {
             @Override

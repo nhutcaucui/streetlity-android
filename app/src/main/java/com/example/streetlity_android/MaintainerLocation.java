@@ -1,24 +1,44 @@
 package com.example.streetlity_android;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.location.Location;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 
+import com.akexorcist.googledirection.DirectionCallback;
+import com.akexorcist.googledirection.GoogleDirection;
+import com.akexorcist.googledirection.constant.RequestResult;
+import com.akexorcist.googledirection.model.Direction;
+import com.akexorcist.googledirection.model.Leg;
+import com.akexorcist.googledirection.model.Route;
+import com.akexorcist.googledirection.util.DirectionConverter;
 import com.example.streetlity_android.Chat.Chat;
+import com.example.streetlity_android.RealtimeService.LocationListener;
 import com.example.streetlity_android.RealtimeService.MaintenanceOrder;
 import com.example.streetlity_android.User.SignUp;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -33,6 +53,8 @@ import android.widget.Toast;
 
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -40,9 +62,17 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class MaintainerLocation extends AppCompatActivity implements OnMapReadyCallback {
+public class MaintainerLocation extends AppCompatActivity implements OnMapReadyCallback, android.location.LocationListener {
 
     GoogleMap mMap;
+    
+    MaintenanceOrder socket;
+
+    double currLat;
+
+    double currLon;
+
+    Marker currMarker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -181,5 +211,52 @@ public class MaintainerLocation extends AppCompatActivity implements OnMapReadyC
 
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        socket = MaintenanceOrder.getInstance();
+
+        socket.LocationListener = new com.example.streetlity_android.RealtimeService.LocationListener<MaintenanceOrder>() {
+            @Override
+            public void onReceived(MaintenanceOrder sender, float lat, float lon) {
+                if(currMarker != null){
+                    currMarker.remove();
+                }
+
+                MarkerOptions options = new MarkerOptions();
+                options.icon(BitmapDescriptorFactory.fromResource(R.drawable.cursor));
+                options.position(new LatLng(lat,lon));
+
+                currMarker = mMap.addMarker(options);
+            }
+        };
+
+
+    }
+
+    public void onLocationChanged(Location location) {
+
+    }
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+    }
+
+    public  void onResume(){
+        super.onResume();
+
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
+    }
+
+    public void onStop(){
+        super.onStop();
+
+        socket.close();
     }
 }
