@@ -543,6 +543,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                             rb.setRating(calculateRating(reviewItems));
 
                             tvRating.setText("("+ df.format(item.getRating()) +")");
+
+                            TextView tvNoReview = findViewById(R.id.tv_no_review);
+                            tvNoReview.setVisibility(View.GONE);
                         }
                     }catch (Exception e){
                         e.printStackTrace();
@@ -667,6 +670,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                 Button btnShowHide= findViewById(R.id.btn_show_hide);
                                 btnShowHide.setVisibility(View.GONE);
                             }
+
+                            if(reviewItems.size() == 0){
+                                TextView tvNoReview = findViewById(R.id.tv_no_review);
+                                tvNoReview.setVisibility(View.VISIBLE);
+                            }
+
                             adapter.notifyDataSetChanged();
 
                             tvRating.setText("("+ df.format(item.getRating()) +")");
@@ -740,33 +749,38 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                 }
                             }
 
-                            Collections.reverse(reviewItems);
+                            if(reviewItems.size() <= 0){
+                                TextView tvNoReview = findViewById(R.id.tv_no_review);
+                                tvNoReview.setVisibility(View.VISIBLE);
+                            }else {
 
-                            int number = 0;
-                            if (reviewItems.size() > 3) {
-                                number = reviewItems.size() - 3;
+                                Collections.reverse(reviewItems);
 
+                                int number = 0;
+                                if (reviewItems.size() > 3) {
+                                    number = reviewItems.size() - 3;
+
+                                }
+
+                                for (int i = reviewItems.size() - 1; i >= number; i--) {
+                                    displayReviewItems.add(reviewItems.get(i));
+                                }
+
+                                adapter.notifyDataSetChanged();
+
+                                loading.setVisibility(View.GONE);
+
+                                item.setRating(calculateRating(reviewItems));
+                                rb.setRating(item.getRating());
+
+                                tvRating = findViewById(R.id.tv_rating);
+                                tvRating.setText("(" + df.format(item.getRating()) + ")");
+
+                                LayerDrawable stars = (LayerDrawable) rb.getProgressDrawable();
+                                stars.getDrawable(2).setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP);
+                                stars.getDrawable(0).setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP);
+                                stars.getDrawable(1).setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP);
                             }
-
-                            for (int i = reviewItems.size() - 1; i >= number; i--) {
-                                displayReviewItems.add(reviewItems.get(i));
-                            }
-
-                            adapter.notifyDataSetChanged();
-
-                            loading.setVisibility(View.GONE);
-
-                            item.setRating(calculateRating(reviewItems));
-                            rb.setRating(item.getRating());
-
-                            tvRating = findViewById(R.id.tv_rating);
-                            tvRating.setText("(" + df.format(item.getRating()) + ")");
-
-                            LayerDrawable stars = (LayerDrawable) rb.getProgressDrawable();
-                            stars.getDrawable(2).setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP);
-                            stars.getDrawable(0).setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP);
-                            stars.getDrawable(1).setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP);
-
                             Button btnShowHide = findViewById(R.id.btn_show_hide);
 
                             if (reviewItems.size() <= 3) {

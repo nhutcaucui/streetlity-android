@@ -51,10 +51,12 @@ import com.example.streetlity_android.R;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.lang.reflect.Field;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -174,6 +176,7 @@ public class AllServiceMap extends AppCompatActivity implements GoogleMap.OnMark
             Button btnShowHide = dialogView.findViewById(R.id.btn_show_hide);
             ProgressBar loadingImg = dialogView.findViewById(R.id.loading_img);
             ProgressBar loadingReview = dialogView.findViewById(R.id.loading_review);
+            TextView tvNoReview = dialogView.findViewById(R.id.tv_no_review);
 
             final BottomSheetDialog dialog = new BottomSheetDialog(this, android.R.style.Theme_Black_NoTitleBar);
             //dialog.getWindow().setWindowAnimations(R.style.PauseDialog);
@@ -232,7 +235,7 @@ public class AllServiceMap extends AppCompatActivity implements GoogleMap.OnMark
                         }
                         DecimalFormat df = new DecimalFormat("#.#");
                         tvDistance.setText("~" + df.format(distance) + dis);
-                        loadReviews(item, rb, tvRating,btnShowHide, loadingReview);
+                        loadReviews(item, rb, tvRating,btnShowHide, loadingReview,tvNoReview);
                         addImages(imgHolder, item, tvNoImg, loadingImg);
                     }
                     break;
@@ -574,7 +577,7 @@ public class AllServiceMap extends AppCompatActivity implements GoogleMap.OnMark
     }
 
     public void loadReviews(MapObject item, final RatingBar rb, final TextView tvRating, Button btnShowHide,
-                            ProgressBar loading){
+                            ProgressBar loading, TextView noReview){
         loading.setVisibility(View.VISIBLE);
         reviewItems.clear();
         displayReviewItems.clear();
@@ -621,32 +624,39 @@ public class AllServiceMap extends AppCompatActivity implements GoogleMap.OnMark
                                 review.setId(jsonObject1.getInt("Id"));
                                 reviewItems.add(review);
                             }
-                            int number = 0;
-                            if (reviewItems.size() > 3) {
-                                number = reviewItems.size() - 3;
 
+                            if (reviewItems.size() <= 0) {
+                                noReview.setVisibility(View.VISIBLE);
+                            } else {
+
+                                Collections.reverse(reviewItems);
+
+                                int number = 0;
+                                if (reviewItems.size() > 3) {
+                                    number = reviewItems.size() - 3;
+
+                                }
+
+                                for (int i = reviewItems.size() - 1; i >= number; i--) {
+                                    displayReviewItems.add(reviewItems.get(i));
+                                }
+
+                                adapter.notifyDataSetChanged();
+
+                                loading.setVisibility(View.GONE);
+
+                                item.setRating(calculateRating(reviewItems));
+                                rb.setRating(item.getRating());
+
+                                DecimalFormat df = new DecimalFormat("#.#");
+
+                                tvRating.setText("(" + df.format(item.getRating()) + ")");
+
+                                LayerDrawable stars = (LayerDrawable) rb.getProgressDrawable();
+                                stars.getDrawable(2).setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP);
+                                stars.getDrawable(0).setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP);
+                                stars.getDrawable(1).setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP);
                             }
-
-                            for (int i = reviewItems.size() - 1; i >= number; i--) {
-                                displayReviewItems.add(reviewItems.get(i));
-                            }
-
-                            adapter.notifyDataSetChanged();
-
-                            loading.setVisibility(View.GONE);
-
-                            item.setRating(calculateRating(reviewItems));
-                            rb.setRating(item.getRating());
-
-                            DecimalFormat df = new DecimalFormat("#.#");
-
-                            tvRating.setText("(" + df.format(item.getRating()) + ")");
-
-                            LayerDrawable stars = (LayerDrawable) rb.getProgressDrawable();
-                            stars.getDrawable(2).setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP);
-                            stars.getDrawable(0).setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP);
-                            stars.getDrawable(1).setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP);
-
                             if (reviewItems.size() <= 3) {
                                 btnShowHide.setVisibility(View.GONE);
                             }

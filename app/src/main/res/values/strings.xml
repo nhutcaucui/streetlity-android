@@ -212,4 +212,6 @@
     <string name="cancel_order">Cancel order?</string>
     <string name="title_activity_all_service_map" translatable="false">AllServiceMap</string>
     <string name="all_service">All services</string>
+    <string name="show_all">Show me all the services</string>
+    <string name="no_review">No review</string>
 </resources>

@@ -198,4 +198,6 @@
     <string name="cancel_order">Hủy yêu cầu?</string>
     <string name="find_maintainer">Tìm thợ sửa xe</string>
     <string name="all_service">Tất cả dịch vụ</string>
+    <string name="show_all">Hiện tất cả dịch vụ</string>
+    <string name="no_review">Không có đánh giá</string>
 </resources>
