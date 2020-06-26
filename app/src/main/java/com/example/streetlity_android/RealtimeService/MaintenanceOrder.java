@@ -14,9 +14,7 @@ import org.json.JSONObject;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 
@@ -65,7 +63,10 @@ public class MaintenanceOrder {
      * Listener for event Typed Message. Trigger when an user is complete to type
      */
     public TypeMessageListener<MaintenanceOrder> TypedListener;
-
+    /**
+     * Listener for event Pulled Message. Trigger when the pull message event is completed.
+     */
+    public Listener<MaintenanceOrder> PulledMessageListener;
     private Emitter.Listener onChat = new Emitter.Listener() {
         @Override
         public void call(Object... args) {
@@ -136,7 +137,7 @@ public class MaintenanceOrder {
             mSocket.close();
 
             if (DeclineListener != null) {
-                DeclineListener.call(self);
+                DeclineListener.trigger(self);
             }
         }
     };
@@ -146,7 +147,7 @@ public class MaintenanceOrder {
         @Override
         public void call(Object... args) {
             if (CompleteListener != null) {
-                CompleteListener.call(self);
+                CompleteListener.trigger(self);
             }
         }
     };
@@ -163,7 +164,7 @@ public class MaintenanceOrder {
         public void call(Object... args) {
             Log.d(Tag, "onJoined: joined");
             if (JoinedListener != null) {
-                JoinedListener.call(self);
+                JoinedListener.trigger(self);
             }
         }
     };
@@ -190,6 +191,15 @@ public class MaintenanceOrder {
         }
     };
 
+    private Emitter.Listener onPulledChat = new Emitter.Listener() {
+        @Override
+        public void call(Object... args) {
+            if (PulledMessageListener != null) {
+                PulledMessageListener.trigger(self);
+            }
+        }
+    };
+
     private Socket mSocket;
     private MaintenanceOrder self;
 
@@ -211,6 +221,7 @@ public class MaintenanceOrder {
             mSocket = manager.socket("/" + room);
         }catch (URISyntaxException e) {}
         mSocket.on("chat", onChat);
+        mSocket.on("pulled-chat", onPulledChat);
         mSocket.on("update-location", onUpdateLocation);
         mSocket.on("update-information", onUpdateInformation);
         mSocket.on("pull-information", onPullInformation);
@@ -227,7 +238,7 @@ public class MaintenanceOrder {
      */
     public void join() {
         if (mSocket.connected()) {
-            JoinedListener.call(self);
+            JoinedListener.trigger(self);
             Log.i(Tag, "join in " + room + ": already connected");
             return;
         }

@@ -137,20 +137,20 @@ public class Chat extends AppCompatActivity {
 
         socket.DeclineListener = new Listener<MaintenanceOrder>() {
             @Override
-            public void call(MaintenanceOrder sender) {
+            public void trigger(MaintenanceOrder sender) {
 
             }
         };
         socket.CompleteListener = new Listener<MaintenanceOrder>() {
             @Override
-            public void call(MaintenanceOrder sender) {
+            public void trigger(MaintenanceOrder sender) {
                 Log.e("", "call: completed");
             }
         };
 
         socket.JoinedListener = new Listener<MaintenanceOrder>() {
             @Override
-            public void call(MaintenanceOrder sender) {
+            public void trigger(MaintenanceOrder sender) {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
