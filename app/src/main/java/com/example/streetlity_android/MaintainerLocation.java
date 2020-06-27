@@ -228,11 +228,29 @@ public class MaintainerLocation extends AppCompatActivity implements OnMapReadyC
             }
         };
 
+        if (ContextCompat.checkSelfPermission(MaintainerLocation.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
+                ContextCompat.checkSelfPermission(MaintainerLocation.this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            LocationManager locationManager = (LocationManager)
+                    MaintainerLocation.this.getSystemService(Context.LOCATION_SERVICE);
+
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 1000, this);
+        }
 
     }
 
     public void onLocationChanged(Location location) {
+        if(currMarker!= null) {
+            currMarker.remove();
+        }
+        MarkerOptions currOption = new MarkerOptions();
+        currOption.position(new LatLng(location.getLatitude(),location.getLongitude()));
+        currOption.title(getString(R.string.you_r_here));
+        currOption.icon(BitmapDescriptorFactory.fromResource(R.drawable.user));
+        currMarker = mMap.addMarker(currOption);
 
+        if(socket != null){
+            socket.updateLocation(location.getLatitude(),location.getLongitude(),location.getBearing());
+        }
     }
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {

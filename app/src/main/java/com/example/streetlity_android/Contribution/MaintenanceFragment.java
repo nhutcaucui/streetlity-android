@@ -89,7 +89,7 @@ public class MaintenanceFragment extends Fragment{
     float currLat;
     float currLon;
 
-    private static final long MIN_TIME = 400;
+    private static final long MIN_TIME = 1;
     private static final float MIN_DISTANCE = 1000;
 
     LocationManager locationManager;

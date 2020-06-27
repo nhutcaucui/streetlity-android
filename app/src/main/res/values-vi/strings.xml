@@ -201,4 +201,7 @@
     <string name="show_all">Hiện tất cả dịch vụ</string>
     <string name="no_review">Không có đánh giá</string>
     <string name="something_wrong_direction">Có lỗi xảy ra khi tìm đường</string>
+    <string name="submitted_by">Được thêm bởi:</string>
+    <string name="revert">Trở về kết quả ban đầu</string>
+    <string name="filter_bank">Lọc ngân hàng</string>
 </resources>

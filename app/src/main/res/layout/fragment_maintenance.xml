@@ -10,6 +10,34 @@
         android:layout_height="match_parent">
 
         <LinearLayout
+            android:id="@+id/layout_revert"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_alignParentBottom="true"
+            android:clickable="true"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:gravity="center|center_vertical"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <ImageView
+                android:id="@+id/imageView7"
+                app:srcCompat="@drawable/return_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:paddingLeft="10dp"
+                android:text="@string/revert"
+                android:textColor="#000"
+                android:textSize="16sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
             android:id="@+id/layout_search"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -39,6 +67,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:background="@null"
+                android:foreground="?android:attr/selectableItemBackground"
                 android:paddingLeft="15dp"
                 android:paddingRight="15dp"
                 android:src="@drawable/search"
@@ -87,10 +116,10 @@
             android:id="@+id/fab_broadcast"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_above="@id/layout_range"
             android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
             android:layout_marginRight="15dp"
-            android:layout_marginBottom="10dp"
+            android:layout_marginBottom="80dp"
             android:background="@color/button_background"
             android:backgroundTint="@color/button_background"
             android:clickable="true"

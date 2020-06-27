@@ -35,7 +35,7 @@
                 <LinearLayout
                     android:id="@+id/btn_all"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:background="@android:color/transparent"
                     android:clickable="true"
                     android:foreground="?android:attr/selectableItemBackground"
@@ -44,10 +44,18 @@
                     android:padding="10dp">
 
 
-                    <ImageView
+                    <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        app:srcCompat="@drawable/all_service" />
+                        android:background="@drawable/backgroun_home"
+                        android:orientation="horizontal"
+                        android:padding="15dp">
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            app:srcCompat="@drawable/all_service" />
+                    </LinearLayout>
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -78,8 +86,9 @@
                         <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:background="@drawable/backgroun_home"
                             android:orientation="horizontal"
-                            android:padding="10dp">
+                            android:padding="15dp">
 
                             <ImageView
                                 android:id="@+id/imageView2"
@@ -109,11 +118,19 @@
                         android:gravity="center"
                         android:orientation="vertical">
 
-                        <ImageView
-                            android:id="@+id/imageView3"
+                        <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            app:srcCompat="@drawable/atm_big_icon" />
+                            android:background="@drawable/backgroun_home"
+                            android:orientation="horizontal"
+                            android:padding="15dp">
+
+                            <ImageView
+                                android:id="@+id/imageView3"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                app:srcCompat="@drawable/atm_big_icon" />
+                        </LinearLayout>
 
                         <TextView
                             android:id="@+id/textView20"
@@ -144,10 +161,18 @@
                         android:gravity="center"
                         android:orientation="vertical">
 
-                        <ImageView
+                        <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            app:srcCompat="@drawable/wc_big_icon" />
+                            android:background="@drawable/backgroun_home"
+                            android:orientation="horizontal"
+                            android:padding="15dp">
+
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                app:srcCompat="@drawable/wc_big_icon" />
+                        </LinearLayout>
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -170,11 +195,19 @@
                         android:gravity="center"
                         android:orientation="vertical">
 
-                        <ImageView
-
+                        <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            app:srcCompat="@drawable/fix_big_icon" />
+                            android:background="@drawable/backgroun_home"
+                            android:orientation="horizontal"
+                            android:padding="15dp">
+
+                            <ImageView
+
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                app:srcCompat="@drawable/fix_big_icon" />
+                        </LinearLayout>
 
                         <TextView
 

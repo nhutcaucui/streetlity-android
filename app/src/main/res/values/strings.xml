@@ -215,4 +215,7 @@
     <string name="show_all">Show me all the services</string>
     <string name="no_review">No review</string>
     <string name="something_wrong_direction">"Something went wrong when trying to find direction"</string>
+    <string name="submitted_by">Submitted by:</string>
+    <string name="revert">Revert to original</string>
+    <string name="filter_bank">Filter banks</string>
 </resources>

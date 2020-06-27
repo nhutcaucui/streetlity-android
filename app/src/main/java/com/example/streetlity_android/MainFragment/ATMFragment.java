@@ -26,6 +26,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
@@ -85,7 +86,7 @@ public class ATMFragment extends Fragment implements LocationListener {
     ArrayList<MapObject> searchItems = new ArrayList<>();
     ArrayList<BankObject> arrBank = new ArrayList<BankObject>();
     MapObjectAdapter adapter;
-    private static final long MIN_TIME = 400;
+    private static final long MIN_TIME = 1;
     private static final float MIN_DISTANCE = 1000;
 
     LocationManager locationManager;
@@ -98,6 +99,8 @@ public class ATMFragment extends Fragment implements LocationListener {
     float currLon;
 
     Spinner atcpBank;
+
+    boolean isSearch = false;
 
     public ATMFragment() {
         // Required empty public constructor
@@ -244,6 +247,18 @@ public class ATMFragment extends Fragment implements LocationListener {
             }
         });
 
+        LinearLayout layoutRevert = rootView.findViewById(R.id.layout_revert);
+        layoutRevert.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                isSearch = false;
+                rootView.findViewById(R.id.layout_range).setVisibility(View.VISIBLE);
+                rootView.findViewById(R.id.layout_revert).setVisibility(View.GONE);
+
+                changeRange(sb.getProgress()+1);
+            }
+        });
+
         return rootView;
 
     }
@@ -327,12 +342,22 @@ public class ATMFragment extends Fragment implements LocationListener {
                                                 }
 
                                                 if(searchItems.size()>0){
-//                                                    Collections.sort(searchItems, new Comparator<MapObject>() {
-//                                                        @Override
-//                                                        public int compare(MapObject o1, MapObject o2) {
-//                                                            return Float.compare(o1.getDistance(), o2.getDistance());
-//                                                        }
-//                                                    });
+                                                    Collections.sort(searchItems, new Comparator<MapObject>() {
+                                                        @Override
+                                                        public int compare(MapObject o1, MapObject o2) {
+                                                            return Float.compare(o1.getDistance(), o2.getDistance());
+                                                        }
+                                                    });
+
+                                                    isSearch = true;
+
+                                                    displayItems = searchItems;
+
+                                                    getActivity().findViewById(R.id.layout_range).setVisibility(View.GONE);
+
+                                                    getActivity().findViewById(R.id.layout_revert).setVisibility(View.VISIBLE);
+
+                                                    adapter.notifyDataSetChanged();
 //
 //                                                    ((MainNavigationHolder) getActivity()).getLoading().setVisibility(View.VISIBLE);
 //                                                    Intent t = new Intent(getActivity(), MapsActivity.class);

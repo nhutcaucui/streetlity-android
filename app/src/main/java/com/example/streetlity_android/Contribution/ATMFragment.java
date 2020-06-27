@@ -87,7 +87,7 @@ public class ATMFragment extends Fragment{
 
     ArrayList<BankObject> arrBank = new ArrayList<>();
     MapObjectAdapter adapter;
-    private static final long MIN_TIME = 400;
+    private static final long MIN_TIME = 1;
     private static final float MIN_DISTANCE = 1000;
 
     LocationManager locationManager;
