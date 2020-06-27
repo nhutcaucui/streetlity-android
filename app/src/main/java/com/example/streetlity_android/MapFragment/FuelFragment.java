@@ -506,7 +506,7 @@ public class FuelFragment extends Fragment implements OnMapReadyCallback, Google
                     try {
                         jsonObject = new JSONObject(response.body().string());
                         Log.e("", "onResponse: " + jsonObject.toString());
-                        if(jsonObject.getJSONArray("Fuels").toString() != "null") {
+                        if(jsonObject.getJSONArray("Fuels").toString().equals("")) {
                             jsonArray = jsonObject.getJSONArray("Fuels");
 
                             for (int i = 0; i < jsonArray.length(); i++) {

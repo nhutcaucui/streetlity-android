@@ -2,6 +2,7 @@ package com.example.streetlity_android.MainFragment;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -15,6 +16,8 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -26,6 +29,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -36,12 +40,15 @@ import android.widget.Toast;
 
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.streetlity_android.Chat.Chat;
 import com.example.streetlity_android.MainNavigationHolder;
 import com.example.streetlity_android.MapAPI;
 import com.example.streetlity_android.MapsActivity;
 import com.example.streetlity_android.MyApplication;
 import com.example.streetlity_android.R;
+import com.example.streetlity_android.User.UserInfoOther;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -102,6 +109,10 @@ public class ATMFragment extends Fragment implements LocationListener {
 
     boolean isSearch = false;
 
+    BankObjectAdapter adapter1;
+
+    Dialog dialogSearch;
+
     public ATMFragment() {
         // Required empty public constructor
     }
@@ -140,7 +151,6 @@ public class ATMFragment extends Fragment implements LocationListener {
 
         View rootView = inflater.inflate(R.layout.fragment_atm, container, false);
 
-        getBank(rootView);
         ListView lv = rootView.findViewById(R.id.list_view);
 
         loading = rootView.findViewById(R.id.loading);
@@ -225,8 +235,56 @@ public class ATMFragment extends Fragment implements LocationListener {
             }
         });
 
+        LinearLayout layoutSearch = rootView.findViewById(R.id.layout_search);
         EditText edtFind = rootView.findViewById(R.id.edt_find);
-        ImageButton imgFind = rootView.findViewById(R.id.img_btn_find);
+
+        View view = View.inflate(getActivity(), R.layout.dialog_atm_search, null);
+
+        EditText edtDialogFind = view.findViewById(R.id.edt_find);
+        ImageButton imgFind = view.findViewById(R.id.img_btn_find);
+        ListView lv2 = view.findViewById(R.id.lv);
+        EditText edtFilter = view.findViewById(R.id.edt_filter_bank);
+        ImageView imgClose = view.findViewById(R.id.img_close);
+
+        imgClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialogSearch.hide();
+            }
+        });
+
+        edtFilter.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                adapter1.getFilter().filter(edtFilter.getText().toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+        lv2.setTextFilterEnabled(true);
+
+        getBank(rootView, lv2);
+        //lv2.setAdapter(adapter1);
+
+        lv2.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                adapter.getFilter().filter(Integer.toString(arrBank.get(position).getId()));
+                dialogSearch.hide();
+                edtFind.setText(arrBank.get(position).getName());
+                edtFilter.setText("");
+                adapter1.getFilter().filter("");
+            }
+        });
 
         imgFind.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -235,8 +293,9 @@ public class ATMFragment extends Fragment implements LocationListener {
                     InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), 0);
                 }
-                if(!edtFind.getText().toString().equals("")) {
-                    findLocation(edtFind.getText().toString());
+                if(!edtDialogFind.getText().toString().equals("")) {
+                    findLocation(edtDialogFind.getText().toString(), edtDialogFind);
+                    edtFind.setText(edtDialogFind.getText().toString());
                 }else{
                     Toast toast = Toast.makeText(getActivity(), R.string.address_not_found, Toast.LENGTH_LONG);
                     TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
@@ -247,6 +306,23 @@ public class ATMFragment extends Fragment implements LocationListener {
             }
         });
 
+        layoutSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(dialogSearch == null) {
+                    dialogSearch = new Dialog(getActivity());
+                    dialogSearch.setContentView(view);
+                    dialogSearch.setCanceledOnTouchOutside(false);
+                    dialogSearch.show();
+                }else{
+                    dialogSearch.show();
+                }
+
+            }
+        });
+
+
+
         LinearLayout layoutRevert = rootView.findViewById(R.id.layout_revert);
         layoutRevert.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -256,6 +332,8 @@ public class ATMFragment extends Fragment implements LocationListener {
                 rootView.findViewById(R.id.layout_revert).setVisibility(View.GONE);
 
                 changeRange(sb.getProgress()+1);
+
+                edtFind.setText("");
             }
         });
 
@@ -263,7 +341,7 @@ public class ATMFragment extends Fragment implements LocationListener {
 
     }
 
-    public void findLocation(String address){
+    public void findLocation(String address, EditText editText){
         searchItems.clear();
         Retrofit retro = new Retrofit.Builder().baseUrl("https://maps.googleapis.com/maps/api/geocode/")
                 .addConverterFactory(GsonConverterFactory.create()).build();
@@ -302,8 +380,7 @@ public class ATMFragment extends Fragment implements LocationListener {
                             double mLat = jsonLatLng.getDouble("lat");
                             double mLon = jsonLatLng.getDouble("lng");
 
-                            EditText edtFind = getActivity().findViewById(R.id.edt_find);
-                            edtFind.setText(jsonObject1.getString("formatted_address"));
+                            editText.setText(jsonObject1.getString("formatted_address"));
 
                             Call<ResponseBody> call2 = tour2.getATMInRange("1.0.0", (float)mLat, (float)mLon,(float)0.1);
                             call2.enqueue(new Callback<ResponseBody>() {
@@ -315,7 +392,7 @@ public class ATMFragment extends Fragment implements LocationListener {
                                         try {
                                             jsonObject = new JSONObject(response.body().string());
                                             Log.e("", "onResponse: " + jsonObject.toString());
-                                            if (jsonObject.getJSONArray("Services").toString() != "null") {
+                                            if (!jsonObject.getJSONArray("Services").toString().equals("")) {
                                                 jsonArray = jsonObject.getJSONArray("Services");
 
                                                 String bankName="";
@@ -351,7 +428,9 @@ public class ATMFragment extends Fragment implements LocationListener {
 
                                                     isSearch = true;
 
-                                                    displayItems = searchItems;
+                                                    displayItems.clear();
+displayItems.addAll(searchItems);
+locationManager.removeUpdates(ATMFragment.this);
 
                                                     getActivity().findViewById(R.id.layout_range).setVisibility(View.GONE);
 
@@ -366,6 +445,10 @@ public class ATMFragment extends Fragment implements LocationListener {
 //                                                    t.putExtra("item", searchItems.get(0));
 //                                                    Log.e("", "onItemClick: " + searchItems.get(0).getId());
 //                                                    startActivity(t);
+
+                                                    dialogSearch.hide();
+
+                                                    editText.setText("");
                                                 }
                                                 else{
                                                     Toast toast = Toast.makeText(getActivity(), R.string.no_result, Toast.LENGTH_LONG);
@@ -375,6 +458,12 @@ public class ATMFragment extends Fragment implements LocationListener {
                                                     toast.show();
                                                 }
 
+                                            }else{
+                                                Toast toast = Toast.makeText(getActivity(), R.string.no_result, Toast.LENGTH_LONG);
+                                                TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
+                                                tv.setTextColor(Color.RED);
+
+                                                toast.show();
                                             }
                                         }catch (Exception e){
                                             e.printStackTrace();
@@ -498,7 +587,7 @@ public class ATMFragment extends Fragment implements LocationListener {
                         try {
                             jsonObject = new JSONObject(response.body().string());
                             Log.e("", "onResponse: " + jsonObject.toString());
-                            if (jsonObject.getJSONArray("Services").toString() != "null") {
+                            if (!jsonObject.getJSONArray("Services").toString().equals("")) {
                                 jsonArray = jsonObject.getJSONArray("Services");
 
                                 for (int i = 0; i < jsonArray.length(); i++) {
@@ -574,7 +663,7 @@ public class ATMFragment extends Fragment implements LocationListener {
         return dist;
     }
 
-    public void getBank(View view){
+    public void getBank(View view, ListView lv){
         Retrofit retro = new Retrofit.Builder().baseUrl(((MyApplication) getActivity().getApplication()).getServiceURL())
                 .addConverterFactory(GsonConverterFactory.create()).build();
         final MapAPI tour = retro.create(MapAPI.class);
@@ -600,40 +689,44 @@ public class ATMFragment extends Fragment implements LocationListener {
                                 Log.e("", "onResponse: "+ jsonObject1.getString("Name") + getString(R.string.all) );
                             }
 
-                            atcpBank = view.findViewById(R.id.actv_bank);
+//                            atcpBank = view.findViewById(R.id.actv_bank);
 
-                            BankObjectAdapter adapter1 = new BankObjectAdapter(getActivity(), R.layout.spinner_item_broadcast, arrBank);
+                            adapter1 = new BankObjectAdapter(getActivity(), R.layout.bank_item, arrBank);
 
-                            atcpBank.setAdapter(adapter1);
+                            lv.setAdapter(adapter1);
 
-                            atcpBank.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                                @Override
-                                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                            adapter1.notifyDataSetChanged();
 
-                                        adapter.getFilter().filter(Integer.toString(arrBank.get(position).getId()));
-                                        Log.e("", "onItemSelected: " + arrBank.get(position).getId());
+//                            atcpBank.setAdapter(adapter1);
+//
+//                            atcpBank.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+//                                @Override
+//                                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+//
+//                                        adapter.getFilter().filter(Integer.toString(arrBank.get(position).getId()));
+//                                        Log.e("", "onItemSelected: " + arrBank.get(position).getId());
+//
+//                                }
+//
+//                                @Override
+//                                public void onNothingSelected(AdapterView<?> parent) {
+//
+//                                }
+//                            });
 
-                                }
-
-                                @Override
-                                public void onNothingSelected(AdapterView<?> parent) {
-
-                                }
-                            });
-
-                            try {
-                                Field popup = Spinner.class.getDeclaredField("mPopup");
-                                popup.setAccessible(true);
-
-                                // Get private mPopup member variable and try cast to ListPopupWindow
-                                android.widget.ListPopupWindow popupWindow = (android.widget.ListPopupWindow) popup.get(atcpBank);
-
-                                // Set popupWindow height to 500px
-                                popupWindow.setHeight(500);
-                            }
-                            catch (NoClassDefFoundError | ClassCastException | NoSuchFieldException | IllegalAccessException e) {
-                                // silently fail...
-                            }
+//                            try {
+//                                Field popup = Spinner.class.getDeclaredField("mPopup");
+//                                popup.setAccessible(true);
+//
+//                                // Get private mPopup member variable and try cast to ListPopupWindow
+//                                android.widget.ListPopupWindow popupWindow = (android.widget.ListPopupWindow) popup.get(atcpBank);
+//
+//                                // Set popupWindow height to 500px
+//                                popupWindow.setHeight(500);
+//                            }
+//                            catch (NoClassDefFoundError | ClassCastException | NoSuchFieldException | IllegalAccessException e) {
+//                                // silently fail...
+//                            }
                         }
                     } catch (Exception e){
                         e.printStackTrace();

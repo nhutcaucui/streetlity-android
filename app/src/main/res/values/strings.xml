@@ -16,6 +16,7 @@
     <string name="title_activity_add_atm">Add An ATM</string>
     <string name="title_activity_bank_selection">Bank Selection</string>
     <string name="search">Search for a bank</string>
+    <string name="search_atm">Search for ATMs</string>
     <string name="select_bank">Select your bank</string>
     <string name="review">Reviews:</string>
     <string name="login">Login</string>

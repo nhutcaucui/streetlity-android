@@ -204,4 +204,5 @@
     <string name="submitted_by">Được thêm bởi:</string>
     <string name="revert">Trở về kết quả ban đầu</string>
     <string name="filter_bank">Lọc ngân hàng</string>
+    <string name="search_atm">Tìm ATM</string>
 </resources>

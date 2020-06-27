@@ -2,105 +2,130 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <LinearLayout
-        android:id="@+id/layout_search"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.8">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/edt_find"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/find_by_address"
-                android:inputType="text"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <ImageButton
-            android:id="@+id/img_btn_find"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:background="@null"
-            android:foreground="?android:attr/selectableItemBackground"
-            android:paddingLeft="15dp"
-            android:paddingRight="15dp"
-            android:src="@drawable/search"
-            android:visibility="visible" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/divider"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="horizontal"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/layout_search">
-
-        <View
-            android:id="@+id/divider6"
-            android:layout_width="0dp"
-            android:layout_height="1dp"
-            android:layout_marginLeft="30dp"
-            android:layout_weight="1"
-            android:background="?android:attr/listDivider" />
-
-        <TextView
-            android:id="@+id/textView34"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="5dp"
-            android:text="or" />
-
-        <View
-            android:id="@+id/divider7"
-            android:layout_width="0dp"
-            android:layout_height="1dp"
-            android:layout_marginRight="30dp"
-            android:layout_weight="1"
-            android:background="?android:attr/listDivider" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/divider">
+        android:padding="15dp">
 
-        <com.google.android.material.textfield.TextInputLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="0.8">
+            android:layout_marginBottom="10dp">
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/edt_filter_bank"
+            <TextView
+                android:id="@+id/textView36"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="@string/search_atm"
+                android:textColor="@color/black"
+                android:textSize="16sp" />
+
+            <ImageView
+                android:id="@+id/img_close"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:clickable="true"
+                android:foreground="?android:attr/selectableItemBackground"
+                app:srcCompat="@drawable/remove" />
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/layout_search"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/filter_bank"
-                android:inputType="text"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:layout_weight="0.8">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/lv"
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edt_find"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/find_by_address"
+                    android:inputType="text"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <ImageButton
+                android:id="@+id/img_btn_find"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="@null"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:paddingLeft="15dp"
+                android:paddingRight="15dp"
+                android:src="@drawable/search"
+                android:visibility="visible" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/divider"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <View
+                android:id="@+id/divider6"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_marginLeft="30dp"
+                android:layout_weight="1"
+                android:background="?android:attr/listDivider" />
+
+            <TextView
+                android:id="@+id/textView34"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                android:text="or" />
+
+            <View
+                android:id="@+id/divider7"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_marginRight="30dp"
+                android:layout_weight="1"
+                android:background="?android:attr/listDivider" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.8">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edt_filter_bank"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/filter_bank"
+                    android:inputType="text"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <ListView
+                android:id="@+id/lv"
+                android:layout_width="match_parent"
+                android:layout_height="200dp" />
+        </LinearLayout>
+
     </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

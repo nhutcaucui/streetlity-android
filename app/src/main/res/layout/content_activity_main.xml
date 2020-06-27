@@ -150,6 +150,7 @@
         android:layout_centerInParent="true"
         android:backgroundTint="@color/colorPrimary"
         android:clickable="true"
+        android:visibility="gone"
         app:srcCompat="@drawable/chat" />
 
     <RelativeLayout

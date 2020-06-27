@@ -276,6 +276,7 @@ public class MaintenanceFragment extends Fragment implements LocationListener {
         });
 
         LinearLayout layoutRevert = rootView.findViewById(R.id.layout_revert);
+
         layoutRevert.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -284,6 +285,8 @@ public class MaintenanceFragment extends Fragment implements LocationListener {
                 rootView.findViewById(R.id.layout_revert).setVisibility(View.GONE);
 
                 changeRange(sb.getProgress()+1);
+
+                edtFind.setText("");
             }
         });
 
@@ -342,7 +345,7 @@ public class MaintenanceFragment extends Fragment implements LocationListener {
                                         try {
                                             jsonObject = new JSONObject(response.body().string());
                                             Log.e("", "onResponse: " + jsonObject.toString());
-                                            if (jsonObject.getJSONArray("Services").toString() != "null") {
+                                            if (!jsonObject.getJSONArray("Services").toString().equals("")) {
                                                 jsonArray = jsonObject.getJSONArray("Services");
 
                                                 for (int i = 0; i < jsonArray.length(); i++) {
@@ -371,12 +374,15 @@ public class MaintenanceFragment extends Fragment implements LocationListener {
 
                                                     isSearch = true;
 
-                                                    displayItems = searchItems;
+                                                    displayItems.clear();
+
+                                                    displayItems.addAll(searchItems);
+locationManager.removeUpdates(MaintenanceFragment.this);
 
                                                     getActivity().findViewById(R.id.layout_range).setVisibility(View.GONE);
 
                                                     getActivity().findViewById(R.id.layout_revert).setVisibility(View.VISIBLE);
-
+                                                    Log.e(TAG, "onResponse: hi im in find" );
                                                     adapter.notifyDataSetChanged();
 //                                                    ((MainNavigationHolder) getActivity()).getLoading().setVisibility(View.VISIBLE);
 //                                                    Intent t = new Intent(getActivity(), MapsActivity.class);
@@ -394,6 +400,12 @@ public class MaintenanceFragment extends Fragment implements LocationListener {
                                                     toast.show();
                                                 }
 
+                                            }else {
+                                                Toast toast = Toast.makeText(getActivity(), R.string.no_result, Toast.LENGTH_LONG);
+                                                TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
+                                                tv.setTextColor(Color.RED);
+
+                                                toast.show();
                                             }
                                         }catch (Exception e){
                                             e.printStackTrace();
@@ -513,7 +525,7 @@ public class MaintenanceFragment extends Fragment implements LocationListener {
                         try {
                             jsonObject = new JSONObject(response.body().string());
                             Log.e("", "onResponse: " + jsonObject.toString());
-                            if (jsonObject.getJSONArray("Services").toString() != "null") {
+                            if (!jsonObject.getJSONArray("Services").toString().equals("")) {
                                 jsonArray = jsonObject.getJSONArray("Services");
 
                                 for (int i = 0; i < jsonArray.length(); i++) {

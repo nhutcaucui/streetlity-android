@@ -296,7 +296,7 @@ public class ATMFragment extends Fragment{
                                         try {
                                             jsonObject = new JSONObject(response.body().string());
                                             Log.e("", "onResponse: " + jsonObject.toString());
-                                            if (jsonObject.getJSONArray("Services").toString() != "null") {
+                                            if (!jsonObject.getJSONArray("Services").toString().equals("")) {
                                                 jsonArray = jsonObject.getJSONArray("Services");
 
                                                 String bankName="";
@@ -412,7 +412,7 @@ public class ATMFragment extends Fragment{
                         try {
                             jsonObject = new JSONObject(response.body().string());
                             Log.e("", "onResponse: " + jsonObject.toString());
-                            if (jsonObject.getJSONArray("Services").toString() != "null") {
+                            if (!jsonObject.getJSONArray("Services").toString().equals("")) {
                                 jsonArray = jsonObject.getJSONArray("Services");
 
                                 for (int i = 0; i < jsonArray.length(); i++) {

@@ -1,5 +1,5 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:map="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -15,6 +15,7 @@
             android:layout_height="50dp"
             android:layout_alignParentBottom="true"
             android:clickable="true"
+            android:elevation="5dp"
             android:foreground="?android:attr/selectableItemBackground"
             android:gravity="center|center_vertical"
             android:orientation="horizontal"
@@ -22,9 +23,9 @@
 
             <ImageView
                 android:id="@+id/imageView7"
-                app:srcCompat="@drawable/return_icon"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/return_icon" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -44,22 +45,23 @@
             android:layout_marginLeft="15dp"
             android:layout_marginTop="10dp"
             android:layout_marginRight="15dp"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:visibility="visible">
 
 
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="0.8"
-                >
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/edt_find"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/find_by_name"
-                android:inputType="text"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp" />
+                android:layout_weight="0.8">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edt_find"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/find_by_name"
+                    android:inputType="text"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <ImageButton
@@ -124,7 +126,7 @@
             android:backgroundTint="@color/button_background"
             android:clickable="true"
             android:src="@drawable/signal"
-            map:borderWidth="0dp" />
+            app:borderWidth="0dp" />
 
         <ListView
             android:id="@+id/list_view"
@@ -143,7 +145,8 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:gravity="center_vertical"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:visibility="visible">
 
             <TextView
                 android:id="@+id/textView11"
