@@ -253,4 +253,9 @@ public interface MapAPI {
 
     @GET("user/info")
     Call<ResponseBody> userInfo(@Query("id") String username);
+
+   //@FormUrlEncoded
+    @GET("user/refresh")
+    Call<ResponseBody> refresh(@Query("refresh-token") String refreshToken);
+
 }

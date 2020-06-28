@@ -21,6 +21,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
 
+import android.text.Html;
 import android.text.InputType;
 import android.util.Log;
 import android.view.MenuItem;
@@ -85,6 +86,15 @@ public class UserInfo extends AppCompatActivity {
         imgAvatar = findViewById(R.id.img_avatar);
         ImageView imgEditable = findViewById(R.id.img_editable);
         LinearLayout preventClick = findViewById(R.id.prevent_click);
+
+        Button btnAchiviement = findViewById(R.id.btn_to_achievement);
+        btnAchiviement.setText(Html.fromHtml(getString(R.string.underline_achievement)));
+        btnAchiviement.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(UserInfo.this, Achievement.class));
+            }
+        });
 
         imgAvatar.setOnClickListener(new View.OnClickListener() {
             @Override

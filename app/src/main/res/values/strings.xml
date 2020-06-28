@@ -26,6 +26,7 @@
     <string name="email">Email</string>
     <string name="cfpassword">Confirm password</string>
     <string name="signup">Sign Up</string>
+    <string name="achievement">Achievements</string>
     <string name="input_bank_name">Input bank name here</string>
     <string name="go">Go</string>
     <!-- TODO: Remove or change this placeholder text -->
@@ -173,6 +174,7 @@
     <string name="fuel_success">Fuel station added successfully</string>
     <string name="wc_success">Public toilet added successfully</string>
     <string name="underline_signup">&lt;u&gt;Sign Up&lt;/u&gt;</string>
+    <string name="underline_achievement">&lt;u&gt;Achievements&lt;/u&gt;</string>
     <string name="underline_forgotpass">&lt;u&gt;Forgot password?&lt;/u&gt;</string>
     <string name="confirming_location">Confirming locations</string>
     <string name="error_upload">Error when uploading picture(s)</string>
@@ -219,4 +221,11 @@
     <string name="submitted_by">Submitted by:</string>
     <string name="revert">Revert to original</string>
     <string name="filter_bank">Filter banks</string>
+    <string name="title_activity_achievement">Achievement</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+
+    <string name="hello_first_fragment">Hello first fragment</string>
+    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
 </resources>

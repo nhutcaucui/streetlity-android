@@ -210,6 +210,8 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
             ((MyApplication) this.getApplication()).setPhone(s.getString("phone",""));
             ((MyApplication) this.getApplication()).setAddress(s.getString("address",""));
 
+            refreshToken();
+            Log.e("TAG", "onCreate: " );
             setDrawerForUser(navView);
 
             View header=navView.getHeaderView(0);
@@ -634,5 +636,34 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
 
     public long getTimeLeft() {
         return timeLeft;
+    }
+
+    public  void refreshToken(){
+        Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getAuthURL())
+                .addConverterFactory(GsonConverterFactory.create()).build();
+        final MapAPI tour = retro.create(MapAPI.class);
+        Call<ResponseBody> call = tour.refresh(MyApplication.getInstance().getRefreshToken());
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if(response.code() == 200){
+                    final JSONObject jsonObject;
+                    try{
+                        jsonObject = new JSONObject(response.body().string());
+                        Log.e("", "onResponse: "+jsonObject.toString() );
+
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                }else {
+                    Log.e("TAG", "onResponse: "+response.code() );
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+            }
+        });
     }
 }

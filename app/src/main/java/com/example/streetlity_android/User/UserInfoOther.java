@@ -5,11 +5,13 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.text.Html;
 import android.text.InputType;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -70,6 +72,15 @@ public class UserInfoOther extends AppCompatActivity {
 
         fabEdit.hide();
         getInfo(tvUsername, tvEmail, edtPhone, edtAddress);
+
+        Button btnAchiviement = findViewById(R.id.btn_to_achievement);
+        btnAchiviement.setText(Html.fromHtml(getString(R.string.underline_achievement)));
+        btnAchiviement.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(UserInfoOther.this, Achievement.class));
+            }
+        });
     }
 
     public boolean onOptionsItemSelected(MenuItem item){
