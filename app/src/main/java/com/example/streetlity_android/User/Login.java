@@ -3,6 +3,8 @@ package com.example.streetlity_android.User;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
 
@@ -182,7 +184,12 @@ public class Login extends AppCompatActivity {
                                 e.putString("phone", ((MyApplication) Login.this.getApplication()).getPhone());
                                 e.putString("address", ((MyApplication) Login.this.getApplication()).getAddress());
                                 e.putInt("userType", jsonObject.getInt("Role"));
+                                e.putString("avatar", jsonObject1.getString("Avatar"));
                                 e.commit();
+
+                                if(!jsonObject1.getString("Avatar").equals("")){
+                                    getAvatar(jsonObject1.getString("Avatar"));
+                                }
 
 //                                Call<ResponseBody> call2 = tour.addDevice("1.0.0", ((MyApplication) Login.this.getApplication()).getToken(),
 //                                        username);
@@ -267,6 +274,30 @@ public class Login extends AppCompatActivity {
 //        return super.dispatchTouchEvent(ev);
 //    }
 
+    public  void getAvatar(String avatar){
+        Retrofit retro = new Retrofit.Builder().baseUrl(((MyApplication) this.getApplication()).getDriverURL())
+                .addConverterFactory(GsonConverterFactory.create()).build();
+        final MapAPI tour = retro.create(MapAPI.class);
+        Call<ResponseBody> call = tour.download(avatar);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.code() == 200) {
+                    try {
+                        Bitmap bmp = BitmapFactory.decodeStream(response.body().byteStream());
+                        MyApplication.getInstance().setImage(bmp);
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                t.printStackTrace();
+            }
+        });
+    }
 
 }
 

@@ -173,6 +173,10 @@ public interface MapAPI {
     @POST("/")
     Call<ResponseBody> upload(@Query("f") String[] name,@Part List<MultipartBody.Part> body);
 
+    @Multipart
+    @POST("/")
+    Call<ResponseBody> uploadWithType(@Query("f") String[] name,@Part List<MultipartBody.Part> body, @Query("utype") int type);
+
     @GET("/")
     Call<ResponseBody> download(@Query("f") String name);
 
@@ -258,4 +262,14 @@ public interface MapAPI {
     @GET("user/refresh")
     Call<ResponseBody> refresh(@Query("refresh-token") String refreshToken);
 
+    @FormUrlEncoded
+    @POST("user/info/")
+    Call<ResponseBody> updateInfo(@Field("id") String username, @Field("name") String name,
+                                  @Field("address") String address, @Field("phone") String phone,
+                                  @Field("avatar") String avatar);
+
+    @FormUrlEncoded
+    @POST("user/info/")
+    Call<ResponseBody> updateInfoWithoutAvatar(@Field("id") String username, @Field("name") String name,
+                                  @Field("address") String address, @Field("phone") String phone);
 }

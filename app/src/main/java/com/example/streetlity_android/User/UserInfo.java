@@ -6,8 +6,10 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 
+import com.example.streetlity_android.Contribution.AddAMaintenance;
 import com.example.streetlity_android.Contribution.SelectFromMap;
 import com.example.streetlity_android.MapAPI;
 import com.example.streetlity_android.MyApplication;
@@ -37,9 +39,12 @@ import android.widget.Toast;
 
 import com.example.streetlity_android.R;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import okhttp3.MediaType;
@@ -60,6 +65,9 @@ public class UserInfo extends AppCompatActivity {
     MultipartBody.Part body;
     String fileName = "";
     ImageView imgAvatar;
+
+    String avatar = "";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,6 +94,10 @@ public class UserInfo extends AppCompatActivity {
         imgAvatar = findViewById(R.id.img_avatar);
         ImageView imgEditable = findViewById(R.id.img_editable);
         LinearLayout preventClick = findViewById(R.id.prevent_click);
+
+        if(MyApplication.getInstance().getImage()!= null){
+            imgAvatar.setImageBitmap(MyApplication.getInstance().getImage());
+        }
 
         Button btnAchiviement = findViewById(R.id.btn_to_achievement);
         btnAchiviement.setText(Html.fromHtml(getString(R.string.underline_achievement)));
@@ -161,6 +173,8 @@ public class UserInfo extends AppCompatActivity {
                         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                         imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
                     }
+
+                    updateInfo(edtPhone.getText().toString(), edtAddress.getText().toString());
                 }
             }
         });
@@ -192,7 +206,9 @@ public class UserInfo extends AppCompatActivity {
 
                     hasImg = true;
 
-                    String generatedString = RandomString.getAlphaNumericString(10);
+                    String extension = path.substring(path.lastIndexOf("."));
+
+                    String generatedString = MyApplication.getInstance().getUsername()+extension;
 
                     RequestBody fbody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
                     MultipartBody.Part mBody =
@@ -205,6 +221,200 @@ public class UserInfo extends AppCompatActivity {
             }
         }catch (Exception e){
             e.printStackTrace();
+        }
+    }
+
+    public void updateInfo(String phone, String address){
+        Retrofit retro = new Retrofit.Builder().baseUrl(((MyApplication) this.getApplication()).getAuthURL())
+                .addConverterFactory(GsonConverterFactory.create()).build();
+        Retrofit retro2 = new Retrofit.Builder().baseUrl(((MyApplication) this.getApplication()).getDriverURL())
+                .addConverterFactory(GsonConverterFactory.create()).build();
+        final MapAPI tour = retro.create(MapAPI.class);
+        final MapAPI tour2 = retro2.create(MapAPI.class);
+
+        String token = ((MyApplication) this.getApplication()).getToken();
+
+        if(hasImg){
+
+            String[] f = new String[1];
+            f[0] = fileName;
+
+            List<MultipartBody.Part> list = new ArrayList<>();
+            list.add(body);
+
+            Call<ResponseBody> call2 = tour2.uploadWithType(f, list,1);
+            call2.enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    if (response.code() == 200) {
+                        final JSONObject jsonObject;
+                        try {
+                            jsonObject = new JSONObject(response.body().string());
+                            Log.e("", "onResponse: " + jsonObject.toString());
+
+                            if (jsonObject.getBoolean("Status")) {
+                                JSONObject jsonObject1 = jsonObject.getJSONObject("Paths");
+                                    JSONObject jsonObject2 = jsonObject1.getJSONObject(fileName);
+                                    avatar = jsonObject2.getString("Message");
+
+
+                                Call<ResponseBody> call1 = tour.updateInfo(MyApplication.getInstance().getUsername(),"", address, phone, avatar);
+
+                                call1.enqueue(new Callback<ResponseBody>() {
+                                    @Override
+                                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                        if(response.code() == 200) {
+                                            final JSONObject jsonObject;
+                                            JSONArray jsonArray;
+                                            try {
+                                                jsonObject = new JSONObject(response.body().string());
+                                                Log.e("", "onResponse: " + jsonObject.toString());
+
+                                                Toast toast = Toast.makeText(UserInfo.this, R.string.update_successfully, Toast.LENGTH_LONG);
+
+                                                toast.show();
+
+                                                MyApplication.getInstance().setAddress(address);
+                                                MyApplication.getInstance().setPhone(phone);
+                                                MyApplication.getInstance().setImage(((BitmapDrawable)imgAvatar.getDrawable()).getBitmap());
+
+                                                SharedPreferences s = getSharedPreferences("userPref", Context.MODE_PRIVATE);
+                                                SharedPreferences.Editor e = s.edit();
+                                                e.putString("phone", MyApplication.getInstance().getPhone());
+                                                e.putString("address", MyApplication.getInstance().getAddress());
+                                                e.putString("avatar", avatar);
+                                                e.apply();
+
+                                                //finish();
+                                            } catch (Exception e){
+                                                e.printStackTrace();
+                                                Toast toast = Toast.makeText(UserInfo.this, "!", Toast.LENGTH_LONG);
+                                                TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
+                                                tv.setTextColor(Color.RED);
+
+                                                toast.show();
+                                            }
+                                        }
+                                        else{
+                                            try {
+                                                Log.e(", ",response.errorBody().toString());
+                                                Toast toast = Toast.makeText(UserInfo.this, "!", Toast.LENGTH_LONG);
+                                                TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
+                                                tv.setTextColor(Color.RED);
+
+                                                toast.show();
+                                            }catch (Exception e){
+                                                e.printStackTrace();
+                                                Toast toast = Toast.makeText(UserInfo.this, "!", Toast.LENGTH_LONG);
+                                                TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
+                                                tv.setTextColor(Color.RED);
+
+                                                toast.show();
+                                            }
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                        Log.e("", "onFailure: " + t.toString());
+                                        Toast toast = Toast.makeText(UserInfo.this, "!", Toast.LENGTH_LONG);
+                                        TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
+                                        tv.setTextColor(Color.RED);
+
+                                        toast.show();
+
+                                    }
+                                });
+                            } else {
+                                Toast toast = Toast.makeText(UserInfo.this, R.string.error_upload, Toast.LENGTH_LONG);
+                                TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
+                                tv.setTextColor(Color.RED);
+
+                                toast.show();
+                            }
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            Toast toast = Toast.makeText(UserInfo.this, "!", Toast.LENGTH_LONG);
+                            TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
+                            tv.setTextColor(Color.RED);
+
+                            toast.show();
+                        }
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    Log.e("", "onFailure: " + t.toString());
+                    Toast toast = Toast.makeText(UserInfo.this, "!", Toast.LENGTH_LONG);
+                    TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
+                    tv.setTextColor(Color.RED);
+
+                    toast.show();
+                }
+            });
+        }
+        else{
+            Call<ResponseBody> call1 = tour.updateInfoWithoutAvatar(MyApplication.getInstance().getUsername(),"", address, phone);
+
+            call1.enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    if(response.code() == 200) {
+                        final JSONObject jsonObject;
+                        JSONArray jsonArray;
+                        try {
+                            jsonObject = new JSONObject(response.body().string());
+                            Log.e("", "onResponse: " + jsonObject.toString());
+
+                            Toast toast = Toast.makeText(UserInfo.this, R.string.update_successfully, Toast.LENGTH_LONG);
+
+                            toast.show();
+
+                            MyApplication.getInstance().setAddress(address);
+                            MyApplication.getInstance().setPhone(phone);
+
+                            SharedPreferences s = getSharedPreferences("userPref", Context.MODE_PRIVATE);
+                            SharedPreferences.Editor e = s.edit();
+                            e.putString("phone", MyApplication.getInstance().getPhone());
+                            e.putString("address", MyApplication.getInstance().getAddress());
+                            e.apply();
+
+                            //finish();
+                        } catch (Exception e){
+                            e.printStackTrace();
+                            Toast toast = Toast.makeText(UserInfo.this, "!", Toast.LENGTH_LONG);
+                            TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
+                            tv.setTextColor(Color.RED);
+
+                            toast.show();
+                        }
+                    }
+                    else{
+                        try {
+                            Log.e(", ",response.errorBody().toString());
+                            Toast toast = Toast.makeText(UserInfo.this, "!", Toast.LENGTH_LONG);
+                            TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
+                            tv.setTextColor(Color.RED);
+
+                            toast.show();
+                        }catch (Exception e){
+                            e.printStackTrace();
+                            Toast toast = Toast.makeText(UserInfo.this, "!", Toast.LENGTH_LONG);
+                            TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
+                            tv.setTextColor(Color.RED);
+
+                            toast.show();
+                        }
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    Log.e("", "onFailure: " + t.toString());
+                }
+            });
         }
     }
 }

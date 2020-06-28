@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -209,6 +211,10 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
             ((MyApplication) this.getApplication()).setEmail(s.getString("email",""));
             ((MyApplication) this.getApplication()).setPhone(s.getString("phone",""));
             ((MyApplication) this.getApplication()).setAddress(s.getString("address",""));
+
+            if(!s.getString("avatar","").equals("")){
+                getAvatar(s.getString("avatar",""));
+            }
 
             refreshToken();
             Log.e("TAG", "onCreate: " );
@@ -534,6 +540,8 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
                             ((MyApplication) MainNavigationHolder.this.getApplication()).setPhone("");
                             ((MyApplication) MainNavigationHolder.this.getApplication()).setAddress("");
                             ((MyApplication) MainNavigationHolder.this.getApplication()).setUserType(-1);
+                            ((MyApplication) MainNavigationHolder.this.getApplication()).setImage(null);
+
 
                             SharedPreferences s = getSharedPreferences("userPref", Context.MODE_PRIVATE);
                             SharedPreferences.Editor e = s.edit();
@@ -663,6 +671,31 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
 
+            }
+        });
+    }
+
+    public  void getAvatar(String avatar){
+        Retrofit retro = new Retrofit.Builder().baseUrl(((MyApplication) this.getApplication()).getDriverURL())
+                .addConverterFactory(GsonConverterFactory.create()).build();
+        final MapAPI tour = retro.create(MapAPI.class);
+        Call<ResponseBody> call = tour.download(avatar);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.code() == 200) {
+                    try {
+                        Bitmap bmp = BitmapFactory.decodeStream(response.body().byteStream());
+                        MyApplication.getInstance().setImage(bmp);
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                t.printStackTrace();
             }
         });
     }
