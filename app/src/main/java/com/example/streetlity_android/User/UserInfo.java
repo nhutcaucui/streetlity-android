@@ -116,6 +116,11 @@ public class UserInfo extends AppCompatActivity {
                 intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, false);
                 intent.setAction(Intent.ACTION_GET_CONTENT);
                 startActivityForResult(Intent.createChooser(intent,"Select Picture"), 1);
+
+                if (getCurrentFocus() != null) {
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+                }
             }
         });
 
@@ -212,7 +217,7 @@ public class UserInfo extends AppCompatActivity {
 
                     RequestBody fbody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
                     MultipartBody.Part mBody =
-                            MultipartBody.Part.createFormData(generatedString+0, file.getName(), fbody);
+                            MultipartBody.Part.createFormData(generatedString, file.getName(), fbody);
 
                     body=mBody;
 
@@ -297,7 +302,7 @@ public class UserInfo extends AppCompatActivity {
                                         }
                                         else{
                                             try {
-                                                Log.e(", ",response.errorBody().toString());
+                                                Log.e(", ",""+response.code());
                                                 Toast toast = Toast.makeText(UserInfo.this, "!", Toast.LENGTH_LONG);
                                                 TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
                                                 tv.setTextColor(Color.RED);
