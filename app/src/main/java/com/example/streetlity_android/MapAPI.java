@@ -274,13 +274,13 @@ public interface MapAPI {
                                   @Field("address") String address, @Field("phone") String phone);
 
     @FormUrlEncoded
-    @POST("user/achievement/")
-    Call<ResponseBody> addAction(@Field("id") String id, @Field("action_type") String actionType, @Field("time") long time,
+    @POST("user/action/")
+    Call<ResponseBody> addActionReview(@Field("id") String id, @Field("time") long time,
                                  @Field("affect") String affect, @Field("service") String service);
 
     @FormUrlEncoded
-    @POST("user/achievement/")
-    Call<ResponseBody> addAction(@Field("id") String id, @Field("action_type") String[] actionType, @Field("time") long[] time,
+    @POST("user/action/review")
+    Call<ResponseBody> addActionReview(@Field("id") String id, String[] actionType, @Field("time") long[] time,
                                  @Field("affect") String[] affect, @Field("service") String[] service);
 
     @GET("user/achievement/progress")

@@ -56,7 +56,7 @@
     <string name="phone">Phone number</string>
     <string name="title_activity_edit_profile">Edit Profile</string>
     <string name="address">Your address</string>
-    <string name="signup_as_maintain" translatable="false">Sign up as Maintainer</string>
+    <string name="signup_as_maintain" translatable="false">Sign up as Repairman</string>
     <string name="address_short">Address</string>
     <string name="phone_short">Phone</string>
     <string name="save">Save</string>
@@ -64,7 +64,7 @@
     <string name="address_short_with">Address:</string>
     <string name="phone_short_with">Phone:</string>
     <string name="edit_profile">Edit profile</string>
-    <string name="maintainer_signup">Maintainer Signup</string>
+    <string name="maintainer_signup">Repairman Signup</string>
     <string name="title_activity_works">Works</string>
     <string name="order">Order</string>
     <string name="name_order">Name</string>
@@ -73,7 +73,7 @@
     <string name="alert">Alert! This will notify nearby maintenance stores about your location. ONLY USE IN CASE OF EMERGENCY</string>
     <string name="reason">Reason</string>
     <string name="broadcast">Broadcast</string>
-    <string name="find_maintainer">Find a maintainer</string>
+    <string name="find_maintainer">Find a repairman</string>
     <string name="my_works">My works</string>
     <string name="normal_order">Normal orders</string>
     <string name="no_order">No order</string>
@@ -102,7 +102,7 @@
     <string name="additional_info">Additional information</string>
     <string name="user_type">What kind of user are you?</string>
     <string name="user_common">I just want to help expanding the locations</string>
-    <string name="user_owner">I\'m an owner of a store</string>
+    <string name="user_owner">I\'m a repairman</string>
     <string name="user_store_state">Is your store on the map?</string>
     <string name="user_store_yes">Yes, it is already on the map</string>
     <string name="user_store_no">No, i want to add it</string>
@@ -190,9 +190,9 @@
     <string name="show_more">Show more</string>
     <string name="show_less">Show less</string>
     <string name="title_activity_maintainer_location" translatable="false">MaintainerLocation</string>
-    <string name="maintainer_location">Maintainer location</string>
+    <string name="maintainer_location">Repairman location</string>
     <string name="title_activity_chat" translatable="false">Chat</string>
-    <string name="no_available">No available maintainers</string>
+    <string name="no_available">No available repairman</string>
     <string name="empty_phone">Empty phone number</string>
     <string name="find_by_address">Find location by address</string>
     <string name="find_by_name">Find location by address or name</string>
@@ -207,8 +207,8 @@
     <string name="remove_pic">Remove this picture from the list?</string>
     <string name="is_typing">is typing...</string>
     <string name="go_to_chat">Go to chat</string>
-    <string name="maintainer">Maintainer: </string>
-    <string name="maintainer_accept">A MAINTAINER ACCEPTED YOUR ORDER</string>
+    <string name="maintainer">Repairman: </string>
+    <string name="maintainer_accept">A REPAIRMAN ACCEPTED YOUR ORDER</string>
     <string name="mark_spam">Marked as spam</string>
     <string name="seconds">seconds</string>
     <string name="cant_broadcast_while_active">Can\'t broadcast while an order is active</string>

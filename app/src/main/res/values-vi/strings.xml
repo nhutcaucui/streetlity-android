@@ -117,7 +117,7 @@
     <string name="user_common">Tôi chỉ muốn giúp mở rộng địa điểm</string>
     <string name="user_info">Thông tin người dùng</string>
     <string name="title_activity_order_info">Thông tin yêu cầu</string>
-    <string name="user_owner">Tôi là chủ của 1 cửa tiệm</string>
+    <string name="user_owner">Tôi là thợ sửa xe</string>
     <string name="user_store_no">Chưa, tôi muốn thêm vào</string>
     <string name="user_store_state">Cửa tiệm của bạn hiện đã có trên bản đồ chưa?</string>
     <string name="user_store_yes">Rồi, tiệm đã có trên bản đồ</string>

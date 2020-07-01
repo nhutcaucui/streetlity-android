@@ -31,6 +31,7 @@ import android.widget.Toast;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import com.example.streetlity_android.Achievement.ActionObject;
 import com.example.streetlity_android.BroadcastActivity;
 import com.example.streetlity_android.MainFragment.MapObject;
 import com.example.streetlity_android.MainFragment.MapObjectAdapter;
@@ -48,6 +49,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Map;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -424,7 +426,22 @@ else{
 
                                     item.setContributor(jsonObject1.getString("Contributor"));
 
-                                    items.add(item);
+                                    if(MyApplication.getInstance().getContributeMap().containsKey("Maintenance")) {
+                                        boolean exist = false;
+                                        Map<String, ActionObject> map = MyApplication.getInstance().getContributeMap().get("Maintenance");
+                                        for(String key: map.keySet()){
+                                            if(map.get(key).getAffected().equals(Integer.toString(item.getId()))){
+                                                exist = true;
+                                                break;
+                                            }
+                                        }
+
+                                        if(!exist){
+                                            items.add(item);
+                                        }
+                                    }else {
+                                        items.add(item);
+                                    }
                                 }
 
                                 Collections.sort(items, new Comparator<MapObject>() {
