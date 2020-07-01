@@ -543,6 +543,7 @@ locationManager.removeUpdates(FuelFragment.this);
             });
         }else {
             tvNoInternet.setVisibility(View.VISIBLE);
+loading.setVisibility(View.GONE);
         }
     }
 

@@ -452,6 +452,7 @@ public class MaintenanceFragment extends Fragment{
             });
         }else {
             tvNoInternet.setVisibility(View.VISIBLE);
+loading.setVisibility(View.GONE);
         }
     }
 

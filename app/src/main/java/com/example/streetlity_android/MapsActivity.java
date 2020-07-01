@@ -211,7 +211,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         Button leaveReview = findViewById(R.id.btn_leave_comment);
 
-        if(!((MyApplication) this.getApplication()).getToken().equals("")){
+        if(!MyApplication.getInstance().getToken().equals("")){
             leaveReview.setVisibility(View.VISIBLE);
         }
 
@@ -434,7 +434,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         loading.setVisibility(View.VISIBLE);
         if(!item.getImages().equals("")) {
             String[] split = item.getImages().split(";");
-            Retrofit retro = new Retrofit.Builder().baseUrl(((MyApplication) this.getApplication()).getDriverURL())
+            Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getDriverURL())
                     .addConverterFactory(GsonConverterFactory.create()).build();
             final MapAPI tour = retro.create(MapAPI.class);
             for (int i = 0; i < split.length; i++) {
@@ -488,7 +488,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     public void createReviews(float rating,String comment){
         //MapObject item = (MapObject) getIntent().getSerializableExtra("item");
-        Retrofit retro = new Retrofit.Builder().baseUrl(((MyApplication) this.getApplication()).getServiceURL())
+        Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getServiceURL())
                 .addConverterFactory(GsonConverterFactory.create()).build();
         final MapAPI tour = retro.create(MapAPI.class);
         Call<ResponseBody> call = tour.createFuelReview("1.0.0", item.getId(), MyApplication.getInstance().getUsername(),
@@ -564,7 +564,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
     public void updateReviews(int pos,int id, float rating, String comment, Dialog dialog){
         //MapObject item = (MapObject) getIntent().getSerializableExtra("item");
-        Retrofit retro = new Retrofit.Builder().baseUrl(((MyApplication) this.getApplication()).getServiceURL())
+        Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getServiceURL())
                 .addConverterFactory(GsonConverterFactory.create()).build();
         final MapAPI tour = retro.create(MapAPI.class);
         Call<ResponseBody> call = tour.updateFuelReview("1.0.0", id, rating, comment);
@@ -626,7 +626,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     public void deleteReviews(int pos, int id, Dialog dialog){
        // MapObject item = (MapObject) getIntent().getSerializableExtra("item");
-        Retrofit retro = new Retrofit.Builder().baseUrl(((MyApplication) this.getApplication()).getServiceURL())
+        Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getServiceURL())
                 .addConverterFactory(GsonConverterFactory.create()).build();
         final MapAPI tour = retro.create(MapAPI.class);
         Call<ResponseBody> call = tour.deleteFuelReview("1.0.0", id);
@@ -703,7 +703,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         ProgressBar loading = findViewById(R.id.loading_review);
         loading.setVisibility(View.VISIBLE);
        // MapObject item = (MapObject) getIntent().getSerializableExtra("item");
-        Retrofit retro = new Retrofit.Builder().baseUrl(((MyApplication) this.getApplication()).getServiceURL())
+        Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getServiceURL())
                 .addConverterFactory(GsonConverterFactory.create()).build();
         final MapAPI tour = retro.create(MapAPI.class);
         Call<ResponseBody> call = tour.getFuelReview("1.0.0", item.getId(), 0,-1);

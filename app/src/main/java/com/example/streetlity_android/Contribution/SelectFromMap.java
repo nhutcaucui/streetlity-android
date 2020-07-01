@@ -266,14 +266,14 @@ public class SelectFromMap extends AppCompatActivity implements OnMapReadyCallba
     public void addFuel(){
         ConstraintLayout csLayout = findViewById(R.id.layout_cant_find_loca);
         csLayout.setVisibility(View.VISIBLE);
-        Retrofit retro = new Retrofit.Builder().baseUrl(((MyApplication) this.getApplication()).getServiceURL())
+        Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getServiceURL())
                 .addConverterFactory(GsonConverterFactory.create()).build();
-        Retrofit retro2 = new Retrofit.Builder().baseUrl(((MyApplication) this.getApplication()).getDriverURL())
+        Retrofit retro2 = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getDriverURL())
                 .addConverterFactory(GsonConverterFactory.create()).build();
         final MapAPI tour = retro.create(MapAPI.class);
         final MapAPI tour2 = retro2.create(MapAPI.class);
 
-        String token = ((MyApplication) this.getApplication()).getToken();
+        String token = MyApplication.getInstance().getToken();
 
         Log.e("", "addATM: "+ mNote+"-"+latToAdd+"-"+latToAdd+"-"+mAddress);
 
@@ -441,16 +441,16 @@ public class SelectFromMap extends AppCompatActivity implements OnMapReadyCallba
 
         OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
         httpClient.addInterceptor(logging);
-        Retrofit retro = new Retrofit.Builder().baseUrl(((MyApplication) this.getApplication()).getServiceURL())
+        Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getServiceURL())
                 .addConverterFactory(GsonConverterFactory.create()).client(httpClient.build()).build();
-        Retrofit retro2 = new Retrofit.Builder().baseUrl(((MyApplication) this.getApplication()).getDriverURL())
+        Retrofit retro2 = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getDriverURL())
                 .addConverterFactory(GsonConverterFactory.create()).build();
         final MapAPI tour = retro.create(MapAPI.class);
         final MapAPI tour2 = retro2.create(MapAPI.class);
 
         Log.e("", "addATM: "+ mNote+"-"+latToAdd+"-"+latToAdd+"-"+mAddress);
 
-        String token = ((MyApplication) this.getApplication()).getToken();
+        String token = MyApplication.getInstance().getToken();
         if(hasImg) {
 
             String[] f = new String[paramMap.size()];

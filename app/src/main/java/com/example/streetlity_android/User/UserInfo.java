@@ -223,14 +223,14 @@ public class UserInfo extends AppCompatActivity {
     }
 
     public void updateInfo(String phone, String address){
-        Retrofit retro = new Retrofit.Builder().baseUrl(((MyApplication) this.getApplication()).getAuthURL())
+        Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getAuthURL())
                 .addConverterFactory(GsonConverterFactory.create()).build();
-        Retrofit retro2 = new Retrofit.Builder().baseUrl(((MyApplication) this.getApplication()).getDriverURL())
+        Retrofit retro2 = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getDriverURL())
                 .addConverterFactory(GsonConverterFactory.create()).build();
         final MapAPI tour = retro.create(MapAPI.class);
         final MapAPI tour2 = retro2.create(MapAPI.class);
 
-        String token = ((MyApplication) this.getApplication()).getToken();
+        String token = MyApplication.getInstance().getToken();
 
         if(hasImg){
 

@@ -70,9 +70,9 @@ public class MainActivity extends AppCompatActivity {
 //                });
 //            }
 //
-//            ((MyApplication) this.getApplication()).setToken(s.getString("token",""));
-//            ((MyApplication) this.getApplication()).setRefreshToken(s.getString("refreshToken",""));
-//            ((MyApplication) this.getApplication()).setToken(s.getString("username",""));
+//            MyApplication.getInstance().setToken(s.getString("token",""));
+//            MyApplication.getInstance().setRefreshToken(s.getString("refreshToken",""));
+//            MyApplication.getInstance().setToken(s.getString("username",""));
 //
 //            btnContribute = findViewById(R.id.btn_contribute);
 //
@@ -143,7 +143,7 @@ public class MainActivity extends AppCompatActivity {
 //            if (requestCode == 1 && resultCode == RESULT_OK) {
 //                Button btnContribute = findViewById(R.id.btn_contribute);
 //
-//                if(((MyApplication) this.getApplication()).getUserType() == 7) {
+//                if(MyApplication.getInstance().getUserType() == 7) {
 //                    Button btnWork = findViewById(R.id.btn_works);
 //                    btnWork.setVisibility(View.VISIBLE);
 //                    btnWork.setOnClickListener(new View.OnClickListener() {

@@ -529,11 +529,11 @@ public class AllServiceMap extends AppCompatActivity implements GoogleMap.OnMark
     }
 
     public void getBank(){
-        Retrofit retro = new Retrofit.Builder().baseUrl(((MyApplication) this.getApplication()).getServiceURL())
+        Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getServiceURL())
                 .addConverterFactory(GsonConverterFactory.create()).build();
         final MapAPI tour = retro.create(MapAPI.class);
 
-        String token = ((MyApplication) this.getApplication()).getToken();
+        String token = MyApplication.getInstance().getToken();
 
         Call<ResponseBody> call = tour.getBank("1.0.0",token);
         call.enqueue(new Callback<ResponseBody>() {
@@ -582,7 +582,7 @@ public class AllServiceMap extends AppCompatActivity implements GoogleMap.OnMark
         reviewItems.clear();
         displayReviewItems.clear();
         // MapObject item = (MapObject) getIntent().getSerializableExtra("item");
-        Retrofit retro = new Retrofit.Builder().baseUrl(((MyApplication) this.getApplication()).getServiceURL())
+        Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getServiceURL())
                 .addConverterFactory(GsonConverterFactory.create()).build();
         final MapAPI tour = retro.create(MapAPI.class);
         Call<ResponseBody> call = tour.getFuelReview("1.0.0", item.getId(), 0,-1);
@@ -714,7 +714,7 @@ public class AllServiceMap extends AppCompatActivity implements GoogleMap.OnMark
         loading.setVisibility(View.VISIBLE);
         if (!item.getImages().equals("")) {
             String[] split = item.getImages().split(";");
-            Retrofit retro = new Retrofit.Builder().baseUrl(((MyApplication) this.getApplication()).getDriverURL())
+            Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getDriverURL())
                     .addConverterFactory(GsonConverterFactory.create()).build();
             final MapAPI tour = retro.create(MapAPI.class);
             for (int i = 0; i < split.length; i++) {

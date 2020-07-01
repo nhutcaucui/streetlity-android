@@ -204,13 +204,13 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
                 nav_Menu.findItem(R.id.works).setVisible(false);
             }
 
-            ((MyApplication) this.getApplication()).setToken(s.getString("token",""));
-            ((MyApplication) this.getApplication()).setRefreshToken(s.getString("refreshToken",""));
-            ((MyApplication) this.getApplication()).setUsername(s.getString("username",""));
-            ((MyApplication) this.getApplication()).setUserType(s.getInt("userType", -1));
-            ((MyApplication) this.getApplication()).setEmail(s.getString("email",""));
-            ((MyApplication) this.getApplication()).setPhone(s.getString("phone",""));
-            ((MyApplication) this.getApplication()).setAddress(s.getString("address",""));
+            MyApplication.getInstance().setToken(s.getString("token",""));
+            MyApplication.getInstance().setRefreshToken(s.getString("refreshToken",""));
+            MyApplication.getInstance().setUsername(s.getString("username",""));
+            MyApplication.getInstance().setUserType(s.getInt("userType", -1));
+            MyApplication.getInstance().setEmail(s.getString("email",""));
+            MyApplication.getInstance().setPhone(s.getString("phone",""));
+            MyApplication.getInstance().setAddress(s.getString("address",""));
 
             if(!s.getString("avatar","").equals("")){
                 getAvatar(s.getString("avatar",""));
@@ -222,7 +222,7 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
 
             View header=navView.getHeaderView(0);
             TextView tvUsername = header.findViewById(R.id.username);
-            tvUsername.setText(((MyApplication) this.getApplication()).getUsername());
+            tvUsername.setText(MyApplication.getInstance().getUsername());
 
             imgNotify.setVisibility(View.VISIBLE);
         }else{
@@ -359,7 +359,7 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
 
                 View header=navView.getHeaderView(0);
                 TextView tvUsername = header.findViewById(R.id.username);
-                tvUsername.setText(((MyApplication) this.getApplication()).getUsername());
+                tvUsername.setText(MyApplication.getInstance().getUsername());
 
                 LinearLayout btnBroadcast = findViewById(R.id.btn_broadcast);
                 if(btnBroadcast != null){
@@ -443,7 +443,7 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
     }
 
     public void setDrawerForUser(NavigationView navView){
-        if(((MyApplication) this.getApplication()).getUserType() == 1){
+        if(MyApplication.getInstance().getUserType() == 1){
             Menu nav_Menu = navView.getMenu();
             nav_Menu.findItem(R.id.works).setVisible(false);
         }
@@ -522,8 +522,8 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
         Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getAuthURL())
                 .addConverterFactory(GsonConverterFactory.create()).build();
         final MapAPI tour = retro.create(MapAPI.class);
-        String token = ((MyApplication) this.getApplication()).getToken();
-        Call<ResponseBody> call = tour.logout(token, ((MyApplication) this.getApplication()).getUsername(),
+        String token = MyApplication.getInstance().getToken();
+        Call<ResponseBody> call = tour.logout(token, MyApplication.getInstance().getUsername(),
                 MyApplication.getInstance().getRefreshToken(),((MyApplication) getApplication()).getDeviceToken());
         call.enqueue(new Callback<ResponseBody>() {
             @Override
@@ -676,7 +676,7 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
     }
 
     public  void getAvatar(String avatar){
-        Retrofit retro = new Retrofit.Builder().baseUrl(((MyApplication) this.getApplication()).getDriverURL())
+        Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getDriverURL())
                 .addConverterFactory(GsonConverterFactory.create()).build();
         final MapAPI tour = retro.create(MapAPI.class);
         Call<ResponseBody> call = tour.download(avatar);

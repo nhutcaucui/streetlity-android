@@ -206,6 +206,7 @@ public class BroadcastActivity extends AppCompatActivity {
                     }
                     e.commit();
                     edtReason.setText("");
+                    isOther = false;
                 } else {
                     Toast toast = Toast.makeText(BroadcastActivity.this, R.string.empty_reason, Toast.LENGTH_LONG);
                     TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
@@ -447,7 +448,7 @@ public class BroadcastActivity extends AppCompatActivity {
 
                                                 notFound = true;
 
-                                                countdown = new CountDownTimer(300000, 1000) {
+                                                countdown = new CountDownTimer(20000, 1000) {
 
                                                     public void onTick(long millisUntilFinished) {
                                                         if (!notFound) {

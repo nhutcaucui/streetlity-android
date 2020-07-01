@@ -472,6 +472,7 @@ public class ATMFragment extends Fragment{
             });
         }else{
             tvNoInternet.setVisibility(View.VISIBLE);
+loading.setVisibility(View.GONE);
         }
     }
 
@@ -489,11 +490,11 @@ public class ATMFragment extends Fragment{
     }
 
     public void getBank(View view){
-        Retrofit retro = new Retrofit.Builder().baseUrl(((MyApplication) getActivity().getApplication()).getServiceURL())
+        Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getServiceURL())
                 .addConverterFactory(GsonConverterFactory.create()).build();
         final MapAPI tour = retro.create(MapAPI.class);
 
-        String token = ((MyApplication) getActivity().getApplication()).getToken();
+        String token = MyApplication.getInstance().getToken();
 
         Call<ResponseBody> call = tour.getBank("1.0.0",token);
         call.enqueue(new Callback<ResponseBody>() {

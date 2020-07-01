@@ -358,14 +358,14 @@ public class AddAnATM extends AppCompatActivity implements OnMapReadyCallback {
     public void addATM(){
         ConstraintLayout csLayout = findViewById(R.id.layout_cant_find_loca);
         csLayout.setVisibility(View.VISIBLE);
-        Retrofit retro = new Retrofit.Builder().baseUrl(((MyApplication) this.getApplication()).getServiceURL())
+        Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getServiceURL())
                 .addConverterFactory(GsonConverterFactory.create()).build();
-        Retrofit retro2 = new Retrofit.Builder().baseUrl(((MyApplication) this.getApplication()).getDriverURL())
+        Retrofit retro2 = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getDriverURL())
                 .addConverterFactory(GsonConverterFactory.create()).build();
         final MapAPI tour = retro.create(MapAPI.class);
         final MapAPI tour2 = retro2.create(MapAPI.class);
 
-        String token = ((MyApplication) this.getApplication()).getToken();
+        String token = MyApplication.getInstance().getToken();
         Log.e("", "addATM: "+ mNote+"-"+mLat+"-"+mLon+"-"+mBankId+"-"+mAddress);
         if(hasImg){
             String[] f = new String[paramMap.size()];
@@ -656,11 +656,11 @@ public class AddAnATM extends AppCompatActivity implements OnMapReadyCallback {
     }
 
     public void getBank(View view){
-        Retrofit retro = new Retrofit.Builder().baseUrl(((MyApplication) this.getApplication()).getServiceURL())
+        Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getServiceURL())
                 .addConverterFactory(GsonConverterFactory.create()).build();
         final MapAPI tour = retro.create(MapAPI.class);
 
-        String token = ((MyApplication) this.getApplication()).getToken();
+        String token = MyApplication.getInstance().getToken();
 
         Call<ResponseBody> call = tour.getBank("1.0.0",token);
         call.enqueue(new Callback<ResponseBody>() {
@@ -738,11 +738,11 @@ public class AddAnATM extends AppCompatActivity implements OnMapReadyCallback {
     }
 
     public  void addBank(String name){
-        Retrofit retro = new Retrofit.Builder().baseUrl(((MyApplication) this.getApplication()).getServiceURL())
+        Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getServiceURL())
                 .addConverterFactory(GsonConverterFactory.create()).build();
         final MapAPI tour = retro.create(MapAPI.class);
 
-        String token = ((MyApplication) this.getApplication()).getToken();
+        String token = MyApplication.getInstance().getToken();
 
         Call<ResponseBody> call = tour.addBank("1.0.0",token, name);
         call.enqueue(new Callback<ResponseBody>() {
