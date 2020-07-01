@@ -245,7 +245,7 @@ public class FuelFragment extends Fragment {
             loading.setVisibility(View.VISIBLE);
             tvNoInternet.setVisibility(View.GONE);
             Log.e("", "callFuel: " + range);
-            Retrofit retro = new Retrofit.Builder().baseUrl("http://35.240.207.83/")
+            Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getServiceURL())
                     .addConverterFactory(GsonConverterFactory.create()).build();
             final MapAPI tour = retro.create(MapAPI.class);
             Call<ResponseBody> call = tour.getUcfFuelRange("1.0.0", (float) lat, (float) lon, (float)0.1);

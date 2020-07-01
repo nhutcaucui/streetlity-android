@@ -330,7 +330,7 @@ public class SignUp extends AppCompatActivity implements OnMapReadyCallback, Goo
                 if(step == 2 && type == 0){
                     isPass=false;
                     Log.e("", "onClick: "+phone);
-                    Retrofit retro = new Retrofit.Builder().baseUrl("http://35.240.232.218/")
+                    Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getAuthURL())
                             .addConverterFactory(GsonConverterFactory.create()).build();
                     final MapAPI tour = retro.create(MapAPI.class);
 
@@ -747,7 +747,7 @@ public class SignUp extends AppCompatActivity implements OnMapReadyCallback, Goo
     public void getLocations(float lat, float lon){
         mMap.clear();
         mMarkers.removeAll(mMarkers);
-        Retrofit retro = new Retrofit.Builder().baseUrl("http://35.240.207.83/")
+        Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getServiceURL())
                 .addConverterFactory(GsonConverterFactory.create()).build();
         final MapAPI tour = retro.create(MapAPI.class);
         Call<ResponseBody> call = tour.getMaintenanceInRange("1.0.0",(float)lat,(float)lon,(float)0.1);
@@ -895,7 +895,7 @@ public class SignUp extends AppCompatActivity implements OnMapReadyCallback, Goo
     }
 
     public void signUpMaintain(){
-        Retrofit retro = new Retrofit.Builder().baseUrl("http://35.240.232.218/")
+        Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getAuthURL())
                 .addConverterFactory(GsonConverterFactory.create()).build();
         final MapAPI tour = retro.create(MapAPI.class);
 
@@ -951,7 +951,7 @@ public class SignUp extends AppCompatActivity implements OnMapReadyCallback, Goo
     }
 
     public void signUpMaintainNonService(){
-        Retrofit retro = new Retrofit.Builder().baseUrl("http://35.240.232.218/")
+        Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getAuthURL())
                 .addConverterFactory(GsonConverterFactory.create()).build();
         final MapAPI tour = retro.create(MapAPI.class);
 
@@ -1490,7 +1490,7 @@ public class SignUp extends AppCompatActivity implements OnMapReadyCallback, Goo
     }
 
     public void validateUsername(String username, String email){
-        Retrofit retro = new Retrofit.Builder().baseUrl("http://35.240.232.218/")
+        Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getAuthURL())
                 .addConverterFactory(GsonConverterFactory.create()).build();
         final MapAPI tour = retro.create(MapAPI.class);
 

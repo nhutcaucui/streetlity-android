@@ -569,7 +569,7 @@
 //        mMap.clear();
 //        mMarkers.removeAll(mMarkers);
 //        items.removeAll(items);
-//        Retrofit retro = new Retrofit.Builder().baseUrl("http://35.240.207.83/")
+//        Retrofit retro = new Retrofit.Builder().baseUrl("http://34.87.144.190/")
 //                .addConverterFactory(GsonConverterFactory.create()).build();
 //        final MapAPI tour = retro.create(MapAPI.class);
 //        Call<ResponseBody> call = tour.getMaintenanceInRange("1.0.0",(float)lat,(float)lon,(float)range + 1);
@@ -626,7 +626,7 @@
 //    }
 //
 //    public void sendBroadcast(final Dialog dialog, final String reason, final String name, final String phone, final String note, double lat, double lon){
-//        Retrofit retro = new Retrofit.Builder().baseUrl("http://35.240.207.83/")
+//        Retrofit retro = new Retrofit.Builder().baseUrl("http://34.87.144.190/")
 //                .addConverterFactory(GsonConverterFactory.create()).build();
 //        final MapAPI tour = retro.create(MapAPI.class);
 //        Call<ResponseBody> call = tour.getMaintenanceInRange("1.0.0",(float)lat,(float)lon,(float)15);
@@ -713,7 +713,7 @@
 //    }
 //
 //    public void order(final Dialog dialog, String name, String address, String phone, String note, String time, int[] id){
-//        Retrofit retro = new Retrofit.Builder().baseUrl("http://35.240.207.83/")
+//        Retrofit retro = new Retrofit.Builder().baseUrl("http://34.87.144.190/")
 //                .addConverterFactory(GsonConverterFactory.create()).build();
 //        final MapAPI tour = retro.create(MapAPI.class);
 //        Call<ResponseBody> call = tour.broadcast("1.0.0", "", name, phone, note, id, address, time);

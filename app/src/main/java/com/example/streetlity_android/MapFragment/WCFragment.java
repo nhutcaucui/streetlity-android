@@ -265,7 +265,7 @@ public class WCFragment extends Fragment implements OnMapReadyCallback, GoogleMa
     public void callWC(double lat, double lon, float range){
         mMap.clear();
         mMarkers.removeAll(mMarkers);
-        Retrofit retro = new Retrofit.Builder().baseUrl("http://35.240.207.83/")
+        Retrofit retro = new Retrofit.Builder().baseUrl("http://34.87.144.190/")
                 .addConverterFactory(GsonConverterFactory.create()).build();
         final MapAPI tour = retro.create(MapAPI.class);
         Call<ResponseBody> call = tour.getWCInRange("1.0.0",(float)lat,(float)lon,(float)range + 1);

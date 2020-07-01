@@ -31,6 +31,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.streetlity_android.MapFragment.MaintenanceObject;
+import com.example.streetlity_android.MyApplication;
 import com.example.streetlity_android.R;
 import com.example.streetlity_android.WorkaroundMapFragment;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -97,7 +98,7 @@ public class SignupAsMaintainer extends AppCompatActivity implements OnMapReadyC
                 if(checkFields(edtUsername.getText().toString(), edtPassword.getText().toString(), edtCFPassword.getText().toString(),
                         edtMail.getText().toString(),edtPhone.getText().toString(),edtAddress.getText().toString())){
 
-                    Retrofit retro = new Retrofit.Builder().baseUrl("http://35.240.232.218/")
+                    Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getAuthURL())
                             .addConverterFactory(GsonConverterFactory.create()).build();
                     final MapAPI tour = retro.create(MapAPI.class);
 
@@ -298,7 +299,7 @@ public class SignupAsMaintainer extends AppCompatActivity implements OnMapReadyC
     public void getLocations(float lat, float lon){
         mMap.clear();
         mMarkers.removeAll(mMarkers);
-        Retrofit retro = new Retrofit.Builder().baseUrl("http://35.240.207.83/")
+        Retrofit retro = new Retrofit.Builder().baseUrl("http://34.87.144.190/")
                 .addConverterFactory(GsonConverterFactory.create()).build();
         final MapAPI tour = retro.create(MapAPI.class);
         Call<ResponseBody> call = tour.getMaintenanceInRange("1.0.0",(float)lat,(float)lon,(float)15);

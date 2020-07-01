@@ -26,6 +26,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.example.streetlity_android.MapAPI;
+import com.example.streetlity_android.MyApplication;
 import com.example.streetlity_android.R;
 import com.example.streetlity_android.Review;
 import com.example.streetlity_android.ReviewAdapter;
@@ -260,7 +261,7 @@ public class ATMFragment extends Fragment implements OnMapReadyCallback, GoogleM
         public void callATM(double lat, double lon, float range){
             mMap.clear();
             mMarkers.removeAll(mMarkers);
-        Retrofit retro = new Retrofit.Builder().baseUrl("http://35.240.207.83/")
+        Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getServiceURL())
                 .addConverterFactory(GsonConverterFactory.create()).build();
         final MapAPI tour = retro.create(MapAPI.class);
         Call<ResponseBody> call = tour.getATMInRange("1.0.0",(float)lat,(float)lon,(float)range + 1);

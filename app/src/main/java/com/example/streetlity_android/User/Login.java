@@ -142,7 +142,7 @@ public class Login extends AppCompatActivity {
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
         }
-        Retrofit retro = new Retrofit.Builder().baseUrl("http://35.240.232.218/")
+        Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getAuthURL())
                 .addConverterFactory(GsonConverterFactory.create()).build();
         final MapAPI tour = retro.create(MapAPI.class);
         Call<ResponseBody> call = tour.login(username, password, ((MyApplication) getApplication()).getDeviceToken());

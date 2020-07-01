@@ -291,7 +291,7 @@ public class AllServiceMap extends AppCompatActivity implements GoogleMap.OnMark
     }
 
     public void callATM(double lat, double lon){
-        Retrofit retro = new Retrofit.Builder().baseUrl("http://35.240.207.83/")
+        Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getServiceURL())
                 .addConverterFactory(GsonConverterFactory.create()).build();
         final MapAPI tour = retro.create(MapAPI.class);
         Call<ResponseBody> call = tour.getATMInRange("1.0.0",(float)lat,(float)lon,(float)0.1);
@@ -355,7 +355,7 @@ public class AllServiceMap extends AppCompatActivity implements GoogleMap.OnMark
     }
 
     public void callMaintenance(double lat, double lon){
-        Retrofit retro = new Retrofit.Builder().baseUrl("http://35.240.207.83/")
+        Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getServiceURL())
                 .addConverterFactory(GsonConverterFactory.create()).build();
         final MapAPI tour = retro.create(MapAPI.class);
         Call<ResponseBody> call = tour.getMaintenanceInRange("1.0.0",(float)lat,(float)lon,(float)0.1);
@@ -408,7 +408,7 @@ public class AllServiceMap extends AppCompatActivity implements GoogleMap.OnMark
     }
 
     public void callFuel(double lat, double lon){
-        Retrofit retro = new Retrofit.Builder().baseUrl("http://35.240.207.83/")
+        Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getServiceURL())
                 .addConverterFactory(GsonConverterFactory.create()).build();
         final MapAPI tour = retro.create(MapAPI.class);
         Call<ResponseBody> call = tour.getFuelInRange("1.0.0",(float)lat,(float)lon,(float)0.1);
@@ -462,7 +462,7 @@ public class AllServiceMap extends AppCompatActivity implements GoogleMap.OnMark
     }
 
     public void callWC(double lat, double lon){
-        Retrofit retro = new Retrofit.Builder().baseUrl("http://35.240.207.83/")
+        Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getServiceURL())
                 .addConverterFactory(GsonConverterFactory.create()).build();
         final MapAPI tour = retro.create(MapAPI.class);
         Call<ResponseBody> call = tour.getWCInRange("1.0.0",(float)lat,(float)lon,(float)0.1);
