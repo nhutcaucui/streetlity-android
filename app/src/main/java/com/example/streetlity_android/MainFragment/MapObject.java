@@ -16,6 +16,7 @@ public class MapObject implements Serializable {
     int bankId;
     String images;
     String contributor;
+    boolean upvoted;
 
     public MapObject(int id, String name, float rating, String address, float lat, float lon, String note, int type) {
         this.id = id;
@@ -120,5 +121,13 @@ public class MapObject implements Serializable {
 
     public String getContributor() {
         return contributor;
+    }
+
+    public void setUpvoted(boolean upvoted) {
+        this.upvoted = upvoted;
+    }
+
+    public boolean isUpvoted() {
+        return upvoted;
     }
 }

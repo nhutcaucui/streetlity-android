@@ -38,6 +38,7 @@ import androidx.core.content.ContextCompat;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
+import com.example.streetlity_android.Achievement.ActionObject;
 import com.example.streetlity_android.Events.EListener;
 import com.example.streetlity_android.Events.Event;
 import com.example.streetlity_android.Events.GlobalEvents;
@@ -74,6 +75,8 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+
+import static androidx.constraintlayout.widget.Constraints.TAG;
 
 public class AddAMaintenance extends AppCompatActivity implements OnMapReadyCallback {
 
@@ -141,6 +144,8 @@ public class AddAMaintenance extends AppCompatActivity implements OnMapReadyCall
                             }catch (Exception e){
                                 e.printStackTrace();
                             }
+                        }else{
+                            Log.e(TAG, "onResponse: "+response.code() );
                         }
                     }
 
@@ -431,10 +436,24 @@ public class AddAMaintenance extends AppCompatActivity implements OnMapReadyCall
                                                     }
                                                     csLayout.setVisibility(View.GONE);
                                                     Calendar calendar = Calendar.getInstance();
+                                                    long time = calendar.getTimeInMillis();
                                                     String builder = "";
-                                                    builder = calendar.getTimeInMillis()+ ";"+ jsonObject.getJSONObject("Service").getInt("Id")
+                                                    builder = time+ ";"+ jsonObject.getJSONObject("Service").getInt("Id")
                                                     +";"+ "Maintenance";
                                                     e.trigger(MyApplication.getInstance().getUsername(), builder);
+
+                                                    ActionObject ao = new ActionObject("", time,"Contribute", Integer.toString(jsonObject.getJSONObject("Service").getInt("Id")));
+
+                                                    if(MyApplication.getInstance().getContributeMap().containsKey("Maintenance")){
+                                                        MyApplication.getInstance().getContributeMap().get("Maintenance").put("contributed " + jsonObject.getJSONObject("Service").getInt("Id"), ao);
+                                                    }
+                                                    else{
+                                                        Map<String, ActionObject> map = new HashMap<>();
+                                                        map.put("contributed " + jsonObject.getJSONObject("Service").getInt("Id"), ao);
+                                                        MyApplication.getInstance().getContributeMap().put("Maintenance", map);
+                                                    }
+
+                                                    Log.e(TAG, "onResponse: " + MyApplication.getInstance().getContributeMap());
                                                 }
                                                 //finish();
                                             } catch (Exception e){

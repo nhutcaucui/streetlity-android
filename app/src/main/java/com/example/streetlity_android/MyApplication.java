@@ -4,6 +4,7 @@ import android.app.Application;
 import android.graphics.Bitmap;
 
 import com.example.streetlity_android.Achievement.ActionObject;
+import com.example.streetlity_android.Option.OptionInterface;
 import com.example.streetlity_android.RealtimeService.MaintenanceOrder;
 
 import org.json.JSONObject;
@@ -69,6 +70,16 @@ public class MyApplication extends Application { //35.240.232.218 auth server
     private Map<String, Map<String, ActionObject>> reviewedMap;
     private Map<String, Map<String, ActionObject>> contributeMap;
     private Map<String, Map<String, ActionObject>> upvoteMap;
+
+    private OptionInterface option;
+
+    public void setOption(OptionInterface option) {
+        this.option = option;
+    }
+
+    public OptionInterface getOption() {
+        return option;
+    }
 
     public MaintenanceOrder getSocket() {
         return socket;

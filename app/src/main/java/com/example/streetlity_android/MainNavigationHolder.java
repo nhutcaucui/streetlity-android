@@ -21,6 +21,7 @@ import com.example.streetlity_android.MainFragment.HomeFragment;
 import com.example.streetlity_android.MainFragment.MaintenanceFragment;
 import com.example.streetlity_android.MainFragment.WCFragment;
 import com.example.streetlity_android.Notification.Notification;
+import com.example.streetlity_android.Option.MaintainerOption;
 import com.example.streetlity_android.RealtimeService.MaintenanceOrder;
 import com.example.streetlity_android.User.ChangePassword;
 import com.example.streetlity_android.User.Common.MyOrders;
@@ -101,6 +102,8 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
         setContentView(R.layout.activity_main_navigation_holder);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        startService(new Intent(getBaseContext(), ServiceChecking.class));
 
         getSharedPreferences("activeOrder",MODE_PRIVATE).edit().clear().apply();
 
@@ -221,6 +224,16 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
                 getAvatar(s.getString("avatar",""));
             }
 
+            if(MyApplication.getInstance().getUserType() == 7){
+                if(getSharedPreferences("acceptEmergency", MODE_PRIVATE).contains("acceptEmergency")){
+                    MyApplication.getInstance().setOption(new MaintainerOption(getSharedPreferences("acceptEmergency", MODE_PRIVATE).getBoolean("acceptEmergency", false)));
+                }
+                else if(MyApplication.getInstance().getOption() == null){
+                    MyApplication.getInstance().setOption(new MaintainerOption());
+                    MyApplication.getInstance().getOption().setAcceptEmergency(false);
+                }
+            }
+
             refreshToken();
             Log.e("TAG", "onCreate: " );
             setDrawerForUser(navView);
@@ -235,17 +248,26 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
         }
 
         s = getSharedPreferences("map", MODE_PRIVATE);
+        Gson gson = new Gson();
         if (s.contains("review")) {
-            Gson gson = new Gson();
             MyApplication.getInstance().setReviewedMap(
                     gson.fromJson(s.getString("review", ""),
-                            new TypeToken<Map<String, Map<String, ActionObject>>>() {}.getType()));
+                            new TypeToken<Map<String, Map<String, ActionObject>>>() {
+                            }.getType()));
+            Log.e("TAG", "onCreate: " + MyApplication.getInstance().getReviewedMap());
+        }if(s.contains("upvote")) {
             MyApplication.getInstance().setUpvoteMap(
                     gson.fromJson(s.getString("upvote", ""),
-                            new TypeToken<Map<String, Map<String, ActionObject>>>() {}.getType()));
+                            new TypeToken<Map<String, Map<String, ActionObject>>>() {
+                            }.getType()));
+            Log.e("TAG", "onCreate: " + MyApplication.getInstance().getUpvoteMap());
+        }
+        if(s.contains("contribute")) {
             MyApplication.getInstance().setContributeMap(
                     gson.fromJson(s.getString("contribute", ""),
-                            new TypeToken<Map<String, Map<String, ActionObject>>>() {}.getType()));
+                            new TypeToken<Map<String, Map<String, ActionObject>>>() {
+                            }.getType()));
+            Log.e("TAG", "onCreate: " + MyApplication.getInstance().getContributeMap());
         }
 
         fragment = new HomeFragment();
@@ -463,8 +485,9 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
 
     public void setDrawerForUser(NavigationView navView){
         if(MyApplication.getInstance().getUserType() == 1){
-            Menu nav_Menu = navView.getMenu();
-            nav_Menu.findItem(R.id.works).setVisible(false);
+            Menu navMenu = navView.getMenu();
+            navMenu.findItem(R.id.works).setVisible(false);
+            navMenu.findItem(R.id.settings).setVisible(false);
         }
 
         navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {

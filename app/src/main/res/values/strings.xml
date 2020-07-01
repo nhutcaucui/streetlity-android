@@ -224,4 +224,8 @@
     <string name="update_successfully">Info updated</string>
     <string name="point">Points: </string>
     <string name="looking_for">What are you looking for?</string>
+    <string name="title_activity_options" translatable="false">Options</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="accept_emergency">Accept emergency orders</string>
+    <string name="options">Options</string>
 </resources>

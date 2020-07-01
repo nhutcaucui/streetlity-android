@@ -59,6 +59,8 @@ import java.io.File;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -111,6 +113,8 @@ public class MapsActivityConfirmation extends AppCompatActivity implements OnMap
                             }catch (Exception e){
                                 e.printStackTrace();
                             }
+                        }else{
+                            Log.e(TAG, "onResponse: "+response.code() );
                         }
                     }
 
@@ -391,18 +395,23 @@ public class MapsActivityConfirmation extends AppCompatActivity implements OnMap
                         long time = calendar.getTimeInMillis();
                         String builder = "";
                         builder = builder + time +";"+ item.getId()+";";
+                        String type = "";
 
                         if(item.getType()==1){
                             builder+="Fuel";
+                            type = "Fuel";
                         }
                         else if(item.getType()==2){
                             builder+="Toilet";
+                            type = "Toilet";
                         }
                         else if(item.getType()==3){
                             builder+="Maintenance";
+                            type = "Maintenance";
                         }
                         else if(item.getType()==4){
                             builder+="Atm";
+                            type = "Atm";
                         }
 
                         if(jsonObject.getBoolean("Status")){
@@ -411,8 +420,20 @@ public class MapsActivityConfirmation extends AppCompatActivity implements OnMap
                             setResult(RESULT_OK, data);
 
                             e.trigger(MyApplication.getInstance().getUsername(), builder);
-                            ActionObject ao = new ActionObject("", time,"Upvote", Integer.toString(item.getId()));
-                            finish();
+                            ActionObject ao = new ActionObject("upvote " + item.getId(), time,"Upvote", Integer.toString(item.getId()));
+
+                            if(MyApplication.getInstance().getUpvoteMap().containsKey(type)){
+                                MyApplication.getInstance().getUpvoteMap().get(type).put("upvote " + item.getId(), ao);
+                            }
+                            else{
+                                Map<String, ActionObject> map = new HashMap<>();
+                                map.put("upvote " + item.getId(), ao);
+                                MyApplication.getInstance().getUpvoteMap().put(type, map);
+                            }
+
+                            Log.e(TAG, "onResponse: " + MyApplication.getInstance().getUpvoteMap());
+
+                        finish();
                         }
                     }catch (Exception e){
                         e.printStackTrace();

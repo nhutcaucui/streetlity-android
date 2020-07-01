@@ -23,11 +23,16 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
+            android:name=".Option.Options"
+            android:label="@string/title_activity_options"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity
             android:name=".Achievement.Achievement"
             android:label="@string/achievement"
-            android:theme="@style/AppTheme.NoActionBar"/>
-        <activity android:name=".MapsActivityConfirmation"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".MapsActivityConfirmation"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".AllServiceMap"
             android:label="@string/title_activity_all_service_map"
@@ -235,10 +240,9 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-
         <service
-            android:enabled="true"
             android:name=".ServiceChecking"
+            android:enabled="true"
             android:exported="false"
             android:stopWithTask="false" />
     </application>

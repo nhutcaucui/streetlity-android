@@ -34,6 +34,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 
+import com.example.streetlity_android.Achievement.ActionObject;
 import com.example.streetlity_android.Events.EListener;
 import com.example.streetlity_android.Events.Event;
 import com.example.streetlity_android.Events.GlobalEvents;
@@ -78,6 +79,8 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+
+import static androidx.constraintlayout.widget.Constraints.TAG;
 
 public class SelectFromMap extends AppCompatActivity implements OnMapReadyCallback {
 
@@ -363,9 +366,23 @@ public class SelectFromMap extends AppCompatActivity implements OnMapReadyCallba
 
                                                     Calendar calendar = Calendar.getInstance();
                                                     String builder = "";
-                                                    builder = calendar.getTimeInMillis()+ ";"+ jsonObject.getJSONObject("Service").getInt("Id")
+                                                    long time = calendar.getTimeInMillis();
+                                                    builder = time+ ";"+ jsonObject.getJSONObject("Service").getInt("Id")
                                                             +";"+ "Fuel";
                                                     e.trigger(MyApplication.getInstance().getUsername(), builder);
+
+                                                    ActionObject ao = new ActionObject("", time,"Contribute", Integer.toString(jsonObject.getJSONObject("Service").getInt("Id")));
+
+                                                    if(MyApplication.getInstance().getContributeMap().containsKey("Fuel")){
+                                                        MyApplication.getInstance().getContributeMap().get("Fuel").put("contributed " + jsonObject.getJSONObject("Service").getInt("Id"), ao);
+                                                    }
+                                                    else{
+                                                        Map<String, ActionObject> map = new HashMap<>();
+                                                        map.put("contributed " + jsonObject.getJSONObject("Service").getInt("Id"), ao);
+                                                        MyApplication.getInstance().getContributeMap().put("Fuel", map);
+                                                    }
+
+                                                    Log.e(TAG, "onResponse: " + MyApplication.getInstance().getContributeMap());
 
                                                     finish();
                                                 }
@@ -454,6 +471,27 @@ public class SelectFromMap extends AppCompatActivity implements OnMapReadyCallba
                                 Intent t = new Intent(SelectFromMap.this, AddSuccess.class);
                                 t.putExtra("type", 1);
                                 startActivity(t);
+
+                                Calendar calendar = Calendar.getInstance();
+                                String builder = "";
+                                long time = calendar.getTimeInMillis();
+                                builder = time+ ";"+ jsonObject.getJSONObject("Service").getInt("Id")
+                                        +";"+ "Fuel";
+                                e.trigger(MyApplication.getInstance().getUsername(), builder);
+
+                                ActionObject ao = new ActionObject("", time,"Contribute", Integer.toString(jsonObject.getJSONObject("Service").getInt("Id")));
+
+                                if(MyApplication.getInstance().getContributeMap().containsKey("Fuel")){
+                                    MyApplication.getInstance().getContributeMap().get("Fuel").put("contributed " + jsonObject.getJSONObject("Service").getInt("Id"), ao);
+                                }
+                                else{
+                                    Map<String, ActionObject> map = new HashMap<>();
+                                    map.put("contributed " + jsonObject.getJSONObject("Service").getInt("Id"), ao);
+                                    MyApplication.getInstance().getContributeMap().put("Fuel", map);
+                                }
+
+                                Log.e(TAG, "onResponse: " + MyApplication.getInstance().getContributeMap());
+
                                 finish();
                             }
                         } catch (Exception e) {
@@ -542,9 +580,23 @@ public class SelectFromMap extends AppCompatActivity implements OnMapReadyCallba
 
                                                     Calendar calendar = Calendar.getInstance();
                                                     String builder = "";
-                                                    builder = calendar.getTimeInMillis()+ ";"+ jsonObject.getJSONObject("Service").getInt("Id")
+                                                    long time = calendar.getTimeInMillis();
+                                                    builder = time+ ";"+ jsonObject.getJSONObject("Service").getInt("Id")
                                                             +";"+ "Toilet";
                                                     e.trigger(MyApplication.getInstance().getUsername(), builder);
+
+                                                    ActionObject ao = new ActionObject("", time,"Contribute", Integer.toString(jsonObject.getJSONObject("Service").getInt("Id")));
+
+                                                    if(MyApplication.getInstance().getContributeMap().containsKey("Toilet")){
+                                                        MyApplication.getInstance().getContributeMap().get("Toilet").put("contributed " + jsonObject.getJSONObject("Service").getInt("Id"), ao);
+                                                    }
+                                                    else{
+                                                        Map<String, ActionObject> map = new HashMap<>();
+                                                        map.put("contributed " + jsonObject.getJSONObject("Service").getInt("Id"), ao);
+                                                        MyApplication.getInstance().getContributeMap().put("Toilet", map);
+                                                    }
+
+                                                    Log.e(TAG, "onResponse: " + MyApplication.getInstance().getContributeMap());
 
                                                     finish();
                                                 }
@@ -606,6 +658,27 @@ public class SelectFromMap extends AppCompatActivity implements OnMapReadyCallba
                                 Intent t = new Intent(SelectFromMap.this, AddSuccess.class);
                                 t.putExtra("type", 2);
                                 startActivity(t);
+
+                                Calendar calendar = Calendar.getInstance();
+                                String builder = "";
+                                long time = calendar.getTimeInMillis();
+                                builder = time+ ";"+ jsonObject.getJSONObject("Service").getInt("Id")
+                                        +";"+ "Toilet";
+                                e.trigger(MyApplication.getInstance().getUsername(), builder);
+
+                                ActionObject ao = new ActionObject("", time,"Contribute", Integer.toString(jsonObject.getJSONObject("Service").getInt("Id")));
+
+                                if(MyApplication.getInstance().getContributeMap().containsKey("Toilet")){
+                                    MyApplication.getInstance().getContributeMap().get("Toilet").put("contributed " + jsonObject.getJSONObject("Service").getInt("Id"), ao);
+                                }
+                                else{
+                                    Map<String, ActionObject> map = new HashMap<>();
+                                    map.put("contributed " + jsonObject.getJSONObject("Service").getInt("Id"), ao);
+                                    MyApplication.getInstance().getContributeMap().put("Toilet", map);
+                                }
+
+                                Log.e(TAG, "onResponse: " + MyApplication.getInstance().getContributeMap());
+
                                 finish();
                             }
                         } catch (Exception e) {

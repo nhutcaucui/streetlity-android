@@ -48,6 +48,7 @@ import com.akexorcist.googledirection.model.Direction;
 import com.akexorcist.googledirection.model.Leg;
 import com.akexorcist.googledirection.model.Route;
 import com.akexorcist.googledirection.util.DirectionConverter;
+import com.example.streetlity_android.Achievement.ActionObject;
 import com.example.streetlity_android.Events.EListener;
 import com.example.streetlity_android.Events.Event;
 import com.example.streetlity_android.Events.GlobalEvents;
@@ -84,7 +85,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -92,6 +95,8 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+
+import static androidx.constraintlayout.widget.Constraints.TAG;
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, LocationListener {
 
@@ -149,6 +154,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                             }catch (Exception e){
                                 e.printStackTrace();
                             }
+                        }else{
+                            Log.e(TAG, "onResponse: "+response.code() );
                         }
                     }
 
@@ -604,20 +611,41 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                             tvNoReview.setVisibility(View.GONE);
 
                             String builder = "";
+
                             Calendar calendar = Calendar.getInstance();
 
-                            builder = calendar.getTimeInMillis() + ";"+ item.getId() +";";
+                            long time = calendar.getTimeInMillis();
+
+                            builder = time + ";"+ item.getId() +";";
+                            String type = "";
                             if(item.getType() == 1){
                                 builder +="Fuel";
+                                type = "Fuel";
                             }else if(item.getType() == 2){
                                 builder +="Toilet";
+                                type = "Toilet";
                             }else if(item.getType() == 3){
                                 builder +="Maintenance";
+                                type = "Maintenance";
                             }else if(item.getType() == 4){
                                 builder +="Atm";
+                                type = "Atm";
                             }
 
                             e.trigger(MyApplication.getInstance().getUsername(), builder);
+
+                            ActionObject ao = new ActionObject("review " + item.getId(), time,"Review", Integer.toString(item.getId()));
+
+                            if(MyApplication.getInstance().getReviewedMap().containsKey(type)){
+                                MyApplication.getInstance().getReviewedMap().get(type).put("review " + item.getId(), ao);
+                            }
+                            else{
+                                Map<String, ActionObject> map = new HashMap<>();
+                                map.put("review " + item.getId(), ao);
+                                MyApplication.getInstance().getReviewedMap().put(type, map);
+                            }
+
+                            Log.e(TAG, "onResponse: " + MyApplication.getInstance().getReviewedMap());
                         }
                     }catch (Exception e){
                         e.printStackTrace();

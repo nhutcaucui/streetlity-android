@@ -29,6 +29,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.streetlity_android.MyApplication;
+import com.example.streetlity_android.Option.MaintainerOption;
 import com.example.streetlity_android.R;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.gson.Gson;
@@ -192,6 +193,16 @@ public class Login extends AppCompatActivity {
                                 e.putInt("userType", jsonObject.getInt("Role"));
                                 e.putString("avatar", jsonObject1.getString("Avatar"));
                                 e.commit();
+
+                                if(MyApplication.getInstance().getUserType() == 7){
+                                    if(getSharedPreferences("acceptEmergency", MODE_PRIVATE).contains("acceptEmergency")){
+                                        MyApplication.getInstance().setOption(new MaintainerOption(getSharedPreferences("acceptEmergency", MODE_PRIVATE).getBoolean("acceptEmergency", false)));
+                                    }
+                                    else if(MyApplication.getInstance().getOption() == null){
+                                        MyApplication.getInstance().setOption(new MaintainerOption());
+                                        MyApplication.getInstance().getOption().setAcceptEmergency(false);
+                                    }
+                                }
 
                                 if(!jsonObject1.getString("Avatar").equals("")){
                                     getAvatar(jsonObject1.getString("Avatar"));
@@ -430,6 +441,10 @@ public class Login extends AppCompatActivity {
                                                     MyApplication.getInstance().setContributeMap(contributeMap);
                                                     MyApplication.getInstance().setReviewedMap(reviewMap);
                                                     MyApplication.getInstance().setUpvoteMap(upvoteMap);
+
+                                                    Log.e("TAG", "onResponse: "+contributeMap );
+                                                    Log.e("TAG", "onResponse: "+reviewMap );
+                                                    Log.e("TAG", "onResponse: "+upvoteMap );
 
                                                     Gson gs = new Gson();
 

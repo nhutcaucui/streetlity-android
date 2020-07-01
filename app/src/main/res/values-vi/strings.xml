@@ -210,4 +210,6 @@
     <string name="update_successfully">Đã cập nhật thông tin</string>
     <string name="point">Điểm: </string>
     <string name="looking_for">Bạn cần tìm gì?</string>
+    <string name="accept_emergency">Chấp nhận yêu cầu khẩn</string>
+    <string name="options">Cài đặt</string>
 </resources>
