@@ -48,6 +48,9 @@ import com.akexorcist.googledirection.model.Direction;
 import com.akexorcist.googledirection.model.Leg;
 import com.akexorcist.googledirection.model.Route;
 import com.akexorcist.googledirection.util.DirectionConverter;
+import com.example.streetlity_android.Events.EListener;
+import com.example.streetlity_android.Events.Event;
+import com.example.streetlity_android.Events.GlobalEvents;
 import com.example.streetlity_android.Firebase.StreetlityFirebaseMessagingService;
 import com.example.streetlity_android.MainFragment.MapObject;
 import com.example.streetlity_android.User.Login;
@@ -78,7 +81,9 @@ import java.io.File;
 import java.io.InputStream;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import okhttp3.ResponseBody;
@@ -111,6 +116,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     boolean isExpanded = false;
 
+    Event<String, String> e = GlobalEvents.Example;
+
+    EListener<String, String> listener;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -121,6 +130,37 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("");
+
+        listener = new EListener<String, String>() {
+            @Override
+            public void trigger(String s, String s2) {
+                String[] split = s2.split(";", -1);
+                Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getAuthURL())
+                        .addConverterFactory(GsonConverterFactory.create()).build();
+                final MapAPI tour = retro.create(MapAPI.class);
+                Call<ResponseBody> call = tour.addActionReview(s, Long.parseLong(split[0]), split[1], split[2]);
+                call.enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        if(response.code() == 200){
+                            try{
+                                JSONObject jsonObject1 = new JSONObject(response.body().string());
+                                Log.e("TAG", "onResponse: " + jsonObject1.toString() );
+                            }catch (Exception e){
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                        t.printStackTrace();
+                    }
+                });
+            }
+        };
+
+        e.subcribe(listener);
 
         BottomSheetBehavior sheetBehavior;
         LinearLayout bottom_sheet;
@@ -562,6 +602,22 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                             TextView tvNoReview = findViewById(R.id.tv_no_review);
                             tvNoReview.setVisibility(View.GONE);
+
+                            String builder = "";
+                            Calendar calendar = Calendar.getInstance();
+
+                            builder = calendar.getTimeInMillis() + ";"+ item.getId() +";";
+                            if(item.getType() == 1){
+                                builder +="Fuel";
+                            }else if(item.getType() == 2){
+                                builder +="Toilet";
+                            }else if(item.getType() == 3){
+                                builder +="Maintenance";
+                            }else if(item.getType() == 4){
+                                builder +="Atm";
+                            }
+
+                            e.trigger(MyApplication.getInstance().getUsername(), builder);
                         }
                     }catch (Exception e){
                         e.printStackTrace();
@@ -862,5 +918,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     public void onProviderDisabled(String provider) {
+    }
+
+    public void onStop(){
+        super.onStop();
+
+        e.unsubcribe(listener);
     }
 }

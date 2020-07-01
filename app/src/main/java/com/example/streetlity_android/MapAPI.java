@@ -260,7 +260,7 @@ public interface MapAPI {
 
    //@FormUrlEncoded
     @GET("user/refresh")
-    Call<ResponseBody> refresh(@Query("refresh-token") String refreshToken);
+    Call<ResponseBody> refresh(@Query("rtoken") String refreshToken);
 
     @FormUrlEncoded
     @POST("user/info/")
@@ -274,14 +274,34 @@ public interface MapAPI {
                                   @Field("address") String address, @Field("phone") String phone);
 
     @FormUrlEncoded
-    @POST("user/action/")
+    @POST("user/action/review")
     Call<ResponseBody> addActionReview(@Field("id") String id, @Field("time") long time,
                                  @Field("affect") String affect, @Field("service") String service);
 
     @FormUrlEncoded
     @POST("user/action/review")
-    Call<ResponseBody> addActionReview(@Field("id") String id, String[] actionType, @Field("time") long[] time,
+    Call<ResponseBody> addActionReview(@Field("id") String id, @Field("time") long[] time,
                                  @Field("affect") String[] affect, @Field("service") String[] service);
+
+    @FormUrlEncoded
+    @POST("user/action/contribute")
+    Call<ResponseBody> addActionContribute(@Field("id") String id, @Field("time") long time,
+                                       @Field("affect") String affect, @Field("service") String service);
+
+    @FormUrlEncoded
+    @POST("user/action/contribute")
+    Call<ResponseBody> addActionContribute(@Field("id") String id, @Field("time") long[] time,
+                                       @Field("affect") String[] affect, @Field("service") String[] service);
+
+    @FormUrlEncoded
+    @POST("user/action/upvote")
+    Call<ResponseBody> addActionUpvote(@Field("id") String id, @Field("time") long time,
+                                       @Field("affect") String affect, @Field("service") String service);
+
+    @FormUrlEncoded
+    @POST("user/action/upvote")
+    Call<ResponseBody> addActionUpvote(@Field("id") String id, @Field("time") long[] time,
+                                       @Field("affect") String[] affect, @Field("service") String[] service);
 
     @GET("user/achievement/progress")
     Call<ResponseBody> getProgress(@Query("id") String id);

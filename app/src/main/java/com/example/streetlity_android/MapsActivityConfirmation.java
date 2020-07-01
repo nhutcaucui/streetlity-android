@@ -34,6 +34,10 @@ import com.akexorcist.googledirection.model.Direction;
 import com.akexorcist.googledirection.model.Leg;
 import com.akexorcist.googledirection.model.Route;
 import com.akexorcist.googledirection.util.DirectionConverter;
+import com.example.streetlity_android.Achievement.ActionObject;
+import com.example.streetlity_android.Events.EListener;
+import com.example.streetlity_android.Events.Event;
+import com.example.streetlity_android.Events.GlobalEvents;
 import com.example.streetlity_android.MainFragment.MapObject;
 import com.example.streetlity_android.User.UserInfoOther;
 import com.google.android.gms.maps.CameraUpdate;
@@ -54,6 +58,7 @@ import org.json.JSONObject;
 import java.io.File;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -71,6 +76,10 @@ public class MapsActivityConfirmation extends AppCompatActivity implements OnMap
     Marker currentPosition;
     MapObject item;
 
+    Event<String, String> e = GlobalEvents.Example;
+
+    EListener<String,String> listener;
+
     ArrayList<MarkerOptions> mMarkers = new ArrayList<MarkerOptions>();;
 
     @Override
@@ -83,6 +92,37 @@ public class MapsActivityConfirmation extends AppCompatActivity implements OnMap
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("");
+
+        listener = new EListener<String, String>() {
+            @Override
+            public void trigger(String s, String s2) {
+                String[] split = s2.split(";", -1);
+                Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getAuthURL())
+                        .addConverterFactory(GsonConverterFactory.create()).build();
+                final MapAPI tour = retro.create(MapAPI.class);
+                Call<ResponseBody> call = tour.addActionUpvote(s, Long.parseLong(split[0]), split[1], split[2]);
+                call.enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        if(response.code() == 200){
+                            try{
+                                JSONObject jsonObject1 = new JSONObject(response.body().string());
+                                Log.e("TAG", "onResponse: " + jsonObject1.toString() );
+                            }catch (Exception e){
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                        t.printStackTrace();
+                    }
+                });
+            }
+        };
+
+        e.subcribe(listener);
 
         LinearLayout llReview = findViewById(R.id.ll_review);
         llReview.setVisibility(View.GONE);
@@ -328,13 +368,13 @@ public class MapsActivityConfirmation extends AppCompatActivity implements OnMap
         if(item.getType()==1){
             call = tour.upvoteFuel("1.0.0", item.getId(), MyApplication.getInstance().getUsername());
         }
-        if(item.getType()==2){
+        else if(item.getType()==2){
             call = tour.upvoteWC("1.0.0", item.getId(), MyApplication.getInstance().getUsername());
         }
-        if(item.getType()==3){
+        else if(item.getType()==3){
             call = tour.upvoteMaintenance("1.0.0", item.getId(), MyApplication.getInstance().getUsername());
         }
-        if(item.getType()==4){
+        else if(item.getType()==4){
             call = tour.upvoteATM("1.0.0", item.getId(), MyApplication.getInstance().getUsername());
         }
         call.enqueue(new Callback<ResponseBody>() {
@@ -347,11 +387,31 @@ public class MapsActivityConfirmation extends AppCompatActivity implements OnMap
                         jsonObject = new JSONObject(response.body().string());
                         Log.e("", "onResponse: "+jsonObject.toString() );
 
+                        Calendar calendar = Calendar.getInstance();
+                        long time = calendar.getTimeInMillis();
+                        String builder = "";
+                        builder = builder + time +";"+ item.getId()+";";
+
+                        if(item.getType()==1){
+                            builder+="Fuel";
+                        }
+                        else if(item.getType()==2){
+                            builder+="Toilet";
+                        }
+                        else if(item.getType()==3){
+                            builder+="Maintenance";
+                        }
+                        else if(item.getType()==4){
+                            builder+="Atm";
+                        }
+
                         if(jsonObject.getBoolean("Status")){
                             Intent data = new Intent();
                             data.putExtra("index", getIntent().getIntExtra("index", -1));
                             setResult(RESULT_OK, data);
 
+                            e.trigger(MyApplication.getInstance().getUsername(), builder);
+                            ActionObject ao = new ActionObject("", time,"Upvote", Integer.toString(item.getId()));
                             finish();
                         }
                     }catch (Exception e){
@@ -365,5 +425,11 @@ public class MapsActivityConfirmation extends AppCompatActivity implements OnMap
                 t.printStackTrace();
             }
         });
+    }
+
+    public  void onStop(){
+        super.onStop();
+
+        e.unsubcribe(listener);
     }
 }

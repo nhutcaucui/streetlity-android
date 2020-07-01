@@ -34,6 +34,9 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 
+import com.example.streetlity_android.Events.EListener;
+import com.example.streetlity_android.Events.Event;
+import com.example.streetlity_android.Events.GlobalEvents;
 import com.example.streetlity_android.MapAPI;
 import com.example.streetlity_android.MapsActivity;
 import com.example.streetlity_android.MyApplication;
@@ -57,6 +60,7 @@ import java.io.File;
 import java.net.URI;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -98,6 +102,10 @@ public class SelectFromMap extends AppCompatActivity implements OnMapReadyCallba
     ArrayList<String> paramMap = new ArrayList<>();
     List<MultipartBody.Part> body = new ArrayList<>();
 
+    Event<String, String> e = GlobalEvents.Example;
+
+    EListener<String, String> listener;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -108,6 +116,37 @@ public class SelectFromMap extends AppCompatActivity implements OnMapReadyCallba
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("");
+
+        listener = new EListener<String, String>() {
+            @Override
+            public void trigger(String s, String s2) {
+                String[] split = s2.split(";", -1);
+                Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getAuthURL())
+                        .addConverterFactory(GsonConverterFactory.create()).build();
+                final MapAPI tour = retro.create(MapAPI.class);
+                Call<ResponseBody> call = tour.addActionContribute(s, Long.parseLong(split[0]), split[1], split[2]);
+                call.enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        if(response.code() == 200){
+                            try{
+                                JSONObject jsonObject1 = new JSONObject(response.body().string());
+                                Log.e("TAG", "onResponse: " + jsonObject1.toString() );
+                            }catch (Exception e){
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                        t.printStackTrace();
+                    }
+                });
+            }
+        };
+
+        e.subcribe(listener);
 
         Intent t = getIntent();
         final int type = t.getIntExtra("type", -1);
@@ -321,6 +360,13 @@ public class SelectFromMap extends AppCompatActivity implements OnMapReadyCallba
                                                     Intent t = new Intent(SelectFromMap.this, AddSuccess.class);
                                                     t.putExtra("type", 1);
                                                     startActivity(t);
+
+                                                    Calendar calendar = Calendar.getInstance();
+                                                    String builder = "";
+                                                    builder = calendar.getTimeInMillis()+ ";"+ jsonObject.getJSONObject("Service").getInt("Id")
+                                                            +";"+ "Fuel";
+                                                    e.trigger(MyApplication.getInstance().getUsername(), builder);
+
                                                     finish();
                                                 }
                                             } catch (Exception e) {
@@ -493,6 +539,13 @@ public class SelectFromMap extends AppCompatActivity implements OnMapReadyCallba
                                                     Intent t = new Intent(SelectFromMap.this, AddSuccess.class);
                                                     t.putExtra("type", 2);
                                                     startActivity(t);
+
+                                                    Calendar calendar = Calendar.getInstance();
+                                                    String builder = "";
+                                                    builder = calendar.getTimeInMillis()+ ";"+ jsonObject.getJSONObject("Service").getInt("Id")
+                                                            +";"+ "Toilet";
+                                                    e.trigger(MyApplication.getInstance().getUsername(), builder);
+
                                                     finish();
                                                 }
                                             } catch (Exception e) {
@@ -898,5 +951,10 @@ public class SelectFromMap extends AppCompatActivity implements OnMapReadyCallba
         this.finish();
 
         return true;
+    }
+
+    public void onStop(){
+        super.onStop();
+        e.unsubcribe(listener);
     }
 }

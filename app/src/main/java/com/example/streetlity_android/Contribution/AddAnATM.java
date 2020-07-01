@@ -41,6 +41,9 @@ import androidx.core.content.ContextCompat;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
+import com.example.streetlity_android.Events.EListener;
+import com.example.streetlity_android.Events.Event;
+import com.example.streetlity_android.Events.GlobalEvents;
 import com.example.streetlity_android.MainFragment.BankObject;
 import com.example.streetlity_android.MainFragment.BankObjectAdapter;
 import com.example.streetlity_android.MapAPI;
@@ -61,6 +64,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -112,6 +116,10 @@ public class AddAnATM extends AppCompatActivity implements OnMapReadyCallback {
 
     int step = 0;
 
+    Event<String, String> e = GlobalEvents.Example;
+
+    EListener<String, String> listener;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -122,6 +130,37 @@ public class AddAnATM extends AppCompatActivity implements OnMapReadyCallback {
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("");
+
+        listener = new EListener<String, String>() {
+            @Override
+            public void trigger(String s, String s2) {
+                String[] split = s2.split(";", -1);
+                Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getAuthURL())
+                        .addConverterFactory(GsonConverterFactory.create()).build();
+                final MapAPI tour = retro.create(MapAPI.class);
+                Call<ResponseBody> call = tour.addActionContribute(s, Long.parseLong(split[0]), split[1], split[2]);
+                call.enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        if(response.code() == 200){
+                            try{
+                                JSONObject jsonObject1 = new JSONObject(response.body().string());
+                                Log.e("TAG", "onResponse: " + jsonObject1.toString() );
+                            }catch (Exception e){
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                        t.printStackTrace();
+                    }
+                });
+            }
+        };
+
+        e.subcribe(listener);
 
         btnNext = findViewById(R.id.btn_next);
         btnPrevious = findViewById(R.id.btn_previous);
@@ -512,6 +551,12 @@ public class AddAnATM extends AppCompatActivity implements OnMapReadyCallback {
                                 step++;
                             }
                             csLayout.setVisibility(View.GONE);
+
+                            Calendar calendar = Calendar.getInstance();
+                            String builder = "";
+                            builder = calendar.getTimeInMillis()+ ";"+ jsonObject.getJSONObject("Service").getInt("Id")
+                                    +";"+ "Atm";
+                            e.trigger(MyApplication.getInstance().getUsername(), builder);
                         }
                         //finish();
                     } catch (Exception e){
@@ -1037,5 +1082,10 @@ public class AddAnATM extends AppCompatActivity implements OnMapReadyCallback {
             e.printStackTrace();
         }
 
+    }
+
+    public void onStop(){
+        super.onStop();
+        e.unsubcribe(listener);
     }
 }

@@ -285,10 +285,11 @@ else{
 
                                     item.setContributor(jsonObject1.getString("Contributor"));
 
-                                    if(MyApplication.getInstance().getContributeMap().containsKey("Fuel")) {
+                                    if(MyApplication.getInstance().getUpvoteMap().containsKey("Fuel")) {
                                         boolean exist = false;
-                                        Map<String, ActionObject> map = MyApplication.getInstance().getContributeMap().get("Fuel");
+                                        Map<String, ActionObject> map = MyApplication.getInstance().getUpvoteMap().get("Fuel");
                                         for(String key: map.keySet()){
+                                            Log.e(TAG, "onResponse: "+ key +" "  + map.get(key).getAffected());
                                             if(map.get(key).getAffected().equals(Integer.toString(item.getId()))){
                                                 exist = true;
                                                 break;

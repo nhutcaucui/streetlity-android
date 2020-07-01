@@ -5,7 +5,7 @@ import com.example.streetlity_android.RealtimeService.Listener;
 import java.util.ArrayList;
 
 public class Event<TSender, TArgs> {
-    private ArrayList<EListener<TSender, TArgs>> events;
+    private ArrayList<EListener<TSender, TArgs>> events = new ArrayList<>();
 
     /**
      * Subcribe the listener, this listener will
