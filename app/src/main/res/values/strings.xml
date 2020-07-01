@@ -222,5 +222,6 @@
     <string name="revert">Revert to original</string>
     <string name="filter_bank">Filter banks</string>
     <string name="update_successfully">Info updated</string>
+    <string name="point">Points: </string>
 
 </resources>

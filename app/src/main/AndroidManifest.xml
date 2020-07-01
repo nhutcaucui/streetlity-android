@@ -23,7 +23,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".User.Achievement"
+            android:name=".Achievement.Achievement"
             android:label="@string/achievement"
             android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity

@@ -208,4 +208,5 @@
     <string name="achievement">Thành tựu</string>
     <string name="underline_achievement">&lt;u&gt;Thành tựu&lt;/u&gt;</string>
     <string name="update_successfully">Đã cập nhật thông tin</string>
+    <string name="point">Điểm: </string>
 </resources>

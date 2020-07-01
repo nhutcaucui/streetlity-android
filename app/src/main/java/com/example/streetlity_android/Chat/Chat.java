@@ -13,6 +13,7 @@ import com.example.streetlity_android.RealtimeService.Listener;
 import com.example.streetlity_android.RealtimeService.LocationListener;
 import com.example.streetlity_android.RealtimeService.MaintenanceOrder;
 import com.example.streetlity_android.RealtimeService.MessageListener;
+import com.example.streetlity_android.RealtimeService.TypeMessageListener;
 import com.example.streetlity_android.User.UserInfo;
 import com.example.streetlity_android.User.UserInfoOther;
 import com.google.android.material.textfield.TextInputEditText;
@@ -24,12 +25,15 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.os.CountDownTimer;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -103,6 +107,8 @@ public class Chat extends AppCompatActivity {
         MaintenanceOrder socket = MaintenanceOrder.getInstance();
 
         socket.Create(room);
+
+
 
         socket.InformationListener = new InformationListener<MaintenanceOrder>() {
             @Override
@@ -197,7 +203,54 @@ public class Chat extends AppCompatActivity {
             }
         });
 
+        edtMessage.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if(edtMessage.getText().toString().equals("")){
+                    socket.sendTyped(MyApplication.getInstance().getUsername());
+                }else {
+                    socket.sendTyping(MyApplication.getInstance().getUsername());
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+        socket.TypingListener = new TypeMessageListener<MaintenanceOrder>(){
+            @Override
+            public void trigger(MaintenanceOrder sender, String typeUser){
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if(findViewById(R.id.tv_chat_username) != null){
+                            ((TextView) findViewById(R.id.tv_chat_username)).setText(typeUser);
+                            findViewById(R.id.layout_is_typing).setVisibility(View.VISIBLE);
+                        }
+                    }
+                });
+            }
+
+        };
+
+        socket.TypedListener = new TypeMessageListener<MaintenanceOrder>() {
+            @Override
+            public void trigger(MaintenanceOrder sender, String triggeringUser) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        findViewById(R.id.layout_is_typing).setVisibility(View.GONE);
+                    }
+                });
+            }
+        };
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -234,6 +287,7 @@ public class Chat extends AppCompatActivity {
         protected ArrayList<ChatObject> doInBackground(ChatObject... message) {
             try {
                 items.add(message[0]);
+                findViewById(R.id.layout_is_typing).setVisibility(View.GONE);
                 return null;
             } catch (Exception e) {
                 return null;
