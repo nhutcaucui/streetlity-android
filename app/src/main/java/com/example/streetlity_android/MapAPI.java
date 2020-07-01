@@ -73,19 +73,19 @@ public interface MapAPI {
 
     @FormUrlEncoded
     @POST("service/fuel_ucf/upvote")
-    Call<ResponseBody> upvoteFuel(@Header("Version") String version, @Field("id") int id);
+    Call<ResponseBody> upvoteFuel(@Header("Version") String version, @Field("id") int id, @Field("upvote_user") String username);
 
     @FormUrlEncoded
     @POST("service/maintenance_ucf/upvote")
-    Call<ResponseBody> upvoteMaintenance(@Header("Version") String version, @Field("id") int id);
+    Call<ResponseBody> upvoteMaintenance(@Header("Version") String version, @Field("id") int id, @Field("upvote_user") String username);
 
     @FormUrlEncoded
     @POST("service/toilet_ucf/upvote")
-    Call<ResponseBody> upvoteWC(@Header("Version") String version, @Field("id") int id);
+    Call<ResponseBody> upvoteWC(@Header("Version") String version, @Field("id") int id, @Field("upvote_user") String username);
 
     @FormUrlEncoded
     @POST("service/atm_ucf/upvote")
-    Call<ResponseBody> upvoteATM(@Header("Version") String version, @Field("id") int id);
+    Call<ResponseBody> upvoteATM(@Header("Version") String version, @Field("id") int id, @Field("upvote_user") String username);
 
     @GET("service/range")
     Call<ResponseBody> getServiceInRange(@Query("location") float lat, @Query("location") float lon,

@@ -54,6 +54,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+import static android.app.Activity.RESULT_OK;
 import static androidx.constraintlayout.widget.Constraints.TAG;
 
 /**
@@ -145,8 +146,9 @@ public class FuelFragment extends Fragment {
                 t.putExtra("currLat", currLat);
                 t.putExtra("currLon", currLon);
                 t.putExtra("item", items.get(position));
+                t.putExtra("index", position);
 
-                startActivity(t);
+                startActivityForResult(t,1);
             }
         });
 
@@ -196,6 +198,9 @@ public class FuelFragment extends Fragment {
         if(displayItems.size()==0){
             tvNoItem.setVisibility(View.VISIBLE);
         }
+else{
+ tvNoItem.setVisibility(View.GONE);
+}
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -266,7 +271,7 @@ public class FuelFragment extends Fragment {
                                     JSONObject jsonObject1 = jsonArray.getJSONObject(i);
                                     Log.e("", "onResponse: " + jsonObject1.toString());
                                     Log.e("", "onResponse: " + jsonObject1.getInt("Id"));
-                                    MapObject item = new MapObject(jsonObject1.getInt("Id"), "Fuel Station", 3,
+                                    MapObject item = new MapObject(jsonObject1.getInt("Id"), "Fuel Station", 0,
                                             jsonObject1.getString("Address"), (float) jsonObject1.getDouble("Lat"),
                                             (float) jsonObject1.getDouble("Lon"), jsonObject1.getString("Note"), 1);
 
@@ -275,6 +280,9 @@ public class FuelFragment extends Fragment {
                                     item.setImages(jsonObject1.getString("Images"));
 
                                     item.setDistance(distance);
+
+                                    item.setContributor(jsonObject1.getString("Contributor"));
+
                                     items.add(item);
                                 }
 
@@ -396,7 +404,7 @@ loading.setVisibility(View.GONE);
                                                     JSONObject jsonObject1 = jsonArray.getJSONObject(i);
                                                     Log.e("", "onResponse: " + jsonObject1.toString());
                                                     Log.e("", "onResponse: " + jsonObject1.getInt("Id"));
-                                                    MapObject item = new MapObject(jsonObject1.getInt("Id"), getString(R.string.fuel), 3,
+                                                    MapObject item = new MapObject(jsonObject1.getInt("Id"), getString(R.string.fuel), 0,
                                                             jsonObject1.getString("Address"), (float) jsonObject1.getDouble("Lat"),
                                                             (float) jsonObject1.getDouble("Lon"), jsonObject1.getString("Note"), 1);
 
@@ -405,6 +413,9 @@ loading.setVisibility(View.GONE);
                                                     item.setImages(jsonObject1.getString("Images"));
 
                                                     item.setDistance(distance);
+
+                                                    item.setContributor(jsonObject1.getString("Contributor"));
+
                                                     searchItems.add(item);
                                                 }
 
@@ -472,5 +483,18 @@ loading.setVisibility(View.GONE);
 
             }
         });
+    }
+
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        try {
+            if (requestCode == 1 && resultCode == RESULT_OK && data != null) {
+                if(data.getIntExtra("index",-1)!= -1){
+                    items.remove(data.getIntExtra("index", -1));
+                    adapter.notifyDataSetChanged();
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();}
     }
 }

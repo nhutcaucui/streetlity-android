@@ -25,7 +25,9 @@
         <activity
             android:name=".Achievement.Achievement"
             android:label="@string/achievement"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity android:name=".MapsActivityConfirmation"
+            android:theme="@style/AppTheme.NoActionBar"/>
         <activity
             android:name=".AllServiceMap"
             android:label="@string/title_activity_all_service_map"

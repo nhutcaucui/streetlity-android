@@ -1,6 +1,7 @@
 package com.example.streetlity_android;
 
 import android.app.Dialog;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -17,6 +18,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -46,6 +48,8 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
+import org.json.JSONObject;
+
 import java.io.File;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -56,6 +60,8 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+
+import static androidx.constraintlayout.widget.Constraints.TAG;
 
 public class MapsActivityConfirmation extends AppCompatActivity implements OnMapReadyCallback {
 
@@ -76,9 +82,6 @@ public class MapsActivityConfirmation extends AppCompatActivity implements OnMap
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("");
-
-        TextView tvTittle = findViewById(R.id.tv_title);
-        tvTittle.setText(R.string.confirming_location);
 
         LinearLayout llReview = findViewById(R.id.ll_review);
         llReview.setVisibility(View.GONE);
@@ -147,6 +150,7 @@ public class MapsActivityConfirmation extends AppCompatActivity implements OnMap
         stars.getDrawable(1).setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP);
 
         LinearLayout imgContainer = findViewById(R.id.layout_container);
+        addImages(imgContainer);
 
         LinearLayout peekLayout = findViewById(R.id.layout_peek);
         peekLayout.setOnClickListener(new View.OnClickListener() {
@@ -157,6 +161,9 @@ public class MapsActivityConfirmation extends AppCompatActivity implements OnMap
                 }
             }
         });
+
+        TextView tvContributor = findViewById(R.id.tv_submit_user);
+        tvContributor.setText(item.getContributor());
 
         sheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override
@@ -244,49 +251,108 @@ public class MapsActivityConfirmation extends AppCompatActivity implements OnMap
         return temp;
     }
 
-    public void addImage(LinearLayout imgContainer){
-        ImageView img = new ImageView(this);
-        File file = new File("/");
-        Bitmap myBitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
-        img.setImageBitmap(myBitmap);
-        img.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Bitmap bitmap = ((BitmapDrawable)img.getDrawable()).getBitmap();
-                new PhotoFullPopupWindow(MapsActivityConfirmation.this, R.layout.popup_photo_full, img, "", bitmap);
+    public void addImages(LinearLayout imgContainer) {
+        ProgressBar loading = findViewById(R.id.loading_img);
+        loading.setVisibility(View.VISIBLE);
+        if (!item.getImages().equals("")) {
+            String[] split = item.getImages().split(";");
+            Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getDriverURL())
+                    .addConverterFactory(GsonConverterFactory.create()).build();
+            final MapAPI tour = retro.create(MapAPI.class);
+            for (int i = 0; i < split.length; i++) {
+                Log.e("", "addImages: " + split[i]);
+                Call<ResponseBody> call = tour.download(split[i]);
+                call.enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        if (response.code() == 200) {
+                            try {
+
+                                Bitmap bmp = BitmapFactory.decodeStream(response.body().byteStream());
+                                ImageView img = new ImageView(MapsActivityConfirmation.this);
+                                img.setImageBitmap(bmp);
+                                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                                        300,
+                                        300
+                                );
+                                lp.setMargins(5, 0, 5, 0);
+                                img.setLayoutParams(lp);
+                                img.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        Bitmap bitmap = ((BitmapDrawable) img.getDrawable()).getBitmap();
+                                        new PhotoFullPopupWindow(MapsActivityConfirmation.this, R.layout.popup_photo_full, img, "", bitmap);
+                                    }
+                                });
+                                imgContainer.addView(img);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                    }
+                });
             }
-        });
-        imgContainer.addView(img);
+            loading.setVisibility(View.GONE);
+//        File file = new File("/");
+//        Bitmap myBitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
+
+        } else {
+            loading.setVisibility(View.GONE);
+            TextView tvNoImg = findViewById(R.id.tv_no_img);
+            tvNoImg.setVisibility(View.VISIBLE);
+        }
     }
 
     public void upvote(){
+        Log.e(TAG, "onActivityResult: "+ getIntent().getIntExtra("index",-1));
         Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getServiceURL())
                 .addConverterFactory(GsonConverterFactory.create()).build();
         final MapAPI tour = retro.create(MapAPI.class);
-        Call<ResponseBody> call = tour.upvoteATM("1.0.0", item.getId());
+        Call<ResponseBody> call = tour.upvoteATM("1.0.0", item.getId(), MyApplication.getInstance().getUsername());
         if(item.getType()==1){
-            call = tour.upvoteFuel("1.0.0", item.getId());
+            call = tour.upvoteFuel("1.0.0", item.getId(), MyApplication.getInstance().getUsername());
         }
         if(item.getType()==2){
-            call = tour.upvoteWC("1.0.0", item.getId());
+            call = tour.upvoteWC("1.0.0", item.getId(), MyApplication.getInstance().getUsername());
         }
         if(item.getType()==3){
-            call = tour.upvoteMaintenance("1.0.0", item.getId());
+            call = tour.upvoteMaintenance("1.0.0", item.getId(), MyApplication.getInstance().getUsername());
         }
         if(item.getType()==4){
-            call = tour.upvoteATM("1.0.0", item.getId());
+            call = tour.upvoteATM("1.0.0", item.getId(), MyApplication.getInstance().getUsername());
         }
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if(response.code() == 200){
+                    final JSONObject jsonObject;
+                    try{
+                        Log.e("", "onResponse: "+response );
+                        jsonObject = new JSONObject(response.body().string());
+                        Log.e("", "onResponse: "+jsonObject.toString() );
 
+                        if(jsonObject.getBoolean("Status")){
+                            Intent data = new Intent();
+                            data.putExtra("index", getIntent().getIntExtra("index", -1));
+                            setResult(RESULT_OK, data);
+
+                            finish();
+                        }
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                }
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-
+                t.printStackTrace();
             }
         });
-        finish();
     }
 }

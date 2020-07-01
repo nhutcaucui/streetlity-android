@@ -406,7 +406,7 @@ public class SelectFromMap extends AppCompatActivity implements OnMapReadyCallba
 
                             if (jsonObject.getBoolean("Status")) {
                                 Intent t = new Intent(SelectFromMap.this, AddSuccess.class);
-                                t.putExtra("type", 2);
+                                t.putExtra("type", 1);
                                 startActivity(t);
                                 finish();
                             }

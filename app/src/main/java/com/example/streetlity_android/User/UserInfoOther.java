@@ -97,6 +97,9 @@ public class UserInfoOther extends AppCompatActivity {
                         mail.setText(jsonObject1.getString("Email"));
                         phone.setText(jsonObject1.getString("Phone"));
                         address.setText(jsonObject1.getString("Address"));
+                        if(!jsonObject1.getString("Avatar").equals("")){
+
+                        }
 
                     }catch (Exception e){
                     e.printStackTrace();

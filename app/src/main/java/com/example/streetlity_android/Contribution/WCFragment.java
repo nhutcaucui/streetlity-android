@@ -54,6 +54,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+import static android.app.Activity.RESULT_OK;
 import static androidx.constraintlayout.widget.Constraints.TAG;
 
 /**
@@ -145,8 +146,9 @@ public class WCFragment extends Fragment{
                 t.putExtra("currLat", currLat);
                 t.putExtra("currLon", currLon);
                 t.putExtra("item", items.get(position));
+                t.putExtra("index", position);
 
-                startActivity(t);
+                startActivityForResult(t,1);
             }
         });
 
@@ -276,7 +278,7 @@ public class WCFragment extends Fragment{
                                                     JSONObject jsonObject1 = jsonArray.getJSONObject(i);
                                                     Log.e("", "onResponse: " + jsonObject1.toString());
                                                     Log.e("", "onResponse: " + jsonObject1.getInt("Id"));
-                                                    MapObject item = new MapObject(jsonObject1.getInt("Id"), getString(R.string.wc), 3,
+                                                    MapObject item = new MapObject(jsonObject1.getInt("Id"), getString(R.string.wc), 0,
                                                             jsonObject1.getString("Address"), (float) jsonObject1.getDouble("Lat"),
                                                             (float) jsonObject1.getDouble("Lon"), jsonObject1.getString("Note"), 2);
 
@@ -285,6 +287,9 @@ public class WCFragment extends Fragment{
                                                     item.setImages(jsonObject1.getString("Images"));
 
                                                     item.setDistance(distance);
+
+                                                    item.setContributor(jsonObject1.getString("Contributor"));
+
                                                     searchItems.add(item);
                                                 }
 
@@ -368,6 +373,9 @@ public class WCFragment extends Fragment{
         if(displayItems.size()==0){
             tvNoItem.setVisibility(View.VISIBLE);
         }
+else{
+ tvNoItem.setVisibility(View.GONE);
+}
     }
 
     public void callWC(double lat, double lon, float range){
@@ -398,7 +406,7 @@ public class WCFragment extends Fragment{
                                 for (int i = 0; i < jsonArray.length(); i++) {
                                     JSONObject jsonObject1 = jsonArray.getJSONObject(i);
                                     Log.e("", "onResponse: " + jsonObject1.toString());
-                                    MapObject item = new MapObject(jsonObject1.getInt("Id"), "Public Toilet", 3,
+                                    MapObject item = new MapObject(jsonObject1.getInt("Id"), "Public Toilet", 0,
                                             jsonObject1.getString("Address"), (float) jsonObject1.getDouble("Lat"),
                                             (float) jsonObject1.getDouble("Lon"), jsonObject1.getString("Note"), 2);
 
@@ -407,6 +415,9 @@ public class WCFragment extends Fragment{
                                     item.setImages(jsonObject1.getString("Images"));
 
                                     item.setDistance(distance);
+
+                                    item.setContributor(jsonObject1.getString("Contributor"));
+
                                     items.add(item);
                                 }
 
@@ -427,6 +438,8 @@ public class WCFragment extends Fragment{
 
                                 if (items.size() == 0 || displayItems.size() == 0) {
                                     tvNoItem.setVisibility(View.VISIBLE);
+                                }else{
+                                    tvNoItem.setVisibility(View.GONE);
                                 }
                                 loading.setIndeterminate(false);
                                 loading.setVisibility(View.GONE);
@@ -444,7 +457,7 @@ public class WCFragment extends Fragment{
             });
         }else {
             tvNoInternet.setVisibility(View.VISIBLE);
-loading.setVisibility(View.GONE);
+            loading.setVisibility(View.GONE);
         }
     }
 
@@ -466,5 +479,18 @@ loading.setVisibility(View.GONE);
                 = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        try {
+            if (requestCode == 1 && resultCode == RESULT_OK && data != null) {
+                if(data.getIntExtra("index",-1)!= -1) {
+                    items.remove(data.getIntExtra("index", -1));
+                    adapter.notifyDataSetChanged();
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();}
     }
 }

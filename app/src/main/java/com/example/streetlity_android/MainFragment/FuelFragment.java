@@ -324,6 +324,9 @@ public class FuelFragment extends Fragment implements LocationListener {
                                                     item.setImages(jsonObject1.getString("Images"));
 
                                                     item.setDistance(distance);
+
+                                                    item.setContributor(jsonObject1.getString("Contributor"));
+
                                                     searchItems.add(item);
                                                 }
 
@@ -465,6 +468,9 @@ locationManager.removeUpdates(FuelFragment.this);
         if(displayItems.size()==0){
             tvNoItem.setVisibility(View.VISIBLE);
         }
+else{
+ tvNoItem.setVisibility(View.GONE);
+}
     }
 
     public void callFuel(double lat, double lon, float range){
@@ -505,6 +511,9 @@ locationManager.removeUpdates(FuelFragment.this);
                                     item.setImages(jsonObject1.getString("Images"));
 
                                     item.setDistance(distance);
+
+                                    item.setContributor(jsonObject1.getString("Contributor"));
+
                                     items.add(item);
                                 }
 

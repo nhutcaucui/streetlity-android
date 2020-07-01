@@ -699,4 +699,5 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
             }
         });
     }
+
 }

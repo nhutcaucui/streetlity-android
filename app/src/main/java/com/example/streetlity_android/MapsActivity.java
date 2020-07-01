@@ -51,6 +51,7 @@ import com.akexorcist.googledirection.util.DirectionConverter;
 import com.example.streetlity_android.Firebase.StreetlityFirebaseMessagingService;
 import com.example.streetlity_android.MainFragment.MapObject;
 import com.example.streetlity_android.User.Login;
+import com.example.streetlity_android.User.UserInfoOther;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -164,7 +165,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         reviewList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if(reviewItems.get(position).getUsername().equals(MyApplication.getInstance().getUsername()));
+                if (reviewItems.get(position).getUsername().equals(MyApplication.getInstance().getUsername())) {
                     Dialog dialogUpdate = new Dialog(MapsActivity.this);
 
                     final LayoutInflater inflater2 = LayoutInflater.from(MapsActivity.this.getApplicationContext());
@@ -201,8 +202,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                     dialogUpdate.setContentView(dialogView2);
                     dialogUpdate.show();
+                }else{
+                    Intent t = new Intent(MapsActivity.this, UserInfoOther.class);
+                    t.putExtra("user", reviewItems.get(position).getUsername());
+                    startActivity(t);
                 }
-
+            }
         });
 
         LinearLayout imgContainer = findViewById(R.id.img_holder);
@@ -246,9 +251,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         }
                         else{
                             createReviews(rtReview.getRating(),edtComment.getText().toString());
-
-
-
                             dialogComment.cancel();
                         }
                     }
@@ -269,6 +271,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 }
             }
         });
+
+        TextView tvContributor = findViewById(R.id.tv_submit_user);
+        tvContributor.setText(item.getContributor());
 
         sheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override

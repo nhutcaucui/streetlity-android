@@ -57,7 +57,7 @@ public class MyApplication extends Application { //35.240.232.218 auth server
     //private String authURL = "http://35.240.232.218/";
     private String authURL = "http://35.240.195.17/";
    // private String driverURL = "http://34.87.144.190/";
-   private String driverURL = "http://34.87.165.17/";
+   private String driverURL = "http://34.87.165.234/";
 
     private String maintenanceURL = "http://34.87.144.190:9002/";
 

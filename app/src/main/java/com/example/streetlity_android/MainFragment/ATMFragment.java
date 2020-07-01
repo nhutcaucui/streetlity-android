@@ -415,6 +415,9 @@ public class ATMFragment extends Fragment implements LocationListener {
                                                     item.setImages(jsonObject1.getString("Images"));
 
                                                     item.setDistance(distance);
+
+                                                    item.setContributor(jsonObject1.getString("Contributor"));
+
                                                     searchItems.add(item);
                                                 }
 
@@ -561,6 +564,9 @@ locationManager.removeUpdates(ATMFragment.this);
         if(displayItems.size()==0){
             tvNoItem.setVisibility(View.VISIBLE);
         }
+else{
+ tvNoItem.setVisibility(View.GONE);
+}
     }
 
     public void callATM(double lat, double lon, float range){
@@ -587,6 +593,7 @@ locationManager.removeUpdates(ATMFragment.this);
                         try {
                             jsonObject = new JSONObject(response.body().string());
                             Log.e("", "onResponse: " + jsonObject.toString());
+                            Log.e("", "onResponse: "+response );
                             if (!jsonObject.getJSONArray("Services").toString().equals("")) {
                                 jsonArray = jsonObject.getJSONArray("Services");
 
@@ -610,6 +617,9 @@ locationManager.removeUpdates(ATMFragment.this);
                                     float distance = distance(item.getLat(), item.getLon(), currLat, currLon);
 
                                     item.setDistance(distance);
+
+                                    item.setContributor(jsonObject1.getString("Contributor"));
+
                                     items.add(item);
                                 }
 

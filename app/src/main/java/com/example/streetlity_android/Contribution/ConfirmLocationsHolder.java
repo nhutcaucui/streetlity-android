@@ -74,7 +74,7 @@ public class ConfirmLocationsHolder extends AppCompatActivity implements FuelFra
         WCFragment.OnFragmentInteractionListener, View.OnClickListener {
     Fragment fragment;
 
-    int current =R.id.btn_home_bottom;
+    int current =R.id.btn_fuel_bottom;
     @Override
     public void onFragmentInteraction(Uri uri){
         //you can leave it empty
@@ -94,7 +94,7 @@ public class ConfirmLocationsHolder extends AppCompatActivity implements FuelFra
         loadFragment(fragment);
 
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
-        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+        //navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         
         LinearLayout btnFuel = findViewById(R.id.btn_fuel_bottom);
         LinearLayout btnATM = findViewById(R.id.btn_atm_bottom);

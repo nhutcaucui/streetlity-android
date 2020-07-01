@@ -60,6 +60,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+import static android.app.Activity.RESULT_OK;
 import static androidx.constraintlayout.widget.Constraints.TAG;
 
 /**
@@ -155,8 +156,9 @@ public class ATMFragment extends Fragment{
                 t.putExtra("currLat", currLat);
                 t.putExtra("currLon", currLon);
                 t.putExtra("item", items.get(position));
+                t.putExtra("index", position);
 
-                startActivity(t);
+                startActivityForResult(t,1);
             }
         });
 
@@ -203,6 +205,9 @@ public class ATMFragment extends Fragment{
         if(displayItems.size()==0){
             tvNoItem.setVisibility(View.VISIBLE);
         }
+else{
+ tvNoItem.setVisibility(View.GONE);
+}
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -310,7 +315,7 @@ public class ATMFragment extends Fragment{
                                                     JSONObject jsonObject1 = jsonArray.getJSONObject(i);
                                                     Log.e("", "onResponse: " + jsonObject1.toString());
                                                     Log.e("", "onResponse: " + jsonObject1.getInt("Id"));
-                                                    MapObject item = new MapObject(jsonObject1.getInt("Id"), bankName, 3,
+                                                    MapObject item = new MapObject(jsonObject1.getInt("Id"), bankName, 0,
                                                             jsonObject1.getString("Address"), (float) jsonObject1.getDouble("Lat"),
                                                             (float) jsonObject1.getDouble("Lon"), jsonObject1.getString("Note"), 4);
 
@@ -319,6 +324,9 @@ public class ATMFragment extends Fragment{
                                                     item.setImages(jsonObject1.getString("Images"));
 
                                                     item.setDistance(distance);
+
+                                                    item.setContributor(jsonObject1.getString("Contributor"));
+
                                                     searchItems.add(item);
                                                 }
 
@@ -424,13 +432,15 @@ public class ATMFragment extends Fragment{
                                             bankName = arrBank.get(j).getName();
                                         }
                                     }
-                                    MapObject item = new MapObject(jsonObject1.getInt("Id"), bankName, 3,
+                                    MapObject item = new MapObject(jsonObject1.getInt("Id"), bankName, 0,
                                             jsonObject1.getString("Address"), (float) jsonObject1.getDouble("Lat"),
                                             (float) jsonObject1.getDouble("Lon"), jsonObject1.getString("Note"), 4);
 
                                     item.setBankId(jsonObject1.getInt("BankId"));
 
                                     item.setImages(jsonObject1.getString("Images"));
+
+                                    item.setContributor(jsonObject1.getString("Contributor"));
 
                                     float distance = distance(item.getLat(), item.getLon(), currLat, currLon);
 
@@ -515,40 +525,40 @@ loading.setVisibility(View.GONE);
                                 Log.e("", "onResponse: "+ jsonObject1.getString("Name") + getString(R.string.all) );
                             }
 
-                            atcpBank = view.findViewById(R.id.actv_bank);
+//                            atcpBank = view.findViewById(R.id.actv_bank);
+//
+//                            BankObjectAdapter adapter1 = new BankObjectAdapter(getActivity(), R.layout.spinner_item_broadcast, arrBank);
+//
+//                            atcpBank.setAdapter(adapter1);
 
-                            BankObjectAdapter adapter1 = new BankObjectAdapter(getActivity(), R.layout.spinner_item_broadcast, arrBank);
+//                            atcpBank.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+//                                @Override
+//                                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+//
+//                                    adapter.getFilter().filter(Integer.toString(arrBank.get(position).getId()));
+//                                    Log.e("", "onItemSelected: " + arrBank.get(position).getId());
+//
+//                                }
 
-                            atcpBank.setAdapter(adapter1);
-
-                            atcpBank.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                                @Override
-                                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
-                                    adapter.getFilter().filter(Integer.toString(arrBank.get(position).getId()));
-                                    Log.e("", "onItemSelected: " + arrBank.get(position).getId());
-
-                                }
-
-                                @Override
-                                public void onNothingSelected(AdapterView<?> parent) {
-
-                                }
-                            });
-
-                            try {
-                                Field popup = Spinner.class.getDeclaredField("mPopup");
-                                popup.setAccessible(true);
-
-                                // Get private mPopup member variable and try cast to ListPopupWindow
-                                android.widget.ListPopupWindow popupWindow = (android.widget.ListPopupWindow) popup.get(atcpBank);
-
-                                // Set popupWindow height to 500px
-                                popupWindow.setHeight(500);
-                            }
-                            catch (NoClassDefFoundError | ClassCastException | NoSuchFieldException | IllegalAccessException e) {
-                                // silently fail...
-                            }
+//                                @Override
+//                                public void onNothingSelected(AdapterView<?> parent) {
+//
+//                                }
+//                            });
+//
+//                            try {
+//                                Field popup = Spinner.class.getDeclaredField("mPopup");
+//                                popup.setAccessible(true);
+//
+//                                // Get private mPopup member variable and try cast to ListPopupWindow
+//                                android.widget.ListPopupWindow popupWindow = (android.widget.ListPopupWindow) popup.get(atcpBank);
+//
+//                                // Set popupWindow height to 500px
+//                                popupWindow.setHeight(500);
+//                            }
+//                            catch (NoClassDefFoundError | ClassCastException | NoSuchFieldException | IllegalAccessException e) {
+//                                // silently fail...
+//                            }
                         }
                     } catch (Exception e){
                         e.printStackTrace();
@@ -575,5 +585,18 @@ loading.setVisibility(View.GONE);
                 = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        try {
+            if (requestCode == 1 && resultCode == RESULT_OK && data != null) {
+                if(data.getIntExtra("index",-1)!= -1){
+                    items.remove(data.getIntExtra("index", -1));
+                    adapter.notifyDataSetChanged();
+                }
+            }
+        }catch (Exception e){
+        e.printStackTrace();}
     }
 }

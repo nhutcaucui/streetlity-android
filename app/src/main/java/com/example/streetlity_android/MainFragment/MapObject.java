@@ -15,6 +15,7 @@ public class MapObject implements Serializable {
     int type; //1=fuel; 2=wc; 3=mainte; 4=atm
     int bankId;
     String images;
+    String contributor;
 
     public MapObject(int id, String name, float rating, String address, float lat, float lon, String note, int type) {
         this.id = id;
@@ -111,5 +112,13 @@ public class MapObject implements Serializable {
 
     public String getImages() {
         return images;
+    }
+
+    public void setContributor(String contributor) {
+        this.contributor = contributor;
+    }
+
+    public String getContributor() {
+        return contributor;
     }
 }
