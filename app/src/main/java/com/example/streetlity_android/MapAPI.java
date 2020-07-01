@@ -272,4 +272,17 @@ public interface MapAPI {
     @POST("user/info/")
     Call<ResponseBody> updateInfoWithoutAvatar(@Field("id") String username, @Field("name") String name,
                                   @Field("address") String address, @Field("phone") String phone);
+
+    @FormUrlEncoded
+    @POST("user/achievement/")
+    Call<ResponseBody> addAction(@Field("id") String id, @Field("action_type") String actionType, @Field("time") long time,
+                                 @Field("affect") String affect, @Field("service") String service);
+
+    @FormUrlEncoded
+    @POST("user/achievement/")
+    Call<ResponseBody> addAction(@Field("id") String id, @Field("action_type") String[] actionType, @Field("time") long[] time,
+                                 @Field("affect") String[] affect, @Field("service") String[] service);
+
+    @GET("user/achievement/progress")
+    Call<ResponseBody> getProgress(@Query("id") String id);
 }

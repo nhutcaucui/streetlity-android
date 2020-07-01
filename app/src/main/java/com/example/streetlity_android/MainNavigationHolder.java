@@ -11,6 +11,7 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 
+import com.example.streetlity_android.Achievement.ActionObject;
 import com.example.streetlity_android.Chat.Chat;
 import com.example.streetlity_android.Contribution.ContributeToService;
 import com.example.streetlity_android.Firebase.StreetlityFirebaseMessagingService;
@@ -30,6 +31,8 @@ import com.example.streetlity_android.User.UserInfo;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -58,6 +61,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONObject;
+
+import java.util.Map;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -227,6 +232,20 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
             imgNotify.setVisibility(View.VISIBLE);
         }else{
             setDrawerForNonUser(navView);
+        }
+
+        s = getSharedPreferences("map", MODE_PRIVATE);
+        if (s.contains("review")) {
+            Gson gson = new Gson();
+            MyApplication.getInstance().setReviewedMap(
+                    gson.fromJson(s.getString("review", ""),
+                            new TypeToken<Map<String, Map<String, ActionObject>>>() {}.getType()));
+            MyApplication.getInstance().setUpvoteMap(
+                    gson.fromJson(s.getString("upvote", ""),
+                            new TypeToken<Map<String, Map<String, ActionObject>>>() {}.getType()));
+            MyApplication.getInstance().setContributeMap(
+                    gson.fromJson(s.getString("contribute", ""),
+                            new TypeToken<Map<String, Map<String, ActionObject>>>() {}.getType()));
         }
 
         fragment = new HomeFragment();
@@ -573,6 +592,14 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
                             layoutTop.setVisibility(View.GONE);
                             Toast toast = Toast.makeText(MainNavigationHolder.this, R.string.logged_out, Toast.LENGTH_LONG);
                             toast.show();
+
+                            SharedPreferences s1 = getSharedPreferences("map", MODE_PRIVATE);
+                            SharedPreferences.Editor e1 = s1.edit();
+
+                            e1.clear();
+
+                            e1.apply();
+
                         }else{
 
                         }
@@ -700,4 +727,18 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
         });
     }
 
+    public void onStop(){
+        super.onStop();
+
+        Gson gs = new Gson();
+
+        SharedPreferences s = getSharedPreferences("map", MODE_PRIVATE);
+        SharedPreferences.Editor e = s.edit();
+
+        e.putString("review", gs.toJson(MyApplication.getInstance().getReviewedMap()));
+        e.putString("contribute", gs.toJson(MyApplication.getInstance().getContributeMap()));
+        e.putString("upvote", gs.toJson(MyApplication.getInstance().getUpvoteMap()));
+
+        e.apply();
+    }
 }

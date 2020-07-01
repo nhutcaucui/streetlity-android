@@ -3,7 +3,12 @@ package com.example.streetlity_android;
 import android.app.Application;
 import android.graphics.Bitmap;
 
+import com.example.streetlity_android.Achievement.ActionObject;
 import com.example.streetlity_android.RealtimeService.MaintenanceOrder;
+
+import org.json.JSONObject;
+
+import java.util.Map;
 
 //eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1OTQ0NDUzMzIsImlkIjoibXJYWVpaemFidiJ9.0Hd4SpIELulSuTxGAeuCPl_A33X-KoPUpRmgK4dTphk
 
@@ -60,6 +65,10 @@ public class MyApplication extends Application { //35.240.232.218 auth server
    private String driverURL = "http://34.87.165.234/";
 
     private String maintenanceURL = "http://34.87.144.190:9002/";
+
+    private Map<String, Map<String, ActionObject>> reviewedMap;
+    private Map<String, Map<String, ActionObject>> contributeMap;
+    private Map<String, Map<String, ActionObject>> upvoteMap;
 
     public MaintenanceOrder getSocket() {
         return socket;
@@ -155,5 +164,29 @@ public class MyApplication extends Application { //35.240.232.218 auth server
 
     public void setImage(Bitmap image) {
         this.image = image;
+    }
+
+    public void setReviewedMap(Map<String, Map<String, ActionObject>> reviewedMap) {
+        this.reviewedMap = reviewedMap;
+    }
+
+    public void setContributeMap(Map<String, Map<String, ActionObject>> contributeMap) {
+        this.contributeMap = contributeMap;
+    }
+
+    public void setUpvoteMap(Map<String, Map<String, ActionObject>> upvoteMap) {
+        this.upvoteMap = upvoteMap;
+    }
+
+    public Map<String, Map<String, ActionObject>> getReviewedMap() {
+        return reviewedMap;
+    }
+
+    public Map<String, Map<String, ActionObject>> getContributeMap() {
+        return contributeMap;
+    }
+
+    public Map<String, Map<String, ActionObject>> getUpvoteMap() {
+        return upvoteMap;
     }
 }

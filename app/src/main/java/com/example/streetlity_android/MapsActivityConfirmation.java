@@ -35,6 +35,7 @@ import com.akexorcist.googledirection.model.Leg;
 import com.akexorcist.googledirection.model.Route;
 import com.akexorcist.googledirection.util.DirectionConverter;
 import com.example.streetlity_android.MainFragment.MapObject;
+import com.example.streetlity_android.User.UserInfoOther;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -164,6 +165,16 @@ public class MapsActivityConfirmation extends AppCompatActivity implements OnMap
 
         TextView tvContributor = findViewById(R.id.tv_submit_user);
         tvContributor.setText(item.getContributor());
+
+        LinearLayout layoutSubmited = findViewById(R.id.layout_submitted);
+        layoutSubmited.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent t = new Intent(MapsActivityConfirmation.this, UserInfoOther.class);
+                t.putExtra("user", item.getContributor());
+                startActivity(t);
+            }
+        });
 
         sheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override

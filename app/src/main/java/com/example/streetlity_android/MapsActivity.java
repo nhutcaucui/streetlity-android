@@ -275,6 +275,16 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         TextView tvContributor = findViewById(R.id.tv_submit_user);
         tvContributor.setText(item.getContributor());
 
+        LinearLayout layoutSubmited = findViewById(R.id.layout_submitted);
+        layoutSubmited.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent t = new Intent(MapsActivity.this, UserInfoOther.class);
+                t.putExtra("user", item.getContributor());
+                startActivity(t);
+            }
+        });
+
         sheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override
             public void onStateChanged(@NonNull View view, int newState) {

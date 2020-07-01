@@ -223,5 +223,5 @@
     <string name="filter_bank">Filter banks</string>
     <string name="update_successfully">Info updated</string>
     <string name="point">Points: </string>
-
+    <string name="looking_for">What are you looking for?</string>
 </resources>
