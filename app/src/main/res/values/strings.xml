@@ -228,4 +228,5 @@
     <!-- Strings used for fragments for navigation -->
     <string name="accept_emergency">Accept emergency orders</string>
     <string name="options">Options</string>
+    <string name="emergency_broadcast">Find emergency repairman</string>
 </resources>

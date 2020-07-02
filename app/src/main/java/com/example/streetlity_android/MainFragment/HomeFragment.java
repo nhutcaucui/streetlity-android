@@ -28,6 +28,7 @@ import androidx.fragment.app.Fragment;
 
 import com.example.streetlity_android.AllServiceMap;
 import com.example.streetlity_android.BroadcastActivity;
+import com.example.streetlity_android.BroadcastEmergencyActivity;
 import com.example.streetlity_android.MainNavigationHolder;
 import com.example.streetlity_android.MyApplication;
 import com.example.streetlity_android.R;
@@ -102,6 +103,35 @@ public class HomeFragment extends Fragment implements LocationListener{
         LinearLayout btnMaintenance = rootView.findViewById(R.id.btn_maintenance);
         LinearLayout btnBroadcast = rootView.findViewById(R.id.btn_broadcast);
         LinearLayout btnAll = rootView.findViewById(R.id.btn_all);
+        LinearLayout btnEmergency = rootView.findViewById(R.id.btn_emergency);
+
+        btnEmergency.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                boolean activeOrder =  getActivity().
+                        getSharedPreferences("activeOrder",Context.MODE_PRIVATE).contains("activeOrder");
+                if(((MainNavigationHolder)getActivity()).isCanBroadcast() && !activeOrder) {
+                    getActivity().startActivityForResult(new Intent(getActivity(), BroadcastEmergencyActivity.class), 5);
+                }
+                else{
+                    if(activeOrder){
+                        Toast toast = Toast.makeText(getActivity(), R.string.cant_broadcast_while_active, Toast.LENGTH_LONG);
+                        TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
+                        tv.setTextColor(RED);
+
+                        toast.show();
+                    }else {
+                        String builder = getString(R.string.retry_later) + " " + ((MainNavigationHolder) getActivity()).getTimeLeft()
+                                + " " + getString(R.string.seconds);
+                        Toast toast = Toast.makeText(getActivity(), builder, Toast.LENGTH_LONG);
+                        TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
+                        tv.setTextColor(RED);
+
+                        toast.show();
+                    }
+                }
+            }
+        });
 
         btnAll.setOnClickListener(new View.OnClickListener() {
             @Override
