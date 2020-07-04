@@ -213,4 +213,5 @@
     <string name="accept_emergency">Chấp nhận yêu cầu khẩn</string>
     <string name="options">Cài đặt</string>
     <string name="emergency_broadcast">Tìm thợ sửa khẩn cấp</string>
+    <string name="increase_range">Không tìm được kết quả, hãy thử tăng phạm vi</string>
 </resources>

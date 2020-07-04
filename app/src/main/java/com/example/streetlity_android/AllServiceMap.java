@@ -627,6 +627,7 @@ public class AllServiceMap extends AppCompatActivity implements GoogleMap.OnMark
 
                             if (reviewItems.size() <= 0) {
                                 noReview.setVisibility(View.VISIBLE);
+                                loading.setVisibility(View.GONE);
                             } else {
 
                                 Collections.reverse(reviewItems);

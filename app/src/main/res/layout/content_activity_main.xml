@@ -22,10 +22,10 @@
             android:layout_margin="20dp"
             android:background="@drawable/button_background"
             android:orientation="vertical"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toBottomOf="@id/appbarlayout"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toTopOf="@id/appbarlayout">
 
             <TextView
                 android:layout_width="match_parent"
@@ -71,61 +71,67 @@
             app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/appbarlayout"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/top_bar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
-        android:theme="@style/AppTheme.AppBarOverlay"
-        app:elevation="0dp">
+        android:layout_height="wrap_content">
 
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/appbarlayout"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
+            android:layout_height="wrap_content"
             android:background="@android:color/transparent"
-            app:popupTheme="@style/AppTheme.PopupOverlay">
+            android:theme="@style/AppTheme.AppBarOverlay"
+            app:elevation="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="?attr/actionBarSize"
+                android:background="@android:color/transparent"
+                android:theme="@style/Theme.BlackBackArrow"
+                app:popupTheme="@style/AppTheme.PopupOverlay">
 
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/logo"
-                    android:translationX="-50dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"/>
+            </androidx.appcompat.widget.Toolbar>
 
-                <RelativeLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_marginRight="15dp"
-                    app:layout_constraintRight_toRightOf="parent">
+        </com.google.android.material.appbar.AppBarLayout>
 
-                    <ImageButton
-                        android:id="@+id/img_notify"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@null"
-                        android:visibility="gone"
-                        app:srcCompat="@drawable/notification" />
-                </RelativeLayout>
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/logo"
+            app:layout_constraintBottom_toBottomOf="@id/appbarlayout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/appbarlayout" />
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
-        </androidx.appcompat.widget.Toolbar>
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-    </com.google.android.material.appbar.AppBarLayout>
+            <ImageButton
+                android:id="@+id/img_notify"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:visibility="gone"
+                app:srcCompat="@drawable/notification" />
+        </RelativeLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <FrameLayout
         android:id="@+id/frame_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@id/bottom_view"
-        android:layout_below="@id/appbarlayout">
+        android:layout_below="@id/top_bar">
 
     </FrameLayout>
 
@@ -152,6 +158,13 @@
         android:clickable="true"
         android:visibility="gone"
         app:srcCompat="@drawable/chat" />
+
+    <View
+        android:id="@+id/divider2"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_above="@id/bottom_view"
+        android:background="?android:attr/listDivider" />
 
     <RelativeLayout
         android:id="@+id/bottom_view"

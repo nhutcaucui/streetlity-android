@@ -305,4 +305,8 @@ public interface MapAPI {
 
     @GET("user/achievement/progress")
     Call<ResponseBody> getProgress(@Query("id") String id);
+
+    @FormUrlEncoded
+    @POST("order/complete")
+    Call<ResponseBody> completeOrder(@Field("order_id") int id);
 }

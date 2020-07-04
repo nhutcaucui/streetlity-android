@@ -10,4 +10,9 @@
     <color name="blue">#00006D</color>
     <color name="button_background">#B7E4C7</color>
     <color name="listview_divider">#56ACACAC</color>
+    <color name ="grab_background">#C6EED7</color>
+    <color name="greenPrimary">#95D6A4</color>
+    <color name="greenShadow">#78C2A4</color>
+    <color name="backgroundShadow">#D8E2F1</color>
+    <color name="backgroundIcon">#D8E2F1</color>
 </resources>

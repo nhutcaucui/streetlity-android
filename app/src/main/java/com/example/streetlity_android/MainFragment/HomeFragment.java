@@ -95,6 +95,8 @@ public class HomeFragment extends Fragment implements LocationListener{
         if(MyApplication.getInstance().getToken().equals("")){
             LinearLayout btnBroadcast = rootView.findViewById(R.id.btn_broadcast);
             btnBroadcast.setVisibility(GONE);
+            LinearLayout btnBroadcastE = rootView.findViewById(R.id.btn_emergency);
+            btnBroadcastE.setVisibility(GONE);
         }
 
         LinearLayout btnFuel = rootView.findViewById(R.id.btn_fuel);

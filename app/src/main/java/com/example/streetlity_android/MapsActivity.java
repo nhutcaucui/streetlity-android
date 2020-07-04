@@ -849,6 +849,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                 }
                             }
 
+                            loading.setVisibility(View.GONE);
+
                             if(reviewItems.size() <= 0){
                                 TextView tvNoReview = findViewById(R.id.tv_no_review);
                                 loading.setVisibility(View.GONE);

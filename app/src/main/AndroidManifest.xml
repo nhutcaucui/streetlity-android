@@ -23,9 +23,13 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
+            android:name=".BroadcastEmergencyActivity"
+            android:label="@string/find_maintainer"
+            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity
             android:name=".Option.Options"
             android:label="@string/title_activity_options"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar"/>
         <activity
             android:name=".Achievement.Achievement"
             android:label="@string/achievement"

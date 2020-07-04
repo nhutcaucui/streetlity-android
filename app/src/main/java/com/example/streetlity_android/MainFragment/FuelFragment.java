@@ -90,6 +90,8 @@ public class FuelFragment extends Fragment implements LocationListener {
     TextView tvNoItem;
     TextView tvNoInternet;
 
+    TextView nothingFound;
+
     float currLat;
     float currLon;
 
@@ -214,6 +216,7 @@ public class FuelFragment extends Fragment implements LocationListener {
             @Override
             public void onClick(View v) {
                 tvNoItem.setVisibility(View.GONE);
+                nothingFound.setVisibility(View.GONE);
                 changeRange(sb.getProgress()+1);
             }
         });
@@ -250,6 +253,14 @@ public class FuelFragment extends Fragment implements LocationListener {
                 changeRange(sb.getProgress()+1);
 
                 edtFind.setText("");
+            }
+        });
+
+        nothingFound = rootView.findViewById(R.id.nothing_found);
+        nothingFound.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                nothingFound.setVisibility(View.GONE);
             }
         });
 
@@ -534,6 +545,12 @@ else{
 
                                 if (items.size() == 0 || displayItems.size() == 0) {
                                     tvNoItem.setVisibility(View.VISIBLE);
+                                }
+
+                                if(displayItems.size() == 0){
+                                    if(nothingFound!= null) {
+                                        nothingFound.setVisibility(View.VISIBLE);
+                                    }
                                 }
 
                                 loading.setIndeterminate(false);

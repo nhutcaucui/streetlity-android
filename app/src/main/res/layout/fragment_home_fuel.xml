@@ -167,6 +167,20 @@
 
         </LinearLayout>
 
+        <TextView
+            android:id="@+id/nothing_found"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/layout_range"
+            android:layout_centerHorizontal="true"
+            android:layout_marginStart="25dp"
+            android:layout_marginEnd="25dp"
+            android:background="@drawable/bubble"
+            android:padding="10dp"
+            android:text="@string/increase_range"
+            android:textColor="@color/black"
+            android:visibility="gone" />
+
     </RelativeLayout>
 
 </FrameLayout>

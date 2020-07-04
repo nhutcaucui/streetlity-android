@@ -17,12 +17,13 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
             android:gravity="center"
+            android:text="@string/looking_for"
             android:textColor="@color/blue"
             android:textSize="24dp" />
 
         <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_below="@id/textView">
 
             <LinearLayout
@@ -31,109 +32,98 @@
                 android:orientation="vertical">
 
                 <LinearLayout
-                    android:id="@+id/confirm_location_layout"
+                    android:id="@+id/btn_broadcast"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@android:color/transparent"
-                    android:orientation="vertical">
+                    android:clickable="true"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    android:paddingTop="15dp"
+                    android:paddingBottom="15dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toRightOf="@id/guideline3"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
 
-                    <LinearLayout
-                        android:id="@+id/btn_broadcast"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:background="@android:color/transparent"
-                        android:clickable="true"
-                        android:foreground="?android:attr/selectableItemBackground"
-                        android:gravity="center"
-                        android:orientation="horizontal"
-                        android:paddingTop="15dp"
-                        android:paddingBottom="15dp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintLeft_toRightOf="@id/guideline3"
-                        app:layout_constraintRight_toRightOf="parent"
-                        app:layout_constraintTop_toTopOf="parent">
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:srcCompat="@drawable/signal" />
 
-                        <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            app:srcCompat="@drawable/signal" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="5dp"
+                        android:text="@string/find_maintainer"
+                        android:textColor="#000"
+                        android:textSize="16sp" />
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="5dp"
-                            android:text="@string/find_maintainer"
-                            android:textColor="#000"
-                            android:textSize="16sp" />
+                    <TextView
+                        android:id="@+id/textView39"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="5dp"
+                        android:background="@drawable/hot_background"
+                        android:padding="3dp"
+                        android:text="HOT"
+                        android:textColor="@android:color/white"
+                        android:textSize="12sp" />
 
-                        <TextView
-                            android:id="@+id/textView39"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="5dp"
-                            android:background="@drawable/hot_background"
-                            android:padding="3dp"
-                            android:text="HOT"
-                            android:textColor="@android:color/white"
-                            android:textSize="12sp" />
-
-                    </LinearLayout>
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/btn_emergency"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:background="@android:color/transparent"
-                    android:orientation="vertical">
+                    android:clickable="true"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    android:paddingTop="15dp"
+                    android:paddingBottom="15dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toRightOf="@id/guideline3"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
 
-                    <LinearLayout
-                        android:id="@+id/btn_emergency"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:background="@android:color/transparent"
-                        android:clickable="true"
-                        android:foreground="?android:attr/selectableItemBackground"
-                        android:gravity="center"
-                        android:orientation="horizontal"
-                        android:paddingTop="15dp"
-                        android:paddingBottom="15dp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintLeft_toRightOf="@id/guideline3"
-                        app:layout_constraintRight_toRightOf="parent"
-                        app:layout_constraintTop_toTopOf="parent">
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:srcCompat="@drawable/emergency" />
 
-                        <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            app:srcCompat="@drawable/emergency" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="5dp"
+                        android:text="@string/emergency_broadcast"
+                        android:textColor="#000"
+                        android:textSize="16sp" />
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="5dp"
-                            android:text="@string/emergency_broadcast"
-                            android:textColor="#000"
-                            android:textSize="16sp" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="5dp"
+                        android:background="@drawable/hot_background"
+                        android:padding="3dp"
+                        android:text="HOT"
+                        android:textColor="@android:color/white"
+                        android:textSize="12sp" />
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="5dp"
-                            android:background="@drawable/hot_background"
-                            android:padding="3dp"
-                            android:text="HOT"
-                            android:textColor="@android:color/white"
-                            android:textSize="12sp" />
-
-                    </LinearLayout>
                 </LinearLayout>
 
                 <LinearLayout
                     android:id="@+id/btn_all"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@android:color/transparent"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginEnd="20dp"
+                    android:background="@drawable/white_cardview"
                     android:clickable="true"
+                    android:elevation="5dp"
                     android:foreground="?android:attr/selectableItemBackground"
                     android:gravity="center"
                     android:orientation="vertical"
@@ -143,14 +133,14 @@
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/backgroun_home"
+                        android:background="@drawable/backgroun_home_static"
                         android:orientation="horizontal"
                         android:padding="15dp">
 
                         <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            app:srcCompat="@drawable/all_service" />
+                            android:layout_width="64dp"
+                            android:layout_height="64dp"
+                            app:srcCompat="@drawable/map" />
                     </LinearLayout>
 
                     <TextView
@@ -171,9 +161,13 @@
                         android:id="@+id/btn_fuel"
                         android:layout_width="0dp"
                         android:layout_height="200dp"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginTop="15dp"
+                        android:layout_marginEnd="5dp"
                         android:layout_weight="1"
-                        android:background="@android:color/transparent"
+                        android:background="@drawable/white_cardview"
                         android:clickable="true"
+                        android:elevation="10dp"
                         android:foreground="?android:attr/selectableItemBackground"
                         android:gravity="center"
                         android:orientation="vertical">
@@ -182,15 +176,15 @@
                         <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:background="@drawable/backgroun_home"
+                            android:background="@drawable/backgroun_home_static"
                             android:orientation="horizontal"
                             android:padding="15dp">
 
                             <ImageView
                                 android:id="@+id/imageView2"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                app:srcCompat="@drawable/fuel_big_icon" />
+                                android:layout_width="64dp"
+                                android:layout_height="64dp"
+                                app:srcCompat="@drawable/gas_station" />
                         </LinearLayout>
 
                         <TextView
@@ -207,9 +201,13 @@
                         android:id="@+id/btn_atm"
                         android:layout_width="0dp"
                         android:layout_height="200dp"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="15dp"
+                        android:layout_marginEnd="20dp"
                         android:layout_weight="1"
-                        android:background="@android:color/transparent"
+                        android:background="@drawable/white_cardview"
                         android:clickable="true"
+                        android:elevation="10dp"
                         android:foreground="?android:attr/selectableItemBackground"
                         android:gravity="center"
                         android:orientation="vertical">
@@ -217,15 +215,15 @@
                         <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:background="@drawable/backgroun_home"
+                            android:background="@drawable/backgroun_home_static"
                             android:orientation="horizontal"
                             android:padding="15dp">
 
                             <ImageView
                                 android:id="@+id/imageView3"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                app:srcCompat="@drawable/atm_big_icon" />
+                                android:layout_width="64dp"
+                                android:layout_height="64dp"
+                                app:srcCompat="@drawable/atm_machine" />
                         </LinearLayout>
 
                         <TextView
@@ -244,15 +242,20 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginBottom="15dp"
                     android:orientation="horizontal">
 
                     <LinearLayout
                         android:id="@+id/btn_wc"
                         android:layout_width="0dp"
                         android:layout_height="200dp"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginTop="15dp"
+                        android:layout_marginEnd="5dp"
                         android:layout_weight="1"
-                        android:background="@android:color/transparent"
+                        android:background="@drawable/white_cardview"
                         android:clickable="true"
+                        android:elevation="10dp"
                         android:foreground="?android:attr/selectableItemBackground"
                         android:gravity="center"
                         android:orientation="vertical">
@@ -260,14 +263,14 @@
                         <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:background="@drawable/backgroun_home"
+                            android:background="@drawable/backgroun_home_static"
                             android:orientation="horizontal"
                             android:padding="15dp">
 
                             <ImageView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                app:srcCompat="@drawable/wc_big_icon" />
+                                android:layout_width="64dp"
+                                android:layout_height="64dp"
+                                app:srcCompat="@drawable/wc" />
                         </LinearLayout>
 
                         <TextView
@@ -284,9 +287,13 @@
                         android:id="@+id/btn_maintenance"
                         android:layout_width="0dp"
                         android:layout_height="200dp"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="15dp"
+                        android:layout_marginEnd="20dp"
                         android:layout_weight="1"
-                        android:background="@android:color/transparent"
+                        android:background="@drawable/white_cardview"
                         android:clickable="true"
+                        android:elevation="10dp"
                         android:foreground="?android:attr/selectableItemBackground"
                         android:gravity="center"
                         android:orientation="vertical">
@@ -294,15 +301,15 @@
                         <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:background="@drawable/backgroun_home"
+                            android:background="@drawable/backgroun_home_static"
                             android:orientation="horizontal"
                             android:padding="15dp">
 
                             <ImageView
 
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                app:srcCompat="@drawable/fix_big_icon" />
+                                android:layout_width="64dp"
+                                android:layout_height="64dp"
+                                app:srcCompat="@drawable/maintenance_bike" />
                         </LinearLayout>
 
                         <TextView
@@ -316,58 +323,6 @@
 
                     </LinearLayout>
                 </LinearLayout>
-
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/service_layout"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-
-                    <androidx.constraintlayout.widget.Guideline
-                        android:id="@+id/guideline2"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        app:layout_constraintGuide_percent="0.5" />
-
-                    <androidx.constraintlayout.widget.ConstraintLayout
-                        android:id="@+id/top_half"
-                        android:layout_width="0dp"
-                        android:layout_height="0dp"
-                        app:layout_constraintBottom_toTopOf="@id/guideline2"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintHorizontal_bias="0.5"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent">
-
-                        <androidx.constraintlayout.widget.Guideline
-                            android:id="@+id/guideline"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            app:layout_constraintGuide_percent="0.5" />
-
-                    </androidx.constraintlayout.widget.ConstraintLayout>
-
-                    <androidx.constraintlayout.widget.ConstraintLayout
-                        android:id="@+id/constraintLayout"
-                        android:layout_width="0dp"
-                        android:layout_height="0dp"
-                        android:orientation="horizontal"
-                        android:visibility="visible"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintLeft_toLeftOf="parent"
-                        app:layout_constraintRight_toRightOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/guideline2">
-
-                        <androidx.constraintlayout.widget.Guideline
-                            android:id="@+id/guideline3"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            app:layout_constraintGuide_percent="0.5" />
-
-                    </androidx.constraintlayout.widget.ConstraintLayout>
-                </androidx.constraintlayout.widget.ConstraintLayout>
 
             </LinearLayout>
         </ScrollView>

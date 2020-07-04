@@ -72,6 +72,8 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+import static android.view.View.GONE;
+
 public class MainNavigationHolder extends AppCompatActivity implements FuelFragment.OnFragmentInteractionListener,
         ATMFragment.OnFragmentInteractionListener, MaintenanceFragment.OnFragmentInteractionListener,
         WCFragment.OnFragmentInteractionListener, HomeFragment.OnFragmentInteractionListener,
@@ -187,6 +189,7 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.menu);
         getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setTitle("");
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
@@ -407,6 +410,11 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
                     btnBroadcast.setVisibility(View.VISIBLE);
                 }
 
+                LinearLayout btnBroadcastE = findViewById(R.id.btn_emergency);
+                if(btnBroadcastE != null){
+                    btnBroadcastE.setVisibility(View.VISIBLE);
+                }
+
                 ImageButton imgNotify = findViewById(R.id.img_notify);
                 imgNotify.setVisibility(View.VISIBLE);
             }else if (requestCode == 2 && resultCode == RESULT_OK) {
@@ -605,6 +613,11 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
                             LinearLayout btnBroadcast = findViewById(R.id.btn_broadcast);
                             if(btnBroadcast != null){
                                 btnBroadcast.setVisibility(View.GONE);
+                            }
+
+                            LinearLayout btnBroadcastE = findViewById(R.id.btn_emergency);
+                            if(btnBroadcastE != null){
+                                btnBroadcastE.setVisibility(View.GONE);
                             }
 
                             FloatingActionButton fab = findViewById(R.id.fab_broadcast);
