@@ -309,4 +309,21 @@ public interface MapAPI {
     @FormUrlEncoded
     @POST("order/complete")
     Call<ResponseBody> completeOrder(@Field("order_id") int id);
+
+    @FormUrlEncoded
+    @POST("emergency/create")
+    Call<ResponseBody> createEmergency(@Field("id") String username, @Field("lat") float lat, @Field("lon") float lon);
+
+    @FormUrlEncoded
+    @POST("emergency/remove")
+    Call<ResponseBody> removeEmergency(@Field("id") String username);
+
+    @FormUrlEncoded
+    @POST("emergency/location")
+    Call<ResponseBody> updateLocation(@Field("id") String username, @Field("lat") float lat, @Field("lon") float lon);
+
+    @FormUrlEncoded
+    @POST("emergency/range")
+    Call<ResponseBody> getEmergency(@Field("range") float range, @Field("lat") float lat, @Field("lon") float lon);
+
 }
