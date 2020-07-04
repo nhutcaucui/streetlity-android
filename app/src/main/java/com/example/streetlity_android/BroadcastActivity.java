@@ -1,6 +1,7 @@
 package com.example.streetlity_android;
 
 import android.Manifest;
+import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -8,6 +9,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.RippleDrawable;
 import android.location.Location;
@@ -16,6 +18,8 @@ import android.os.Build;
 import android.os.Bundle;
 
 import com.example.streetlity_android.Chat.Chat;
+import com.example.streetlity_android.User.Login;
+import com.example.streetlity_android.User.SignUp;
 import com.example.streetlity_android.User.SignupAsMaintainer;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
@@ -28,6 +32,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -91,12 +96,39 @@ public class BroadcastActivity extends AppCompatActivity {
         LocationManager locationManager = (LocationManager)
                 this.getSystemService(Context.LOCATION_SERVICE);
 
+        if(!getSharedPreferences("firstBroadcast",MODE_PRIVATE).getBoolean("first", false)){
+            getSharedPreferences("firstBroadcast",MODE_PRIVATE).edit().putBoolean("first", true).apply();
+
+            final Dialog dialog = new Dialog(this);
+
+            final LayoutInflater inflater = LayoutInflater.from(this);
+
+            final View dialogView = View.inflate(this ,R.layout.dialog_instruction_broadcast, null);
+
+            Button btnUnderstand = dialogView.findViewById(R.id.btn_understand);
+
+            btnUnderstand.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dialog.dismiss();
+                }
+            });
+
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.argb(100, 0, 0, 0)));
+
+            dialog.setContentView(dialogView);
+
+            dialog.show();
+        }
+
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
                 ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             Location location = locationManager.getLastKnownLocation(locationManager
                     .NETWORK_PROVIDER);
-            currLat = (float) location.getLatitude();
-            currLon = (float) location.getLongitude();
+            if(location != null) {
+                currLat = (float) location.getLatitude();
+                currLon = (float) location.getLongitude();
+            }
         }
         Log.e("", "onMapReady: " + currLat + " , " + currLon);
 

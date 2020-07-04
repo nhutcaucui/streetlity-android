@@ -236,4 +236,14 @@
     <string name="need_login">This feature need login</string>
     <string name="need_login_info">Please login or sign up to use this feature</string>
     <string name="or">or</string>
+    <string name="broadcast_to_repair">Broadcast signal to repairmen</string>
+    <string name="repairman_accept">A repairman accept your request</string>
+    <string name="chat_with">Chat with him (if needed)</string>
+    <string name="repair_come">Repairman comes and fixes your vehicle</string>
+    <string name="mark_and_pay">Mark the job as done and pay the repair man</string>
+    <string name="note_pay">Note: Price is depend on the repairman</string>
+    <string name="i_understand">I understand</string>
+    <string name="instruction">Instruction</string>
+    <string name="its_late">It\'s late and the maintenance stores are closed</string>
+    <string name="repairman_accept_emergency">An emergency repairman accept your request</string>
 </resources>

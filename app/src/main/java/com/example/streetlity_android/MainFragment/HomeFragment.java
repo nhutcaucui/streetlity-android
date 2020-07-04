@@ -225,7 +225,7 @@ public class HomeFragment extends Fragment implements LocationListener{
             @Override
             public void onClick(View v) {
                 if (MyApplication.getInstance().getToken().equals("")) {
-                    final Dialog dialogDecline = new Dialog(getActivity());
+                    final Dialog dialog = new Dialog(getActivity());
 
                     final LayoutInflater inflater = LayoutInflater.from(getActivity());
 
@@ -239,7 +239,7 @@ public class HomeFragment extends Fragment implements LocationListener{
                         @Override
                         public void onClick(View v) {
                             getActivity().startActivityForResult(new Intent(getActivity(), Login.class),1);
-                            dialogDecline.dismiss();
+                            dialog.dismiss();
                         }
                     });
 
@@ -249,15 +249,15 @@ public class HomeFragment extends Fragment implements LocationListener{
                             Intent t = new Intent(getActivity(), SignUp.class);
                             t.putExtra("from", 1);
                             getActivity().startActivityForResult(t, 1);
-                            dialogDecline.dismiss();
+                            dialog.dismiss();
                         }
                     });
 
-                    dialogDecline.getWindow().setBackgroundDrawable(new ColorDrawable(Color.argb(100, 0, 0, 0)));
+                    dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.argb(100, 0, 0, 0)));
 
-                    dialogDecline.setContentView(dialogView);
+                    dialog.setContentView(dialogView);
 
-                    dialogDecline.show();
+                    dialog.show();
                 } else {
                     boolean activeOrder = getActivity().
                             getSharedPreferences("activeOrder", Context.MODE_PRIVATE).contains("activeOrder");
