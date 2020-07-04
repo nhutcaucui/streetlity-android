@@ -26,6 +26,7 @@ import com.example.streetlity_android.RealtimeService.MaintenanceOrder;
 import com.example.streetlity_android.User.ChangePassword;
 import com.example.streetlity_android.User.Common.MyOrders;
 import com.example.streetlity_android.User.Login;
+import com.example.streetlity_android.User.Maintainer.OrderInfo;
 import com.example.streetlity_android.User.Maintainer.Works;
 import com.example.streetlity_android.User.SignUp;
 import com.example.streetlity_android.User.UserInfo;
@@ -107,7 +108,7 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
 
         startService(new Intent(getBaseContext(), ServiceChecking.class));
 
-        getSharedPreferences("activeOrder",MODE_PRIVATE).edit().clear().apply();
+        //getSharedPreferences("activeOrder",MODE_PRIVATE).edit().clear().apply();
 
         if(getSharedPreferences("spam", MODE_PRIVATE).contains("spam")){
             canBroadcast = false;
@@ -518,9 +519,11 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
                     case R.id.works:
                         startActivity(new Intent(MainNavigationHolder.this, Works.class));
                         break;
-                    case R.id.my_order:
-                        startActivity(new Intent(MainNavigationHolder.this, MyOrders.class));
+                    case R.id.my_order: {
+                        startActivity(new Intent(MainNavigationHolder.this, MaintainerLocation.class));
+                        startActivity(new Intent( MainNavigationHolder.this, Chat.class));
                         break;
+                    }
                     case R.id.contribute:
                         startActivity(new Intent(MainNavigationHolder.this, ContributeToService.class));
                         break;

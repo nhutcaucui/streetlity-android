@@ -182,13 +182,50 @@ public class MaintainerLocation extends AppCompatActivity implements OnMapReadyC
             @Override
             public void onClick(View v) {
                 AlertDialog alertDialog = new AlertDialog.Builder(MaintainerLocation.this).create();
-                alertDialog.setTitle(getString(R.string.remove)+"?");
-                alertDialog.setMessage(getString(R.string.remove_pic));
+                alertDialog.setTitle(getString(R.string.mark_complete)+"?");
+//                alertDialog.setMessage(getString(R.string.mark_complete));
                 alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, getString(android.R.string.yes),
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
 
-                                dialog.dismiss();
+                                Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getMaintenanceURL())
+                                        .addConverterFactory(GsonConverterFactory.create()).build();
+                                final MapAPI tour = retro.create(MapAPI.class);
+                                Call<ResponseBody> call = tour.completeOrder(Integer.parseInt(getSharedPreferences("activeOrder",MODE_PRIVATE)
+                                        .getString("activeOrder","")));
+                                //need Id
+                                call.enqueue(new Callback<ResponseBody>() {
+                                    @Override
+                                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                        if (response.code() == 200) {
+                                            final JSONObject jsonObject;
+                                            try {
+                                                jsonObject = new JSONObject(response.body().string());
+                                                Log.e("", "onResponse: " + jsonObject.toString());
+                                                if(jsonObject.getBoolean("Status")){
+
+                                                    finish();
+                                                    dialog.dismiss();
+                                                }
+                                            }catch (Exception e){
+                                                e.printStackTrace();
+                                            }
+                                        }
+                                        else{
+                                            Toast toast = Toast.makeText(MaintainerLocation.this, R.string.something_wrong, Toast.LENGTH_LONG);
+                                            TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
+                                            tv.setTextColor(Color.RED);
+
+                                            toast.show();
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                                    }
+                                });
+
                             }
                         });
 

@@ -574,7 +574,7 @@ public class BroadcastActivity extends AppCompatActivity {
     public void foundAMaintainer(Intent intent){
         notFound = false;
 
-        getSharedPreferences("activeOrder",MODE_PRIVATE).edit().putInt("activeOrder", 1).apply();
+        getSharedPreferences("activeOrder",MODE_PRIVATE).edit().putString("activeOrder", intent.getStringExtra("id")).apply();
 
         RelativeLayout broadcasting = findViewById(R.id.layout_broadcasting);
 
@@ -592,6 +592,9 @@ public class BroadcastActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent t1 = new Intent(BroadcastActivity.this, MaintainerLocation.class);
                 startActivity(t1);
+
+                SharedPreferences s = getSharedPreferences("Room", MODE_PRIVATE);
+                s.edit().putString("room",intent.getStringExtra("id")).apply();
 
                 startActivity(intent);
 
