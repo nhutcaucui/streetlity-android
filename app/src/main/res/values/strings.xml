@@ -230,4 +230,6 @@
     <string name="options">Options</string>
     <string name="emergency_broadcast">Find emergency repairman</string>
     <string name="increase_range">Nothing found, try increase the range</string>
+    <string name="reviewed_location">Reviewed locations:</string>
+    <string name="contributed_location">Contributed locations:</string>
 </resources>

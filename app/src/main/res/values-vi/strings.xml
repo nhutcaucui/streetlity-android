@@ -214,4 +214,6 @@
     <string name="options">Cài đặt</string>
     <string name="emergency_broadcast">Tìm thợ sửa khẩn cấp</string>
     <string name="increase_range">Không tìm được kết quả, hãy thử tăng phạm vi</string>
+    <string name="reviewed_location">Những điểm đã đánh giá:</string>
+    <string name="contributed_location">Những điểm đã đóng góp:</string>
 </resources>
