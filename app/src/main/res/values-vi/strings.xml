@@ -197,7 +197,7 @@
     <string name="cant_broadcast_while_active">Không thể broadcast khi có yêu cầu chưa hoàn thành</string>
     <string name="cancel_order">Hủy yêu cầu?</string>
     <string name="find_maintainer">Tìm thợ sửa xe</string>
-    <string name="all_service">Tất cả dịch vụ</string>
+    <string name="all_service">Tất cả dịch vụ quanh đây</string>
     <string name="show_all">Hiện tất cả dịch vụ</string>
     <string name="no_review">Không có đánh giá</string>
     <string name="something_wrong_direction">Có lỗi xảy ra khi tìm đường</string>
@@ -216,4 +216,8 @@
     <string name="increase_range">Không tìm được kết quả, hãy thử tăng phạm vi</string>
     <string name="reviewed_location">Những điểm đã đánh giá:</string>
     <string name="contributed_location">Những điểm đã đóng góp:</string>
+    <string name="need_login">Tính năng cần đăng nhập</string>
+    <string name="need_login_info">Xin đăng kí hoặc đăng nhập để sử dụng tính năng này</string>
+    <string name="or">hoặc</string>
+    <string name="already_have_account">Đã có tài khoản?</string>
 </resources>

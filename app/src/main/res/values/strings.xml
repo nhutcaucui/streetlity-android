@@ -25,7 +25,7 @@
     <string name="forgotpass">Forgot password?</string>
     <string name="email">Email</string>
     <string name="cfpassword">Confirm password</string>
-    <string name="signup">Sign Up</string>
+    <string name="signup">Sign up</string>
     <string name="achievement">Achievements</string>
     <string name="input_bank_name">Input bank name here</string>
     <string name="go">Go</string>
@@ -106,6 +106,7 @@
     <string name="user_store_state">Is your store on the map?</string>
     <string name="user_store_yes">Yes, it is already on the map</string>
     <string name="user_store_no">No, i want to add it</string>
+    <string name="already_have_account">Already have account?</string>
 
     <string name="signup_success">Sign up successfully</string>
     <string name="signup_success_owner">Sign up successfully\nPlease wait for verification</string>
@@ -214,7 +215,7 @@
     <string name="cant_broadcast_while_active">Can\'t broadcast while an order is active</string>
     <string name="cancel_order">Cancel order?</string>
     <string name="title_activity_all_service_map" translatable="false">AllServiceMap</string>
-    <string name="all_service">All services</string>
+    <string name="all_service">All services nearby</string>
     <string name="show_all">Show me all the services</string>
     <string name="no_review">No review</string>
     <string name="something_wrong_direction">"Something went wrong when trying to find direction"</string>
@@ -232,4 +233,7 @@
     <string name="increase_range">Nothing found, try increase the range</string>
     <string name="reviewed_location">Reviewed locations:</string>
     <string name="contributed_location">Contributed locations:</string>
+    <string name="need_login">This feature need login</string>
+    <string name="need_login_info">Please login or sign up to use this feature</string>
+    <string name="or">or</string>
 </resources>

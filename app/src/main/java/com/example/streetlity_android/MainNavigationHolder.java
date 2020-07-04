@@ -406,15 +406,15 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
                 TextView tvUsername = header.findViewById(R.id.username);
                 tvUsername.setText(MyApplication.getInstance().getUsername());
 
-                LinearLayout btnBroadcast = findViewById(R.id.btn_broadcast);
-                if(btnBroadcast != null){
-                    btnBroadcast.setVisibility(View.VISIBLE);
-                }
-
-                LinearLayout btnBroadcastE = findViewById(R.id.btn_emergency);
-                if(btnBroadcastE != null){
-                    btnBroadcastE.setVisibility(View.VISIBLE);
-                }
+//                LinearLayout btnBroadcast = findViewById(R.id.btn_broadcast);
+//                if(btnBroadcast != null){
+//                    btnBroadcast.setVisibility(View.VISIBLE);
+//                }
+//
+//                LinearLayout btnBroadcastE = findViewById(R.id.btn_emergency);
+//                if(btnBroadcastE != null){
+//                    btnBroadcastE.setVisibility(View.VISIBLE);
+//                }
 
                 ImageButton imgNotify = findViewById(R.id.img_notify);
                 imgNotify.setVisibility(View.VISIBLE);
@@ -613,15 +613,15 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
 
                             setDrawerForNonUser(navView);
 
-                            LinearLayout btnBroadcast = findViewById(R.id.btn_broadcast);
-                            if(btnBroadcast != null){
-                                btnBroadcast.setVisibility(View.GONE);
-                            }
-
-                            LinearLayout btnBroadcastE = findViewById(R.id.btn_emergency);
-                            if(btnBroadcastE != null){
-                                btnBroadcastE.setVisibility(View.GONE);
-                            }
+//                            LinearLayout btnBroadcast = findViewById(R.id.btn_broadcast);
+//                            if(btnBroadcast != null){
+//                                btnBroadcast.setVisibility(View.GONE);
+//                            }
+//
+//                            LinearLayout btnBroadcastE = findViewById(R.id.btn_emergency);
+//                            if(btnBroadcastE != null){
+//                                btnBroadcastE.setVisibility(View.GONE);
+//                            }
 
                             FloatingActionButton fab = findViewById(R.id.fab_broadcast);
                             if(fab != null){

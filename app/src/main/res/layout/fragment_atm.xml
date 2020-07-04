@@ -142,8 +142,8 @@
             android:layout_height="match_parent"
             android:layout_above="@id/layout_range"
             android:layout_below="@id/top"
-            android:divider="@color/listview_divider"
-            android:dividerHeight="1dp">
+            android:divider="@android:color/transparent"
+            android:dividerHeight="10dp">
 
         </ListView>
 

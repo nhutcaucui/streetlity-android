@@ -2,12 +2,14 @@ package com.example.streetlity_android.MainFragment;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -19,6 +21,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,10 +33,22 @@ import com.example.streetlity_android.AllServiceMap;
 import com.example.streetlity_android.BroadcastActivity;
 import com.example.streetlity_android.BroadcastEmergencyActivity;
 import com.example.streetlity_android.MainNavigationHolder;
+import com.example.streetlity_android.MaintainerDirection;
+import com.example.streetlity_android.MapAPI;
 import com.example.streetlity_android.MyApplication;
 import com.example.streetlity_android.R;
 import com.example.streetlity_android.User.Login;
+import com.example.streetlity_android.User.SignUp;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+
+import org.json.JSONObject;
+
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 import static android.graphics.Color.RED;
 import static android.view.View.GONE;
@@ -92,12 +107,12 @@ public class HomeFragment extends Fragment implements LocationListener{
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_home, container, false);
 
-        if(MyApplication.getInstance().getToken().equals("")){
-            LinearLayout btnBroadcast = rootView.findViewById(R.id.btn_broadcast);
-            btnBroadcast.setVisibility(GONE);
-            LinearLayout btnBroadcastE = rootView.findViewById(R.id.btn_emergency);
-            btnBroadcastE.setVisibility(GONE);
-        }
+//        if(MyApplication.getInstance().getToken().equals("")){
+//            LinearLayout btnBroadcast = rootView.findViewById(R.id.btn_broadcast);
+//            btnBroadcast.setVisibility(GONE);
+//            LinearLayout btnBroadcastE = rootView.findViewById(R.id.btn_emergency);
+//            btnBroadcastE.setVisibility(GONE);
+//        }
 
         LinearLayout btnFuel = rootView.findViewById(R.id.btn_fuel);
         LinearLayout btnWC = rootView.findViewById(R.id.btn_wc);
@@ -110,26 +125,62 @@ public class HomeFragment extends Fragment implements LocationListener{
         btnEmergency.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                boolean activeOrder =  getActivity().
-                        getSharedPreferences("activeOrder",Context.MODE_PRIVATE).contains("activeOrder");
-                if(((MainNavigationHolder)getActivity()).isCanBroadcast() && !activeOrder) {
-                    getActivity().startActivityForResult(new Intent(getActivity(), BroadcastEmergencyActivity.class), 5);
-                }
-                else{
-                    if(activeOrder){
-                        Toast toast = Toast.makeText(getActivity(), R.string.cant_broadcast_while_active, Toast.LENGTH_LONG);
-                        TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
-                        tv.setTextColor(RED);
+                if (MyApplication.getInstance().getToken().equals("")) {
+                    final Dialog dialogDecline = new Dialog(getActivity());
 
-                        toast.show();
-                    }else {
-                        String builder = getString(R.string.retry_later) + " " + ((MainNavigationHolder) getActivity()).getTimeLeft()
-                                + " " + getString(R.string.seconds);
-                        Toast toast = Toast.makeText(getActivity(), builder, Toast.LENGTH_LONG);
-                        TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
-                        tv.setTextColor(RED);
+                    final LayoutInflater inflater = LayoutInflater.from(getActivity());
 
-                        toast.show();
+                    final View dialogView = View.inflate(getActivity() ,R.layout.dialog_need_login, null);
+
+                    Button btnLogin = dialogView.findViewById(R.id.btn_dialog_to_login);
+
+                    Button btnSignUp = dialogView.findViewById(R.id.btn_dialog_to_signup);
+
+                    btnLogin.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            getActivity().startActivityForResult(new Intent(getActivity(), Login.class),1);
+                            dialogDecline.dismiss();
+                        }
+                    });
+
+                    btnSignUp.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent t = new Intent(getActivity(), SignUp.class);
+                            t.putExtra("from", 1);
+                            getActivity().startActivityForResult(t, 1);
+                            dialogDecline.dismiss();
+                        }
+                    });
+
+                    dialogDecline.getWindow().setBackgroundDrawable(new ColorDrawable(Color.argb(100, 0, 0, 0)));
+
+                    dialogDecline.setContentView(dialogView);
+
+                    dialogDecline.show();
+                } else {
+                    boolean activeOrder = getActivity().
+                            getSharedPreferences("activeOrder", Context.MODE_PRIVATE).contains("activeOrder");
+                    if (((MainNavigationHolder) getActivity()).isCanBroadcast() && !activeOrder) {
+                        getActivity().startActivityForResult(new Intent(getActivity(), BroadcastEmergencyActivity.class), 5);
+                    } else {
+                        if (activeOrder) {
+                            Toast toast = Toast.makeText(getActivity(), R.string.cant_broadcast_while_active, Toast.LENGTH_LONG);
+                            TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
+                            tv.setTextColor(RED);
+
+                            toast.show();
+                        } else {
+                            String builder = getString(R.string.retry_later) + " " + ((MainNavigationHolder) getActivity()).getTimeLeft()
+                                    + " " + getString(R.string.seconds);
+                            Toast toast = Toast.makeText(getActivity(), builder, Toast.LENGTH_LONG);
+                            TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
+                            tv.setTextColor(RED);
+
+                            toast.show();
+                        }
+
                     }
                 }
             }
@@ -173,26 +224,61 @@ public class HomeFragment extends Fragment implements LocationListener{
         btnBroadcast.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                boolean activeOrder =  getActivity().
-                        getSharedPreferences("activeOrder",Context.MODE_PRIVATE).contains("activeOrder");
-                if(((MainNavigationHolder)getActivity()).isCanBroadcast() && !activeOrder) {
-                    getActivity().startActivityForResult(new Intent(getActivity(), BroadcastActivity.class), 5);
-                }
-                else{
-                    if(activeOrder){
-                        Toast toast = Toast.makeText(getActivity(), R.string.cant_broadcast_while_active, Toast.LENGTH_LONG);
-                        TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
-                        tv.setTextColor(RED);
+                if (MyApplication.getInstance().getToken().equals("")) {
+                    final Dialog dialogDecline = new Dialog(getActivity());
 
-                        toast.show();
-                    }else {
-                        String builder = getString(R.string.retry_later) + " " + ((MainNavigationHolder) getActivity()).getTimeLeft()
-                                + " " + getString(R.string.seconds);
-                        Toast toast = Toast.makeText(getActivity(), builder, Toast.LENGTH_LONG);
-                        TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
-                        tv.setTextColor(RED);
+                    final LayoutInflater inflater = LayoutInflater.from(getActivity());
 
-                        toast.show();
+                    final View dialogView = View.inflate(getActivity() ,R.layout.dialog_need_login, null);
+
+                    Button btnLogin = dialogView.findViewById(R.id.btn_dialog_to_login);
+
+                    Button btnSignUp = dialogView.findViewById(R.id.btn_dialog_to_signup);
+
+                    btnLogin.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            getActivity().startActivityForResult(new Intent(getActivity(), Login.class),1);
+                            dialogDecline.dismiss();
+                        }
+                    });
+
+                    btnSignUp.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent t = new Intent(getActivity(), SignUp.class);
+                            t.putExtra("from", 1);
+                            getActivity().startActivityForResult(t, 1);
+                            dialogDecline.dismiss();
+                        }
+                    });
+
+                    dialogDecline.getWindow().setBackgroundDrawable(new ColorDrawable(Color.argb(100, 0, 0, 0)));
+
+                    dialogDecline.setContentView(dialogView);
+
+                    dialogDecline.show();
+                } else {
+                    boolean activeOrder = getActivity().
+                            getSharedPreferences("activeOrder", Context.MODE_PRIVATE).contains("activeOrder");
+                    if (((MainNavigationHolder) getActivity()).isCanBroadcast() && !activeOrder) {
+                        getActivity().startActivityForResult(new Intent(getActivity(), BroadcastActivity.class), 5);
+                    } else {
+                        if (activeOrder) {
+                            Toast toast = Toast.makeText(getActivity(), R.string.cant_broadcast_while_active, Toast.LENGTH_LONG);
+                            TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
+                            tv.setTextColor(RED);
+
+                            toast.show();
+                        } else {
+                            String builder = getString(R.string.retry_later) + " " + ((MainNavigationHolder) getActivity()).getTimeLeft()
+                                    + " " + getString(R.string.seconds);
+                            Toast toast = Toast.makeText(getActivity(), builder, Toast.LENGTH_LONG);
+                            TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
+                            tv.setTextColor(RED);
+
+                            toast.show();
+                        }
                     }
                 }
             }
