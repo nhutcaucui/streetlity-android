@@ -39,6 +39,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
@@ -91,8 +92,6 @@ public class BroadcastEmergencyActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("");
 
-        if(!getSharedPreferences("first",MODE_PRIVATE).getBoolean("firstEmergency", false)){
-            getSharedPreferences("first",MODE_PRIVATE).edit().putBoolean("firstEmergency", true).apply();
 
             final Dialog dialog = new Dialog(this);
 
@@ -113,8 +112,18 @@ public class BroadcastEmergencyActivity extends AppCompatActivity {
 
             dialog.setContentView(dialogView);
 
+        if(!getSharedPreferences("first",MODE_PRIVATE).getBoolean("firstEmergency", false)){
+            getSharedPreferences("first",MODE_PRIVATE).edit().putBoolean("firstEmergency", true).apply();
             dialog.show();
         }
+
+        ImageView imgHelp = findViewById(R.id.img_help);
+        imgHelp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.show();
+            }
+        });
 
         LocationManager locationManager = (LocationManager)
                 this.getSystemService(Context.LOCATION_SERVICE);

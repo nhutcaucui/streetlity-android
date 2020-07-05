@@ -2,6 +2,7 @@ package com.example.streetlity_android;
 
 import android.app.Application;
 import android.graphics.Bitmap;
+import android.util.Log;
 
 import com.example.streetlity_android.Achievement.ActionObject;
 import com.example.streetlity_android.Option.OptionInterface;
@@ -10,6 +11,8 @@ import com.example.streetlity_android.RealtimeService.MaintenanceOrder;
 import org.json.JSONObject;
 
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 //eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1OTQ0NDUzMzIsImlkIjoibXJYWVpaemFidiJ9.0Hd4SpIELulSuTxGAeuCPl_A33X-KoPUpRmgK4dTphk
 
@@ -199,5 +202,11 @@ public class MyApplication extends Application { //35.240.232.218 auth server
 
     public Map<String, Map<String, ActionObject>> getUpvoteMap() {
         return upvoteMap;
+    }
+
+    private Timer thread = new Timer();
+
+    public Timer getThread() {
+        return thread;
     }
 }

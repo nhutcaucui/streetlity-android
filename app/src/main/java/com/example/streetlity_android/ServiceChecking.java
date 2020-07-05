@@ -10,7 +10,6 @@ import androidx.annotation.Nullable;
 import com.google.gson.Gson;
 
 public class ServiceChecking extends Service {
-
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {

@@ -8,6 +8,9 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -22,6 +25,7 @@ import com.example.streetlity_android.MainFragment.MaintenanceFragment;
 import com.example.streetlity_android.MainFragment.WCFragment;
 import com.example.streetlity_android.Notification.Notification;
 import com.example.streetlity_android.Option.MaintainerOption;
+import com.example.streetlity_android.Option.Options;
 import com.example.streetlity_android.RealtimeService.MaintenanceOrder;
 import com.example.streetlity_android.User.ChangePassword;
 import com.example.streetlity_android.User.Common.MyOrders;
@@ -65,6 +69,9 @@ import android.widget.Toast;
 import org.json.JSONObject;
 
 import java.util.Map;
+import java.util.TimerTask;
+
+import javax.security.auth.login.LoginException;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -235,6 +242,65 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
                 else if(MyApplication.getInstance().getOption() == null){
                     MyApplication.getInstance().setOption(new MaintainerOption());
                     MyApplication.getInstance().getOption().setAcceptEmergency(false);
+                }
+
+                if(MyApplication.getInstance().getOption().isAcceptEmergency()){
+                    MyApplication.getInstance().getThread().scheduleAtFixedRate(new TimerTask() {
+                        @Override
+                        public void run() {
+                            LocationManager locationManager = (LocationManager)
+                                    getSystemService(Context.LOCATION_SERVICE);
+
+                            if (ContextCompat.checkSelfPermission(MainNavigationHolder.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
+                                    ContextCompat.checkSelfPermission(MainNavigationHolder.this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1, 1, new LocationListener() {
+                                    @Override
+                                    public void onLocationChanged(Location location) {
+                                        Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getMaintenanceURL())
+                                                .addConverterFactory(GsonConverterFactory.create()).build();
+                                        final MapAPI tour = retro.create(MapAPI.class);
+                                        Call<ResponseBody> call2 = tour.updateLocation(MyApplication.getInstance().getUsername(),
+                                                (float)location.getLatitude(), (float)location.getLongitude());
+                                        call2.enqueue(new Callback<ResponseBody>() {
+                                            @Override
+                                            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                                if (response.code() == 200) {
+                                                    try {
+                                                        Log.e("TAG", "onResponse: " + new JSONObject(response.body().string()));
+                                                    }catch (Exception e){
+                                                        e.printStackTrace();}
+                                                }else{
+                                                    Log.e("TAG", "onResponse: " + response.code());
+                                                }
+                                            }
+
+                                            @Override
+                                            public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                                            }
+                                        });
+                                        locationManager.removeUpdates(this);
+                                    }
+
+                                    @Override
+                                    public void onStatusChanged(String provider, int status, Bundle extras) {
+
+                                    }
+
+                                    @Override
+                                    public void onProviderEnabled(String provider) {
+
+                                    }
+
+                                    @Override
+                                    public void onProviderDisabled(String provider) {
+
+                                    }
+                                });
+                            }
+
+                        }
+                    }, 5000, 5000);
                 }
             }
 
@@ -586,6 +652,28 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
                         JSONObject jsonObject = new JSONObject(response.body().string());
                         Log.e("", "onResponse: " + jsonObject );
                         if (jsonObject.getBoolean("Status")) {
+
+                            if(MyApplication.getInstance().getUserType() == 7 && MyApplication.getInstance().getOption().isAcceptEmergency()){
+                                MyApplication.getInstance().getThread().cancel();
+
+                                Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getMaintenanceURL())
+                                        .addConverterFactory(GsonConverterFactory.create()).build();
+                                final MapAPI tour = retro.create(MapAPI.class);
+                                Call<ResponseBody> call2 = tour.removeEmergency(MyApplication.getInstance().getUsername());
+
+                                call2.enqueue(new Callback<ResponseBody>() {
+                                    @Override
+                                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                        Log.e("TAG", "onResponse: response when remove maintenance" );
+                                    }
+
+                                    @Override
+                                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                        t.printStackTrace();
+                                    }
+                                });
+                            }
+                            
                             ((MyApplication) MainNavigationHolder.this.getApplication()).setToken("");
                             ((MyApplication) MainNavigationHolder.this.getApplication()).setRefreshToken("");
                             ((MyApplication) MainNavigationHolder.this.getApplication()).setUsername("");

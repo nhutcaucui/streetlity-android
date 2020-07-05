@@ -41,6 +41,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
@@ -96,10 +97,11 @@ public class BroadcastActivity extends AppCompatActivity {
         LocationManager locationManager = (LocationManager)
                 this.getSystemService(Context.LOCATION_SERVICE);
 
-        if(!getSharedPreferences("first",MODE_PRIVATE).getBoolean("firstBroadcast", false)){
-            getSharedPreferences("first",MODE_PRIVATE).edit().putBoolean("firstBroadcast", true).apply();
+        final Dialog dialog;
 
-            final Dialog dialog = new Dialog(this);
+
+
+            dialog = new Dialog(this);
 
             final LayoutInflater inflater = LayoutInflater.from(this);
 
@@ -110,7 +112,7 @@ public class BroadcastActivity extends AppCompatActivity {
             btnUnderstand.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    dialog.dismiss();
+                    dialog.hide();
                 }
             });
 
@@ -118,8 +120,19 @@ public class BroadcastActivity extends AppCompatActivity {
 
             dialog.setContentView(dialogView);
 
+        if(!getSharedPreferences("first",MODE_PRIVATE).getBoolean("firstBroadcast", false)){
+            getSharedPreferences("first",MODE_PRIVATE).edit().putBoolean("firstBroadcast", true).apply();
+
             dialog.show();
         }
+
+        ImageView imgHelp = findViewById(R.id.img_help);
+        imgHelp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.show();
+            }
+        });
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
                 ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
