@@ -246,4 +246,12 @@
     <string name="instruction">Instruction</string>
     <string name="its_late">It\'s late and the maintenance stores are closed</string>
     <string name="repairman_accept_emergency">An emergency repairman accept your request</string>
+    <string name="instruction_broadcast">Find a repairman for you by broadcasting to nearby maintenance stores</string>
+    <string name="emit_signal">Broadcast</string>
+    <string name="instruction_emer">Find a repairman by broadcast to nearby repairmen that have the emergency option turned on</string>
+    <string name="instruction_all">Show all the nearby services from your location</string>
+    <string name="instruction_fuel">Find fuel stations nearby</string>
+    <string name="instruction_atm">Find ATMs nearby</string>
+    <string name="instruction_wc">Find public toilets nearby</string>
+    <string name="instruction_fix">Find maintenance stores nearby</string>
 </resources>

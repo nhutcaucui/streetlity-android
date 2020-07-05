@@ -50,6 +50,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+import static android.content.Context.MODE_PRIVATE;
 import static android.graphics.Color.RED;
 import static android.view.View.GONE;
 
@@ -114,6 +115,29 @@ public class HomeFragment extends Fragment implements LocationListener{
 //            btnBroadcastE.setVisibility(GONE);
 //        }
 
+        if(!getActivity().getSharedPreferences("first",MODE_PRIVATE).getBoolean("firstHome", false)){
+            getActivity().getSharedPreferences("first",MODE_PRIVATE).edit().putBoolean("firstHome", true).apply();
+
+            final Dialog dialog = new Dialog(getActivity());
+
+            final View dialogView = View.inflate(getActivity() ,R.layout.dialog_instruction_home, null);
+
+            Button btnUnderstand = dialogView.findViewById(R.id.btn_understand);
+
+            btnUnderstand.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dialog.dismiss();
+                }
+            });
+
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.argb(100, 0, 0, 0)));
+
+            dialog.setContentView(dialogView);
+
+            dialog.show();
+        }
+
         LinearLayout btnFuel = rootView.findViewById(R.id.btn_fuel);
         LinearLayout btnWC = rootView.findViewById(R.id.btn_wc);
         LinearLayout btnATM = rootView.findViewById(R.id.btn_atm);
@@ -161,7 +185,7 @@ public class HomeFragment extends Fragment implements LocationListener{
                     dialogDecline.show();
                 } else {
                     boolean activeOrder = getActivity().
-                            getSharedPreferences("activeOrder", Context.MODE_PRIVATE).contains("activeOrder");
+                            getSharedPreferences("activeOrder", MODE_PRIVATE).contains("activeOrder");
                     if (((MainNavigationHolder) getActivity()).isCanBroadcast() && !activeOrder) {
                         getActivity().startActivityForResult(new Intent(getActivity(), BroadcastEmergencyActivity.class), 5);
                     } else {
@@ -260,7 +284,7 @@ public class HomeFragment extends Fragment implements LocationListener{
                     dialog.show();
                 } else {
                     boolean activeOrder = getActivity().
-                            getSharedPreferences("activeOrder", Context.MODE_PRIVATE).contains("activeOrder");
+                            getSharedPreferences("activeOrder", MODE_PRIVATE).contains("activeOrder");
                     if (((MainNavigationHolder) getActivity()).isCanBroadcast() && !activeOrder) {
                         getActivity().startActivityForResult(new Intent(getActivity(), BroadcastActivity.class), 5);
                     } else {

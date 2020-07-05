@@ -96,8 +96,8 @@ public class BroadcastActivity extends AppCompatActivity {
         LocationManager locationManager = (LocationManager)
                 this.getSystemService(Context.LOCATION_SERVICE);
 
-        if(!getSharedPreferences("firstBroadcast",MODE_PRIVATE).getBoolean("first", false)){
-            getSharedPreferences("firstBroadcast",MODE_PRIVATE).edit().putBoolean("first", true).apply();
+        if(!getSharedPreferences("first",MODE_PRIVATE).getBoolean("firstBroadcast", false)){
+            getSharedPreferences("first",MODE_PRIVATE).edit().putBoolean("firstBroadcast", true).apply();
 
             final Dialog dialog = new Dialog(this);
 

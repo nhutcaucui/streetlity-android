@@ -91,8 +91,8 @@ public class BroadcastEmergencyActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("");
 
-        if(!getSharedPreferences("firstEmergency",MODE_PRIVATE).getBoolean("first", false)){
-            getSharedPreferences("firstEmergency",MODE_PRIVATE).edit().putBoolean("first", true).apply();
+        if(!getSharedPreferences("first",MODE_PRIVATE).getBoolean("firstEmergency", false)){
+            getSharedPreferences("first",MODE_PRIVATE).edit().putBoolean("firstEmergency", true).apply();
 
             final Dialog dialog = new Dialog(this);
 

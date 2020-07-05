@@ -44,14 +44,14 @@
                     <ImageView
                         android:layout_width="64dp"
                         android:layout_height="64dp"
-                        app:srcCompat="@drawable/stars" />
+                        app:srcCompat="@drawable/lego_dude" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:padding="10dp"
-                        android:text="@string/its_late"
+                        android:text="@string/instruction_broadcast"
                         android:textColor="@color/black" />
 
                 </LinearLayout>
@@ -66,14 +66,14 @@
                     <ImageView
                         android:layout_width="64dp"
                         android:layout_height="64dp"
-                        app:srcCompat="@drawable/phone" />
+                        app:srcCompat="@drawable/alert" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:padding="10dp"
-                        android:text="@string/broadcast_to_repair"
+                        android:text="@string/instruction_emer"
                         android:textColor="@color/black" />
 
                 </LinearLayout>
@@ -88,14 +88,14 @@
                     <ImageView
                         android:layout_width="64dp"
                         android:layout_height="64dp"
-                        app:srcCompat="@drawable/maintenance_accept" />
+                        app:srcCompat="@drawable/map" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:padding="10dp"
-                        android:text="@string/repairman_accept_emergency"
+                        android:text="@string/instruction_all"
                         android:textColor="@color/black" />
 
                 </LinearLayout>
@@ -110,14 +110,14 @@
                     <ImageView
                         android:layout_width="64dp"
                         android:layout_height="64dp"
-                        app:srcCompat="@drawable/message" />
+                        app:srcCompat="@drawable/gas_station" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:padding="10dp"
-                        android:text="@string/chat_with"
+                        android:text="@string/instruction_fuel"
                         android:textColor="@color/black" />
 
                 </LinearLayout>
@@ -132,46 +132,59 @@
                     <ImageView
                         android:layout_width="64dp"
                         android:layout_height="64dp"
-                        app:srcCompat="@drawable/delivery_man" />
+                        app:srcCompat="@drawable/wc" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:padding="10dp"
-                        android:text="@string/repair_come"
+                        android:text="@string/instruction_wc"
                         android:textColor="@color/black" />
 
                 </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_margin="10dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:layout_width="64dp"
-                    android:layout_height="64dp"
-                    app:srcCompat="@drawable/complete" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:padding="10dp"
-                    android:text="@string/mark_and_pay"
-                    android:textColor="@color/black" />
-            </LinearLayout>
-
-                <TextView
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="@string/note_pay"
-                    android:textColor="@color/black"
-                    android:textStyle="bold" />
+                    android:layout_height="match_parent"
+                    android:layout_margin="10dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="64dp"
+                        android:layout_height="64dp"
+                        app:srcCompat="@drawable/atm_machine" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:padding="10dp"
+                        android:text="@string/instruction_atm"
+                        android:textColor="@color/black" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_margin="10dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="64dp"
+                        android:layout_height="64dp"
+                        app:srcCompat="@drawable/maintenance_bike" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:padding="10dp"
+                        android:text="@string/instruction_fix"
+                        android:textColor="@color/black" />
+                </LinearLayout>
 
                 <Button
                     android:id="@+id/btn_understand"

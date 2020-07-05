@@ -639,8 +639,13 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
 
                             e1.apply();
 
-                            getSharedPreferences("firstBroadcast",MODE_PRIVATE).edit().clear().apply();
-                            getSharedPreferences("firstEmergency",MODE_PRIVATE).edit().clear().apply();
+                            SharedPreferences s2 = getSharedPreferences("first",MODE_PRIVATE);
+
+                            SharedPreferences.Editor e2 = s2.edit();
+
+                            e2.putBoolean("firstBroadcast", false);
+                            e2.putBoolean("firstEmergency", false);
+                            e2.apply();
 
                         }else{
 

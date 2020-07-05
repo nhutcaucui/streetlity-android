@@ -230,4 +230,12 @@
     <string name="instruction">Hướng dẫn</string>
     <string name="its_late">Đã khuya và các tiệm sửa xe đã đóng cửa</string>
     <string name="repairman_accept_emergency">Thợ sửa xe khẩn cấp sẽ chấp nhận yêu cầu</string>
+    <string name="instruction_broadcast">Tìm thợ sửa xe bằng cách phát tín hiệu đến những tiệm sửa xe gần đây</string>
+    <string name="emit_signal">Phát tín hiệu</string>
+    <string name="instruction_emer">Tìm thợ sửa xe bằng cách phát tín hiệu đến những thợ sửa có bật yêu cầu khẩn xe gần đây</string>
+    <string name="instruction_all">Hiện tất cả dịch vụ trong phạm vi quanh đây</string>
+    <string name="instruction_fuel">Tìm những trạm xăng gần đây</string>
+    <string name="instruction_atm">Tìm những cây ATM gần đây</string>
+    <string name="instruction_wc">Tìm những nhà vệ sinh công cộng gần đây</string>
+    <string name="instruction_fix">Tìm những tiệm sửa xe gần đây</string>
 </resources>

@@ -150,17 +150,17 @@
                     android:text="@string/note_pay"
                     android:textColor="@color/black"
                     android:textStyle="bold" />
-
+                <Button
+                    android:id="@+id/btn_understand"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="15dp"
+                    android:background="@color/grab_background"
+                    android:text="@string/i_understand"
+                    android:textAllCaps="false" />
             </LinearLayout>
         </ScrollView>
 
-        <Button
-            android:id="@+id/btn_understand"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
-            android:background="@color/grab_background"
-            android:text="@string/i_understand"
-            android:textAllCaps="false" />
+
     </LinearLayout>
 </LinearLayout>
