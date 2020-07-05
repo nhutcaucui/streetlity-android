@@ -734,6 +734,10 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
                         jsonObject = new JSONObject(response.body().string());
                         Log.e("", "onResponse: "+jsonObject.toString() );
 
+                        ((MyApplication) MainNavigationHolder.this.getApplication()).setToken(jsonObject.getString("AccessToken"));
+                        getSharedPreferences("userPref", Context.MODE_PRIVATE).edit()
+                                .putString("token", ((MyApplication) MainNavigationHolder.this.getApplication()).getToken()).apply();
+
                     }catch (Exception e){
                         e.printStackTrace();
                     }

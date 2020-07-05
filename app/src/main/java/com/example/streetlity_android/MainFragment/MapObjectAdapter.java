@@ -18,6 +18,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.example.streetlity_android.Contribution.ConfirmLocationsHolder;
 import com.example.streetlity_android.R;
 
 import java.text.DecimalFormat;
@@ -95,6 +96,15 @@ public class MapObjectAdapter extends ArrayAdapter implements Filterable {
         stars.getDrawable(2).setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP);
         stars.getDrawable(0).setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP);
         stars.getDrawable(1).setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP);
+
+        if ( context instanceof ConfirmLocationsHolder) {
+
+            if(this.mDisplayedValues.get(position).isUpvoted() || this.mDisplayedValues.get(position).isDownvoted()){
+                holder.tvName.setTextColor(context.getResources().getColor(R.color.default_text));
+            }else{
+                holder.tvName.setTextColor(context.getResources().getColor(R.color.black));
+            }
+        }
 
         return convertView;
     }

@@ -80,9 +80,10 @@ public class MapsActivityConfirmation extends AppCompatActivity implements OnMap
 
     Event<String, String> e = GlobalEvents.Example;
 
-    EListener<String,String> listener;
+    EListener<String, String> listener;
 
-    ArrayList<MarkerOptions> mMarkers = new ArrayList<MarkerOptions>();;
+    ArrayList<MarkerOptions> mMarkers = new ArrayList<MarkerOptions>();
+    ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,15 +107,15 @@ public class MapsActivityConfirmation extends AppCompatActivity implements OnMap
                 call.enqueue(new Callback<ResponseBody>() {
                     @Override
                     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                        if(response.code() == 200){
-                            try{
+                        if (response.code() == 200) {
+                            try {
                                 JSONObject jsonObject1 = new JSONObject(response.body().string());
-                                Log.e("TAG", "onResponse: " + jsonObject1.toString() );
-                            }catch (Exception e){
+                                Log.e("TAG", "onResponse: " + jsonObject1.toString());
+                            } catch (Exception e) {
                                 e.printStackTrace();
                             }
-                        }else{
-                            Log.e(TAG, "onResponse: "+response.code() );
+                        } else {
+                            Log.e(TAG, "onResponse: " + response.code());
                         }
                     }
 
@@ -131,25 +132,79 @@ public class MapsActivityConfirmation extends AppCompatActivity implements OnMap
         LinearLayout llReview = findViewById(R.id.ll_review);
         llReview.setVisibility(View.GONE);
 
-        LinearLayout confirmingLayout = findViewById(R.id.layout_confirming);
-        confirmingLayout.setVisibility(View.VISIBLE);
 
-        Button btnExist = findViewById(R.id.btn_exist);
-        Button btnNonExist = findViewById(R.id.btn_non_exist);
+        if (item.isDownvoted() || item.isUpvoted()) {
+            Button btnClearVote = findViewById(R.id.btn_clear);
+            btnClearVote.setVisibility(View.VISIBLE);
 
-        btnExist.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                upvote();
-            }
-        });
+            btnClearVote.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent data = new Intent();
+                    data.putExtra("index", getIntent().getIntExtra("index", -1));
+                    data.putExtra("action", 3);
+                    setResult(RESULT_OK, data);
 
-        btnNonExist.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+                    String type = "";
 
-            }
-        });
+                    switch (item.getType()) {
+                        case 1: {
+                            type = "Fuel";
+                            break;
+                        }
+                        case 2: {
+                            type = "Toilet";
+                            break;
+                        }
+                        case 3: {
+                            type = "Maintenance";
+                            break;
+                        }
+                        case 4: {
+                            type = "Atm";
+                            break;
+                        }
+
+                    }
+                    if (item.isUpvoted()) {
+                        MyApplication.getInstance().getUpvoteMap().get(type).remove("upvote " + item.getId());
+
+                        Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getAuthURL())
+                                .addConverterFactory(GsonConverterFactory.create()).build();
+                        final MapAPI tour = retro.create(MapAPI.class);
+                        Call<ResponseBody> call = tour.deleteActionUpvote(Integer.toString(item.getId()), type);
+
+                    } else {
+                        //reserve for downvote
+                    }
+                    finish();
+                }
+            });
+
+        } else {
+            Button btnExist = findViewById(R.id.btn_exist);
+            Button btnNonExist = findViewById(R.id.btn_non_exist);
+            LinearLayout confirmingLayout = findViewById(R.id.layout_confirming);
+            confirmingLayout.setVisibility(View.VISIBLE);
+
+            btnExist.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    upvote();
+                }
+            });
+
+            btnNonExist.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent data = new Intent();
+                    data.putExtra("index", getIntent().getIntExtra("index", -1));
+                    data.putExtra("action", 2);
+                    setResult(RESULT_OK, data);
+                    finish();
+                }
+            });
+        }
 
         BottomSheetBehavior sheetBehavior;
         LinearLayout bottom_sheet;
@@ -159,8 +214,8 @@ public class MapsActivityConfirmation extends AppCompatActivity implements OnMap
         item = (MapObject) getIntent().getSerializableExtra("item");
 
         LinearLayout layoutNote = findViewById(R.id.layout_note);
-        TextView tvNote =findViewById(R.id.tv_note);
-        if(!item.getNote().equals("")) {
+        TextView tvNote = findViewById(R.id.tv_note);
+        if (!item.getNote().equals("")) {
             layoutNote.setVisibility(View.VISIBLE);
             tvNote.setText(item.getNote());
         }
@@ -177,14 +232,14 @@ public class MapsActivityConfirmation extends AppCompatActivity implements OnMap
         TextView tvDistance = findViewById(R.id.tv_distance);
         float distance = item.getDistance();
         String dis = "m";
-        if(distance > 1000){
+        if (distance > 1000) {
             dis = "km";
             distance = distance / 1000;
         }
         tvDistance.setText("~" + df.format(distance) + dis);
 
         TextView tvRating = findViewById(R.id.tv_rating);
-        tvRating.setText("("+ df.format(item.getRating()) +")");
+        tvRating.setText("(" + df.format(item.getRating()) + ")");
 
         RatingBar rb = findViewById(R.id.ratingbar_map_object);
         rb.setRating(item.getRating());
@@ -235,7 +290,7 @@ public class MapsActivityConfirmation extends AppCompatActivity implements OnMap
                     case BottomSheetBehavior.STATE_DRAGGING:
                         break;
                     case BottomSheetBehavior.STATE_SETTLING: {
-                        if (sheetBehavior.getPeekHeight() < 150){
+                        if (sheetBehavior.getPeekHeight() < 150) {
                             sheetBehavior.setPeekHeight(150);
                         }
                         break;
@@ -273,14 +328,14 @@ public class MapsActivityConfirmation extends AppCompatActivity implements OnMap
         MapObject item = (MapObject) getIntent().getSerializableExtra("item");
 
         MarkerOptions desOption = new MarkerOptions();
-        desOption.position(new LatLng(item.getLat(),item.getLon()));
-        if(item.getType() == 1)
+        desOption.position(new LatLng(item.getLat(), item.getLon()));
+        if (item.getType() == 1)
             desOption.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_fuel));
-        else if(item.getType() == 2)
+        else if (item.getType() == 2)
             desOption.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_wc));
-        else if(item.getType() == 3)
+        else if (item.getType() == 3)
             desOption.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_maintenance));
-        else if(item.getType() == 4)
+        else if (item.getType() == 4)
             desOption.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_atm));
 
         mMap.addMarker(desOption);
@@ -289,15 +344,15 @@ public class MapsActivityConfirmation extends AppCompatActivity implements OnMap
 
     }
 
-    public boolean onOptionsItemSelected(MenuItem item){
+    public boolean onOptionsItemSelected(MenuItem item) {
         this.finish();
 
         return true;
     }
 
-    public float calculateRating(ArrayList<Review> list){
+    public float calculateRating(ArrayList<Review> list) {
         float temp = 0;
-        for(int i =0; i < list.size(); i++){
+        for (int i = 0; i < list.size(); i++) {
             temp += list.get(i).rating;
         }
 
@@ -363,69 +418,63 @@ public class MapsActivityConfirmation extends AppCompatActivity implements OnMap
         }
     }
 
-    public void upvote(){
-        Log.e(TAG, "onActivityResult: "+ getIntent().getIntExtra("index",-1));
+    public void upvote() {
+        Log.e(TAG, "onActivityResult: " + getIntent().getIntExtra("index", -1));
         Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getServiceURL())
                 .addConverterFactory(GsonConverterFactory.create()).build();
         final MapAPI tour = retro.create(MapAPI.class);
         Call<ResponseBody> call = tour.upvoteATM("1.0.0", item.getId(), MyApplication.getInstance().getUsername());
-        if(item.getType()==1){
+        if (item.getType() == 1) {
             call = tour.upvoteFuel("1.0.0", item.getId(), MyApplication.getInstance().getUsername());
-        }
-        else if(item.getType()==2){
+        } else if (item.getType() == 2) {
             call = tour.upvoteWC("1.0.0", item.getId(), MyApplication.getInstance().getUsername());
-        }
-        else if(item.getType()==3){
+        } else if (item.getType() == 3) {
             call = tour.upvoteMaintenance("1.0.0", item.getId(), MyApplication.getInstance().getUsername());
-        }
-        else if(item.getType()==4){
+        } else if (item.getType() == 4) {
             call = tour.upvoteATM("1.0.0", item.getId(), MyApplication.getInstance().getUsername());
         }
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                if(response.code() == 200){
+                if (response.code() == 200) {
                     final JSONObject jsonObject;
-                    try{
-                        Log.e("", "onResponse: "+response );
+                    try {
+                        Log.e("", "onResponse: " + response);
                         jsonObject = new JSONObject(response.body().string());
-                        Log.e("", "onResponse: "+jsonObject.toString() );
+                        Log.e("", "onResponse: " + jsonObject.toString());
 
                         Calendar calendar = Calendar.getInstance();
                         long time = calendar.getTimeInMillis();
                         String builder = "";
-                        builder = builder + time +";"+ item.getId()+";";
+                        builder = builder + time + ";" + item.getId() + ";";
                         String type = "";
 
-                        if(item.getType()==1){
-                            builder+="Fuel";
+                        if (item.getType() == 1) {
+                            builder += "Fuel";
                             type = "Fuel";
-                        }
-                        else if(item.getType()==2){
-                            builder+="Toilet";
+                        } else if (item.getType() == 2) {
+                            builder += "Toilet";
                             type = "Toilet";
-                        }
-                        else if(item.getType()==3){
-                            builder+="Maintenance";
+                        } else if (item.getType() == 3) {
+                            builder += "Maintenance";
                             type = "Maintenance";
-                        }
-                        else if(item.getType()==4){
-                            builder+="Atm";
+                        } else if (item.getType() == 4) {
+                            builder += "Atm";
                             type = "Atm";
                         }
 
-                        if(jsonObject.getBoolean("Status")){
+                        if (jsonObject.getBoolean("Status")) {
                             Intent data = new Intent();
                             data.putExtra("index", getIntent().getIntExtra("index", -1));
+                            data.putExtra("action", 1);
                             setResult(RESULT_OK, data);
 
                             e.trigger(MyApplication.getInstance().getUsername(), builder);
-                            ActionObject ao = new ActionObject("upvote " + item.getId(), time,"Upvote", Integer.toString(item.getId()));
+                            ActionObject ao = new ActionObject("upvote " + item.getId(), time, "Upvote", Integer.toString(item.getId()));
 
-                            if(MyApplication.getInstance().getUpvoteMap().containsKey(type)){
+                            if (MyApplication.getInstance().getUpvoteMap().containsKey(type)) {
                                 MyApplication.getInstance().getUpvoteMap().get(type).put("upvote " + item.getId(), ao);
-                            }
-                            else{
+                            } else {
                                 Map<String, ActionObject> map = new HashMap<>();
                                 map.put("upvote " + item.getId(), ao);
                                 MyApplication.getInstance().getUpvoteMap().put(type, map);
@@ -433,9 +482,9 @@ public class MapsActivityConfirmation extends AppCompatActivity implements OnMap
 
                             Log.e(TAG, "onResponse: " + MyApplication.getInstance().getUpvoteMap());
 
-                        finish();
+                            finish();
                         }
-                    }catch (Exception e){
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
@@ -446,11 +495,5 @@ public class MapsActivityConfirmation extends AppCompatActivity implements OnMap
                 t.printStackTrace();
             }
         });
-    }
-
-    public  void onStop(){
-        super.onStop();
-
-        e.unsubcribe(listener);
     }
 }

@@ -420,12 +420,13 @@ else{
 
                                     item.setContributor(jsonObject1.getString("Contributor"));
 
-                                    if(MyApplication.getInstance().getContributeMap().containsKey("Toilet")) {
+                                    if(MyApplication.getInstance().getUpvoteMap().containsKey("Toilet")) {
                                         boolean exist = false;
-                                        Map<String, ActionObject> map = MyApplication.getInstance().getContributeMap().get("Toilet");
+                                        Map<String, ActionObject> map = MyApplication.getInstance().getUpvoteMap().get("Toilet");
                                         for(String key: map.keySet()){
+                                            Log.e(TAG, "onResponse: "+ key +" "  + map.get(key).getAffected());
                                             if(map.get(key).getAffected().equals(Integer.toString(item.getId()))){
-                                                exist = true;
+                                                item.setUpvoted(true);
                                                 break;
                                             }
                                         }
@@ -442,6 +443,13 @@ else{
                                     @Override
                                     public int compare(MapObject o1, MapObject o2) {
                                         return Float.compare(o1.getDistance(), o2.getDistance());
+                                    }
+                                });
+
+                                Collections.sort(items, new Comparator<MapObject>() {
+                                    @Override
+                                    public int compare(MapObject o1, MapObject o2) {
+                                        return Boolean.compare(o1.isUpvoted(), o2.isUpvoted());
                                     }
                                 });
 
@@ -502,9 +510,24 @@ else{
         super.onActivityResult(requestCode, resultCode, data);
         try {
             if (requestCode == 1 && resultCode == RESULT_OK && data != null) {
-                if(data.getIntExtra("index",-1)!= -1) {
-                    items.remove(data.getIntExtra("index", -1));
-                    adapter.notifyDataSetChanged();
+                if(data.getIntExtra("action", -1 )== 1) {
+                    if (data.getIntExtra("index", -1) != -1) {
+                        items.get((data.getIntExtra("index", -1))).setUpvoted(true);
+                        adapter.notifyDataSetChanged();
+                    }
+                }
+                if(data.getIntExtra("action", -1 )== 2) {
+                    if (data.getIntExtra("index", -1) != -1) {
+                        items.get((data.getIntExtra("index", -1))).setDownvoted(true);
+                        adapter.notifyDataSetChanged();
+                    }
+                }
+                if(data.getIntExtra("action", -1 )== 3) {
+                    if (data.getIntExtra("index", -1) != -1) {
+                        items.get((data.getIntExtra("index", -1))).setUpvoted(false);
+                        items.get((data.getIntExtra("index", -1))).setDownvoted(false);
+                        adapter.notifyDataSetChanged();
+                    }
                 }
             }
         }catch (Exception e){

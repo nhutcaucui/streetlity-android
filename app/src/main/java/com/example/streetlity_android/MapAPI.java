@@ -238,8 +238,8 @@ public interface MapAPI {
                                         @Field("score") float rating,
                                         @Field("new_body") String comment);
 
-    @HTTP(method="DELETE", path="service/fuel/review/", hasBody = true)
-    Call<ResponseBody> deleteFuelReview(@Header("Version") String version ,@Field("review_id") int id);
+    @DELETE("service/fuel/review/")
+    Call<ResponseBody> deleteFuelReview(@Header("Version") String version ,@Query("review_id") int id);
     @DELETE("service/atm/review/")
     Call<ResponseBody> deleteATMReview(@Header("Version") String version ,@Query("review_id") int id);
     @DELETE("service/maintenance/review/")
@@ -283,6 +283,9 @@ public interface MapAPI {
     Call<ResponseBody> addActionReview(@Field("id") String id, @Field("time") long[] time,
                                  @Field("affect") String[] affect, @Field("service") String[] service);
 
+    @DELETE("user/action/review")
+    Call<ResponseBody> deleteActionReview(@Query("affect") String affect, @Query("service") String service);
+
     @FormUrlEncoded
     @POST("user/action/contribute")
     Call<ResponseBody> addActionContribute(@Field("id") String id, @Field("time") long time,
@@ -293,6 +296,9 @@ public interface MapAPI {
     Call<ResponseBody> addActionContribute(@Field("id") String id, @Field("time") long[] time,
                                        @Field("affect") String[] affect, @Field("service") String[] service);
 
+    @DELETE("user/action/contribute")
+    Call<ResponseBody> deleteActionContribute(@Query("affect") String affect, @Query("service") String service);
+
     @FormUrlEncoded
     @POST("user/action/upvote")
     Call<ResponseBody> addActionUpvote(@Field("id") String id, @Field("time") long time,
@@ -302,6 +308,11 @@ public interface MapAPI {
     @POST("user/action/upvote")
     Call<ResponseBody> addActionUpvote(@Field("id") String id, @Field("time") long[] time,
                                        @Field("affect") String[] affect, @Field("service") String[] service);
+
+    @DELETE("user/action/upvote")
+    Call<ResponseBody> deleteActionUpvote(@Query("affect") String affect, @Query("service") String service);
+
+
 
     @GET("user/achievement/progress")
     Call<ResponseBody> getProgress(@Query("id") String id);

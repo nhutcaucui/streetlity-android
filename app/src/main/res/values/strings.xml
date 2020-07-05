@@ -254,4 +254,6 @@
     <string name="instruction_atm">Find ATMs nearby</string>
     <string name="instruction_wc">Find public toilets nearby</string>
     <string name="instruction_fix">Find maintenance stores nearby</string>
+    <string name="maintenance_store">Maintenance stores</string>
+    <string name="clear_vote">Clear vote</string>
 </resources>

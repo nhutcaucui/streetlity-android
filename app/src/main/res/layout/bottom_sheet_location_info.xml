@@ -5,7 +5,7 @@
     android:id="@+id/bottom_sheet"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/gradient_background"
+    android:background="#FFF"
     android:orientation="vertical"
     android:paddingBottom="15dp"
     app:behavior_hideable="false"
@@ -17,6 +17,15 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
+
+        <Button
+            android:id="@+id/btn_clear"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:background="@drawable/button_background_negative"
+            android:text="@string/clear_vote"
+            android:visibility="gone" />
 
         <LinearLayout
             android:id="@+id/layout_confirming"

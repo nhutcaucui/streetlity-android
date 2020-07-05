@@ -15,4 +15,5 @@
     <color name="greenShadow">#78C2A4</color>
     <color name="backgroundShadow">#D8E2F1</color>
     <color name="backgroundIcon">#D8E2F1</color>
+    <color name="default_text">#808080</color>
 </resources>

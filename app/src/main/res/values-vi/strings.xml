@@ -238,4 +238,6 @@
     <string name="instruction_atm">Tìm những cây ATM gần đây</string>
     <string name="instruction_wc">Tìm những nhà vệ sinh công cộng gần đây</string>
     <string name="instruction_fix">Tìm những tiệm sửa xe gần đây</string>
+    <string name="maintenance_store">Tiệm sửa xe</string>
+    <string name="clear_vote">Hủy phiếu bầu</string>
 </resources>
