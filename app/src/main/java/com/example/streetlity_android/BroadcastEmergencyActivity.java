@@ -387,7 +387,7 @@ public class BroadcastEmergencyActivity extends AppCompatActivity {
         Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getServiceURL())
                 .addConverterFactory(GsonConverterFactory.create()).build();
         final MapAPI tour = retro.create(MapAPI.class);
-        Call<ResponseBody> call = tour.getMaintenanceInRange("1.0.0", (float) lat, (float) lon, (float) 0.1);
+        Call<ResponseBody> call = tour.getEmergency((float) 0.1, (float) lat, (float) lon);
         //Call<ResponseBody> call = tour.getAllATM();
         call.enqueue(new Callback<ResponseBody>() {
             @Override
@@ -398,44 +398,42 @@ public class BroadcastEmergencyActivity extends AppCompatActivity {
                     try {
                         jsonObject = new JSONObject(response.body().string());
                         Log.e("", "onResponse: " + jsonObject.toString());
-                        jsonArray = jsonObject.getJSONArray("Services");
+                        jsonArray = jsonObject.getJSONArray("Emergencies");
 
-                        final ArrayList<Integer> idList = new ArrayList<>();
+                        final ArrayList<String> idList = new ArrayList<>();
                         final ArrayList<String> maintenanceList = new ArrayList<>();
+
+                        String[] id;
+                        String[] maintenance;
 
                         int count = 0;
                         int range = 1000;
 
-                        int[] id;
-                        String[] maintenance;
-
-                        while (count < 3) {
+                        while (count < 5) {
                             count = 0;
                             idList.clear();
 
                             for (int i = 0; i < jsonArray.length(); i++) {
                                 JSONObject jsonObject1 = jsonArray.getJSONObject(i);
-                                if (distance(lat, lon, jsonObject1.getDouble("Lat"), jsonObject1.getDouble("Lon")) < range
-                                        && !jsonObject1.getString("Owner").equals("")) {
-                                    idList.add(jsonObject1.getInt("Id"));
-                                    maintenanceList.add(jsonObject1.getString("Owner"));
+                                if (distance(lat, lon, jsonObject1.getDouble("Lat"), jsonObject1.getDouble("Lon")) < range) {
+                                    idList.add(jsonObject1.getString("Id"));
                                     count++;
                                 }
-                            }
 
-                            range += 1000;
-                            if (range > 10000) {
-                                range -= 1000;
-                                break;
+                                range += 1000;
+                                if (range > 10000) {
+                                    range -= 1000;
+                                    break;
+                                }
                             }
                         }
 
-                        id = new int[idList.size()];
+                        id = new String[idList.size()];
                         maintenance = new String[maintenanceList.size()];
 
                         for (int i = 0; i < idList.size(); i++) {
                             id[i] = idList.get(i);
-                            maintenance[i] = maintenanceList.get(i);
+                            maintenance[i] = idList.get(i);
                         }
 
                         final int fRange = range;
@@ -443,7 +441,7 @@ public class BroadcastEmergencyActivity extends AppCompatActivity {
                         if (count > 0) {
 
                             Call<ResponseBody> call2 = tour.broadcast("1.0.0", MyApplication.getInstance().getUsername()
-                                    , reason, phone, note, maintenance, id);
+                                    , reason, phone, note, maintenance, id, 2);
                             call2.enqueue(new Callback<ResponseBody>() {
                                 @Override
                                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -466,13 +464,9 @@ public class BroadcastEmergencyActivity extends AppCompatActivity {
 
                                                 String temp = getString(R.string.contacted);
                                                 temp += " " + idList.size();
-                                                temp += " " + getString(R.string.nearby_store);
+                                                temp += " " + getString(R.string.nearby_repairmen);
 
-                                                if(fRange>=1000) {
-                                                    temp += " " + getString(R.string.in_range) + " " + (fRange / 1000) + "km";
-                                                }else{
-                                                    temp += " " + getString(R.string.in_range) + " " + (fRange) + "m";
-                                                }
+
 
                                                 tvBroadcastTo.setText(temp);
 
@@ -506,34 +500,34 @@ public class BroadcastEmergencyActivity extends AppCompatActivity {
 
                                                 }.start();
 
-                                                Thread thread = new Thread(new Runnable () {
-                                                    @Override
-                                                    public void run() {
-
-                                                        for (int i = 300 ; i >= 0; i--) {
-                                                            try{
-                                                                Thread.sleep(1000);
-                                                            }catch (InterruptedException e) {
-                                                                e.printStackTrace();
-                                                            }
-
-                                                        }
-                                                        if(notFound) {
-                                                            runOnUiThread(new Runnable() {
-                                                                @Override
-                                                                public void run() {
-                                                                    broadcasting.setVisibility(View.GONE);
-                                                                    Toast toast = Toast.makeText(BroadcastEmergencyActivity.this, R.string.no_available, Toast.LENGTH_LONG);
-                                                                    TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
-                                                                    tv.setTextColor(Color.RED);
-
-                                                                    toast.show();
-                                                                }
-                                                            });
-                                                        }
-                                                    }
-                                                });
-                                                //thread.start();
+//                                                Thread thread = new Thread(new Runnable () {
+//                                                    @Override
+//                                                    public void run() {
+//
+//                                                        for (int i = 300 ; i >= 0; i--) {
+//                                                            try{
+//                                                                Thread.sleep(1000);
+//                                                            }catch (InterruptedException e) {
+//                                                                e.printStackTrace();
+//                                                            }
+//
+//                                                        }
+//                                                        if(notFound) {
+//                                                            runOnUiThread(new Runnable() {
+//                                                                @Override
+//                                                                public void run() {
+//                                                                    broadcasting.setVisibility(View.GONE);
+//                                                                    Toast toast = Toast.makeText(BroadcastEmergencyActivity.this, R.string.no_available, Toast.LENGTH_LONG);
+//                                                                    TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
+//                                                                    tv.setTextColor(Color.RED);
+//
+//                                                                    toast.show();
+//                                                                }
+//                                                            });
+//                                                        }
+//                                                    }
+//                                                });
+//                                                //thread.start();
                                             }
                                         } catch (Exception e) {
                                             e.printStackTrace();

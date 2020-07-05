@@ -149,7 +149,13 @@ public interface MapAPI {
     //@POST("order/request")
     Call<ResponseBody> broadcast(@Header("Version") String version, @Field("common_user") String username, @Field("reason") String reason,
                                  @Field("phone") String phone, @Field("note") String note,
-                                 @Field("maintenance_users") String[] maintenance, @Field("service_id") int[] id);
+                                 @Field("maintenance_users") String[] maintenance, @Field("service_id") int[] id,
+                                    @Field("type") int type);
+
+    Call<ResponseBody> broadcast(@Header("Version") String version, @Field("common_user") String username, @Field("reason") String reason,
+                                 @Field("phone") String phone, @Field("note") String note,
+                                 @Field("maintenance_users") String[] maintenance, @Field("service_id") String[] id,
+                                 @Field("type") int type);
 
     @FormUrlEncoded
     @POST("user/device")
@@ -322,12 +328,11 @@ public interface MapAPI {
     Call<ResponseBody> completeOrder(@Field("order_id") int id);
 
     @FormUrlEncoded
-    @POST("emergency/create")
+    @POST("emergency/")
     Call<ResponseBody> createEmergency(@Field("id") String username, @Field("lat") float lat, @Field("lon") float lon);
 
-    @FormUrlEncoded
-    @POST("emergency/remove")
-    Call<ResponseBody> removeEmergency(@Field("id") String username);
+    @DELETE("emergency/")
+    Call<ResponseBody> removeEmergency(@Query("id") String username);
 
     @FormUrlEncoded
     @POST("emergency/location")

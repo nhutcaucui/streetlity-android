@@ -445,7 +445,7 @@ public class BroadcastActivity extends AppCompatActivity {
                         if (count > 0) {
 
                             Call<ResponseBody> call2 = tour.broadcast("1.0.0", MyApplication.getInstance().getUsername()
-                                    , reason, phone, note, maintenance, id);
+                                    , reason, phone, note, maintenance, id, 1);
                             call2.enqueue(new Callback<ResponseBody>() {
                                 @Override
                                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -468,7 +468,13 @@ public class BroadcastActivity extends AppCompatActivity {
 
                                                 String temp = getString(R.string.contacted);
                                                 temp += " " + idList.size();
-                                                temp += " " + getString(R.string.nearby_store);
+                                                temp += " " + getString(R.string.nearby_repairmen);
+
+                                                if(fRange>=1000) {
+                                                    temp += " " + getString(R.string.in_range) + " " + (fRange / 1000) + "km";
+                                                }else{
+                                                    temp += " " + getString(R.string.in_range) + " " + (fRange) + "m";
+                                                }
 
                                                 if(fRange>=1000) {
                                                     temp += " " + getString(R.string.in_range) + " " + (fRange / 1000) + "km";
@@ -508,33 +514,33 @@ public class BroadcastActivity extends AppCompatActivity {
 
                                                 }.start();
 
-                                                Thread thread = new Thread(new Runnable () {
-                                                    @Override
-                                                    public void run() {
-
-                                                        for (int i = 300 ; i >= 0; i--) {
-                                                            try{
-                                                                Thread.sleep(1000);
-                                                            }catch (InterruptedException e) {
-                                                                e.printStackTrace();
-                                                            }
-
-                                                        }
-                                                        if(notFound) {
-                                                            runOnUiThread(new Runnable() {
-                                                                @Override
-                                                                public void run() {
-                                                                    broadcasting.setVisibility(View.GONE);
-                                                                    Toast toast = Toast.makeText(BroadcastActivity.this, R.string.no_available, Toast.LENGTH_LONG);
-                                                                    TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
-                                                                    tv.setTextColor(Color.RED);
-
-                                                                    toast.show();
-                                                                }
-                                                            });
-                                                        }
-                                                    }
-                                                });
+//                                                Thread thread = new Thread(new Runnable () {
+//                                                    @Override
+//                                                    public void run() {
+//
+//                                                        for (int i = 300 ; i >= 0; i--) {
+//                                                            try{
+//                                                                Thread.sleep(1000);
+//                                                            }catch (InterruptedException e) {
+//                                                                e.printStackTrace();
+//                                                            }
+//
+//                                                        }
+//                                                        if(notFound) {
+//                                                            runOnUiThread(new Runnable() {
+//                                                                @Override
+//                                                                public void run() {
+//                                                                    broadcasting.setVisibility(View.GONE);
+//                                                                    Toast toast = Toast.makeText(BroadcastActivity.this, R.string.no_available, Toast.LENGTH_LONG);
+//                                                                    TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
+//                                                                    tv.setTextColor(Color.RED);
+//
+//                                                                    toast.show();
+//                                                                }
+//                                                            });
+//                                                        }
+//                                                    }
+//                                                });
                                                 //thread.start();
                                             }
                                         } catch (Exception e) {

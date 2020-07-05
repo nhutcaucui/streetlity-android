@@ -834,8 +834,8 @@ loading.setVisibility(View.GONE);
                         ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                     Location location = locationManager.getLastKnownLocation(locationManager
                             .NETWORK_PROVIDER);
-                    locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME, MIN_DISTANCE, this);
                     if (location == null) {
+                        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME, MIN_DISTANCE, this);
                         loading.setVisibility(View.GONE);
                         ((MainNavigationHolder) getActivity()).getCantFind().setVisibility(View.VISIBLE);
                         Log.e("", "onMapReady: MULL");

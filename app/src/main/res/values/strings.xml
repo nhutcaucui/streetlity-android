@@ -256,4 +256,5 @@
     <string name="instruction_fix">Find maintenance stores nearby</string>
     <string name="maintenance_store">Maintenance stores</string>
     <string name="clear_vote">Clear vote</string>
+    <string name="nearby_repairmen">Nearby repairmen</string>
 </resources>
