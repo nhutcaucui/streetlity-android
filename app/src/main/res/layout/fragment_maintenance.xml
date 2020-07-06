@@ -10,6 +10,22 @@
         android:layout_height="match_parent">
 
         <LinearLayout
+            android:id="@+id/layout_map"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@id/layout_range"
+            android:layout_below="@id/layout_search"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <fragment
+                android:id="@+id/map"
+                android:name="com.example.streetlity_android.WorkaroundMapFragment"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </LinearLayout>
+
+        <LinearLayout
             android:id="@+id/layout_revert"
             android:layout_width="match_parent"
             android:layout_height="50dp"

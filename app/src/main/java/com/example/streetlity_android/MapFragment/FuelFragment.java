@@ -480,7 +480,7 @@ public class FuelFragment extends Fragment implements OnMapReadyCallback, Google
         return true;
     }
 
-        public void addFuelMarkerToList(float lat, float lon){
+    public void addFuelMarkerToList(float lat, float lon){
         LatLng pos = new LatLng(lat,lon);
         MarkerOptions option = new MarkerOptions();
         option.title("Fuel");

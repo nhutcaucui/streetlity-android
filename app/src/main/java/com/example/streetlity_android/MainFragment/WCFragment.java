@@ -2,11 +2,13 @@ package com.example.streetlity_android.MainFragment;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -21,6 +23,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -32,16 +35,26 @@ import android.widget.Toast;
 
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.example.streetlity_android.MainNavigationHolder;
 import com.example.streetlity_android.MapAPI;
 import com.example.streetlity_android.MapsActivity;
 import com.example.streetlity_android.MyApplication;
 import com.example.streetlity_android.R;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -63,7 +76,7 @@ import static androidx.constraintlayout.widget.Constraints.TAG;
  * Use the {@link WCFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class WCFragment extends Fragment implements LocationListener {
+public class WCFragment extends Fragment implements LocationListener, OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -78,6 +91,14 @@ public class WCFragment extends Fragment implements LocationListener {
     ArrayList<MapObject> displayItems= new ArrayList<>();
     ArrayList<MapObject> searchItems= new ArrayList<>();
     MapObjectAdapter adapter;
+
+    Marker currentPosition;
+
+    ArrayList<MarkerOptions> mMarkerOptions = new ArrayList<MarkerOptions>();
+    ArrayList<Marker> mMarkers = new ArrayList<>();
+    ArrayList<MarkerOptions> searchMakers = new ArrayList<>();
+
+    GoogleMap mMap;
 
     ProgressBar loading;
     TextView tvNoItem;
@@ -131,6 +152,14 @@ public class WCFragment extends Fragment implements LocationListener {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_wc, container, false);
 
+        SupportMapFragment mapFragment = SupportMapFragment.newInstance();
+        FragmentTransaction fragmentTransaction =
+                getChildFragmentManager().beginTransaction();
+        fragmentTransaction.add(R.id.map, mapFragment);
+        fragmentTransaction.commit();
+
+        mapFragment.getMapAsync(this);
+
         loading = rootView.findViewById(R.id.loading);
         tvNoItem = rootView.findViewById(R.id.no_item);
         tvNoInternet = rootView.findViewById(R.id.no_internet);
@@ -155,53 +184,53 @@ public class WCFragment extends Fragment implements LocationListener {
             }
         });
 
-        locationManager = (LocationManager)
-                getActivity().getSystemService(Context.LOCATION_SERVICE);
-        boolean gps_enabled = false;
-        boolean network_enabled = false;
-
-        try {
-            gps_enabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-        } catch(Exception ex) {}
-
-        try {
-            network_enabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-        } catch(Exception ex) {}
-
-        if(!gps_enabled && !network_enabled) {
-            // notify user
-            AlertDialog al =new AlertDialog.Builder(getActivity())
-                    .setMessage(R.string.location_services_off)
-                    .setPositiveButton(R.string.open_settings, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface paramDialogInterface, int paramInt) {
-                            startActivityForResult(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS),1);
-                            paramDialogInterface.dismiss();
-                        }
-                    })
-                    .setCancelable(false)
-                    .show();
-        }
-        else {
-
-            if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
-                    ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                Location location = locationManager.getLastKnownLocation(locationManager
-                        .NETWORK_PROVIDER);
-                if (location == null) {
-                    loading.setVisibility(View.GONE);
-                    locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME, MIN_DISTANCE, this);
-                    ((MainNavigationHolder) getActivity()).getCantFind().setVisibility(View.VISIBLE);
-                    Log.e("", "onMapReady: MULL");
-                } else {
-                    currLat = (float) location.getLatitude();
-                    currLon = (float) location.getLongitude();
-                    callWC(currLat, currLon, (float) 0);
-                }
-                Log.e("", "onMapReady: " + currLat + " , " + currLon);
-            }
-
-        }
+//        locationManager = (LocationManager)
+//                getActivity().getSystemService(Context.LOCATION_SERVICE);
+//        boolean gps_enabled = false;
+//        boolean network_enabled = false;
+//
+//        try {
+//            gps_enabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+//        } catch(Exception ex) {}
+//
+//        try {
+//            network_enabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+//        } catch(Exception ex) {}
+//
+//        if(!gps_enabled && !network_enabled) {
+//            // notify user
+//            AlertDialog al =new AlertDialog.Builder(getActivity())
+//                    .setMessage(R.string.location_services_off)
+//                    .setPositiveButton(R.string.open_settings, new DialogInterface.OnClickListener() {
+//                        @Override
+//                        public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+//                            startActivityForResult(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS),1);
+//                            paramDialogInterface.dismiss();
+//                        }
+//                    })
+//                    .setCancelable(false)
+//                    .show();
+//        }
+//        else {
+//
+//            if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
+//                    ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+//                Location location = locationManager.getLastKnownLocation(locationManager
+//                        .NETWORK_PROVIDER);
+//                if (location == null) {
+//                    loading.setVisibility(View.GONE);
+//                    locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME, MIN_DISTANCE, this);
+//                    ((MainNavigationHolder) getActivity()).getCantFind().setVisibility(View.VISIBLE);
+//                    Log.e("", "onMapReady: MULL");
+//                } else {
+//                    currLat = (float) location.getLatitude();
+//                    currLon = (float) location.getLongitude();
+//                    callWC(currLat, currLon, (float) 0);
+//                }
+//                Log.e("", "onMapReady: " + currLat + " , " + currLon);
+//            }
+//
+//        }
 
         final SeekBar sb = rootView.findViewById(R.id.sb_range);
         ImageButton imgSearch = rootView.findViewById(R.id.img_btn_confirm_range);
@@ -264,6 +293,7 @@ public class WCFragment extends Fragment implements LocationListener {
 
     public void findLocation(String address){
         searchItems.clear();
+        searchMakers.clear();
         Retrofit retro = new Retrofit.Builder().baseUrl("https://maps.googleapis.com/maps/api/geocode/")
                 .addConverterFactory(GsonConverterFactory.create()).build();
         Retrofit retro2 = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getServiceURL())
@@ -347,8 +377,13 @@ public class WCFragment extends Fragment implements LocationListener {
                                                     isSearch = true;
 
                                                     displayItems.clear();
-displayItems.addAll(searchItems);
-locationManager.removeUpdates(WCFragment.this);
+                                                    displayItems.addAll(searchItems);
+                                                    locationManager.removeUpdates(WCFragment.this);
+
+                                                    mMarkers.clear();
+                                                    for(int i =0;i< displayItems.size();i++){
+                                                        addWCMarkerToSearchList(displayItems.get(i).getLat(), displayItems.get(i).getLon());
+                                                    }
 
                                                     getActivity().findViewById(R.id.layout_range).setVisibility(View.GONE);
 
@@ -432,6 +467,7 @@ locationManager.removeUpdates(WCFragment.this);
         super.onAttach(context);
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
+            ((MainNavigationHolder)getActivity()).getLoading().setVisibility(View.GONE);
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
@@ -442,6 +478,134 @@ locationManager.removeUpdates(WCFragment.this);
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        mMap = googleMap;
+        mMap.setOnMarkerClickListener((GoogleMap.OnMarkerClickListener) this);
+
+        locationManager = (LocationManager)
+                getActivity().getSystemService(Context.LOCATION_SERVICE);
+        boolean gps_enabled = false;
+        boolean network_enabled = false;
+
+        try {
+            gps_enabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        } catch(Exception ex) {}
+
+        try {
+            network_enabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+        } catch(Exception ex) {}
+
+        if(!gps_enabled && !network_enabled) {
+            // notify user
+            new AlertDialog.Builder(getActivity())
+                    .setMessage(R.string.location_services_off)
+                    .setPositiveButton(R.string.open_settings, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+                            startActivityForResult(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS),1);
+                            paramDialogInterface.dismiss();
+                        }
+                    })
+                    .setCancelable(false)
+                    .show();
+        }
+        else {
+            if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
+                    ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                Location location = locationManager.getLastKnownLocation(locationManager
+                        .NETWORK_PROVIDER);
+
+                if (location == null) {
+                    locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME, MIN_DISTANCE, this);
+                    loading.setVisibility(View.GONE);
+                    ((MainNavigationHolder) getActivity()).getCantFind().setVisibility(View.VISIBLE);
+                    Log.e("", "onMapReady: MULL");
+                } else {
+                    currLat = (float) location.getLatitude();
+                    currLon = (float) location.getLongitude();
+                    callWC(currLat, currLon, (float) 1000);
+
+                    MarkerOptions curPositionMark = new MarkerOptions();
+                    curPositionMark.position(new LatLng(currLat,currLon));
+                    curPositionMark.title("You are here");
+                    currentPosition = mMap.addMarker(curPositionMark);
+
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(currLat, currLon), 13f));
+                }
+                Log.e("", "onMapReady: " + currLat + " , " + currLon);
+            }
+
+        }
+    }
+
+    @Override
+    public boolean onMarkerClick(final Marker marker) {
+
+        if(!marker.equals(currentPosition)) {
+
+            for(int i = 0; i < mMarkers.size();i++){
+                if(mMarkers.get(i).equals(marker)){
+                    final LayoutInflater inflater = LayoutInflater.from(getActivity().getApplicationContext());
+
+                    final android.view.View dialogView = inflater.inflate(R.layout.dialog_simple_map_info, null);
+
+                    Button btnInfo = dialogView.findViewById(R.id.btn_more_info);
+
+                    TextView tvName = dialogView.findViewById(R.id.tv_name);
+
+                    tvName.setText(displayItems.get(i).getName());
+
+                    TextView tvAddress = dialogView.findViewById(R.id.tv_address);
+
+                    tvAddress.setText(displayItems.get(i).getAddress());
+
+                    TextView tvDistance = dialogView.findViewById(R.id.tv_distance);
+
+                    DecimalFormat df = new DecimalFormat("#.#");
+
+                    float distance = this.displayItems.get(i).getDistance();
+                    String dis = "m";
+                    if(distance > 1000){
+                        dis = "km";
+                        distance = distance / 1000;
+                    }
+                    tvDistance.setText("~" + df.format(distance) + dis);
+
+                    final int pos = i;
+
+                    btnInfo.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            ((MainNavigationHolder) getActivity()).getLoading().setVisibility(View.VISIBLE);
+                            Intent t = new Intent(getActivity(), MapsActivity.class);
+                            t.putExtra("currLat", currLat);
+                            t.putExtra("currLon", currLon);
+                            t.putExtra("item", displayItems.get(pos));
+                            Log.e("", "onItemClick: " + displayItems.get(pos).getId());
+                            locationManager.removeUpdates(WCFragment.this);
+                            startActivity(t);
+                        }
+                    });
+
+                    final Dialog dialog = new Dialog(getActivity(), android.R.style.Theme_Black_NoTitleBar);
+                    dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.argb(100, 0, 0, 0)));
+                    dialog.setContentView(dialogView);
+                    dialog.setCanceledOnTouchOutside(true);
+                    dialog.setCancelable(true);
+
+                    dialog.show();
+                }
+            }
+
+
+        }
+
+        marker.showInfoWindow();
+
+        return true;
     }
 
     /**
@@ -459,23 +623,36 @@ locationManager.removeUpdates(WCFragment.this);
         void onFragmentInteraction(Uri uri);
     }
 
-    public void changeRange(float range){
+    public void addCurrMarker(){
+        MarkerOptions curPositionMark = new MarkerOptions();
+        curPositionMark.position(new LatLng(currLat,currLon));
+        curPositionMark.title("You are here");
+        currentPosition = mMap.addMarker(curPositionMark);
+    }
+
+    public void changeRange(float range) {
         loading.setIndeterminate(true);
         loading.setVisibility(View.VISIBLE);
         displayItems.clear();
-        for(MapObject item: items){
-            if (item.getDistance() <= (range*1000)){
-                displayItems.add(item);
+        mMarkers.clear();
+        mMap.clear();
+
+        addCurrMarker();
+
+        for (int i =0 ;i<items.size();i++) {
+            if (items.get(i).getDistance() <= (range * 1000)) {
+                displayItems.add(items.get(i));
+                mMarkers.add(mMap.addMarker(mMarkerOptions.get(i)));
             }
         }
+
         adapter.notifyDataSetChanged();
         loading.setVisibility(View.GONE);
-        if(displayItems.size()==0){
+        if (displayItems.size() == 0) {
             tvNoItem.setVisibility(View.VISIBLE);
+        } else {
+            tvNoItem.setVisibility(View.GONE);
         }
-else{
- tvNoItem.setVisibility(View.GONE);
-}
     }
 
     public void callWC(double lat, double lon, float range){
@@ -528,9 +705,12 @@ else{
                                     }
                                 });
 
-                                for(MapObject item: items){
-                                    if (item.getDistance() <= 1000){
-                                        displayItems.add(item);
+                                for(int i = 0; i< items.size();i++){
+                                    addWCMarkerToList(items.get(i).getLat(),
+                                            items.get(i).getLon());
+                                    if (items.get(i).getDistance() <= range) {
+                                        displayItems.add(items.get(i));
+                                        mMarkers.add(mMap.addMarker(mMarkerOptions.get(i)));
                                     }
                                 }
 
@@ -587,7 +767,15 @@ loading.setVisibility(View.GONE);
             ((MainNavigationHolder) getActivity()).getCantFind().setVisibility(View.GONE);
             callWC(location.getLatitude(), location.getLongitude(), 0);
         }
-            locationManager.removeUpdates(this);
+
+        MarkerOptions curPositionMark = new MarkerOptions();
+        curPositionMark.position(new LatLng(currLat,currLon));
+        curPositionMark.title("You are here");
+        mMap.addMarker(curPositionMark);
+
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(currLat, currLon), 13f));
+
+        locationManager.removeUpdates(this);
     }
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {
@@ -651,6 +839,26 @@ loading.setVisibility(View.GONE);
 
             }
         }
+    }
+
+    public void addWCMarkerToList(float lat, float lon){
+        LatLng pos = new LatLng(lat,lon);
+        MarkerOptions option = new MarkerOptions();
+        option.title(getString(R.string.wc));
+        option.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_fuel));
+        option.position(pos);
+        mMarkerOptions.add(option);
+        //mMarkers.add(mMap.addMarker(option));
+    }
+
+    public void addWCMarkerToSearchList(float lat, float lon){
+        LatLng pos = new LatLng(lat,lon);
+        MarkerOptions option = new MarkerOptions();
+        option.title(getString(R.string.wc));
+        option.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_fuel));
+        option.position(pos);
+        searchMakers.add(option);
+        mMarkers.add(mMap.addMarker(option));
     }
 
     private boolean isNetworkAvailable() {

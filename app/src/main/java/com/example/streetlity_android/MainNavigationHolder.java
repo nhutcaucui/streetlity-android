@@ -63,6 +63,7 @@ import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -81,6 +82,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
 
 public class MainNavigationHolder extends AppCompatActivity implements FuelFragment.OnFragmentInteractionListener,
         ATMFragment.OnFragmentInteractionListener, MaintenanceFragment.OnFragmentInteractionListener,
@@ -116,6 +118,24 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
         startService(new Intent(getBaseContext(), ServiceChecking.class));
 
         //getSharedPreferences("activeOrder",MODE_PRIVATE).edit().clear().apply();
+
+        ImageView imgSwitch = findViewById(R.id.img_switch);
+        imgSwitch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ListView lv = findViewById(R.id.list_view);
+                LinearLayout layoutMap = findViewById(R.id.layout_map);
+                if(lv.getVisibility() == VISIBLE){
+                    lv.setVisibility(GONE);
+                    layoutMap.setVisibility(VISIBLE);
+                    imgSwitch.setImageResource(R.drawable.list_map);
+                }else{
+                    lv.setVisibility(VISIBLE);
+                    layoutMap.setVisibility(GONE);
+                    imgSwitch.setImageResource(R.drawable.location);
+                }
+            }
+        });
 
         if(getSharedPreferences("spam", MODE_PRIVATE).contains("spam")){
             canBroadcast = false;
@@ -159,8 +179,6 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
             }
         }
 
-
-
         FloatingActionButton fab = findViewById(R.id.chat_btn);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -203,14 +221,6 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
         drawer.addDrawerListener(toggle);
 
         NavigationView navView = findViewById(R.id.nav_view);
-
-        ImageButton imgNotify = findViewById(R.id.img_notify);
-        imgNotify.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(MainNavigationHolder.this, Notification.class));
-            }
-        });
 
         SharedPreferences s = getSharedPreferences("userPref", Context.MODE_PRIVATE);
         if (s.contains("token")){
@@ -311,8 +321,6 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
             View header=navView.getHeaderView(0);
             TextView tvUsername = header.findViewById(R.id.username);
             tvUsername.setText(MyApplication.getInstance().getUsername());
-
-            imgNotify.setVisibility(View.VISIBLE);
         }else{
             setDrawerForNonUser(navView);
         }
@@ -367,25 +375,37 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
             setToUnselect(current);
             current= R.id.btn_home_bottom;
             setToSelect(current);
-
+            findViewById(R.id.img_switch).setVisibility(GONE);
             notTheSame = true;
         }else if(v.getId() == R.id.btn_fuel_bottom && current != R.id.btn_fuel_bottom){
             fragment = new FuelFragment();
             setToUnselect(current);
             current= R.id.btn_fuel_bottom;
             setToSelect(current);
+
+            findViewById(R.id.img_switch).setVisibility(View.VISIBLE);
+            ((ImageView) findViewById(R.id.img_switch)).setImageResource(R.drawable.location);
+
             notTheSame = true;
         }else if(v.getId() == R.id.btn_wc_bottom && current != R.id.btn_wc_bottom) {
             fragment = new WCFragment();
             setToUnselect(current);
             current = R.id.btn_wc_bottom;
             setToSelect(current);
+
+            findViewById(R.id.img_switch).setVisibility(View.VISIBLE);
+            ((ImageView) findViewById(R.id.img_switch)).setImageResource(R.drawable.location);
+
             notTheSame = true;
         }else if(v.getId() == R.id.btn_atm_bottom && current != R.id.btn_atm_bottom) {
             fragment = new ATMFragment();
             setToUnselect(current);
             current = R.id.btn_atm_bottom;
             setToSelect(current);
+
+            findViewById(R.id.img_switch).setVisibility(View.VISIBLE);
+            ((ImageView) findViewById(R.id.img_switch)).setImageResource(R.drawable.location);
+
             notTheSame = true;
         }
         else if(v.getId() == R.id.btn_maintenance_bottom && current != R.id.btn_maintenance_bottom) {
@@ -393,9 +413,14 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
             setToUnselect(current);
             current = R.id.btn_maintenance_bottom;
             setToSelect(current);
+
+            findViewById(R.id.img_switch).setVisibility(View.VISIBLE);
+            ((ImageView) findViewById(R.id.img_switch)).setImageResource(R.drawable.location);
+
             notTheSame = true;
         }
         if(notTheSame) {
+            getLoading().setVisibility(VISIBLE);
             loadFragment(fragment);
         }
     }
@@ -482,11 +507,12 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
 //                    btnBroadcastE.setVisibility(View.VISIBLE);
 //                }
 
-                ImageButton imgNotify = findViewById(R.id.img_notify);
-                imgNotify.setVisibility(View.VISIBLE);
             }else if (requestCode == 2 && resultCode == RESULT_OK) {
                 Toast toast = Toast.makeText(MainNavigationHolder.this, R.string.location_added, Toast.LENGTH_LONG);
                 toast.show();
+            }else if (requestCode == 3 && resultCode == RESULT_OK) {
+                NavigationView navView = findViewById(R.id.nav_view);
+                ((ImageView) navView.findViewById(R.id.avatar)).setImageBitmap(MyApplication.getInstance().getImage());
             } else if (requestCode == 5 && resultCode == RESULT_OK) {
 
                 Toast toast = Toast.makeText(MainNavigationHolder.this, R.string.mark_spam, Toast.LENGTH_LONG);
@@ -577,7 +603,7 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
                 switch (id){
                     case R.id.user_info:
 
-                        startActivity(new Intent(MainNavigationHolder.this, UserInfo.class));
+                        startActivityForResult(new Intent(MainNavigationHolder.this, UserInfo.class), 3);
                         break;
                     case  R.id.logout:
                         logout(navView);
@@ -688,9 +714,6 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
                             SharedPreferences.Editor e = s.edit();
                             e.clear();
                             e.apply();
-
-                            ImageButton imgNotify = findViewById(R.id.img_notify);
-                            imgNotify.setVisibility(View.GONE);
 
                             navView.getMenu().clear();
                             navView.inflateMenu(R.menu.drawer_menu_user_not_login);
@@ -853,6 +876,8 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
                     try {
                         Bitmap bmp = BitmapFactory.decodeStream(response.body().byteStream());
                         MyApplication.getInstance().setImage(bmp);
+                        NavigationView navView = findViewById(R.id.nav_view);
+                        ((ImageView) navView.findViewById(R.id.avatar)).setImageBitmap(MyApplication.getInstance().getImage());
                     }catch (Exception e){
                         e.printStackTrace();
                     }

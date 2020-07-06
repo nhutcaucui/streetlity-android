@@ -241,4 +241,5 @@
     <string name="maintenance_store">Tiệm sửa xe</string>
     <string name="clear_vote">Hủy phiếu bầu</string>
     <string name="nearby_repairmen">Thợ sửa xe gần đây</string>
+    <string name="more_info">Thông tin chi tiết</string>
 </resources>

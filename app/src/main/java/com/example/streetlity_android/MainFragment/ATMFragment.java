@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -20,13 +21,11 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -40,25 +39,29 @@ import android.widget.Toast;
 
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.fragment.app.FragmentTransaction;
 
-import com.example.streetlity_android.Chat.Chat;
 import com.example.streetlity_android.MainNavigationHolder;
 import com.example.streetlity_android.MapAPI;
 import com.example.streetlity_android.MapsActivity;
 import com.example.streetlity_android.MyApplication;
 import com.example.streetlity_android.R;
-import com.example.streetlity_android.User.UserInfoOther;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.lang.reflect.Field;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -77,7 +80,7 @@ import static androidx.constraintlayout.widget.Constraints.TAG;
  * Use the {@link ATMFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ATMFragment extends Fragment implements LocationListener {
+public class ATMFragment extends Fragment implements LocationListener, OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -92,6 +95,15 @@ public class ATMFragment extends Fragment implements LocationListener {
     ArrayList<MapObject> displayItems = new ArrayList<>();
     ArrayList<MapObject> searchItems = new ArrayList<>();
     ArrayList<BankObject> arrBank = new ArrayList<BankObject>();
+
+    Marker currentPosition;
+
+    GoogleMap mMap;
+
+    ArrayList<MarkerOptions> mMarkerOptions = new ArrayList<MarkerOptions>();
+    ArrayList<Marker> mMarkers = new ArrayList<>();
+    ArrayList<MarkerOptions> searchMakers = new ArrayList<>();
+
     MapObjectAdapter adapter;
     private static final long MIN_TIME = 1;
     private static final float MIN_DISTANCE = 1000;
@@ -153,6 +165,14 @@ public class ATMFragment extends Fragment implements LocationListener {
 
         View rootView = inflater.inflate(R.layout.fragment_atm, container, false);
 
+        SupportMapFragment mapFragment = SupportMapFragment.newInstance();
+        FragmentTransaction fragmentTransaction =
+                getChildFragmentManager().beginTransaction();
+        fragmentTransaction.add(R.id.map, mapFragment);
+        fragmentTransaction.commit();
+
+        mapFragment.getMapAsync(this);
+
         ListView lv = rootView.findViewById(R.id.list_view);
 
         loading = rootView.findViewById(R.id.loading);
@@ -177,53 +197,53 @@ public class ATMFragment extends Fragment implements LocationListener {
             }
         });
 
-        locationManager = (LocationManager)
-                getActivity().getSystemService(Context.LOCATION_SERVICE);
-
-        boolean gps_enabled = false;
-        boolean network_enabled = false;
-
-        try {
-            gps_enabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-        } catch (Exception ex) {
-        }
-
-        try {
-            network_enabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-        } catch (Exception ex) {
-        }
-
-        if (!gps_enabled && !network_enabled) {
-            // notify user
-            new AlertDialog.Builder(getActivity())
-                    .setMessage(R.string.location_services_off)
-                    .setPositiveButton(R.string.open_settings, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface paramDialogInterface, int paramInt) {
-                            startActivityForResult(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS), 1);
-                        }
-                    })
-                    .setCancelable(false)
-                    .show();
-        } else {
-
-            if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
-                    ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                Location location = locationManager.getLastKnownLocation(locationManager
-                        .NETWORK_PROVIDER);
-                if (location == null) {
-                    loading.setVisibility(View.GONE);
-                    ((MainNavigationHolder) getActivity()).getCantFind().setVisibility(View.VISIBLE);
-                    locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME, MIN_DISTANCE, this);
-                    Log.e("", "onMapReady: MULL");
-                } else {
-                    currLat = (float) location.getLatitude();
-                    currLon = (float) location.getLongitude();
-                    callATM(currLat, currLon, (float) 0);
-                }
-                Log.e("", "onMapReady: " + currLat + " , " + currLon);
-            }
-        }
+//        locationManager = (LocationManager)
+//                getActivity().getSystemService(Context.LOCATION_SERVICE);
+//
+//        boolean gps_enabled = false;
+//        boolean network_enabled = false;
+//
+//        try {
+//            gps_enabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+//        } catch (Exception ex) {
+//        }
+//
+//        try {
+//            network_enabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+//        } catch (Exception ex) {
+//        }
+//
+//        if (!gps_enabled && !network_enabled) {
+//            // notify user
+//            new AlertDialog.Builder(getActivity())
+//                    .setMessage(R.string.location_services_off)
+//                    .setPositiveButton(R.string.open_settings, new DialogInterface.OnClickListener() {
+//                        @Override
+//                        public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+//                            startActivityForResult(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS), 1);
+//                        }
+//                    })
+//                    .setCancelable(false)
+//                    .show();
+//        } else {
+//
+//            if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
+//                    ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+//                Location location = locationManager.getLastKnownLocation(locationManager
+//                        .NETWORK_PROVIDER);
+//                if (location == null) {
+//                    loading.setVisibility(View.GONE);
+//                    ((MainNavigationHolder) getActivity()).getCantFind().setVisibility(View.VISIBLE);
+//                    locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME, MIN_DISTANCE, this);
+//                    Log.e("", "onMapReady: MULL");
+//                } else {
+//                    currLat = (float) location.getLatitude();
+//                    currLon = (float) location.getLongitude();
+//                    callATM(currLat, currLon, (float) 0);
+//                }
+//                Log.e("", "onMapReady: " + currLat + " , " + currLon);
+//            }
+//        }
 
 
         final SeekBar sb = rootView.findViewById(R.id.sb_range);
@@ -282,10 +302,14 @@ public class ATMFragment extends Fragment implements LocationListener {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 adapter.getFilter().filter(Integer.toString(arrBank.get(position).getId()));
+                filterMarkerByBank(arrBank.get(position).getName(), sb.getProgress());
                 dialogSearch.hide();
                 edtFind.setText(arrBank.get(position).getName());
                 edtFilter.setText("");
                 adapter1.getFilter().filter("");
+                rootView.findViewById(R.id.layout_revert).setVisibility(View.VISIBLE);
+                rootView.findViewById(R.id.layout_range).setVisibility(View.GONE);
+
             }
         });
 
@@ -352,8 +376,153 @@ public class ATMFragment extends Fragment implements LocationListener {
 
     }
 
+    public void filterMarkerByBank(String name, float range){
+        mMarkers.clear();
+        for (int i = 0 ;i < displayItems.size();i++){
+            if(mMarkerOptions.get(i).getTitle().equals(name) && displayItems.get(i).getDistance()<= (range*1000)){
+                mMarkers.add(mMap.addMarker((mMarkerOptions.get(i))));
+            }
+        }
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        mMap = googleMap;
+        mMap.setOnMarkerClickListener((GoogleMap.OnMarkerClickListener) this);
+
+        locationManager = (LocationManager)
+                getActivity().getSystemService(Context.LOCATION_SERVICE);
+        boolean gps_enabled = false;
+        boolean network_enabled = false;
+
+        try {
+            gps_enabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        } catch(Exception ex) {}
+
+        try {
+            network_enabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+        } catch(Exception ex) {}
+
+        if(!gps_enabled && !network_enabled) {
+            // notify user
+            new AlertDialog.Builder(getActivity())
+                    .setMessage(R.string.location_services_off)
+                    .setPositiveButton(R.string.open_settings, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+                            startActivityForResult(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS),1);
+                            paramDialogInterface.dismiss();
+                        }
+                    })
+                    .setCancelable(false)
+                    .show();
+        }
+        else {
+            if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
+                    ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                Location location = locationManager.getLastKnownLocation(locationManager
+                        .NETWORK_PROVIDER);
+
+                if (location == null) {
+                    locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME, MIN_DISTANCE, this);
+                    loading.setVisibility(View.GONE);
+                    ((MainNavigationHolder) getActivity()).getCantFind().setVisibility(View.VISIBLE);
+                    Log.e("", "onMapReady: MULL");
+                } else {
+                    currLat = (float) location.getLatitude();
+                    currLon = (float) location.getLongitude();
+                    callATM(currLat, currLon, (float) 1000);
+
+                    MarkerOptions curPositionMark = new MarkerOptions();
+                    curPositionMark.position(new LatLng(currLat,currLon));
+                    curPositionMark.title("You are here");
+                    currentPosition = mMap.addMarker(curPositionMark);
+
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(currLat, currLon), 13f));
+                }
+                Log.e("", "onMapReady: " + currLat + " , " + currLon);
+            }
+
+        }
+    }
+
+    @Override
+    public boolean onMarkerClick(final Marker marker) {
+
+        if(!marker.equals(currentPosition)) {
+
+            for(int i = 0; i < mMarkers.size();i++){
+                if(mMarkers.get(i).equals(marker)){
+                    final LayoutInflater inflater = LayoutInflater.from(getActivity().getApplicationContext());
+
+                    final android.view.View dialogView = inflater.inflate(R.layout.dialog_simple_map_info, null);
+
+                    Button btnInfo = dialogView.findViewById(R.id.btn_more_info);
+
+                    TextView tvName = dialogView.findViewById(R.id.tv_name);
+
+                    tvName.setText(displayItems.get(i).getName());
+
+                    TextView tvAddress = dialogView.findViewById(R.id.tv_address);
+
+                    tvAddress.setText(displayItems.get(i).getAddress());
+
+                    TextView tvDistance = dialogView.findViewById(R.id.tv_distance);
+
+                    DecimalFormat df = new DecimalFormat("#.#");
+
+                    float distance = this.displayItems.get(i).getDistance();
+                    String dis = "m";
+                    if(distance > 1000){
+                        dis = "km";
+                        distance = distance / 1000;
+                    }
+                    tvDistance.setText("~" + df.format(distance) + dis);
+
+                    final int pos = i;
+
+                    btnInfo.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            ((MainNavigationHolder) getActivity()).getLoading().setVisibility(View.VISIBLE);
+                            Intent t = new Intent(getActivity(), MapsActivity.class);
+                            t.putExtra("currLat", currLat);
+                            t.putExtra("currLon", currLon);
+                            t.putExtra("item", displayItems.get(pos));
+                            Log.e("", "onItemClick: " + displayItems.get(pos).getId());
+                            locationManager.removeUpdates(ATMFragment.this);
+                            startActivity(t);
+                        }
+                    });
+
+                    final Dialog dialog = new Dialog(getActivity(), android.R.style.Theme_Black_NoTitleBar);
+                    dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.argb(100, 0, 0, 0)));
+                    dialog.setContentView(dialogView);
+                    dialog.setCanceledOnTouchOutside(true);
+                    dialog.setCancelable(true);
+
+                    dialog.show();
+                }
+            }
+
+
+        }
+
+        marker.showInfoWindow();
+
+        return true;
+    }
+
+    public void addCurrMarker(){
+        MarkerOptions curPositionMark = new MarkerOptions();
+        curPositionMark.position(new LatLng(currLat,currLon));
+        curPositionMark.title("You are here");
+        currentPosition = mMap.addMarker(curPositionMark);
+    }
+
     public void findLocation(String address, EditText editText){
         searchItems.clear();
+        searchMakers.clear();
         Retrofit retro = new Retrofit.Builder().baseUrl("https://maps.googleapis.com/maps/api/geocode/")
                 .addConverterFactory(GsonConverterFactory.create()).build();
         Retrofit retro2 = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getServiceURL())
@@ -443,8 +612,13 @@ public class ATMFragment extends Fragment implements LocationListener {
                                                     isSearch = true;
 
                                                     displayItems.clear();
-displayItems.addAll(searchItems);
-locationManager.removeUpdates(ATMFragment.this);
+                                                    displayItems.addAll(searchItems);
+                                                    locationManager.removeUpdates(ATMFragment.this);
+
+                                                    mMarkers.clear();
+                                                    for(int i =0;i< displayItems.size();i++){
+                                                        addATMMarkerToSearchList(displayItems.get(i).getLat(), displayItems.get(i).getLon(), displayItems.get(i).getName());
+                                                    }
 
                                                     getActivity().findViewById(R.id.layout_range).setVisibility(View.GONE);
 
@@ -532,6 +706,8 @@ locationManager.removeUpdates(ATMFragment.this);
         super.onAttach(context);
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
+
+            ((MainNavigationHolder)getActivity()).getLoading().setVisibility(View.GONE);
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
@@ -563,6 +739,19 @@ locationManager.removeUpdates(ATMFragment.this);
         loading.setIndeterminate(true);
         loading.setVisibility(View.VISIBLE);
         displayItems.clear();
+
+        mMarkers.clear();
+        mMap.clear();
+
+        addCurrMarker();
+
+        for (int i =0 ;i<items.size();i++) {
+            if (items.get(i).getDistance() <= (range * 1000)) {
+                displayItems.add(items.get(i));
+                mMarkers.add(mMap.addMarker(mMarkerOptions.get(i)));
+            }
+        }
+
         if(atcpBank!= null)
             atcpBank.setSelection(0);
         for(MapObject item: items){
@@ -641,9 +830,12 @@ else{
                                     }
                                 });
 
-                                for(MapObject item: items){
-                                    if (item.getDistance() <= 1000){
-                                        displayItems.add(item);
+                                for(int i = 0; i< items.size();i++){
+                                    addATMMarkerToList(items.get(i).getLat(),
+                                            items.get(i).getLon(),items.get(i).getName());
+                                    if (items.get(i).getDistance() <= range) {
+                                        displayItems.add(items.get(i));
+                                        mMarkers.add(mMap.addMarker(mMarkerOptions.get(i)));
                                     }
                                 }
 
@@ -785,9 +977,38 @@ loading.setVisibility(View.GONE);
             ((MainNavigationHolder) getActivity()).getCantFind().setVisibility(View.GONE);
             callATM(location.getLatitude(), location.getLongitude(), 0);
         }
-            locationManager.removeUpdates(this);
+
+        MarkerOptions curPositionMark = new MarkerOptions();
+        curPositionMark.position(new LatLng(currLat,currLon));
+        curPositionMark.title("You are here");
+        mMap.addMarker(curPositionMark);
+
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(currLat, currLon), 13f));
+
+        locationManager.removeUpdates(this);
 
     }
+
+    public void addATMMarkerToList(float lat, float lon, String name){
+        LatLng pos = new LatLng(lat,lon);
+        MarkerOptions option = new MarkerOptions();
+        option.title(name);
+        option.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_fuel));
+        option.position(pos);
+        mMarkerOptions.add(option);
+        //mMarkers.add(mMap.addMarker(option));
+    }
+
+    public void addATMMarkerToSearchList(float lat, float lon, String name){
+        LatLng pos = new LatLng(lat,lon);
+        MarkerOptions option = new MarkerOptions();
+        option.title(name);
+        option.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_fuel));
+        option.position(pos);
+        searchMakers.add(option);
+        mMarkers.add(mMap.addMarker(option));
+    }
+
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {
     }
