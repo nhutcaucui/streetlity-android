@@ -953,6 +953,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onStop(){
         super.onStop();
 
+        locationManager.removeUpdates(this);
         e.unsubcribe(listener);
     }
 }

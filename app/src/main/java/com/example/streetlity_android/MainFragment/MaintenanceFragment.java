@@ -926,7 +926,7 @@ public class MaintenanceFragment extends Fragment implements LocationListener, O
         LatLng pos = new LatLng(lat,lon);
         MarkerOptions option = new MarkerOptions();
         option.title(name);
-        option.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_fuel));
+        option.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_maintenance));
         option.position(pos);
         mMarkerOptions.add(option);
         //mMarkers.add(mMap.addMarker(option));
@@ -936,7 +936,7 @@ public class MaintenanceFragment extends Fragment implements LocationListener, O
         LatLng pos = new LatLng(lat,lon);
         MarkerOptions option = new MarkerOptions();
         option.title(name);
-        option.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_fuel));
+        option.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_maintenance));
         option.position(pos);
         searchMakers.add(option);
         mMarkers.add(mMap.addMarker(option));

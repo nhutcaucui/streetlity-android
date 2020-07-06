@@ -647,7 +647,7 @@ public class FuelFragment extends Fragment implements LocationListener, OnMapRea
                                     JSONObject jsonObject1 = jsonArray.getJSONObject(i);
                                     Log.e("", "onResponse: " + jsonObject1.toString());
                                     Log.e("", "onResponse: " + jsonObject1.getInt("Id"));
-                                    MapObject item = new MapObject(jsonObject1.getInt("Id"), "Fuel Station", 3,
+                                    MapObject item = new MapObject(jsonObject1.getInt("Id"), getString(R.string.fuel), 3,
                                             jsonObject1.getString("Address"), (float) jsonObject1.getDouble("Lat"),
                                             (float) jsonObject1.getDouble("Lon"), jsonObject1.getString("Note"), 1);
 

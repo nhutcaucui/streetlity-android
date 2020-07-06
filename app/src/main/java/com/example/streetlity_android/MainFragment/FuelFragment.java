@@ -535,6 +535,11 @@ public class FuelFragment extends Fragment implements LocationListener, OnMapRea
                     tvDistance.setText("~" + df.format(distance) + dis);
 
                     final int pos = i;
+                    final Dialog dialog = new Dialog(getActivity(), android.R.style.Theme_Black_NoTitleBar);
+                    dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.argb(100, 0, 0, 0)));
+                    dialog.setContentView(dialogView);
+                    dialog.setCanceledOnTouchOutside(true);
+                    dialog.setCancelable(true);
 
                     btnInfo.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -547,14 +552,11 @@ public class FuelFragment extends Fragment implements LocationListener, OnMapRea
                             Log.e("", "onItemClick: " + displayItems.get(pos).getId());
                             locationManager.removeUpdates(FuelFragment.this);
                             startActivity(t);
+
+                            dialog.dismiss();
                         }
                     });
 
-                    final Dialog dialog = new Dialog(getActivity(), android.R.style.Theme_Black_NoTitleBar);
-                    dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.argb(100, 0, 0, 0)));
-                    dialog.setContentView(dialogView);
-                    dialog.setCanceledOnTouchOutside(true);
-                    dialog.setCancelable(true);
 
                     dialog.show();
                 }
@@ -644,7 +646,7 @@ public class FuelFragment extends Fragment implements LocationListener, OnMapRea
                                     JSONObject jsonObject1 = jsonArray.getJSONObject(i);
                                     Log.e("", "onResponse: " + jsonObject1.toString());
                                     Log.e("", "onResponse: " + jsonObject1.getInt("Id"));
-                                    MapObject item = new MapObject(jsonObject1.getInt("Id"), "Fuel Station", 3,
+                                    MapObject item = new MapObject(jsonObject1.getInt("Id"), getString(R.string.fuel), 3,
                                             jsonObject1.getString("Address"), (float) jsonObject1.getDouble("Lat"),
                                             (float) jsonObject1.getDouble("Lon"), jsonObject1.getString("Note"), 1);
 

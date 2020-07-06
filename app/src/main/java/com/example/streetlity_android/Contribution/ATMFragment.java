@@ -965,7 +965,7 @@ public class ATMFragment extends Fragment implements LocationListener, OnMapRead
         LatLng pos = new LatLng(lat,lon);
         MarkerOptions option = new MarkerOptions();
         option.title(name);
-        option.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_fuel));
+        option.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_atm));
         option.position(pos);
         mMarkerOptions.add(option);
         //mMarkers.add(mMap.addMarker(option));
@@ -975,7 +975,7 @@ public class ATMFragment extends Fragment implements LocationListener, OnMapRead
         LatLng pos = new LatLng(lat,lon);
         MarkerOptions option = new MarkerOptions();
         option.title(name);
-        option.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_fuel));
+        option.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_atm));
         option.position(pos);
         searchMakers.add(option);
         mMarkers.add(mMap.addMarker(option));

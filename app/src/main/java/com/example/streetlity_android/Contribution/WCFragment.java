@@ -690,7 +690,7 @@ public class WCFragment extends Fragment implements LocationListener, OnMapReady
                                 for (int i = 0; i < jsonArray.length(); i++) {
                                     JSONObject jsonObject1 = jsonArray.getJSONObject(i);
                                     Log.e("", "onResponse: " + jsonObject1.toString());
-                                    MapObject item = new MapObject(jsonObject1.getInt("Id"), "Public Toilet", 3,
+                                    MapObject item = new MapObject(jsonObject1.getInt("Id"), getString(R.string.wc), 3,
                                             jsonObject1.getString("Address"), (float) jsonObject1.getDouble("Lat"),
                                             (float) jsonObject1.getDouble("Lon"), jsonObject1.getString("Note"), 2);
 
@@ -852,7 +852,7 @@ public class WCFragment extends Fragment implements LocationListener, OnMapReady
         LatLng pos = new LatLng(lat,lon);
         MarkerOptions option = new MarkerOptions();
         option.title(getString(R.string.wc));
-        option.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_fuel));
+        option.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_wc));
         option.position(pos);
         mMarkerOptions.add(option);
         //mMarkers.add(mMap.addMarker(option));
@@ -862,7 +862,7 @@ public class WCFragment extends Fragment implements LocationListener, OnMapReady
         LatLng pos = new LatLng(lat,lon);
         MarkerOptions option = new MarkerOptions();
         option.title(getString(R.string.wc));
-        option.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_fuel));
+        option.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_wc));
         option.position(pos);
         searchMakers.add(option);
         mMarkers.add(mMap.addMarker(option));
