@@ -32,6 +32,7 @@ import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -69,6 +70,9 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
+
 public class ConfirmLocationsHolder extends AppCompatActivity implements FuelFragment.OnFragmentInteractionListener,
         ATMFragment.OnFragmentInteractionListener, MaintenanceFragment.OnFragmentInteractionListener,
         WCFragment.OnFragmentInteractionListener, View.OnClickListener {
@@ -80,12 +84,16 @@ public class ConfirmLocationsHolder extends AppCompatActivity implements FuelFra
         //you can leave it empty
     }
 
+    ConstraintLayout loading;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_confirm_locations_holder);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        loading = findViewById(R.id.layout_loading);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("");
@@ -105,6 +113,24 @@ public class ConfirmLocationsHolder extends AppCompatActivity implements FuelFra
         btnATM.setOnClickListener(this);
         btnMaintenance.setOnClickListener(this);
         btnWC.setOnClickListener(this);
+
+        ImageView imgSwitch = findViewById(R.id.img_switch);
+        imgSwitch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ListView lv = findViewById(R.id.list_view);
+                LinearLayout layoutMap = findViewById(R.id.layout_map);
+                if(lv.getVisibility() == VISIBLE){
+                    lv.setVisibility(GONE);
+                    layoutMap.setVisibility(VISIBLE);
+                    imgSwitch.setImageResource(R.drawable.list_map);
+                }else{
+                    lv.setVisibility(VISIBLE);
+                    layoutMap.setVisibility(GONE);
+                    imgSwitch.setImageResource(R.drawable.location);
+                }
+            }
+        });
     }
 
     @Override
@@ -137,6 +163,7 @@ public class ConfirmLocationsHolder extends AppCompatActivity implements FuelFra
             notTheSame = true;
         }
         if(notTheSame) {
+            getLoading().setVisibility(View.VISIBLE);
             loadFragment(fragment);
         }
     }
@@ -222,5 +249,9 @@ public class ConfirmLocationsHolder extends AppCompatActivity implements FuelFra
         this.finish();
 
         return true;
+    }
+
+    public ConstraintLayout getLoading() {
+        return loading;
     }
 }

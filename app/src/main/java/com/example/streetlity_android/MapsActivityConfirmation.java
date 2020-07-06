@@ -96,6 +96,8 @@ public class MapsActivityConfirmation extends AppCompatActivity implements OnMap
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("");
 
+        findViewById(R.id.layout_vote).setVisibility(View.GONE);
+
         listener = new EListener<String, String>() {
             @Override
             public void trigger(String s, String s2) {

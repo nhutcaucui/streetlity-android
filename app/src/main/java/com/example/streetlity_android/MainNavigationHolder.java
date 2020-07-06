@@ -612,8 +612,15 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
                         startActivity(new Intent(MainNavigationHolder.this, Works.class));
                         break;
                     case R.id.my_order: {
-                        startActivity(new Intent(MainNavigationHolder.this, MaintainerLocation.class));
-                        startActivity(new Intent( MainNavigationHolder.this, Chat.class));
+                        if(getSharedPreferences("activeOrder",MODE_PRIVATE).contains("activeOrder")) {
+                            Intent t = new Intent(MainNavigationHolder.this, Chat.class);
+                            t.putExtra("id", getSharedPreferences("activeOrder",MODE_PRIVATE).getString("activeOrder",""));
+                            startActivity(new Intent(MainNavigationHolder.this, MaintainerLocation.class));
+                            startActivity(t);
+                        }else{
+                            Toast toast = Toast.makeText(MainNavigationHolder.this, R.string.no_order, Toast.LENGTH_LONG);
+                            toast.show();
+                        }
                         break;
                     }
                     case R.id.contribute:
@@ -757,6 +764,8 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
                             e2.putBoolean("firstBroadcast", false);
                             e2.putBoolean("firstEmergency", false);
                             e2.apply();
+
+                            getSharedPreferences("activeOrder",MODE_PRIVATE).edit().clear().apply();
 
                         }else{
 
