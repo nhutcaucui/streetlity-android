@@ -611,7 +611,7 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
                     case R.id.works:
                         startActivity(new Intent(MainNavigationHolder.this, Works.class));
                         break;
-                    case R.id.my_order: {
+                    case R.id.my_orders: {
                         if(getSharedPreferences("activeOrder",MODE_PRIVATE).contains("activeOrder")) {
                             Intent t = new Intent(MainNavigationHolder.this, Chat.class);
                             t.putExtra("id", getSharedPreferences("activeOrder",MODE_PRIVATE).getString("activeOrder",""));
