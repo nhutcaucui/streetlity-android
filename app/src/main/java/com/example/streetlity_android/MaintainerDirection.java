@@ -33,6 +33,8 @@ import com.akexorcist.googledirection.model.Leg;
 import com.akexorcist.googledirection.model.Route;
 import com.akexorcist.googledirection.util.DirectionConverter;
 import com.example.streetlity_android.Chat.Chat;
+import com.example.streetlity_android.RealtimeService.Information;
+import com.example.streetlity_android.RealtimeService.InformationListener;
 import com.example.streetlity_android.RealtimeService.MaintenanceOrder;
 import com.example.streetlity_android.User.Maintainer.OrderInfo;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -46,6 +48,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
@@ -69,6 +72,11 @@ public class MaintainerDirection extends AppCompatActivity implements OnMapReady
     MaintenanceOrder socket;
 
     boolean initUserDestination = true;
+
+    Information infomation;
+
+    String phone;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,8 +86,6 @@ public class MaintainerDirection extends AppCompatActivity implements OnMapReady
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("");
-
-
 
         ImageButton btnCall = findViewById(R.id.btn_call);
         ImageButton btnChat = findViewById(R.id.btn_chat);
@@ -95,7 +101,7 @@ public class MaintainerDirection extends AppCompatActivity implements OnMapReady
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(Intent.ACTION_DIAL);
-                intent.setData(Uri.parse("tel:0123456789"));
+                intent.setData(Uri.parse("tel:"+phone));
                 startActivity(intent);
             }
         });
@@ -194,6 +200,8 @@ public class MaintainerDirection extends AppCompatActivity implements OnMapReady
             option.rotation(location.getBearing() - 45);
             currMarker = mMap.addMarker(option);
 
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 15f));
+
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 1000, this);
         }
 
@@ -284,7 +292,43 @@ public class MaintainerDirection extends AppCompatActivity implements OnMapReady
             }
         };
 
+        String phone2 = "";
+        if (getSharedPreferences("broadcastPhone", MODE_PRIVATE).contains("phone")) {
+            phone2 = getSharedPreferences("broadcastPhone", MODE_PRIVATE).getString("phone", "no");
+        }
+        if (phone2.equals("")) {
+            phone2 = MyApplication.getInstance().getPhone();
+        }
 
+        final TextView tvPhone = findViewById(R.id.tv_phone);
+        final TextView tvName = findViewById(R.id.tv_name);
+
+        socket.InformationListener = new InformationListener<MaintenanceOrder>() {
+            @Override
+            public void onReceived(MaintenanceOrder sender, Information info) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        infomation = info;
+                        Log.e("", "onReceived: " + info.toString());
+                        phone = info.Phone;
+
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                tvPhone.setText(info.Phone);
+                                tvName.setText(info.Username);
+                            }
+                        });
+                    }
+                });
+
+            }
+        };
+
+        Information myInfo = new Information(MyApplication.getInstance().getUsername(), phone2);
+        socket.sendInformation(myInfo);
+        socket.pullInformation();
     }
 
     public void onLocationChanged(Location location) {

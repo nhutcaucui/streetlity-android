@@ -83,7 +83,7 @@ public class OrderInfo extends AppCompatActivity {
 
         try {
             if (from == 0) {
-                item = new NormalOrderObject(Integer.parseInt(getIntent().getStringExtra("id")), getIntent().getStringExtra("user"),
+                item = new NormalOrderObject(Integer.parseInt(getIntent().getStringExtra("id")), getIntent().getStringExtra("common_user"),
                         getIntent().getStringExtra("reason"));
                 item.setNote(getIntent().getStringExtra("note"));
                // item.setPhone(getIntent().getStringExtra("phone"));

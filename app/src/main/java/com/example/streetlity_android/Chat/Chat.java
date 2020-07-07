@@ -210,11 +210,11 @@ public class Chat extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if(edtMessage.getText().toString().equals("")){
-                    maintenanceOrder.sendTyped(MyApplication.getInstance().getUsername());
-                }else {
-                    maintenanceOrder.sendTyping(MyApplication.getInstance().getUsername());
-                }
+//                if(edtMessage.getText().toString().equals("")){
+//                    maintenanceOrder.sendTyped(MyApplication.getInstance().getUsername());
+//                }else {
+//                    maintenanceOrder.sendTyping(MyApplication.getInstance().getUsername());
+//                }
             }
 
             @Override
@@ -223,33 +223,33 @@ public class Chat extends AppCompatActivity {
             }
         });
 
-        maintenanceOrder.TypingListener = new TypeMessageListener<MaintenanceOrder>(){
-            @Override
-            public void trigger(MaintenanceOrder sender, String typeUser){
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if(findViewById(R.id.tv_chat_username) != null){
-                            ((TextView) findViewById(R.id.tv_chat_username)).setText(typeUser);
-                            findViewById(R.id.layout_is_typing).setVisibility(View.VISIBLE);
-                        }
-                    }
-                });
-            }
+//        maintenanceOrder.TypingListener = new TypeMessageListener<MaintenanceOrder>(){
+//            @Override
+//            public void trigger(MaintenanceOrder sender, String typeUser){
+//                runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        if(findViewById(R.id.tv_chat_username) != null){
+//                            ((TextView) findViewById(R.id.tv_chat_username)).setText(typeUser);
+//                            findViewById(R.id.layout_is_typing).setVisibility(View.VISIBLE);
+//                        }
+//                    }
+//                });
+//            }
+//
+//        };
 
-        };
-
-        maintenanceOrder.TypedListener = new TypeMessageListener<MaintenanceOrder>() {
-            @Override
-            public void trigger(MaintenanceOrder sender, String triggeringUser) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        findViewById(R.id.layout_is_typing).setVisibility(View.GONE);
-                    }
-                });
-            }
-        };
+//        maintenanceOrder.TypedListener = new TypeMessageListener<MaintenanceOrder>() {
+//            @Override
+//            public void trigger(MaintenanceOrder sender, String triggeringUser) {
+//                runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        findViewById(R.id.layout_is_typing).setVisibility(View.GONE);
+//                    }
+//                });
+//            }
+//        };
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {

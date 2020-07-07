@@ -21,6 +21,8 @@ import com.akexorcist.googledirection.model.Leg;
 import com.akexorcist.googledirection.model.Route;
 import com.akexorcist.googledirection.util.DirectionConverter;
 import com.example.streetlity_android.Chat.Chat;
+import com.example.streetlity_android.RealtimeService.Information;
+import com.example.streetlity_android.RealtimeService.InformationListener;
 import com.example.streetlity_android.RealtimeService.LocationListener;
 import com.example.streetlity_android.RealtimeService.MaintenanceOrder;
 import com.example.streetlity_android.User.SignUp;
@@ -73,6 +75,12 @@ public class MaintainerLocation extends AppCompatActivity implements OnMapReadyC
     double currLon;
 
     Marker currMarker;
+
+    boolean firstMove = false;
+
+    String phone;
+
+    Information infomation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -273,17 +281,60 @@ public class MaintainerLocation extends AppCompatActivity implements OnMapReadyC
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 1000, this);
         }
 
+        String phone2 = "";
+        if (getSharedPreferences("broadcastPhone", MODE_PRIVATE).contains("phone")) {
+            phone2 = getSharedPreferences("broadcastPhone", MODE_PRIVATE).getString("phone", "no");
+        }
+        if (phone2.equals("")) {
+            phone2 = MyApplication.getInstance().getPhone();
+        }
+
+        final TextView tvPhone = findViewById(R.id.tv_phone);
+        final TextView tvName = findViewById(R.id.tv_name);
+
+        socket.InformationListener = new InformationListener<MaintenanceOrder>() {
+            @Override
+            public void onReceived(MaintenanceOrder sender, Information info) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        infomation = info;
+                        Log.e("", "onReceived: " + info.toString());
+                        phone = info.Phone;
+
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                tvPhone.setText(info.Phone);
+                                tvName.setText(info.Username);
+                            }
+                        });
+                    }
+                });
+
+            }
+        };
+
+        Information myInfo = new Information(MyApplication.getInstance().getUsername(), phone2);
+        socket.sendInformation(myInfo);
+        socket.pullInformation();
     }
 
     public void onLocationChanged(Location location) {
         if(currMarker!= null) {
             currMarker.remove();
         }
+
         MarkerOptions currOption = new MarkerOptions();
         currOption.position(new LatLng(location.getLatitude(),location.getLongitude()));
         currOption.title(getString(R.string.you_r_here));
         currOption.icon(BitmapDescriptorFactory.fromResource(R.drawable.user));
         currMarker = mMap.addMarker(currOption);
+
+        if(!firstMove){
+            firstMove = false;
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 15f));
+        }
 
         if(socket != null){
             socket.updateLocation(location.getLatitude(),location.getLongitude(),location.getBearing());
