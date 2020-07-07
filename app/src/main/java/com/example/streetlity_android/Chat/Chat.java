@@ -84,7 +84,7 @@ public class Chat extends AppCompatActivity {
 
         SharedPreferences s = getSharedPreferences("Room", MODE_PRIVATE);
         if (getIntent().getExtras() != null) {
-            if (!getIntent().getExtras().containsKey("id")) {
+            if (getIntent().getExtras().containsKey("id")) {
                 s.edit().putString("room", getIntent().getStringExtra("id")).apply();
             }
         }
