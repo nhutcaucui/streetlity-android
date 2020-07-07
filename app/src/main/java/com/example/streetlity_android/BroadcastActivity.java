@@ -137,7 +137,7 @@ public class BroadcastActivity extends AppCompatActivity {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
                 ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             Location location = locationManager.getLastKnownLocation(locationManager
-                    .NETWORK_PROVIDER);
+                    .GPS_PROVIDER);
             if(location != null) {
                 currLat = (float) location.getLatitude();
                 currLon = (float) location.getLongitude();
@@ -431,9 +431,9 @@ public class BroadcastActivity extends AppCompatActivity {
                             for (int i = 0; i < jsonArray.length(); i++) {
                                 JSONObject jsonObject1 = jsonArray.getJSONObject(i);
                                 if (distance(lat, lon, jsonObject1.getDouble("Lat"), jsonObject1.getDouble("Lon")) < range
-                                        && !jsonObject1.getString("Owner").equals("")) {
+                                        && !jsonObject1.getString("Maintainer").equals("")) {
                                     idList.add(jsonObject1.getInt("Id"));
-                                    maintenanceList.add(jsonObject1.getString("Owner"));
+                                    maintenanceList.add(jsonObject1.getString("Maintainer"));
                                     count++;
                                 }
                             }
@@ -482,12 +482,6 @@ public class BroadcastActivity extends AppCompatActivity {
                                                 String temp = getString(R.string.contacted);
                                                 temp += " " + idList.size();
                                                 temp += " " + getString(R.string.nearby_repairmen);
-
-                                                if(fRange>=1000) {
-                                                    temp += " " + getString(R.string.in_range) + " " + (fRange / 1000) + "km";
-                                                }else{
-                                                    temp += " " + getString(R.string.in_range) + " " + (fRange) + "m";
-                                                }
 
                                                 if(fRange>=1000) {
                                                     temp += " " + getString(R.string.in_range) + " " + (fRange / 1000) + "km";

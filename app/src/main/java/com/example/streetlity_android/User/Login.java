@@ -251,189 +251,192 @@ public class Login extends AppCompatActivity {
                                                     Map<String, Map<String, ActionObject>> upvoteMap = new HashMap<>();
                                                     Map<String, Map<String, ActionObject>> reviewMap = new HashMap<>();
                                                     Map<String, Map<String, ActionObject>> contributeMap = new HashMap<>();
-                                                    jsonObject2 = new JSONObject(jsonObject2.getString("Progress"));
 
-                                                    JSONObject jsonObject3;
-                                                    JSONObject jsonObject4;
+                                                    if(!jsonObject2.getString("Progress").equals("")) {
+                                                        jsonObject2 = new JSONObject(jsonObject2.getString("Progress"));
 
-                                                    if(!jsonObject2.toString().equals("")) {
+                                                        JSONObject jsonObject3;
+                                                        JSONObject jsonObject4;
 
-                                                        if(jsonObject2.has("Upvoted")) {
-                                                            jsonObject3 = jsonObject2.getJSONObject("Upvoted");
-                                                            jsonObject4 = jsonObject3.getJSONObject("Maintenance");
-                                                            if (jsonObject4.length() > 0) {
-                                                                Iterator<String> keys = jsonObject4.keys();
-                                                                Map<String, ActionObject> insideMap = new HashMap<>();
-                                                                while (keys.hasNext()) {
-                                                                    String key = keys.next();
-                                                                    JSONObject jsonObject5 = jsonObject4.getJSONObject(key);
-                                                                    ActionObject ao = new ActionObject(key, jsonObject5.getLong("Time"),
-                                                                            jsonObject5.getString("Action"), jsonObject5.getString("Affect"));
-                                                                    insideMap.put(key, ao);
+                                                        if (!jsonObject2.toString().equals("")) {
+
+                                                            if (jsonObject2.has("Upvoted")) {
+                                                                jsonObject3 = jsonObject2.getJSONObject("Upvoted");
+                                                                jsonObject4 = jsonObject3.getJSONObject("Maintenance");
+                                                                if (jsonObject4.length() > 0) {
+                                                                    Iterator<String> keys = jsonObject4.keys();
+                                                                    Map<String, ActionObject> insideMap = new HashMap<>();
+                                                                    while (keys.hasNext()) {
+                                                                        String key = keys.next();
+                                                                        JSONObject jsonObject5 = jsonObject4.getJSONObject(key);
+                                                                        ActionObject ao = new ActionObject(key, jsonObject5.getLong("Time"),
+                                                                                jsonObject5.getString("Action"), jsonObject5.getString("Affect"));
+                                                                        insideMap.put(key, ao);
+                                                                    }
+                                                                    upvoteMap.put("Maintenance", insideMap);
                                                                 }
-                                                                upvoteMap.put("Maintenance", insideMap);
+
+
+                                                                jsonObject4 = jsonObject3.getJSONObject("Atm");
+                                                                if (jsonObject4.length() > 0) {
+                                                                    Iterator<String> keys = jsonObject4.keys();
+                                                                    Map<String, ActionObject> insideMap = new HashMap<>();
+                                                                    while (keys.hasNext()) {
+                                                                        String key = keys.next();
+                                                                        JSONObject jsonObject5 = jsonObject4.getJSONObject(key);
+                                                                        ActionObject ao = new ActionObject(key, jsonObject5.getLong("Time"),
+                                                                                jsonObject5.getString("Action"), jsonObject5.getString("Affect"));
+                                                                        insideMap.put(key, ao);
+                                                                    }
+                                                                    upvoteMap.put("Atm", insideMap);
+                                                                }
+
+                                                                jsonObject4 = jsonObject3.getJSONObject("Fuel");
+                                                                if (jsonObject4.length() > 0) {
+                                                                    Iterator<String> keys = jsonObject4.keys();
+                                                                    Map<String, ActionObject> insideMap = new HashMap<>();
+                                                                    while (keys.hasNext()) {
+                                                                        String key = keys.next();
+                                                                        JSONObject jsonObject5 = jsonObject4.getJSONObject(key);
+                                                                        ActionObject ao = new ActionObject(key, jsonObject5.getLong("Time"),
+                                                                                jsonObject5.getString("Action"), jsonObject5.getString("Affect"));
+                                                                        insideMap.put(key, ao);
+                                                                    }
+                                                                    upvoteMap.put("Fuel", insideMap);
+                                                                }
+
+                                                                jsonObject4 = jsonObject3.getJSONObject("Toilet");
+                                                                if (jsonObject4.length() > 0) {
+                                                                    Iterator<String> keys = jsonObject4.keys();
+                                                                    Map<String, ActionObject> insideMap = new HashMap<>();
+                                                                    while (keys.hasNext()) {
+                                                                        String key = keys.next();
+                                                                        JSONObject jsonObject5 = jsonObject4.getJSONObject(key);
+                                                                        ActionObject ao = new ActionObject(key, jsonObject5.getLong("Time"),
+                                                                                jsonObject5.getString("Action"), jsonObject5.getString("Affect"));
+                                                                        insideMap.put(key, ao);
+                                                                    }
+                                                                    upvoteMap.put("Toilet", insideMap);
+                                                                }
                                                             }
 
+                                                            if (jsonObject2.has("Reviewed")) {
 
-                                                            jsonObject4 = jsonObject3.getJSONObject("Atm");
-                                                            if (jsonObject4.length() > 0) {
-                                                                Iterator<String> keys = jsonObject4.keys();
-                                                                Map<String, ActionObject> insideMap = new HashMap<>();
-                                                                while (keys.hasNext()) {
-                                                                    String key = keys.next();
-                                                                    JSONObject jsonObject5 = jsonObject4.getJSONObject(key);
-                                                                    ActionObject ao = new ActionObject(key, jsonObject5.getLong("Time"),
-                                                                            jsonObject5.getString("Action"), jsonObject5.getString("Affect"));
-                                                                    insideMap.put(key, ao);
+                                                                jsonObject3 = jsonObject2.getJSONObject("Reviewed");
+                                                                jsonObject4 = jsonObject3.getJSONObject("Maintenance");
+                                                                if (jsonObject4.length() > 0) {
+                                                                    Iterator<String> keys = jsonObject4.keys();
+                                                                    Map<String, ActionObject> insideMap = new HashMap<>();
+                                                                    while (keys.hasNext()) {
+                                                                        String key = keys.next();
+                                                                        JSONObject jsonObject5 = jsonObject4.getJSONObject(key);
+                                                                        ActionObject ao = new ActionObject(key, jsonObject5.getLong("Time"),
+                                                                                jsonObject5.getString("Action"), jsonObject5.getString("Affect"));
+                                                                        insideMap.put(key, ao);
+                                                                    }
+                                                                    reviewMap.put("Maintenance", insideMap);
                                                                 }
-                                                                upvoteMap.put("Atm", insideMap);
+
+                                                                jsonObject4 = jsonObject3.getJSONObject("Atm");
+                                                                if (jsonObject4.length() > 0) {
+                                                                    Iterator<String> keys = jsonObject4.keys();
+                                                                    Map<String, ActionObject> insideMap = new HashMap<>();
+                                                                    while (keys.hasNext()) {
+                                                                        String key = keys.next();
+                                                                        JSONObject jsonObject5 = jsonObject4.getJSONObject(key);
+                                                                        ActionObject ao = new ActionObject(key, jsonObject5.getLong("Time"),
+                                                                                jsonObject5.getString("Action"), jsonObject5.getString("Affect"));
+                                                                        insideMap.put(key, ao);
+                                                                    }
+                                                                    reviewMap.put("Atm", insideMap);
+                                                                }
+
+                                                                jsonObject4 = jsonObject3.getJSONObject("Fuel");
+                                                                if (jsonObject4.length() > 0) {
+                                                                    Iterator<String> keys = jsonObject4.keys();
+                                                                    Map<String, ActionObject> insideMap = new HashMap<>();
+                                                                    while (keys.hasNext()) {
+                                                                        String key = keys.next();
+                                                                        JSONObject jsonObject5 = jsonObject4.getJSONObject(key);
+                                                                        ActionObject ao = new ActionObject(key, jsonObject5.getLong("Time"),
+                                                                                jsonObject5.getString("Action"), jsonObject5.getString("Affect"));
+                                                                        insideMap.put(key, ao);
+                                                                    }
+                                                                    reviewMap.put("Fuel", insideMap);
+                                                                }
+
+                                                                jsonObject4 = jsonObject3.getJSONObject("Toilet");
+                                                                if (jsonObject4.length() > 0) {
+                                                                    Iterator<String> keys = jsonObject4.keys();
+                                                                    Map<String, ActionObject> insideMap = new HashMap<>();
+                                                                    while (keys.hasNext()) {
+                                                                        String key = keys.next();
+                                                                        JSONObject jsonObject5 = jsonObject4.getJSONObject(key);
+                                                                        ActionObject ao = new ActionObject(key, jsonObject5.getLong("Time"),
+                                                                                jsonObject5.getString("Action"), jsonObject5.getString("Affect"));
+                                                                        insideMap.put(key, ao);
+                                                                    }
+                                                                    reviewMap.put("Toilet", insideMap);
+                                                                }
                                                             }
 
-                                                            jsonObject4 = jsonObject3.getJSONObject("Fuel");
-                                                            if (jsonObject4.length() > 0) {
-                                                                Iterator<String> keys = jsonObject4.keys();
-                                                                Map<String, ActionObject> insideMap = new HashMap<>();
-                                                                while (keys.hasNext()) {
-                                                                    String key = keys.next();
-                                                                    JSONObject jsonObject5 = jsonObject4.getJSONObject(key);
-                                                                    ActionObject ao = new ActionObject(key, jsonObject5.getLong("Time"),
-                                                                            jsonObject5.getString("Action"), jsonObject5.getString("Affect"));
-                                                                    insideMap.put(key, ao);
+                                                            if (jsonObject2.has("Contributed")) {
+                                                                jsonObject3 = jsonObject2.getJSONObject("Contributed");
+                                                                jsonObject4 = jsonObject3.getJSONObject("Maintenance");
+                                                                if (jsonObject4.length() > 0) {
+                                                                    Iterator<String> keys = jsonObject4.keys();
+                                                                    Map<String, ActionObject> insideMap = new HashMap<>();
+                                                                    while (keys.hasNext()) {
+                                                                        String key = keys.next();
+                                                                        JSONObject jsonObject5 = jsonObject4.getJSONObject(key);
+                                                                        ActionObject ao = new ActionObject(key, jsonObject5.getLong("Time"),
+                                                                                jsonObject5.getString("Action"), jsonObject5.getString("Affect"));
+                                                                        insideMap.put(key, ao);
+                                                                    }
+                                                                    contributeMap.put("Maintenance", insideMap);
                                                                 }
-                                                                upvoteMap.put("Fuel", insideMap);
-                                                            }
 
-                                                            jsonObject4 = jsonObject3.getJSONObject("Toilet");
-                                                            if (jsonObject4.length() > 0) {
-                                                                Iterator<String> keys = jsonObject4.keys();
-                                                                Map<String, ActionObject> insideMap = new HashMap<>();
-                                                                while (keys.hasNext()) {
-                                                                    String key = keys.next();
-                                                                    JSONObject jsonObject5 = jsonObject4.getJSONObject(key);
-                                                                    ActionObject ao = new ActionObject(key, jsonObject5.getLong("Time"),
-                                                                            jsonObject5.getString("Action"), jsonObject5.getString("Affect"));
-                                                                    insideMap.put(key, ao);
+                                                                jsonObject4 = jsonObject3.getJSONObject("Atm");
+                                                                if (jsonObject4.length() > 0) {
+                                                                    Iterator<String> keys = jsonObject4.keys();
+                                                                    Map<String, ActionObject> insideMap = new HashMap<>();
+                                                                    while (keys.hasNext()) {
+                                                                        String key = keys.next();
+                                                                        JSONObject jsonObject5 = jsonObject4.getJSONObject(key);
+                                                                        ActionObject ao = new ActionObject(key, jsonObject5.getLong("Time"),
+                                                                                jsonObject5.getString("Action"), jsonObject5.getString("Affect"));
+                                                                        insideMap.put(key, ao);
+                                                                    }
+                                                                    contributeMap.put("Atm", insideMap);
                                                                 }
-                                                                upvoteMap.put("Toilet", insideMap);
-                                                            }
-                                                        }
 
-                                                        if(jsonObject2.has("Reviewed")) {
-
-                                                            jsonObject3 = jsonObject2.getJSONObject("Reviewed");
-                                                            jsonObject4 = jsonObject3.getJSONObject("Maintenance");
-                                                            if (jsonObject4.length() > 0) {
-                                                                Iterator<String> keys = jsonObject4.keys();
-                                                                Map<String, ActionObject> insideMap = new HashMap<>();
-                                                                while (keys.hasNext()) {
-                                                                    String key = keys.next();
-                                                                    JSONObject jsonObject5 = jsonObject4.getJSONObject(key);
-                                                                    ActionObject ao = new ActionObject(key, jsonObject5.getLong("Time"),
-                                                                            jsonObject5.getString("Action"), jsonObject5.getString("Affect"));
-                                                                    insideMap.put(key, ao);
+                                                                jsonObject4 = jsonObject3.getJSONObject("Fuel");
+                                                                if (jsonObject4.length() > 0) {
+                                                                    Iterator<String> keys = jsonObject4.keys();
+                                                                    Map<String, ActionObject> insideMap = new HashMap<>();
+                                                                    while (keys.hasNext()) {
+                                                                        String key = keys.next();
+                                                                        JSONObject jsonObject5 = jsonObject4.getJSONObject(key);
+                                                                        ActionObject ao = new ActionObject(key, jsonObject5.getLong("Time"),
+                                                                                jsonObject5.getString("Action"), jsonObject5.getString("Affect"));
+                                                                        insideMap.put(key, ao);
+                                                                    }
+                                                                    contributeMap.put("Fuel", insideMap);
                                                                 }
-                                                                reviewMap.put("Maintenance", insideMap);
-                                                            }
 
-                                                            jsonObject4 = jsonObject3.getJSONObject("Atm");
-                                                            if (jsonObject4.length() > 0) {
-                                                                Iterator<String> keys = jsonObject4.keys();
-                                                                Map<String, ActionObject> insideMap = new HashMap<>();
-                                                                while (keys.hasNext()) {
-                                                                    String key = keys.next();
-                                                                    JSONObject jsonObject5 = jsonObject4.getJSONObject(key);
-                                                                    ActionObject ao = new ActionObject(key, jsonObject5.getLong("Time"),
-                                                                            jsonObject5.getString("Action"), jsonObject5.getString("Affect"));
-                                                                    insideMap.put(key, ao);
+                                                                jsonObject4 = jsonObject3.getJSONObject("Toilet");
+                                                                if (jsonObject4.length() > 0) {
+                                                                    Iterator<String> keys = jsonObject4.keys();
+                                                                    Map<String, ActionObject> insideMap = new HashMap<>();
+                                                                    while (keys.hasNext()) {
+                                                                        String key = keys.next();
+                                                                        JSONObject jsonObject5 = jsonObject4.getJSONObject(key);
+                                                                        ActionObject ao = new ActionObject(key, jsonObject5.getLong("Time"),
+                                                                                jsonObject5.getString("Action"), jsonObject5.getString("Affect"));
+                                                                        insideMap.put(key, ao);
+                                                                    }
+                                                                    contributeMap.put("Toilet", insideMap);
                                                                 }
-                                                                reviewMap.put("Atm", insideMap);
-                                                            }
-
-                                                            jsonObject4 = jsonObject3.getJSONObject("Fuel");
-                                                            if (jsonObject4.length() > 0) {
-                                                                Iterator<String> keys = jsonObject4.keys();
-                                                                Map<String, ActionObject> insideMap = new HashMap<>();
-                                                                while (keys.hasNext()) {
-                                                                    String key = keys.next();
-                                                                    JSONObject jsonObject5 = jsonObject4.getJSONObject(key);
-                                                                    ActionObject ao = new ActionObject(key, jsonObject5.getLong("Time"),
-                                                                            jsonObject5.getString("Action"), jsonObject5.getString("Affect"));
-                                                                    insideMap.put(key, ao);
-                                                                }
-                                                                reviewMap.put("Fuel", insideMap);
-                                                            }
-
-                                                            jsonObject4 = jsonObject3.getJSONObject("Toilet");
-                                                            if (jsonObject4.length() > 0) {
-                                                                Iterator<String> keys = jsonObject4.keys();
-                                                                Map<String, ActionObject> insideMap = new HashMap<>();
-                                                                while (keys.hasNext()) {
-                                                                    String key = keys.next();
-                                                                    JSONObject jsonObject5 = jsonObject4.getJSONObject(key);
-                                                                    ActionObject ao = new ActionObject(key, jsonObject5.getLong("Time"),
-                                                                            jsonObject5.getString("Action"), jsonObject5.getString("Affect"));
-                                                                    insideMap.put(key, ao);
-                                                                }
-                                                                reviewMap.put("Toilet", insideMap);
-                                                            }
-                                                        }
-
-                                                        if(jsonObject2.has("Contributed")) {
-                                                            jsonObject3 = jsonObject2.getJSONObject("Contributed");
-                                                            jsonObject4 = jsonObject3.getJSONObject("Maintenance");
-                                                            if (jsonObject4.length() > 0) {
-                                                                Iterator<String> keys = jsonObject4.keys();
-                                                                Map<String, ActionObject> insideMap = new HashMap<>();
-                                                                while (keys.hasNext()) {
-                                                                    String key = keys.next();
-                                                                    JSONObject jsonObject5 = jsonObject4.getJSONObject(key);
-                                                                    ActionObject ao = new ActionObject(key, jsonObject5.getLong("Time"),
-                                                                            jsonObject5.getString("Action"), jsonObject5.getString("Affect"));
-                                                                    insideMap.put(key, ao);
-                                                                }
-                                                                contributeMap.put("Maintenance", insideMap);
-                                                            }
-
-                                                            jsonObject4 = jsonObject3.getJSONObject("Atm");
-                                                            if (jsonObject4.length() > 0) {
-                                                                Iterator<String> keys = jsonObject4.keys();
-                                                                Map<String, ActionObject> insideMap = new HashMap<>();
-                                                                while (keys.hasNext()) {
-                                                                    String key = keys.next();
-                                                                    JSONObject jsonObject5 = jsonObject4.getJSONObject(key);
-                                                                    ActionObject ao = new ActionObject(key, jsonObject5.getLong("Time"),
-                                                                            jsonObject5.getString("Action"), jsonObject5.getString("Affect"));
-                                                                    insideMap.put(key, ao);
-                                                                }
-                                                                contributeMap.put("Atm", insideMap);
-                                                            }
-
-                                                            jsonObject4 = jsonObject3.getJSONObject("Fuel");
-                                                            if (jsonObject4.length() > 0) {
-                                                                Iterator<String> keys = jsonObject4.keys();
-                                                                Map<String, ActionObject> insideMap = new HashMap<>();
-                                                                while (keys.hasNext()) {
-                                                                    String key = keys.next();
-                                                                    JSONObject jsonObject5 = jsonObject4.getJSONObject(key);
-                                                                    ActionObject ao = new ActionObject(key, jsonObject5.getLong("Time"),
-                                                                            jsonObject5.getString("Action"), jsonObject5.getString("Affect"));
-                                                                    insideMap.put(key, ao);
-                                                                }
-                                                                contributeMap.put("Fuel", insideMap);
-                                                            }
-
-                                                            jsonObject4 = jsonObject3.getJSONObject("Toilet");
-                                                            if (jsonObject4.length() > 0) {
-                                                                Iterator<String> keys = jsonObject4.keys();
-                                                                Map<String, ActionObject> insideMap = new HashMap<>();
-                                                                while (keys.hasNext()) {
-                                                                    String key = keys.next();
-                                                                    JSONObject jsonObject5 = jsonObject4.getJSONObject(key);
-                                                                    ActionObject ao = new ActionObject(key, jsonObject5.getLong("Time"),
-                                                                            jsonObject5.getString("Action"), jsonObject5.getString("Affect"));
-                                                                    insideMap.put(key, ao);
-                                                                }
-                                                                contributeMap.put("Toilet", insideMap);
                                                             }
                                                         }
                                                     }

@@ -199,7 +199,7 @@ public class ATMFragment extends Fragment implements OnMapReadyCallback, GoogleM
         if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
                 ContextCompat.checkSelfPermission(getActivity(),Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             Location location = locationManager.getLastKnownLocation(locationManager
-                    .NETWORK_PROVIDER);
+                    .GPS_PROVIDER);
             if(location == null){
                 Log.e("", "onMapReady: MULL");
             }

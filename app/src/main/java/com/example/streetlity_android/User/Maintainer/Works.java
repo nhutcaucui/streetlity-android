@@ -47,6 +47,7 @@ MyOrders.OnFragmentInteractionListener, OrderHistory.OnFragmentInteractionListen
         setSupportActionBar(toolbar);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle("");
 
         if(getIntent().getIntExtra("isRoot",0) == 1){
             moveTaskToBack(true);

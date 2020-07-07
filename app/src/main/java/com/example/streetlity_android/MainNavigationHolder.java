@@ -310,7 +310,7 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
                             }
 
                         }
-                    }, 5000, 5000);
+                    }, 5000, 600000);
                 }
             }
 
@@ -497,6 +497,10 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
                 TextView tvUsername = header.findViewById(R.id.username);
                 tvUsername.setText(MyApplication.getInstance().getUsername());
 
+                if(MyApplication.getInstance().getImage()!= null) {
+                    ((ImageView) navView.findViewById(R.id.avatar)).setImageBitmap(MyApplication.getInstance().getImage());
+                }
+
 //                LinearLayout btnBroadcast = findViewById(R.id.btn_broadcast);
 //                if(btnBroadcast != null){
 //                    btnBroadcast.setVisibility(View.VISIBLE);
@@ -632,6 +636,9 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
                     case R.id.about:
                         startActivity(new Intent(MainNavigationHolder.this, AboutUs.class));
                         break;
+                    case R.id.settings:
+                        startActivity(new Intent(MainNavigationHolder.this, Options.class));
+                        break;
                 }
 
                 return true;
@@ -706,6 +713,32 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
                                     }
                                 });
                             }
+                            if(MyApplication.getInstance().getUserType() == 7) {
+                                if (MyApplication.getInstance().getOption().isAcceptEmergency()) {
+                                    Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getMaintenanceURL())
+                                            .addConverterFactory(GsonConverterFactory.create()).build();
+                                    final MapAPI tour = retro.create(MapAPI.class);
+                                    call = tour.removeEmergency(MyApplication.getInstance().getUsername());
+                                    call.enqueue(new Callback<ResponseBody>() {
+                                        @Override
+                                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                            if (response.code() == 200) {
+                                                try {
+                                                    JSONObject jsonObject1 = new JSONObject(response.body().string());
+                                                    Log.e("TAG", "onResponse: " + jsonObject1);
+                                                } catch (Exception e) {
+                                                    e.printStackTrace();
+                                                }
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                                        }
+                                    });
+                                }
+                            }
                             
                             ((MyApplication) MainNavigationHolder.this.getApplication()).setToken("");
                             ((MyApplication) MainNavigationHolder.this.getApplication()).setRefreshToken("");
@@ -724,6 +757,8 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
 
                             navView.getMenu().clear();
                             navView.inflateMenu(R.menu.drawer_menu_user_not_login);
+
+                            ((ImageView)navView.findViewById(R.id.avatar)).setImageResource(R.drawable.avatar);
 
                             View header=navView.getHeaderView(0);
                             TextView tvUsername = header.findViewById(R.id.username);
@@ -766,6 +801,8 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
                             e2.apply();
 
                             getSharedPreferences("activeOrder",MODE_PRIVATE).edit().clear().apply();
+
+                            getSharedPreferences("acceptEmergency",MODE_PRIVATE).edit().clear().apply();
 
                         }else{
 

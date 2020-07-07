@@ -338,8 +338,8 @@ public class HomeFragment extends Fragment implements LocationListener{
             if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
                     ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                 Location location = locationManager.getLastKnownLocation(locationManager
-                        .NETWORK_PROVIDER);
-                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME, MIN_DISTANCE, this);
+                        .GPS_PROVIDER);
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, MIN_TIME, MIN_DISTANCE, this);
                 if (location == null) {
                     ((MainNavigationHolder) getActivity()).getCantFind().setVisibility(View.VISIBLE);
                     Log.e("", "onMapReady: MULL");
@@ -447,11 +447,11 @@ public class HomeFragment extends Fragment implements LocationListener{
                 if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
                         ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                     Location location = locationManager.getLastKnownLocation(locationManager
-                            .NETWORK_PROVIDER);
+                            .GPS_PROVIDER);
                     if (location == null) {
 
                         ((MainNavigationHolder) getActivity()).getCantFind().setVisibility(View.VISIBLE);
-                        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME, MIN_DISTANCE, this);
+                        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, MIN_TIME, MIN_DISTANCE, this);
                         Log.e("", "onMapReady: MULL");
                     }
                 }

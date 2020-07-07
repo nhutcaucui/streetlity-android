@@ -85,7 +85,8 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/gif"
             android:layout_centerHorizontal="true"
-            android:padding="10dp"
+            android:gravity="center"
+            android:padding="15dp"
             android:textColor="#fff" />
 
         <TextView

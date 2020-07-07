@@ -131,7 +131,7 @@ public class BroadcastEmergencyActivity extends AppCompatActivity {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
                 ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             Location location = locationManager.getLastKnownLocation(locationManager
-                    .NETWORK_PROVIDER);
+                    .GPS_PROVIDER);
             if(location!= null) {
                 currLat = (float) location.getLatitude();
                 currLon = (float) location.getLongitude();
@@ -483,6 +483,11 @@ public class BroadcastEmergencyActivity extends AppCompatActivity {
                                                 temp += " " + getString(R.string.nearby_repairmen);
 
 
+                                                if(fRange>=1000) {
+                                                    temp += " " + getString(R.string.in_range) + " " + (fRange / 1000) + "km";
+                                                }else{
+                                                    temp += " " + getString(R.string.in_range) + " " + (fRange) + "m";
+                                                }
 
                                                 tvBroadcastTo.setText(temp);
 

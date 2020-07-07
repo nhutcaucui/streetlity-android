@@ -72,7 +72,7 @@ public class Options extends AppCompatActivity {
                         if (ContextCompat.checkSelfPermission(Options.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
                                 ContextCompat.checkSelfPermission(Options.this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                             Location location = locationManager.getLastKnownLocation(locationManager
-                                    .NETWORK_PROVIDER);
+                                    .GPS_PROVIDER);
                             if (location == null) {
                                 final Call<ResponseBody> call2 = tour.createEmergency(MyApplication.getInstance().getUsername(), (float) location.getLatitude(), (float) location.getLongitude());
                                 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1, 1, new LocationListener() {
@@ -141,7 +141,7 @@ public class Options extends AppCompatActivity {
                                                                     }
 
                                                                 }
-                                                            }, 5000, 5000);
+                                                            }, 5000, 600000);
                                                         }
                                                         else{
                                                             MyApplication.getInstance().getThread().cancel();
@@ -205,7 +205,7 @@ public class Options extends AppCompatActivity {
                                                     if (ContextCompat.checkSelfPermission(Options.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
                                                             ContextCompat.checkSelfPermission(Options.this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                                                         Location location = locationManager.getLastKnownLocation(locationManager
-                                                                .NETWORK_PROVIDER);
+                                                                .GPS_PROVIDER);
                                                         if(location != null){
                                                             Call<ResponseBody> call2 = tour.updateLocation(MyApplication.getInstance().getUsername(),
                                                                     (float)location.getLatitude(), (float)location.getLongitude());
@@ -231,7 +231,7 @@ public class Options extends AppCompatActivity {
                                                     }
 
                                                 }
-                                            }, 5000, 5000);
+                                            }, 5000, 600000);
                                         }
                                     } catch (Exception e) {
                                         e.printStackTrace();
