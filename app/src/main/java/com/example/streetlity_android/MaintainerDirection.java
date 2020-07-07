@@ -346,7 +346,7 @@ public class MaintainerDirection extends AppCompatActivity implements OnMapReady
             socket.updateLocation(location.getLatitude(),location.getLongitude(),location.getBearing());
         }
 
-        mMap.animateCamera(CameraUpdateFactory.newLatLng(new LatLng(location.getLatitude(), location.getLongitude())));
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()),15f));
     }
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {

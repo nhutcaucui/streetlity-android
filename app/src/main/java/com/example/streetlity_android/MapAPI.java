@@ -145,7 +145,7 @@ public interface MapAPI {
                               @Field("rtoken") String refreshToken,@Field("deviceToken") String deviceToken);
 
     @FormUrlEncoded
-    @POST("service/maintenance/order")
+    @POST("order/c")
     //@POST("order/request")
     Call<ResponseBody> broadcast(@Header("Version") String version, @Field("common_user") String username, @Field("reason") String reason,
                                  @Field("phone") String phone, @Field("note") String note,
@@ -153,10 +153,10 @@ public interface MapAPI {
                                     @Field("type") int type);
 
     @FormUrlEncoded
-    @POST("service/maintenance/order")
+    @POST("order/e")
     Call<ResponseBody> broadcast(@Header("Version") String version, @Field("common_user") String username, @Field("reason") String reason,
                                  @Field("phone") String phone, @Field("note") String note,
-                                 @Field("maintenance_users") String[] maintenance, @Field("service_id") String[] id,
+                                 @Field("emergency_maintenance") String[] maintenance, @Field("service_id") String[] id,
                                  @Field("type") int type);
 
     @FormUrlEncoded

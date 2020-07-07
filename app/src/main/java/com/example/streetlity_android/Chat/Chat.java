@@ -91,6 +91,7 @@ public class Chat extends AppCompatActivity {
         if (getIntent().getStringExtra("id") != null) {
             Log.e("", "onCreate: " + getIntent().getStringExtra("id"));
             room = getIntent().getStringExtra("id");
+            s.edit().putString("room", getIntent().getStringExtra("id")).apply();
         } else {
             room = s.getString("room", "noroom");
         }
