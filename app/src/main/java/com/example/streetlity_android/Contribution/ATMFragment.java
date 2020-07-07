@@ -199,7 +199,13 @@ public class ATMFragment extends Fragment implements LocationListener, OnMapRead
                 Intent t = new Intent(getActivity(), MapsActivityConfirmation.class);
                 t.putExtra("currLat", currLat);
                 t.putExtra("currLon", currLon);
-                t.putExtra("item", displayItems.get(position));
+                MapObject item = displayItems.get(position);
+                if(isSearch){
+                    item.setDistance(distance(currLat,currLon,item.getLat(),
+                            item.getLon()));
+                }
+
+                t.putExtra("item", item);
                 t.putExtra("index", position);
 
                 startActivityForResult(t,1);
@@ -407,7 +413,7 @@ public class ATMFragment extends Fragment implements LocationListener, OnMapRead
 
                     MarkerOptions curPositionMark = new MarkerOptions();
                     curPositionMark.position(new LatLng(currLat,currLon));
-                    curPositionMark.title("You are here");
+                    curPositionMark.title(getString(R.string.you_r_here));
                     currentPosition = mMap.addMarker(curPositionMark);
 
                     mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(currLat, currLon), 15f));
@@ -489,8 +495,10 @@ public class ATMFragment extends Fragment implements LocationListener, OnMapRead
     public void addCurrMarker(){
         MarkerOptions curPositionMark = new MarkerOptions();
         curPositionMark.position(new LatLng(currLat,currLon));
-        curPositionMark.title("You are here");
+        curPositionMark.title(getString(R.string.you_r_here));
         currentPosition = mMap.addMarker(curPositionMark);
+
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(currLat,currLon), 15f));
     }
 
     public void findLocation(String address, EditText editText){
@@ -563,7 +571,7 @@ public class ATMFragment extends Fragment implements LocationListener, OnMapRead
                                                             jsonObject1.getString("Address"), (float) jsonObject1.getDouble("Lat"),
                                                             (float) jsonObject1.getDouble("Lon"), jsonObject1.getString("Note"), 4);
 
-                                                    float distance = distance(item.getLat(), item.getLon(), currLat, currLon);
+                                                    float distance = distance((float)mLat, (float)mLon,(float) jsonObject1.getDouble("Lat"), (float)jsonObject1.getDouble("Lon"));
 
                                                     item.setImages(jsonObject1.getString("Images"));
 
@@ -575,6 +583,7 @@ public class ATMFragment extends Fragment implements LocationListener, OnMapRead
                                                 }
 
                                                 if(searchItems.size()>0){
+                                                    nothingFound.setVisibility(View.GONE);
                                                     Collections.sort(searchItems, new Comparator<MapObject>() {
                                                         @Override
                                                         public int compare(MapObject o1, MapObject o2) {
@@ -588,10 +597,18 @@ public class ATMFragment extends Fragment implements LocationListener, OnMapRead
                                                     displayItems.addAll(searchItems);
                                                     locationManager.removeUpdates(ATMFragment.this);
 
+                                                    mMap.clear();
                                                     mMarkers.clear();
                                                     for(int i =0;i< displayItems.size();i++){
                                                         addATMMarkerToSearchList(displayItems.get(i).getLat(), displayItems.get(i).getLon(), displayItems.get(i).getName());
                                                     }
+
+                                                    MarkerOptions options = new MarkerOptions();
+                                                    options.position(new LatLng(mLat, mLon));
+                                                    options.title(getString(R.string.search_location));
+                                                    mMap.addMarker(options);
+
+                                                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mLat,mLon),15f));
 
                                                     getActivity().findViewById(R.id.layout_range).setVisibility(View.GONE);
 
@@ -953,7 +970,7 @@ public class ATMFragment extends Fragment implements LocationListener, OnMapRead
 
         MarkerOptions curPositionMark = new MarkerOptions();
         curPositionMark.position(new LatLng(currLat,currLon));
-        curPositionMark.title("You are here");
+        curPositionMark.title(getString(R.string.you_r_here));
         mMap.addMarker(curPositionMark);
 
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(currLat, currLon), 15f));

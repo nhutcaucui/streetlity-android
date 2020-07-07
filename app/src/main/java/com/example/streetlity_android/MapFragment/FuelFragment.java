@@ -438,7 +438,7 @@ public class FuelFragment extends Fragment implements OnMapReadyCallback, Google
 
         MarkerOptions curPositionMark = new MarkerOptions();
         curPositionMark.position(new LatLng(latitude,longitude));
-        curPositionMark.title("You are here");
+        curPositionMark.title(getString(R.string.you_r_here));
         currentPosition = mMap.addMarker(curPositionMark);
 
         mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(latitude, longitude)));
@@ -523,7 +523,7 @@ public class FuelFragment extends Fragment implements OnMapReadyCallback, Google
 
                             MarkerOptions curPositionMark = new MarkerOptions();
                             curPositionMark.position(new LatLng(latitude,longitude));
-                            curPositionMark.title("You are here");
+                            curPositionMark.title(getString(R.string.you_r_here));
 
                             currentPosition = mMap.addMarker(curPositionMark);
                         }

@@ -262,4 +262,5 @@
     <string name="edit_note">Edit note</string>
     <string name="edit_address">Edit address</string>
     <string name="no_note">No note</string>
+    <string name="search_location">Search location</string>
 </resources>

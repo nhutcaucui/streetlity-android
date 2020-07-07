@@ -343,7 +343,7 @@
 //
 //        MarkerOptions curPositionMark = new MarkerOptions();
 //        curPositionMark.position(new LatLng(latitude, longitude));
-//        curPositionMark.title("You are here");
+//        curPositionMark.title(getString(R.string.you_r_here));
 //
 //        currentPosition = mMap.addMarker(curPositionMark);
 //
@@ -601,7 +601,7 @@
 //
 //                        MarkerOptions curPositionMark = new MarkerOptions();
 //                        curPositionMark.position(new LatLng(latitude,longitude));
-//                        curPositionMark.title("You are here");
+//                        curPositionMark.title(getString(R.string.you_r_here));
 //
 //                        currentPosition = mMap.addMarker(curPositionMark);
 //
