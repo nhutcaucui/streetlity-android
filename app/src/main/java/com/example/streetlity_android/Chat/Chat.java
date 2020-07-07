@@ -14,7 +14,6 @@ import com.example.streetlity_android.RealtimeService.LocationListener;
 import com.example.streetlity_android.RealtimeService.MaintenanceOrder;
 import com.example.streetlity_android.RealtimeService.MessageListener;
 import com.example.streetlity_android.RealtimeService.TypeMessageListener;
-import com.example.streetlity_android.User.UserInfo;
 import com.example.streetlity_android.User.UserInfoOther;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.gson.Gson;
@@ -55,6 +54,8 @@ public class Chat extends AppCompatActivity {
     String room = "";
     ListView lv;
     ChatObjectAdapter adapter;
+
+    MaintenanceOrder maintenanceOrder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,13 +105,11 @@ public class Chat extends AppCompatActivity {
 
         Log.e("", "onCreate: " + room);
 
-        MaintenanceOrder socket = MaintenanceOrder.getInstance();
+        MaintenanceOrder.Create(room);
 
-        socket.Create(room);
+        maintenanceOrder = MaintenanceOrder.getInstance();
 
-
-
-        socket.InformationListener = new InformationListener<MaintenanceOrder>() {
+        maintenanceOrder.InformationListener = new InformationListener<MaintenanceOrder>() {
             @Override
             public void onReceived(MaintenanceOrder sender, Information info) {
                 runOnUiThread(new Runnable() {
@@ -125,17 +124,17 @@ public class Chat extends AppCompatActivity {
         };
         Information myInfo = new Information(MyApplication.getInstance().getUsername(), phone);
 
-        socket.sendInformation(myInfo);
-        socket.pullInformation();
+        maintenanceOrder.sendInformation(myInfo);
+        maintenanceOrder.pullInformation();
 
-        socket.MessageListener = new MessageListener<MaintenanceOrder>() {
+        maintenanceOrder.MessageListener = new MessageListener<MaintenanceOrder>() {
             @Override
             public void onReceived(MaintenanceOrder sender, ChatObject message) {
                 Log.e("", "onReceived:  this is america");
                 new Task().execute(message);
             }
         };
-        socket.LocationListener = new LocationListener<MaintenanceOrder>() {
+        maintenanceOrder.LocationListener = new LocationListener<MaintenanceOrder>() {
             @Override
             public void onReceived(MaintenanceOrder sender, float lat, float lon) {
                 lat = lat;
@@ -143,20 +142,20 @@ public class Chat extends AppCompatActivity {
             }
         };
 
-        socket.DeclineListener = new Listener<MaintenanceOrder>() {
+        maintenanceOrder.DeclineListener = new Listener<MaintenanceOrder>() {
             @Override
             public void trigger(MaintenanceOrder sender) {
 
             }
         };
-        socket.CompleteListener = new Listener<MaintenanceOrder>() {
+        maintenanceOrder.CompleteListener = new Listener<MaintenanceOrder>() {
             @Override
             public void trigger(MaintenanceOrder sender) {
                 Log.e("", "call: completed");
             }
         };
 
-        socket.JoinedListener = new Listener<MaintenanceOrder>() {
+        maintenanceOrder.JoinedListener = new Listener<MaintenanceOrder>() {
             @Override
             public void trigger(MaintenanceOrder sender) {
                 runOnUiThread(new Runnable() {
@@ -181,7 +180,7 @@ public class Chat extends AppCompatActivity {
             }
         };
 
-        socket.join();
+        maintenanceOrder.join();
 
         TextInputEditText edtMessage = findViewById(R.id.edt_body);
 
@@ -193,7 +192,7 @@ public class Chat extends AppCompatActivity {
 
                     Log.e("", "onClick: " + edtMessage.getText().toString());
                     ChatObject object = new ChatObject(MyApplication.getInstance().getUsername(), edtMessage.getText().toString(), new Date());
-                    socket.sendMessage(object);
+                    maintenanceOrder.sendMessage(object);
                     items.add(object);
                     adapter.notifyDataSetChanged();
                     lv.setSelection(adapter.getCount() - 1);
@@ -212,9 +211,9 @@ public class Chat extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if(edtMessage.getText().toString().equals("")){
-                    socket.sendTyped(MyApplication.getInstance().getUsername());
+                    maintenanceOrder.sendTyped(MyApplication.getInstance().getUsername());
                 }else {
-                    socket.sendTyping(MyApplication.getInstance().getUsername());
+                    maintenanceOrder.sendTyping(MyApplication.getInstance().getUsername());
                 }
             }
 
@@ -224,7 +223,7 @@ public class Chat extends AppCompatActivity {
             }
         });
 
-        socket.TypingListener = new TypeMessageListener<MaintenanceOrder>(){
+        maintenanceOrder.TypingListener = new TypeMessageListener<MaintenanceOrder>(){
             @Override
             public void trigger(MaintenanceOrder sender, String typeUser){
                 runOnUiThread(new Runnable() {
@@ -240,7 +239,7 @@ public class Chat extends AppCompatActivity {
 
         };
 
-        socket.TypedListener = new TypeMessageListener<MaintenanceOrder>() {
+        maintenanceOrder.TypedListener = new TypeMessageListener<MaintenanceOrder>() {
             @Override
             public void trigger(MaintenanceOrder sender, String triggeringUser) {
                 runOnUiThread(new Runnable() {

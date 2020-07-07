@@ -19,7 +19,7 @@ import java.util.HashMap;
 import java.util.Locale;
 
 public class MaintenanceOrder {
-    public final String Endpoint = "35.240.207.83:6182";
+    public final String Endpoint = "34.87.144.190:6182";
     public final String Tag = "[MaintenanceOrder]";
     public static HashMap<String, MaintenanceOrder> Orders = new HashMap<String, MaintenanceOrder>();
 
@@ -27,15 +27,8 @@ public class MaintenanceOrder {
     public Information information;
     public Location location;
 
-    private static MaintenanceOrder mySocket;
-    public MaintenanceOrder() {
-        mySocket = this;
-    }
     public static MaintenanceOrder getInstance() {
-        if(mySocket == null){
-            mySocket = new MaintenanceOrder();
-        }
-        return mySocket;
+        return self;
     }
 
     /**
@@ -212,7 +205,7 @@ public class MaintenanceOrder {
     };
 
     private Socket mSocket;
-    private MaintenanceOrder self;
+    public static MaintenanceOrder self;
 
     /**
      * Initialize a new instannce of MaintenanceOrder by a specified room
