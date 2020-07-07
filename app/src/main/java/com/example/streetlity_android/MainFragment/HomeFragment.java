@@ -364,7 +364,9 @@ public class HomeFragment extends Fragment implements LocationListener{
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
 
-            ((MainNavigationHolder)getActivity()).getLoading().setVisibility(View.GONE);
+            if(((MainNavigationHolder)getActivity()).getLoading()!= null) {
+                ((MainNavigationHolder) getActivity()).getLoading().setVisibility(View.GONE);
+            }
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");

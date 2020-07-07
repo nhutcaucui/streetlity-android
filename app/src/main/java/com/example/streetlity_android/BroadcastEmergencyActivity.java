@@ -393,7 +393,7 @@ public class BroadcastEmergencyActivity extends AppCompatActivity {
             thread.start();
         }
 
-        Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getServiceURL())
+        Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getMaintenanceURL())
                 .addConverterFactory(GsonConverterFactory.create()).build();
         final MapAPI tour = retro.create(MapAPI.class);
         Call<ResponseBody> call = tour.getEmergency((float) 0.1, (float) lat, (float) lon);
@@ -428,28 +428,35 @@ public class BroadcastEmergencyActivity extends AppCompatActivity {
                                     idList.add(jsonObject1.getString("Id"));
                                     count++;
                                 }
-
-                                range += 1000;
-                                if (range > 10000) {
-                                    range -= 1000;
-                                    break;
-                                }
                             }
+
+                            range += 1000;
+                            if (range > 10000) {
+                                range -= 1000;
+                                break;
+                            }
+
                         }
 
                         id = new String[idList.size()];
-                        maintenance = new String[maintenanceList.size()];
-
-                        for (int i = 0; i < idList.size(); i++) {
-                            id[i] = idList.get(i);
-                            maintenance[i] = idList.get(i);
-                        }
+                        maintenance = new String[idList.size()];
 
                         final int fRange = range;
 
                         if (count > 0) {
 
-                            Call<ResponseBody> call2 = tour.broadcast("1.0.0", MyApplication.getInstance().getUsername()
+                            for (int i = 0; i < idList.size(); i++) {
+                                id[i] = idList.get(i);
+                                maintenance[i] = idList.get(i);
+                                Log.e("TAG", "onResponse: " + idList.get(i) );
+                            }
+
+
+                            Retrofit retro2 = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getServiceURL())
+                                    .addConverterFactory(GsonConverterFactory.create()).build();
+                            final MapAPI tour2 = retro2.create(MapAPI.class);
+
+                            Call<ResponseBody> call2 = tour2.broadcast("1.0.0", MyApplication.getInstance().getUsername()
                                     , reason, phone, note, maintenance, id, 2);
                             call2.enqueue(new Callback<ResponseBody>() {
                                 @Override
@@ -537,6 +544,13 @@ public class BroadcastEmergencyActivity extends AppCompatActivity {
 //                                                    }
 //                                                });
 //                                                //thread.start();
+                                            }else{
+                                                broadcasting.setVisibility(View.GONE);
+                                                Toast toast = Toast.makeText(BroadcastEmergencyActivity.this, R.string.no_available, Toast.LENGTH_LONG);
+                                                TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
+                                                tv.setTextColor(Color.RED);
+
+                                                toast.show();
                                             }
                                         } catch (Exception e) {
                                             e.printStackTrace();

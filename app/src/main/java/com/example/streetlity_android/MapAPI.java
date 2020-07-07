@@ -152,6 +152,8 @@ public interface MapAPI {
                                  @Field("maintenance_users") String[] maintenance, @Field("service_id") int[] id,
                                     @Field("type") int type);
 
+    @FormUrlEncoded
+    @POST("service/maintenance/order")
     Call<ResponseBody> broadcast(@Header("Version") String version, @Field("common_user") String username, @Field("reason") String reason,
                                  @Field("phone") String phone, @Field("note") String note,
                                  @Field("maintenance_users") String[] maintenance, @Field("service_id") String[] id,
@@ -338,8 +340,7 @@ public interface MapAPI {
     @POST("emergency/location")
     Call<ResponseBody> updateLocation(@Field("id") String username, @Field("lat") float lat, @Field("lon") float lon);
 
-    @FormUrlEncoded
-    @POST("emergency/range")
-    Call<ResponseBody> getEmergency(@Field("range") float range, @Field("lat") float lat, @Field("lon") float lon);
+    @GET("emergency/range")
+    Call<ResponseBody> getEmergency(@Query("range") float range, @Query("lat") float lat, @Query("lon") float lon);
 
 }
