@@ -53,6 +53,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -539,7 +540,7 @@ public class WCFragment extends Fragment implements LocationListener, OnMapReady
                     curPositionMark.title("You are here");
                     currentPosition = mMap.addMarker(curPositionMark);
 
-                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(currLat, currLon), 13f));
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(currLat, currLon), 15f));
                 }
                 Log.e("", "onMapReady: " + currLat + " , " + currLon);
             }
@@ -554,9 +555,9 @@ public class WCFragment extends Fragment implements LocationListener, OnMapReady
 
             for(int i = 0; i < mMarkers.size();i++){
                 if(mMarkers.get(i).equals(marker)){
-                    final LayoutInflater inflater = LayoutInflater.from(getActivity().getApplicationContext());
+                    //final LayoutInflater inflater = LayoutInflater.from(getActivity().getApplicationContext());
 
-                    final android.view.View dialogView = inflater.inflate(R.layout.dialog_simple_map_info, null);
+                    final View dialogView = View.inflate(getActivity(),R.layout.dialog_simple_map_info, null);
 
                     Button btnInfo = dialogView.findViewById(R.id.btn_more_info);
 
@@ -597,7 +598,7 @@ public class WCFragment extends Fragment implements LocationListener, OnMapReady
                         }
                     });
 
-                    final Dialog dialog = new Dialog(getActivity(), android.R.style.Theme_Black_NoTitleBar);
+                    final BottomSheetDialog dialog = new BottomSheetDialog(getActivity(), android.R.style.Theme_Black_NoTitleBar);
                     dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.argb(100, 0, 0, 0)));
                     dialog.setContentView(dialogView);
                     dialog.setCanceledOnTouchOutside(true);

@@ -508,9 +508,9 @@ public class FuelFragment extends Fragment implements LocationListener, OnMapRea
 
             for(int i = 0; i < mMarkers.size();i++){
                 if(mMarkers.get(i).equals(marker)){
-                    final LayoutInflater inflater = LayoutInflater.from(getActivity().getApplicationContext());
+                    //final LayoutInflater inflater = LayoutInflater.from(getActivity().getApplicationContext());
 
-                    final android.view.View dialogView = inflater.inflate(R.layout.dialog_simple_map_info, null);
+                    final View dialogView = View.inflate(getActivity(),R.layout.dialog_simple_map_info, null);
 
                     Button btnInfo = dialogView.findViewById(R.id.btn_more_info);
 
@@ -526,6 +526,8 @@ public class FuelFragment extends Fragment implements LocationListener, OnMapRea
 
                     DecimalFormat df = new DecimalFormat("#.#");
 
+                    Log.e(TAG, "onMarkerClick: "+dialogView.findViewById(R.id.img_destination).getVisibility());
+
                     float distance = this.displayItems.get(i).getDistance();
                     String dis = "m";
                     if(distance > 1000){
@@ -535,7 +537,7 @@ public class FuelFragment extends Fragment implements LocationListener, OnMapRea
                     tvDistance.setText("~" + df.format(distance) + dis);
 
                     final int pos = i;
-                    final Dialog dialog = new Dialog(getActivity(), android.R.style.Theme_Black_NoTitleBar);
+                    final BottomSheetDialog dialog = new BottomSheetDialog(getActivity(), android.R.style.Theme_Black_NoTitleBar);
                     dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.argb(100, 0, 0, 0)));
                     dialog.setContentView(dialogView);
                     dialog.setCanceledOnTouchOutside(true);

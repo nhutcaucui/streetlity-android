@@ -181,6 +181,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         if(!item.getNote().equals("")) {
             layoutNote.setVisibility(View.VISIBLE);
             tvNote.setText(item.getNote());
+        }else{
+            tvNote.setText(getString(R.string.no_note));
         }
 
         TextView tvName = findViewById(R.id.tv_name);
@@ -262,9 +264,15 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         addImages(imgContainer);
 
         Button leaveReview = findViewById(R.id.btn_leave_comment);
+        Button addPhoto = findViewById(R.id.btn_add_photo);
+        Button editNote = findViewById(R.id.btn_edit_note);
+        Button editAddress = findViewById(R.id.btn_edit_address);
 
         if(!MyApplication.getInstance().getToken().equals("")){
             leaveReview.setVisibility(View.VISIBLE);
+            addPhoto.setVisibility(View.VISIBLE);
+            editNote.setVisibility(View.VISIBLE);
+            editAddress.setVisibility(View.VISIBLE);
         }
 
         leaveReview.setOnClickListener(new View.OnClickListener() {

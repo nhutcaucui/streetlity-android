@@ -242,4 +242,8 @@
     <string name="clear_vote">Hủy phiếu bầu</string>
     <string name="nearby_repairmen">Thợ sửa xe gần đây</string>
     <string name="more_info">Thông tin chi tiết</string>
+    <string name="add_phote">Thêm ảnh</string>
+    <string name="edit_note">Sửa ghi chú</string>
+    <string name="edit_address">Sửa địa chỉ</string>
+    <string name="no_note">Không có ghi chú</string>
 </resources>

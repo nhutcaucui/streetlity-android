@@ -11,6 +11,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.LayerDrawable;
 import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 
@@ -68,7 +69,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class AllServiceMap extends AppCompatActivity implements GoogleMap.OnMarkerClickListener,
-        OnMapReadyCallback {
+        OnMapReadyCallback, LocationListener {
 
     GoogleMap mMap;
 
@@ -92,6 +93,8 @@ public class AllServiceMap extends AppCompatActivity implements GoogleMap.OnMark
     double longitude;
 
     boolean isExpanded = false;
+
+    LocationManager locationManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,7 +122,7 @@ public class AllServiceMap extends AppCompatActivity implements GoogleMap.OnMark
         mMap.setOnMarkerClickListener((GoogleMap.OnMarkerClickListener) this);
         //ArrayList<MarkerOptions> markList = new ArrayList<MarkerOptions>();
 
-        LocationManager locationManager = (LocationManager)
+        locationManager = (LocationManager)
                 this.getSystemService(Context.LOCATION_SERVICE);
 
 
@@ -129,29 +132,31 @@ public class AllServiceMap extends AppCompatActivity implements GoogleMap.OnMark
                     .NETWORK_PROVIDER);
             if(location == null){
                 Log.e("", "onMapReady: MULL");
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1, 1, this);
+            }else {
+                latitude = location.getLatitude();
+                longitude = location.getLongitude();
+                Log.e("", "onMapReady: " + latitude + " , " + longitude);
+
+                adapter = new ReviewAdapter(this, R.layout.review_item, displayReviewItems);
+
+                getBank();
+
+                callMaintenance(latitude, longitude);
+
+                callFuel(latitude, longitude);
+
+                callWC(latitude, longitude);
+
+                MarkerOptions curPositionMark = new MarkerOptions();
+                curPositionMark.position(new LatLng(latitude,longitude));
+                curPositionMark.title("You are here");
+
+                currentPosition = mMap.addMarker(curPositionMark);
+
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude, longitude), 15f));
             }
-            latitude = location.getLatitude();
-            longitude = location.getLongitude();
-            Log.e("", "onMapReady: " + latitude+" , " + longitude );
         }
-
-        adapter = new ReviewAdapter(this, R.layout.review_item, displayReviewItems);
-
-        getBank();
-
-        callMaintenance(latitude, longitude);
-
-        callFuel(latitude, longitude);
-
-        callWC(latitude, longitude);
-
-        MarkerOptions curPositionMark = new MarkerOptions();
-        curPositionMark.position(new LatLng(latitude,longitude));
-        curPositionMark.title("You are here");
-
-        currentPosition = mMap.addMarker(curPositionMark);
-
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude, longitude), 12f));
     }
 
 
@@ -766,5 +771,51 @@ public class AllServiceMap extends AppCompatActivity implements GoogleMap.OnMark
             loading.setVisibility(View.GONE);
             tvNoImg.setVisibility(View.VISIBLE);
         }
+    }
+
+    @Override
+    public  void onStop(){
+        super.onStop();
+
+        locationManager.removeUpdates(this);
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        latitude = location.getLatitude();
+        longitude = location.getLongitude();
+
+        adapter = new ReviewAdapter(this, R.layout.review_item, displayReviewItems);
+
+        getBank();
+
+        callMaintenance(latitude, longitude);
+
+        callFuel(latitude, longitude);
+
+        callWC(latitude, longitude);
+
+        MarkerOptions curPositionMark = new MarkerOptions();
+        curPositionMark.position(new LatLng(latitude,longitude));
+        curPositionMark.title("You are here");
+
+        currentPosition = mMap.addMarker(curPositionMark);
+
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude, longitude), 15f));
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+
     }
 }
