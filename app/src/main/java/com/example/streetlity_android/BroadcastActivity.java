@@ -331,6 +331,8 @@ public class BroadcastActivity extends AppCompatActivity {
                         if(jsonObject.getBoolean("Status")){
                             RelativeLayout broadcasting = findViewById(R.id.layout_broadcasting);
                             broadcasting.setVisibility(View.GONE);
+
+                            getSharedPreferences("activeOrder",MODE_PRIVATE).edit().clear().apply();
                         }
                     }catch (Exception e){
                         e.printStackTrace();

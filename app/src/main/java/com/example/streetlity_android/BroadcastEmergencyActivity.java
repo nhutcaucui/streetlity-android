@@ -325,6 +325,8 @@ public class BroadcastEmergencyActivity extends AppCompatActivity {
                         if(jsonObject.getBoolean("Status")){
                             RelativeLayout broadcasting = findViewById(R.id.layout_broadcasting);
                             broadcasting.setVisibility(View.GONE);
+
+                            getSharedPreferences("activeOrder",MODE_PRIVATE).edit().clear().apply();
                         }
                     }catch (Exception e){
                         e.printStackTrace();
@@ -644,6 +646,9 @@ public class BroadcastEmergencyActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent t1 = new Intent(BroadcastEmergencyActivity.this, MaintainerLocation.class);
                 startActivity(t1);
+
+                SharedPreferences s = getSharedPreferences("Room", MODE_PRIVATE);
+                s.edit().putString("room",intent.getStringExtra("id")).apply();
 
                 startActivity(intent);
 

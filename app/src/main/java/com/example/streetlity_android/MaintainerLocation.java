@@ -211,7 +211,7 @@ public class MaintainerLocation extends AppCompatActivity implements OnMapReadyC
                                                 jsonObject = new JSONObject(response.body().string());
                                                 Log.e("", "onResponse: " + jsonObject.toString());
                                                 if(jsonObject.getBoolean("Status")){
-
+                                                    getSharedPreferences("activeOrder",MODE_PRIVATE).edit().clear().apply();
                                                     finish();
                                                     dialog.dismiss();
                                                 }

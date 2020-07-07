@@ -77,6 +77,8 @@ public class MaintainerDirection extends AppCompatActivity implements OnMapReady
 
     String phone;
 
+    String room;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -89,6 +91,8 @@ public class MaintainerDirection extends AppCompatActivity implements OnMapReady
 
         ImageButton btnCall = findViewById(R.id.btn_call);
         ImageButton btnChat = findViewById(R.id.btn_chat);
+
+        room = getSharedPreferences("Room", MODE_PRIVATE).getString("room", "");
 
         btnChat.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -113,7 +117,7 @@ public class MaintainerDirection extends AppCompatActivity implements OnMapReady
             public void onClick(View v) {
                 final Dialog dialogDecline = new Dialog(MaintainerDirection.this);
 
-                final LayoutInflater inflater = LayoutInflater.from(MaintainerDirection.this);
+                //final LayoutInflater inflater = LayoutInflater.from(MaintainerDirection.this);
 
                 final View dialogView = View.inflate(MaintainerDirection.this ,R.layout.dialog_decline, null);
 
@@ -147,7 +151,7 @@ public class MaintainerDirection extends AppCompatActivity implements OnMapReady
                                         jsonObject = new JSONObject(response.body().string());
                                         Log.e("", "onResponse: " + jsonObject.toString());
                                         if(jsonObject.getBoolean("Status")){
-
+                                            getSharedPreferences("activeOrder",MODE_PRIVATE).edit().clear().apply();
                                         }
                                     }catch (Exception e){
                                         e.printStackTrace();

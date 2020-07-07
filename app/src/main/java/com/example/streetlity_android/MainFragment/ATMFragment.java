@@ -384,7 +384,10 @@ public class ATMFragment extends Fragment implements LocationListener, OnMapRead
     }
 
     public void filterMarkerByBank(String name, float range){
+        mMap.clear();
         mMarkers.clear();
+        addCurrMarker();
+        Log.e(TAG, "filterMarkerByBank: "+ displayItems.size());
         for (int i = 0 ;i < displayItems.size();i++){
             if(mMarkerOptions.get(i).getTitle().equals(name) && displayItems.get(i).getDistance()<= (range*1000)){
                 mMarkers.add(mMap.addMarker((mMarkerOptions.get(i))));
@@ -770,21 +773,23 @@ public class ATMFragment extends Fragment implements LocationListener, OnMapRead
             }
         }
 
+        adapter.getFilter().filter("0");
+
         if(atcpBank!= null)
             atcpBank.setSelection(0);
-        for(MapObject item: items){
-            if (item.getDistance() <= (range*1000)){
-                displayItems.add(item);
-            }
-        }
+//        for(MapObject item: items){
+//            if (item.getDistance() <= (range*1000)){
+//                displayItems.add(item);
+//            }
+//        }
         adapter.notifyDataSetChanged();
         loading.setVisibility(View.GONE);
         if(displayItems.size()==0){
             tvNoItem.setVisibility(View.VISIBLE);
         }
-else{
- tvNoItem.setVisibility(View.GONE);
-}
+        else{
+         tvNoItem.setVisibility(View.GONE);
+        }
     }
 
     public void callATM(double lat, double lon, float range){
@@ -810,14 +815,14 @@ else{
                         JSONArray jsonArray;
                         try {
                             jsonObject = new JSONObject(response.body().string());
-                            Log.e("", "onResponse: " + jsonObject.toString());
-                            Log.e("", "onResponse: "+response );
+                            Log.e("", "1onResponse: " + jsonObject.toString());
+
                             if (!jsonObject.getJSONArray("Services").toString().equals("")) {
                                 jsonArray = jsonObject.getJSONArray("Services");
 
                                 for (int i = 0; i < jsonArray.length(); i++) {
                                     JSONObject jsonObject1 = jsonArray.getJSONObject(i);
-                                    Log.e("", "onResponse: " + jsonObject1.toString());
+                                    Log.e("", "2onResponse: " + jsonObject1.toString());
                                     String bankName="";
                                     for (int j=0;j<arrBank.size();j++){
                                         if (jsonObject1.getInt("BankId") == arrBank.get(j).getId()) {

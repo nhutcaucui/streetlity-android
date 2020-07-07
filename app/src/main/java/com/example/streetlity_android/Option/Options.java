@@ -86,6 +86,7 @@ public class Options extends AppCompatActivity {
                                                         Log.e("TAG", "onResponse: " + new JSONObject(response.body().string()));
                                                         findViewById(R.id.layout_loading).setVisibility(View.GONE);
                                                         if (isChecked) {
+                                                            MyApplication.getInstance().setThread();
                                                             MyApplication.getInstance().getThread().scheduleAtFixedRate(new TimerTask() {
                                                                 @Override
                                                                 public void run() {
@@ -196,6 +197,7 @@ public class Options extends AppCompatActivity {
                                         Log.e("TAG", "onResponse: " + new JSONObject(response.body().string()));
                                         findViewById(R.id.layout_loading).setVisibility(View.GONE);
                                         if (isChecked) {
+                                            MyApplication.getInstance().setThread();
                                             MyApplication.getInstance().getThread().scheduleAtFixedRate(new TimerTask() {
                                                 @Override
                                                 public void run() {

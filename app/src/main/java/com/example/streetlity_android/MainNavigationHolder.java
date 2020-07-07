@@ -52,6 +52,9 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.os.CountDownTimer;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -254,10 +257,14 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
                     MyApplication.getInstance().getOption().setAcceptEmergency(false);
                 }
 
-                if(MyApplication.getInstance().getOption().isAcceptEmergency()){
+                if(MyApplication.getInstance().getOption().isAcceptEmergency()) {
+                    MyApplication.getInstance().setThread();
+
                     MyApplication.getInstance().getThread().scheduleAtFixedRate(new TimerTask() {
                         @Override
                         public void run() {
+                            Looper.prepare();
+
                             LocationManager locationManager = (LocationManager)
                                     getSystemService(Context.LOCATION_SERVICE);
 
@@ -270,16 +277,17 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
                                                 .addConverterFactory(GsonConverterFactory.create()).build();
                                         final MapAPI tour = retro.create(MapAPI.class);
                                         Call<ResponseBody> call2 = tour.updateLocation(MyApplication.getInstance().getUsername(),
-                                                (float)location.getLatitude(), (float)location.getLongitude());
-                                        call2.enqueue(new Callback<ResponseBody>() {
+                                                (float) location.getLatitude(), (float) location.getLongitude());
+                                        call2.enqueue(new retrofit2.Callback<ResponseBody>() {
                                             @Override
                                             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                                                 if (response.code() == 200) {
                                                     try {
                                                         Log.e("TAG", "onResponse: " + new JSONObject(response.body().string()));
-                                                    }catch (Exception e){
-                                                        e.printStackTrace();}
-                                                }else{
+                                                    } catch (Exception e) {
+                                                        e.printStackTrace();
+                                                    }
+                                                } else {
                                                     Log.e("TAG", "onResponse: " + response.code());
                                                 }
                                             }
@@ -311,6 +319,8 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
 
                         }
                     }, 5000, 600000);
+
+
                 }
             }
 
@@ -619,7 +629,16 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
                         if(getSharedPreferences("activeOrder",MODE_PRIVATE).contains("activeOrder")) {
                             Intent t = new Intent(MainNavigationHolder.this, Chat.class);
                             t.putExtra("id", getSharedPreferences("activeOrder",MODE_PRIVATE).getString("activeOrder",""));
-                            startActivity(new Intent(MainNavigationHolder.this, MaintainerLocation.class));
+                            if(MyApplication.getInstance().getUserType() == 1) {
+                                Intent t2 = new Intent(MainNavigationHolder.this, MaintainerLocation.class);
+                                t2.putExtra("id", getSharedPreferences("activeOrder",MODE_PRIVATE).getString("activeOrder",""));
+                                startActivity(t2);
+                            }
+                            else if (MyApplication.getInstance().getUserType() == 7){
+                                Intent t2 = new Intent(MainNavigationHolder.this, MaintainerDirection.class);
+                                t2.putExtra("id", getSharedPreferences("activeOrder",MODE_PRIVATE).getString("activeOrder",""));
+                                startActivity(t2);
+                            }
                             startActivity(t);
                         }else{
                             Toast toast = Toast.makeText(MainNavigationHolder.this, R.string.no_order, Toast.LENGTH_LONG);
@@ -694,6 +713,7 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
                         if (jsonObject.getBoolean("Status")) {
 
                             if(MyApplication.getInstance().getUserType() == 7 && MyApplication.getInstance().getOption().isAcceptEmergency()){
+                                MyApplication.getInstance().getOption().setAcceptEmergency(false);
                                 MyApplication.getInstance().getThread().cancel();
 
                                 Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getMaintenanceURL())

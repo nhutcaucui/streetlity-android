@@ -110,7 +110,6 @@
         <activity
             android:name=".User.Maintainer.OrderInfo"
             android:label="@string/title_activity_order_info"
-            android:parentActivityName=".User.Maintainer.Works"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="adjustResize">

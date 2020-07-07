@@ -209,4 +209,8 @@ public class MyApplication extends Application { //35.240.232.218 auth server
     public Timer getThread() {
         return thread;
     }
+
+    public void setThread() {
+        thread = new Timer();
+    }
 }

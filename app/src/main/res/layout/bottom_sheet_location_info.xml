@@ -9,7 +9,7 @@
     android:orientation="vertical"
     android:paddingBottom="15dp"
     app:behavior_hideable="false"
-    app:behavior_peekHeight="150dp"
+    app:behavior_peekHeight="165dp"
     app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
     <LinearLayout
@@ -288,7 +288,7 @@
             android:textSize="20sp"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toEndOf="@id/hori_scroll_view"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 

@@ -27,11 +27,13 @@ public class BankObjectAdapter extends ArrayAdapter implements Filterable {
 
     Context context;
     private ArrayList<BankObject> mDisplayedValues;
+    private ArrayList<BankObject> mOriginalValues;
 
     public BankObjectAdapter(@NonNull Context context, int resource, @NonNull ArrayList<BankObject> objects) {
         super(context, resource, objects);
         this.context = context;
         this.mDisplayedValues = objects;
+        this.mOriginalValues = objects;
     }
 
     @Override
@@ -93,5 +95,57 @@ public class BankObjectAdapter extends ArrayAdapter implements Filterable {
             position = position - mDisplayedValues.size();
         }
         return this.mDisplayedValues.get(position);
+    }
+
+    @Override
+    public Filter getFilter() {
+        Filter filter = new Filter() {
+
+            @SuppressWarnings("unchecked")
+            @Override
+            protected void publishResults(CharSequence constraint, FilterResults results) {
+
+                mDisplayedValues = (ArrayList<BankObject>) results.values; // has the filtered values
+                notifyDataSetChanged();  // notifies the data with new filtered values
+                if(constraint.toString().equals("") || constraint.toString().equals("")){
+                    mDisplayedValues = mOriginalValues;
+                }
+            }
+
+            @Override
+            protected FilterResults performFiltering(CharSequence constraint) {
+                FilterResults results = new FilterResults();        // Holds the results of a filtering operation in values
+                ArrayList<BankObject> FilteredArrList = new ArrayList<BankObject>();
+                Log.e("", "performFiltering: " + constraint );
+                if (mOriginalValues == null) {
+                    mOriginalValues = new ArrayList<BankObject>(mDisplayedValues); // saves the original data in mOriginalValues
+                }
+
+                /********
+                 *
+                 *  If constraint(CharSequence that is received) is null returns the mOriginalValues(Original) values
+                 *  else does the Filtering and returns FilteredArrList(Filtered)
+                 *
+                 ********/
+                if (constraint == null || constraint.length() == 0 || constraint == "") {
+
+                    // set the Original result to return
+                    results.count = mOriginalValues.size();
+                    results.values = mOriginalValues;
+                } else {
+
+                    for (int i = 0; i < mOriginalValues.size(); i++) {
+                        if (mOriginalValues.get(i).getName().contains(constraint)) {
+                            FilteredArrList.add(mOriginalValues.get(i));
+                        }
+                    }
+                    // set the Filtered result to return
+                    results.count = FilteredArrList.size();
+                    results.values = FilteredArrList;
+                }
+                return results;
+            }
+        };
+        return filter;
     }
 }

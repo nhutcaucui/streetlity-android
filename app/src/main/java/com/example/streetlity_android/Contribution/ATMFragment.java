@@ -355,7 +355,10 @@ public class ATMFragment extends Fragment implements LocationListener, OnMapRead
     }
 
     public void filterMarkerByBank(String name, float range){
+        mMap.clear();
         mMarkers.clear();
+        addCurrMarker();
+        Log.e(TAG, "filterMarkerByBank: "+ displayItems.size());
         for (int i = 0 ;i < displayItems.size();i++){
             if(mMarkerOptions.get(i).getTitle().equals(name) && displayItems.get(i).getDistance()<= (range*1000)){
                 mMarkers.add(mMap.addMarker((mMarkerOptions.get(i))));
@@ -742,13 +745,15 @@ public class ATMFragment extends Fragment implements LocationListener, OnMapRead
             }
         }
 
+        adapter.getFilter().filter("0");
+
         if(atcpBank!= null)
             atcpBank.setSelection(0);
-        for(MapObject item: items){
-            if (item.getDistance() <= (range*1000)){
-                displayItems.add(item);
-            }
-        }
+//        for(MapObject item: items){
+//            if (item.getDistance() <= (range*1000)){
+//                displayItems.add(item);
+//            }
+//        }
         adapter.notifyDataSetChanged();
         loading.setVisibility(View.GONE);
         if(displayItems.size()==0){

@@ -140,6 +140,7 @@ public class OrderInfo extends AppCompatActivity {
                                         SharedPreferences s = getSharedPreferences("Room", MODE_PRIVATE);
                                         s.edit().putString("room",Integer.toString(item1.getId())).apply();
 
+                                        getSharedPreferences("activeOrder",MODE_PRIVATE).edit().putString("activeOrder", Integer.toString(item1.getId())).apply();
                                     }
                                 } catch (Exception e) {
                                     e.printStackTrace();
