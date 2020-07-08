@@ -23,6 +23,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
+import android.view.animation.DecelerateInterpolator;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -199,7 +204,8 @@ public class ATMFragment extends Fragment implements LocationListener, OnMapRead
                 Intent t = new Intent(getActivity(), MapsActivityConfirmation.class);
                 t.putExtra("currLat", currLat);
                 t.putExtra("currLon", currLon);
-                MapObject item = displayItems.get(position);
+                MapObject item = (MapObject) adapter.getItem(position);
+
                 if(isSearch){
                     item.setDistance(distance(currLat,currLon,item.getLat(),
                             item.getLon()));
@@ -280,15 +286,18 @@ public class ATMFragment extends Fragment implements LocationListener, OnMapRead
         lv2.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                adapter.getFilter().filter(Integer.toString(arrBank.get(position).getId()));
-                filterMarkerByBank(arrBank.get(position).getName(), sb.getProgress());
+                adapter.getFilter().filter(Integer.toString(((MapObject)adapter1.getItem(position)).getId()));
+                filterMarkerByBank(((MapObject)adapter1.getItem(position)).getName(), sb.getProgress());
                 dialogSearch.hide();
-                edtFind.setText(arrBank.get(position).getName());
+                edtFind.setText(((MapObject)adapter1.getItem(position)).getName());
                 edtFilter.setText("");
                 adapter1.getFilter().filter("");
                 rootView.findViewById(R.id.layout_revert).setVisibility(View.VISIBLE);
                 rootView.findViewById(R.id.layout_range).setVisibility(View.GONE);
 
+                if(adapter.getCount() == 0){
+                    tvNoItem.setVisibility(View.VISIBLE);
+                }
             }
         });
 
@@ -300,7 +309,7 @@ public class ATMFragment extends Fragment implements LocationListener, OnMapRead
                     imm.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), 0);
                 }
                 if(!edtDialogFind.getText().toString().equals("")) {
-                    findLocation(edtDialogFind.getText().toString(), edtDialogFind);
+                    findLocation(edtDialogFind.getText().toString(), edtDialogFind, edtFind);
                     edtFind.setText(edtDialogFind.getText().toString());
                 }else{
                     Toast toast = Toast.makeText(getActivity(), R.string.address_not_found, Toast.LENGTH_LONG);
@@ -504,7 +513,7 @@ public class ATMFragment extends Fragment implements LocationListener, OnMapRead
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(currLat,currLon), 15f));
     }
 
-    public void findLocation(String address, EditText editText){
+    public void findLocation(String address, EditText editText, EditText editTextFind){
         searchItems.clear();
         searchMakers.clear();
         Retrofit retro = new Retrofit.Builder().baseUrl("https://maps.googleapis.com/maps/api/geocode/")
@@ -545,6 +554,7 @@ public class ATMFragment extends Fragment implements LocationListener, OnMapRead
                             double mLon = jsonLatLng.getDouble("lng");
 
                             editText.setText(jsonObject1.getString("formatted_address"));
+                            editTextFind.setText(jsonObject1.getString("formatted_address"));
 
                             Call<ResponseBody> call2 = tour2.getUcfATMRange("1.0.0", (float)mLat, (float)mLon,(float)0.1);
                             call2.enqueue(new Callback<ResponseBody>() {
@@ -558,16 +568,16 @@ public class ATMFragment extends Fragment implements LocationListener, OnMapRead
                                             Log.e("", "onResponse: " + jsonObject.toString());
                                             if (!jsonObject.getJSONArray("Services").toString().equals("")) {
                                                 jsonArray = jsonObject.getJSONArray("Services");
-
-                                                String bankName="";
-                                                for (int j=0;j<arrBank.size();j++){
-                                                    if (jsonObject1.getInt("BankId") == arrBank.get(j).getId()) {
-                                                        bankName = arrBank.get(j).getName();
-                                                    }
-                                                }
-
                                                 for (int i = 0; i < jsonArray.length(); i++) {
                                                     JSONObject jsonObject1 = jsonArray.getJSONObject(i);
+
+                                                    String bankName="";
+                                                    for (int j=0;j<arrBank.size();j++){
+                                                        if (jsonObject1.getInt("BankId") == arrBank.get(j).getId()) {
+                                                            bankName = arrBank.get(j).getName();
+                                                        }
+                                                    }
+
                                                     Log.e("", "onResponse: " + jsonObject1.toString());
                                                     Log.e("", "onResponse: " + jsonObject1.getInt("Id"));
                                                     MapObject item = new MapObject(jsonObject1.getInt("Id"), bankName, 3,
@@ -630,6 +640,7 @@ public class ATMFragment extends Fragment implements LocationListener, OnMapRead
                                                     dialogSearch.hide();
 
                                                     editText.setText("");
+
                                                 }
                                                 else{
                                                     Toast toast = Toast.makeText(getActivity(), R.string.no_result, Toast.LENGTH_LONG);
@@ -762,6 +773,36 @@ public class ATMFragment extends Fragment implements LocationListener, OnMapRead
         else{
             tvNoItem.setVisibility(View.GONE);
         }
+
+        Toast toast = Toast.makeText(getActivity(), getString(R.string.change_range_to) + " " + (range) + "km", Toast.LENGTH_LONG);
+        toast.show();
+
+        Animation fadeIn = new AlphaAnimation(0, 1);
+        fadeIn.setInterpolator(new DecelerateInterpolator()); //add this
+        fadeIn.setDuration(314);
+
+        Animation fadeOut = new AlphaAnimation(1, 0);
+        fadeOut.setInterpolator(new AccelerateInterpolator()); //and this
+        fadeOut.setStartOffset(314);
+        fadeOut.setDuration(314);
+
+        AnimationSet animation = new AnimationSet(false); //change to false
+        animation.addAnimation(fadeIn);
+        animation.addAnimation(fadeOut);
+
+        getActivity().findViewById(R.id.aura).setAnimation(animation);
+
+        animation.setAnimationListener(new Animation.AnimationListener() {
+            public void onAnimationEnd(Animation animation) {
+                getActivity().findViewById(R.id.aura).setVisibility(View.GONE);
+            }
+            public void onAnimationRepeat(Animation animation) {
+                // TODO Auto-generated method stub
+            }
+            public void onAnimationStart(Animation animation) {
+                getActivity().findViewById(R.id.aura).setVisibility(View.VISIBLE);
+            }
+        });
     }
 
     public void callATM(double lat, double lon, float range){
@@ -1018,7 +1059,7 @@ public class ATMFragment extends Fragment implements LocationListener, OnMapRead
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == 1) {
+        if (requestCode == 1) {
             boolean gps_enabled = false;
             boolean network_enabled = false;
 

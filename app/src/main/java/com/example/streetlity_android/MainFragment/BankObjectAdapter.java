@@ -135,7 +135,7 @@ public class BankObjectAdapter extends ArrayAdapter implements Filterable {
                 } else {
 
                     for (int i = 0; i < mOriginalValues.size(); i++) {
-                        if (mOriginalValues.get(i).getName().contains(constraint)) {
+                        if (mOriginalValues.get(i).getName().toLowerCase().contains(constraint.toString().toLowerCase())) {
                             FilteredArrList.add(mOriginalValues.get(i));
                         }
                     }

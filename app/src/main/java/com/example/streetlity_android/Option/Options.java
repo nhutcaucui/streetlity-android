@@ -2,15 +2,18 @@ package com.example.streetlity_android.Option;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 
+import com.example.streetlity_android.MainNavigationHolder;
 import com.example.streetlity_android.MapAPI;
 import com.example.streetlity_android.MyApplication;
 import com.example.streetlity_android.R;
+import com.example.streetlity_android.UpdateLocationService;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -86,66 +89,108 @@ public class Options extends AppCompatActivity {
                                                         Log.e("TAG", "onResponse: " + new JSONObject(response.body().string()));
                                                         findViewById(R.id.layout_loading).setVisibility(View.GONE);
                                                         if (isChecked) {
-                                                            MyApplication.getInstance().setThread();
-                                                            MyApplication.getInstance().getThread().scheduleAtFixedRate(new TimerTask() {
-                                                                @Override
-                                                                public void run() {
-                                                                    LocationManager locationManager = (LocationManager)
-                                                                            getSystemService(Context.LOCATION_SERVICE);
-
-                                                                    if (ContextCompat.checkSelfPermission(Options.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
-                                                                            ContextCompat.checkSelfPermission(Options.this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                                                                        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1, 1, new LocationListener() {
-                                                                            @Override
-                                                                            public void onLocationChanged(Location location) {
-                                                                                Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getMaintenanceURL())
-                                                                                        .addConverterFactory(GsonConverterFactory.create()).build();
-                                                                                final MapAPI tour = retro.create(MapAPI.class);
-                                                                                Call<ResponseBody> call2 = tour.updateLocation(MyApplication.getInstance().getUsername(),
-                                                                                        (float)location.getLatitude(), (float)location.getLongitude());
-                                                                                call2.enqueue(new Callback<ResponseBody>() {
-                                                                                    @Override
-                                                                                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                                                                        if (response.code() == 200) {
-                                                                                            try {
-                                                                                                Log.e("TAG", "onResponse: " + new JSONObject(response.body().string()));
-                                                                                            }catch (Exception e){
-                                                                                                e.printStackTrace();}
-                                                                                        }else{
-                                                                                            Log.e("TAG", "onResponse: " + response.code());
-                                                                                        }
-                                                                                    }
-
-                                                                                    @Override
-                                                                                    public void onFailure(Call<ResponseBody> call, Throwable t) {
-
-                                                                                    }
-                                                                                });
-                                                                                locationManager.removeUpdates(this);
-                                                                            }
-
-                                                                            @Override
-                                                                            public void onStatusChanged(String provider, int status, Bundle extras) {
-
-                                                                            }
-
-                                                                            @Override
-                                                                            public void onProviderEnabled(String provider) {
-
-                                                                            }
-
-                                                                            @Override
-                                                                            public void onProviderDisabled(String provider) {
-
-                                                                            }
-                                                                        });
-                                                                    }
-
-                                                                }
-                                                            }, 5000, 600000);
+//                                                            MyApplication.getInstance().setThread();
+//                                                            MyApplication.getInstance().getThread().scheduleAtFixedRate(new TimerTask() {
+//                                                                @Override
+//                                                                public void run() {
+//                                                                    LocationManager locationManager = (LocationManager)
+//                                                                            getSystemService(Context.LOCATION_SERVICE);
+//
+//                                                                    if (ContextCompat.checkSelfPermission(Options.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
+//                                                                            ContextCompat.checkSelfPermission(Options.this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+//                                                                        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1, 1, new LocationListener() {
+//                                                                            @Override
+//                                                                            public void onLocationChanged(Location location) {
+//                                                                                Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getMaintenanceURL())
+//                                                                                        .addConverterFactory(GsonConverterFactory.create()).build();
+//                                                                                final MapAPI tour = retro.create(MapAPI.class);
+//                                                                                Call<ResponseBody> call2 = tour.updateLocation(MyApplication.getInstance().getUsername(),
+//                                                                                        (float)location.getLatitude(), (float)location.getLongitude());
+//                                                                                call2.enqueue(new Callback<ResponseBody>() {
+//                                                                                    @Override
+//                                                                                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+//                                                                                        if (response.code() == 200) {
+//                                                                                            try {
+//                                                                                                Log.e("TAG", "onResponse: " + new JSONObject(response.body().string()));
+//                                                                                            }catch (Exception e){
+//                                                                                                e.printStackTrace();}
+//                                                                                        }else{
+//                                                                                            Log.e("TAG", "onResponse: " + response.code());
+//                                                                                        }
+//                                                                                    }
+//
+//                                                                                    @Override
+//                                                                                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+//
+//                                                                                    }
+//                                                                                });
+//                                                                                locationManager.removeUpdates(this);
+//                                                                            }
+//
+//                                                                            @Override
+//                                                                            public void onStatusChanged(String provider, int status, Bundle extras) {
+//
+//                                                                            }
+//
+//                                                                            @Override
+//                                                                            public void onProviderEnabled(String provider) {
+//
+//                                                                            }
+//
+//                                                                            @Override
+//                                                                            public void onProviderDisabled(String provider) {
+//
+//                                                                            }
+//                                                                        });
+//                                                                    }
+//
+//                                                                }
+//                                                            }, 5000, 600000);
+//                                                            MyApplication.getInstance().setThread();
+////                                                            MyApplication.getInstance().getThread().scheduleAtFixedRate(new TimerTask() {
+////                                                                @Override
+////                                                                public void run() {
+////                                                                    LocationManager locationManager = (LocationManager)
+////                                                                            getSystemService(Context.LOCATION_SERVICE);
+////
+////                                                                    if (ContextCompat.checkSelfPermission(Options.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
+////                                                                            ContextCompat.checkSelfPermission(Options.this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+////                                                                        Location location = locationManager.getLastKnownLocation(locationManager
+////                                                                                .GPS_PROVIDER);
+////                                                                        if(location != null){
+////                                                                            Call<ResponseBody> call2 = tour.updateLocation(MyApplication.getInstance().getUsername(),
+////                                                                                    (float)location.getLatitude(), (float)location.getLongitude());
+////                                                                            call2.enqueue(new Callback<ResponseBody>() {
+////                                                                                @Override
+////                                                                                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+////                                                                                    if (response.code() == 200) {
+////                                                                                        try {
+////                                                                                            Log.e("TAG", "onResponse: " + new JSONObject(response.body().string()));
+////                                                                                        }catch (Exception e){
+////                                                                                            e.printStackTrace();}
+////                                                                                    }else{
+////                                                                                        Log.e("TAG", "onResponse: " + response.code());
+////                                                                                    }
+////                                                                                }
+////
+////                                                                                @Override
+////                                                                                public void onFailure(Call<ResponseBody> call, Throwable t) {
+////
+////                                                                                }
+////                                                                            });
+////                                                                        }
+////                                                                    }
+////
+////                                                                }
+////                                                            }, 5000, 600000);
+                                                            Intent t= new Intent(Options.this, UpdateLocationService.class);
+                                                            t.setAction("start");
+                                                            startService(t);
                                                         }
                                                         else{
-                                                            MyApplication.getInstance().getThread().cancel();
+                                                            Intent t= new Intent(Options.this, UpdateLocationService.class);
+                                                            t.setAction("stop");
+                                                            startService(t);
                                                         }
                                                     } catch (Exception e) {
                                                         e.printStackTrace();
@@ -197,43 +242,50 @@ public class Options extends AppCompatActivity {
                                         Log.e("TAG", "onResponse: " + new JSONObject(response.body().string()));
                                         findViewById(R.id.layout_loading).setVisibility(View.GONE);
                                         if (isChecked) {
-                                            MyApplication.getInstance().setThread();
-                                            MyApplication.getInstance().getThread().scheduleAtFixedRate(new TimerTask() {
-                                                @Override
-                                                public void run() {
-                                                    LocationManager locationManager = (LocationManager)
-                                                            getSystemService(Context.LOCATION_SERVICE);
-
-                                                    if (ContextCompat.checkSelfPermission(Options.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
-                                                            ContextCompat.checkSelfPermission(Options.this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                                                        Location location = locationManager.getLastKnownLocation(locationManager
-                                                                .GPS_PROVIDER);
-                                                        if(location != null){
-                                                            Call<ResponseBody> call2 = tour.updateLocation(MyApplication.getInstance().getUsername(),
-                                                                    (float)location.getLatitude(), (float)location.getLongitude());
-                                                            call2.enqueue(new Callback<ResponseBody>() {
-                                                                @Override
-                                                                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                                                    if (response.code() == 200) {
-                                                                        try {
-                                                                            Log.e("TAG", "onResponse: " + new JSONObject(response.body().string()));
-                                                                        }catch (Exception e){
-                                                                        e.printStackTrace();}
-                                                                    }else{
-                                                                        Log.e("TAG", "onResponse: " + response.code());
-                                                                    }
-                                                                }
-
-                                                                @Override
-                                                                public void onFailure(Call<ResponseBody> call, Throwable t) {
-
-                                                                }
-                                                            });
-                                                        }
-                                                    }
-
-                                                }
-                                            }, 5000, 600000);
+//                                            MyApplication.getInstance().setThread();
+//                                            MyApplication.getInstance().getThread().scheduleAtFixedRate(new TimerTask() {
+//                                                @Override
+//                                                public void run() {
+//                                                    LocationManager locationManager = (LocationManager)
+//                                                            getSystemService(Context.LOCATION_SERVICE);
+//
+//                                                    if (ContextCompat.checkSelfPermission(Options.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
+//                                                            ContextCompat.checkSelfPermission(Options.this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+//                                                        Location location = locationManager.getLastKnownLocation(locationManager
+//                                                                .GPS_PROVIDER);
+//                                                        if(location != null){
+//                                                            Call<ResponseBody> call2 = tour.updateLocation(MyApplication.getInstance().getUsername(),
+//                                                                    (float)location.getLatitude(), (float)location.getLongitude());
+//                                                            call2.enqueue(new Callback<ResponseBody>() {
+//                                                                @Override
+//                                                                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+//                                                                    if (response.code() == 200) {
+//                                                                        try {
+//                                                                            Log.e("TAG", "onResponse: " + new JSONObject(response.body().string()));
+//                                                                        }catch (Exception e){
+//                                                                        e.printStackTrace();}
+//                                                                    }else{
+//                                                                        Log.e("TAG", "onResponse: " + response.code());
+//                                                                    }
+//                                                                }
+//
+//                                                                @Override
+//                                                                public void onFailure(Call<ResponseBody> call, Throwable t) {
+//
+//                                                                }
+//                                                            });
+//                                                        }
+//                                                    }
+//
+//                                                }
+//                                            }, 5000, 600000);
+                                            Intent t= new Intent(Options.this, UpdateLocationService.class);
+                                            t.setAction("start");
+                                            startService(t);
+                                        }else{
+                                            Intent t= new Intent(Options.this, UpdateLocationService.class);
+                                            t.setAction("stop");
+                                            startService(t);
                                         }
                                     } catch (Exception e) {
                                         e.printStackTrace();

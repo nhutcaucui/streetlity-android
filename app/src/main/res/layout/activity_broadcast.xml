@@ -117,13 +117,14 @@
         android:background="#7C000000"
         android:clickable="true"
         android:elevation="5dp"
+        android:padding="30dp"
         android:visibility="gone">
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:background="#fff"
+            android:background="@drawable/white_cardview"
             android:orientation="vertical">
 
             <TextView
@@ -132,7 +133,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:padding="15dp"
-                android:text="A MAINTAINER ACCEPTED YOUR ORDER"
+                android:text="@string/found_maintainer"
                 android:textColor="@color/black"
                 android:textSize="16sp"
                 android:textStyle="bold" />
@@ -166,7 +167,7 @@
                 android:layout_height="wrap_content"
                 android:background="@null"
                 android:foreground="?android:attr/selectableItemBackground"
-                android:text="@string/go_to_chat"
+                android:text="@string/next_to_chat"
                 android:textColor="@color/colorPrimaryDark" />
 
         </LinearLayout>

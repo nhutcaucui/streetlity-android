@@ -53,16 +53,16 @@ public class OrderInfo extends AppCompatActivity {
         int from = getIntent().getIntExtra("from",0);
 
         getSupportActionBar().setTitle("");
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        if(isTaskRoot()){
-            Intent t = new Intent(this, MainNavigationHolder.class);
-            t.putExtra("isRoot", 1);
-            startActivity(t);
-            t = new Intent(this, Works.class);
-            t.putExtra("isRoot", 1);
-            startActivity(t);
-        }
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//        if(isTaskRoot()){
+//            Intent t = new Intent(this, MainNavigationHolder.class);
+//            t.putExtra("isRoot", 1);
+//            startActivity(t);
+//            t = new Intent(this, Works.class);
+//            t.putExtra("isRoot", 1);
+//            startActivity(t);
+//        }
 
         TextView tvName = findViewById(R.id.tv_name);
         TextView tvPhone = findViewById(R.id.tv_phone);
@@ -136,7 +136,7 @@ public class OrderInfo extends AppCompatActivity {
                                     if (jsonObject.getBoolean("Status")) {
                                         finish();
                                         startActivity(new Intent(OrderInfo.this, MaintainerDirection.class));
-                                        startActivity(new Intent( OrderInfo.this, Chat.class));
+                                        //startActivity(new Intent( OrderInfo.this, Chat.class));
                                         SharedPreferences s = getSharedPreferences("Room", MODE_PRIVATE);
                                         s.edit().putString("room",Integer.toString(item1.getId())).apply();
 

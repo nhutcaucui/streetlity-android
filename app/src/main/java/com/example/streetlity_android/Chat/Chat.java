@@ -13,7 +13,6 @@ import com.example.streetlity_android.RealtimeService.Listener;
 import com.example.streetlity_android.RealtimeService.LocationListener;
 import com.example.streetlity_android.RealtimeService.MaintenanceOrder;
 import com.example.streetlity_android.RealtimeService.MessageListener;
-import com.example.streetlity_android.RealtimeService.TypeMessageListener;
 import com.example.streetlity_android.User.UserInfoOther;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.gson.Gson;
@@ -32,7 +31,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -55,7 +53,7 @@ public class Chat extends AppCompatActivity {
     ListView lv;
     ChatObjectAdapter adapter;
 
-    MaintenanceOrder maintenanceOrder;
+    MaintenanceOrder socket;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,9 +106,9 @@ public class Chat extends AppCompatActivity {
 
         MaintenanceOrder.Create(room);
 
-        maintenanceOrder = MaintenanceOrder.getInstance();
+        socket = MaintenanceOrder.getInstance();
 
-        maintenanceOrder.InformationListener = new InformationListener<MaintenanceOrder>() {
+        socket.InformationListener = new InformationListener<MaintenanceOrder>() {
             @Override
             public void onReceived(MaintenanceOrder sender, Information info) {
                 runOnUiThread(new Runnable() {
@@ -125,17 +123,59 @@ public class Chat extends AppCompatActivity {
         };
         Information myInfo = new Information(MyApplication.getInstance().getUsername(), phone);
 
-        maintenanceOrder.sendInformation(myInfo);
-        maintenanceOrder.pullInformation();
+        socket.sendInformation(myInfo);
+        socket.pullInformation();
 
-        maintenanceOrder.MessageListener = new MessageListener<MaintenanceOrder>() {
+        socket.CompleteListener = new Listener<MaintenanceOrder>() {
+            @Override
+            public void trigger(MaintenanceOrder sender) {
+                findViewById(R.id.btn_finish).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        setResult(RESULT_OK);
+                        finish();
+                    }
+                });
+                getSharedPreferences("activeOrder",MODE_PRIVATE).edit().clear().apply();
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        findViewById(R.id.layout_complete).setVisibility(View.VISIBLE);
+                    }
+                });
+            }
+        };
+
+        socket.DeclineListener = new Listener<MaintenanceOrder>() {
+            @Override
+            public void trigger(MaintenanceOrder sender) {
+                getSharedPreferences("activeOrder",MODE_PRIVATE).edit().clear().apply();
+                findViewById(R.id.btn_finish_denu).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        setResult(RESULT_OK);
+                        finish();
+                    }
+                });
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        findViewById(R.id.layout_denied).setVisibility(View.VISIBLE);
+                    }
+                });
+            }
+        };
+
+        socket.MessageListener = new MessageListener<MaintenanceOrder>() {
             @Override
             public void onReceived(MaintenanceOrder sender, ChatObject message) {
                 Log.e("", "onReceived:  this is america");
                 new Task().execute(message);
             }
         };
-        maintenanceOrder.LocationListener = new LocationListener<MaintenanceOrder>() {
+        socket.LocationListener = new LocationListener<MaintenanceOrder>() {
             @Override
             public void onReceived(MaintenanceOrder sender, float lat, float lon) {
                 lat = lat;
@@ -143,20 +183,20 @@ public class Chat extends AppCompatActivity {
             }
         };
 
-        maintenanceOrder.DeclineListener = new Listener<MaintenanceOrder>() {
+        socket.DeclineListener = new Listener<MaintenanceOrder>() {
             @Override
             public void trigger(MaintenanceOrder sender) {
 
             }
         };
-        maintenanceOrder.CompleteListener = new Listener<MaintenanceOrder>() {
+        socket.CompleteListener = new Listener<MaintenanceOrder>() {
             @Override
             public void trigger(MaintenanceOrder sender) {
                 Log.e("", "call: completed");
             }
         };
 
-        maintenanceOrder.JoinedListener = new Listener<MaintenanceOrder>() {
+        socket.JoinedListener = new Listener<MaintenanceOrder>() {
             @Override
             public void trigger(MaintenanceOrder sender) {
                 runOnUiThread(new Runnable() {
@@ -181,7 +221,7 @@ public class Chat extends AppCompatActivity {
             }
         };
 
-        maintenanceOrder.join();
+        socket.join();
 
         TextInputEditText edtMessage = findViewById(R.id.edt_body);
 
@@ -193,7 +233,7 @@ public class Chat extends AppCompatActivity {
 
                     Log.e("", "onClick: " + edtMessage.getText().toString());
                     ChatObject object = new ChatObject(MyApplication.getInstance().getUsername(), edtMessage.getText().toString(), new Date());
-                    maintenanceOrder.sendMessage(object);
+                    socket.sendMessage(object);
                     items.add(object);
                     adapter.notifyDataSetChanged();
                     lv.setSelection(adapter.getCount() - 1);

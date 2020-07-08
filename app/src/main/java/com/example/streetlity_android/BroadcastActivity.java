@@ -139,6 +139,7 @@ public class BroadcastActivity extends AppCompatActivity {
             Location location = locationManager.getLastKnownLocation(locationManager
                     .GPS_PROVIDER);
             if(location != null) {
+
                 currLat = (float) location.getLatitude();
                 currLon = (float) location.getLongitude();
             }
@@ -301,6 +302,9 @@ public class BroadcastActivity extends AppCompatActivity {
                     setResult(RESULT_OK);
                     finish();
                 }
+
+                countdown.cancel();
+
                 stopThread = true;
                 //denyOrder();
             }
@@ -643,7 +647,7 @@ public class BroadcastActivity extends AppCompatActivity {
                 SharedPreferences s = getSharedPreferences("Room", MODE_PRIVATE);
                 s.edit().putString("room",intent.getStringExtra("id")).apply();
 
-                startActivity(intent);
+                //startActivity(intent);
 
                 finish();
             }

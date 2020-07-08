@@ -33,9 +33,12 @@ import com.akexorcist.googledirection.model.Leg;
 import com.akexorcist.googledirection.model.Route;
 import com.akexorcist.googledirection.util.DirectionConverter;
 import com.example.streetlity_android.Chat.Chat;
+import com.example.streetlity_android.Chat.ChatObject;
 import com.example.streetlity_android.RealtimeService.Information;
 import com.example.streetlity_android.RealtimeService.InformationListener;
+import com.example.streetlity_android.RealtimeService.Listener;
 import com.example.streetlity_android.RealtimeService.MaintenanceOrder;
+import com.example.streetlity_android.RealtimeService.MessageListener;
 import com.example.streetlity_android.User.Maintainer.OrderInfo;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -79,6 +82,8 @@ public class MaintainerDirection extends AppCompatActivity implements OnMapReady
 
     String room;
 
+    LocationManager locationManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -89,6 +94,12 @@ public class MaintainerDirection extends AppCompatActivity implements OnMapReady
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("");
 
+        startActivityForResult(new Intent(MaintainerDirection.this, Chat.class), 1);
+
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
+
         ImageButton btnCall = findViewById(R.id.btn_call);
         ImageButton btnChat = findViewById(R.id.btn_chat);
 
@@ -97,7 +108,8 @@ public class MaintainerDirection extends AppCompatActivity implements OnMapReady
         btnChat.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(MaintainerDirection.this, Chat.class));
+                startActivityForResult(new Intent(MaintainerDirection.this, Chat.class),1);
+                findViewById(R.id.img_chat_new).setVisibility(View.GONE);
             }
         });
 
@@ -137,6 +149,7 @@ public class MaintainerDirection extends AppCompatActivity implements OnMapReady
                 btnConfirm.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        socket.decline(edtReason.getText().toString());
                         Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getMaintenanceURL())
                                 .addConverterFactory(GsonConverterFactory.create()).build();
                         final MapAPI tour = retro.create(MapAPI.class);
@@ -192,24 +205,122 @@ public class MaintainerDirection extends AppCompatActivity implements OnMapReady
 
         if (ContextCompat.checkSelfPermission(MaintainerDirection.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
                 ContextCompat.checkSelfPermission(MaintainerDirection.this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            LocationManager locationManager = (LocationManager)
+            locationManager = (LocationManager)
                     MaintainerDirection.this.getSystemService(Context.LOCATION_SERVICE);
-            Location location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-            currLat = location.getLatitude();
-            currLon = location.getLongitude();
-
-            MarkerOptions option = new MarkerOptions();
-            option.icon(BitmapDescriptorFactory.fromResource(R.drawable.cursor));
-            option.position(new LatLng(location.getLatitude(),location.getLongitude()));
-            option.rotation(location.getBearing() - 45);
-            currMarker = mMap.addMarker(option);
-
-            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 15f));
+//            Location location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+//            currLat = location.getLatitude();
+//            currLon = location.getLongitude();
+//
+//            MarkerOptions option = new MarkerOptions();
+//            option.icon(BitmapDescriptorFactory.fromResource(R.drawable.cursor));
+//            option.position(new LatLng(location.getLatitude(),location.getLongitude()));
+//            option.rotation(location.getBearing() - 45);
+//            currMarker = mMap.addMarker(option);
+//
+//            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 15f));
 
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 1000, this);
         }
 
         socket = MaintenanceOrder.getInstance();
+
+        String phone2 = "";
+        if (getSharedPreferences("broadcastPhone", MODE_PRIVATE).contains("phone")) {
+            phone2 = getSharedPreferences("broadcastPhone", MODE_PRIVATE).getString("phone", "no");
+        }
+        if (phone2.equals("")) {
+            phone2 = MyApplication.getInstance().getPhone();
+        }
+
+        Information myInfo = new Information(MyApplication.getInstance().getUsername(), phone2);
+        socket.sendInformation(myInfo);
+        socket.pullInformation();
+    }
+
+    public void onLocationChanged(Location location) {
+        if(currMarker!= null) {
+            currMarker.remove();
+        }
+        MarkerOptions currOption = new MarkerOptions();
+        currOption.position(new LatLng(location.getLatitude(),location.getLongitude()));
+        currOption.title(getString(R.string.you_r_here));
+        currOption.icon(BitmapDescriptorFactory.fromResource(R.drawable.cursor));
+        currOption.rotation(location.getBearing() - 45);
+        currMarker = mMap.addMarker(currOption);
+
+        if(socket != null){
+            socket.updateLocation(location.getLatitude(),location.getLongitude(),location.getBearing());
+        }
+
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()),15f));
+    }
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+    }
+
+    @Override
+    public void onStop(){
+        super.onStop();
+
+        locationManager.removeUpdates(this);
+        socket.close();
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+
+        socket = MaintenanceOrder.getInstance();
+        final TextView tvPhone = findViewById(R.id.tv_phone);
+        final TextView tvName = findViewById(R.id.tv_name);
+        socket.InformationListener = new InformationListener<MaintenanceOrder>() {
+            @Override
+            public void onReceived(MaintenanceOrder sender, Information info) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        infomation = info;
+                        Log.e("", "onReceived: " + info.toString());
+                        phone = info.Phone;
+
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                tvPhone.setText(info.Phone);
+                                tvName.setText(info.Username);
+                            }
+                        });
+                    }
+                });
+
+            }
+        };
+
+        Information myInfo = new Information(MyApplication.getInstance().getUsername(), phone);
+
+        socket.sendInformation(myInfo);
+        socket.pullInformation();
+
+        socket.MessageListener = new MessageListener<MaintenanceOrder>() {
+            @Override
+            public void onReceived(MaintenanceOrder sender, ChatObject message) {
+                Log.e("", "onReceived:  this is america");
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        findViewById(R.id.img_chat_new).setVisibility(View.VISIBLE);
+                    }
+                });
+            }
+        };
 
         socket.LocationListener = new com.example.streetlity_android.RealtimeService.LocationListener<MaintenanceOrder>() {
             @Override
@@ -296,79 +407,52 @@ public class MaintainerDirection extends AppCompatActivity implements OnMapReady
             }
         };
 
-        String phone2 = "";
-        if (getSharedPreferences("broadcastPhone", MODE_PRIVATE).contains("phone")) {
-            phone2 = getSharedPreferences("broadcastPhone", MODE_PRIVATE).getString("phone", "no");
-        }
-        if (phone2.equals("")) {
-            phone2 = MyApplication.getInstance().getPhone();
-        }
-
-        final TextView tvPhone = findViewById(R.id.tv_phone);
-        final TextView tvName = findViewById(R.id.tv_name);
-
-        socket.InformationListener = new InformationListener<MaintenanceOrder>() {
+        socket.CompleteListener = new Listener<MaintenanceOrder>() {
             @Override
-            public void onReceived(MaintenanceOrder sender, Information info) {
+            public void trigger(MaintenanceOrder sender) {
+                findViewById(R.id.btn_finish).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        finish();
+                    }
+                });
+                getSharedPreferences("activeOrder",MODE_PRIVATE).edit().clear().apply();
+
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        infomation = info;
-                        Log.e("", "onReceived: " + info.toString());
-                        phone = info.Phone;
-
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                tvPhone.setText(info.Phone);
-                                tvName.setText(info.Username);
-                            }
-                        });
+                        findViewById(R.id.layout_complete).setVisibility(View.VISIBLE);
                     }
                 });
-
             }
         };
 
-        Information myInfo = new Information(MyApplication.getInstance().getUsername(), phone2);
-        socket.sendInformation(myInfo);
-        socket.pullInformation();
+        socket.DeclineListener = new Listener<MaintenanceOrder>() {
+            @Override
+            public void trigger(MaintenanceOrder sender) {
+                getSharedPreferences("activeOrder",MODE_PRIVATE).edit().clear().apply();
+                findViewById(R.id.btn_finish_denu).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        finish();
+                    }
+                });
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        findViewById(R.id.layout_denied).setVisibility(View.VISIBLE);
+                    }
+                });
+            }
+        };
     }
 
-    public void onLocationChanged(Location location) {
-        if(currMarker!= null) {
-            currMarker.remove();
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1 && resultCode == RESULT_OK) {
+            finish();
         }
-        MarkerOptions currOption = new MarkerOptions();
-        currOption.position(new LatLng(location.getLatitude(),location.getLongitude()));
-        currOption.title(getString(R.string.you_r_here));
-        currOption.icon(BitmapDescriptorFactory.fromResource(R.drawable.cursor));
-        currOption.rotation(location.getBearing() - 45);
-        currMarker = mMap.addMarker(currOption);
-
-        if(socket != null){
-            socket.updateLocation(location.getLatitude(),location.getLongitude(),location.getBearing());
-        }
-
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()),15f));
-    }
-    @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {
-    }
-
-    @Override
-    public void onProviderEnabled(String provider) {
-    }
-
-    @Override
-    public void onProviderDisabled(String provider) {
-    }
-
-    public  void onResume(){
-        super.onResume();
-
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
     }
 }

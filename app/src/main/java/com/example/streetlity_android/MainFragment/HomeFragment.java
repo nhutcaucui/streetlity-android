@@ -416,7 +416,7 @@ public class HomeFragment extends Fragment implements LocationListener{
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == 1) {
+        if (requestCode == 1) {
             boolean gps_enabled = false;
             boolean network_enabled = false;
 

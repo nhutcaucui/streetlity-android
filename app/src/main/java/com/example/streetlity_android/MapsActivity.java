@@ -96,6 +96,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+import static android.view.View.VISIBLE;
 import static androidx.constraintlayout.widget.Constraints.TAG;
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, LocationListener {
@@ -652,6 +653,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                 map.put("review " + item.getId(), ao);
                                 MyApplication.getInstance().getReviewedMap().put(type, map);
                             }
+
+                            tvNoReview.setVisibility(View.GONE);
 
                             Log.e(TAG, "onResponse: " + MyApplication.getInstance().getReviewedMap());
                         }

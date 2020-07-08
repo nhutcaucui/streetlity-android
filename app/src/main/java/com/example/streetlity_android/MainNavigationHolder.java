@@ -97,6 +97,8 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
         //you can leave it empty
     }
 
+    boolean firstLoop = true;
+
     DrawerLayout drawer;
 
     ConstraintLayout cantFind;
@@ -258,69 +260,49 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
                 }
 
                 if(MyApplication.getInstance().getOption().isAcceptEmergency()) {
-                    MyApplication.getInstance().setThread();
-
-                    MyApplication.getInstance().getThread().scheduleAtFixedRate(new TimerTask() {
-                        @Override
-                        public void run() {
-                            Looper.prepare();
-
-                            LocationManager locationManager = (LocationManager)
-                                    getSystemService(Context.LOCATION_SERVICE);
-
-                            if (ContextCompat.checkSelfPermission(MainNavigationHolder.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
-                                    ContextCompat.checkSelfPermission(MainNavigationHolder.this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1, 1, new LocationListener() {
-                                    @Override
-                                    public void onLocationChanged(Location location) {
-                                        Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getMaintenanceURL())
-                                                .addConverterFactory(GsonConverterFactory.create()).build();
-                                        final MapAPI tour = retro.create(MapAPI.class);
-                                        Call<ResponseBody> call2 = tour.updateLocation(MyApplication.getInstance().getUsername(),
-                                                (float) location.getLatitude(), (float) location.getLongitude());
-                                        call2.enqueue(new retrofit2.Callback<ResponseBody>() {
-                                            @Override
-                                            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                                if (response.code() == 200) {
-                                                    try {
-                                                        Log.e("TAG", "onResponse: " + new JSONObject(response.body().string()));
-                                                    } catch (Exception e) {
-                                                        e.printStackTrace();
-                                                    }
-                                                } else {
-                                                    Log.e("TAG", "onResponse: " + response.code());
-                                                }
-                                            }
-
-                                            @Override
-                                            public void onFailure(Call<ResponseBody> call, Throwable t) {
-
-                                            }
-                                        });
-                                        locationManager.removeUpdates(this);
-                                    }
-
-                                    @Override
-                                    public void onStatusChanged(String provider, int status, Bundle extras) {
-
-                                    }
-
-                                    @Override
-                                    public void onProviderEnabled(String provider) {
-
-                                    }
-
-                                    @Override
-                                    public void onProviderDisabled(String provider) {
-
-                                    }
-                                });
-                            }
-
-                        }
-                    }, 5000, 600000);
-
-
+//                    MyApplication.getInstance().setThread();
+//                    MyApplication.getInstance().getThread().scheduleAtFixedRate(new TimerTask() {
+//                        @Override
+//                        public void run() {
+//                            LocationManager locationManager = (LocationManager)
+//                                    getSystemService(Context.LOCATION_SERVICE);
+//
+//                            if (ContextCompat.checkSelfPermission(MainNavigationHolder.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
+//                                    ContextCompat.checkSelfPermission(MainNavigationHolder.this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+//                                Location location = locationManager.getLastKnownLocation(locationManager
+//                                        .GPS_PROVIDER);
+//                                if(location != null){
+//                                    Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getMaintenanceURL())
+//                                            .addConverterFactory(GsonConverterFactory.create()).build();
+//                                    final MapAPI tour = retro.create(MapAPI.class);
+//                                    Call<ResponseBody> call2 = tour.updateLocation(MyApplication.getInstance().getUsername(),
+//                                            (float)location.getLatitude(), (float)location.getLongitude());
+//                                    call2.enqueue(new Callback<ResponseBody>() {
+//                                        @Override
+//                                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+//                                            if (response.code() == 200) {
+//                                                try {
+//                                                    Log.e("TAG", "onResponse: " + new JSONObject(response.body().string()));
+//                                                }catch (Exception e){
+//                                                    e.printStackTrace();}
+//                                            }else{
+//                                                Log.e("TAG", "onResponse: " + response.code());
+//                                            }
+//                                        }
+//
+//                                        @Override
+//                                        public void onFailure(Call<ResponseBody> call, Throwable t) {
+//
+//                                        }
+//                                    });
+//                                }
+//                            }
+//
+//                        }
+//                    }, 5000, 600000);
+                    Intent t= new Intent(MainNavigationHolder.this, UpdateLocationService.class);
+                    t.setAction("start");
+                    startService(t);
                 }
             }
 
@@ -619,7 +601,7 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
 
                         startActivityForResult(new Intent(MainNavigationHolder.this, UserInfo.class), 3);
                         break;
-                    case  R.id.logout:
+                    case R.id.logout:
                         logout(navView);
                         break;
                     case R.id.works:
@@ -627,8 +609,8 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
                         break;
                     case R.id.my_orders: {
                         if(getSharedPreferences("activeOrder",MODE_PRIVATE).contains("activeOrder")) {
-                            Intent t = new Intent(MainNavigationHolder.this, Chat.class);
-                            t.putExtra("id", getSharedPreferences("activeOrder",MODE_PRIVATE).getString("activeOrder",""));
+                            //Intent t = new Intent(MainNavigationHolder.this, Chat.class);
+                            //t.putExtra("id", getSharedPreferences("activeOrder",MODE_PRIVATE).getString("activeOrder",""));
                             if(MyApplication.getInstance().getUserType() == 1) {
                                 Intent t2 = new Intent(MainNavigationHolder.this, MaintainerLocation.class);
                                 t2.putExtra("id", getSharedPreferences("activeOrder",MODE_PRIVATE).getString("activeOrder",""));
@@ -639,7 +621,7 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
                                 t2.putExtra("id", getSharedPreferences("activeOrder",MODE_PRIVATE).getString("activeOrder",""));
                                 startActivity(t2);
                             }
-                            startActivity(t);
+                            //startActivity(t);
                         }else{
                             Toast toast = Toast.makeText(MainNavigationHolder.this, R.string.no_order, Toast.LENGTH_LONG);
                             toast.show();
@@ -695,6 +677,7 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
 
     public void logout(NavigationView navView){
         drawer.closeDrawers();
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.menu);
         ConstraintLayout layoutTop = findViewById(R.id.layout_loading_top);
         layoutTop.setVisibility(View.VISIBLE);
         Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getAuthURL())
@@ -735,6 +718,11 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
                             }
                             if(MyApplication.getInstance().getUserType() == 7) {
                                 if (MyApplication.getInstance().getOption().isAcceptEmergency()) {
+
+                                    Intent t= new Intent(MainNavigationHolder.this, UpdateLocationService.class);
+                                    t.setAction("stop");
+                                    startService(t);
+
                                     Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getMaintenanceURL())
                                             .addConverterFactory(GsonConverterFactory.create()).build();
                                     final MapAPI tour = retro.create(MapAPI.class);
@@ -891,6 +879,20 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
         super.onResume();
 
         this.getLoading().setVisibility(View.GONE);
+
+        if(getSharedPreferences("activeOrder",MODE_PRIVATE).contains("activeOrder")){
+            getSupportActionBar().setHomeAsUpIndicator(R.drawable.menu_active);
+            NavigationView navView = findViewById(R.id.nav_view);
+            if(navView.getMenu().findItem(R.id.my_orders) != null) {
+                navView.getMenu().findItem(R.id.my_orders).setIcon(R.drawable.my_order_active);
+            }
+        }else{
+            getSupportActionBar().setHomeAsUpIndicator(R.drawable.menu);
+            NavigationView navView = findViewById(R.id.nav_view);
+            if(navView.getMenu().findItem(R.id.my_orders) != null) {
+                navView.getMenu().findItem(R.id.my_orders).setIcon(R.drawable.my_order_icon);
+            }
+        }
     }
 
     public long getTimeLeft() {

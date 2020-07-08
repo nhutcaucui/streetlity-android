@@ -247,4 +247,9 @@
     <string name="edit_address">Sửa địa chỉ</string>
     <string name="no_note">Không có ghi chú</string>
     <string name="search_location">Địa điểm tìm kiếm</string>
+    <string name="change_range_to">Đổi phạm vi thành</string>
+    <string name="next_to_chat">Tiếp theo</string>
+    <string name="found_maintainer">MỘT THỢ SỬA ĐÃ CHẤP NHẬN YÊU CẦU CỦA BẠN</string>
+    <string name="order_completed">YÊU CẦU ĐÃ HOÀN THÀNH</string>
+    <string name="order_cancel">YÊU CẦU BỊ HỦY BỎ</string>
 </resources>

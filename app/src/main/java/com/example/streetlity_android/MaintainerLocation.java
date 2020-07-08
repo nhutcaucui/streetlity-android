@@ -21,10 +21,13 @@ import com.akexorcist.googledirection.model.Leg;
 import com.akexorcist.googledirection.model.Route;
 import com.akexorcist.googledirection.util.DirectionConverter;
 import com.example.streetlity_android.Chat.Chat;
+import com.example.streetlity_android.Chat.ChatObject;
 import com.example.streetlity_android.RealtimeService.Information;
 import com.example.streetlity_android.RealtimeService.InformationListener;
+import com.example.streetlity_android.RealtimeService.Listener;
 import com.example.streetlity_android.RealtimeService.LocationListener;
 import com.example.streetlity_android.RealtimeService.MaintenanceOrder;
+import com.example.streetlity_android.RealtimeService.MessageListener;
 import com.example.streetlity_android.User.SignUp;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -82,6 +85,8 @@ public class MaintainerLocation extends AppCompatActivity implements OnMapReadyC
 
     Information infomation;
 
+    LocationManager locationManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -91,6 +96,8 @@ public class MaintainerLocation extends AppCompatActivity implements OnMapReadyC
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("");
+
+        startActivityForResult(new Intent(MaintainerLocation.this, Chat.class), 1);
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -102,7 +109,7 @@ public class MaintainerLocation extends AppCompatActivity implements OnMapReadyC
         btnChat.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(MaintainerLocation.this, Chat.class));
+                startActivityForResult(new Intent(MaintainerLocation.this, Chat.class), 1);
             }
         });
 
@@ -142,6 +149,7 @@ public class MaintainerLocation extends AppCompatActivity implements OnMapReadyC
                 btnConfirm.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        socket.decline(edtReason.getText().toString());
                         Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getMaintenanceURL())
                                 .addConverterFactory(GsonConverterFactory.create()).build();
                         final MapAPI tour = retro.create(MapAPI.class);
@@ -195,7 +203,7 @@ public class MaintainerLocation extends AppCompatActivity implements OnMapReadyC
                 alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, getString(android.R.string.yes),
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
-
+                                socket.complete();
                                 Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getMaintenanceURL())
                                         .addConverterFactory(GsonConverterFactory.create()).build();
                                 final MapAPI tour = retro.create(MapAPI.class);
@@ -275,7 +283,7 @@ public class MaintainerLocation extends AppCompatActivity implements OnMapReadyC
 
         if (ContextCompat.checkSelfPermission(MaintainerLocation.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
                 ContextCompat.checkSelfPermission(MaintainerLocation.this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            LocationManager locationManager = (LocationManager)
+            locationManager = (LocationManager)
                     MaintainerLocation.this.getSystemService(Context.LOCATION_SERVICE);
 
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 1000, this);
@@ -352,17 +360,124 @@ public class MaintainerLocation extends AppCompatActivity implements OnMapReadyC
     public void onProviderDisabled(String provider) {
     }
 
-    public  void onResume(){
-        super.onResume();
-
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
-    }
 
     public void onStop(){
         super.onStop();
 
+        locationManager.removeUpdates(this);
         socket.close();
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+
+        socket = MaintenanceOrder.getInstance();
+        //socket.join();
+        final TextView tvPhone = findViewById(R.id.tv_phone);
+        final TextView tvName = findViewById(R.id.tv_name);
+        socket.InformationListener = new InformationListener<MaintenanceOrder>() {
+            @Override
+            public void onReceived(MaintenanceOrder sender, Information info) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        infomation = info;
+                        Log.e("", "onReceived: " + info.toString());
+                        phone = info.Phone;
+
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                tvPhone.setText(info.Phone);
+                                tvName.setText(info.Username);
+                            }
+                        });
+                    }
+                });
+
+            }
+        };
+
+        Information myInfo = new Information(MyApplication.getInstance().getUsername(), phone);
+
+        socket.sendInformation(myInfo);
+        socket.pullInformation();
+
+        socket.MessageListener = new MessageListener<MaintenanceOrder>() {
+            @Override
+            public void onReceived(MaintenanceOrder sender, ChatObject message) {
+                Log.e("", "onReceived:  this is america");
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        findViewById(R.id.img_chat_new).setVisibility(View.VISIBLE);
+                    }
+                });
+            }
+        };
+
+        socket.LocationListener = new com.example.streetlity_android.RealtimeService.LocationListener<MaintenanceOrder>() {
+            @Override
+            public void onReceived(MaintenanceOrder sender, float lat, float lon) {
+                if(currMarker != null){
+                    currMarker.remove();
+                }
+
+                MarkerOptions options = new MarkerOptions();
+                options.icon(BitmapDescriptorFactory.fromResource(R.drawable.cursor));
+                options.position(new LatLng(lat,lon));
+
+                currMarker = mMap.addMarker(options);
+            }
+        };
+
+        socket.CompleteListener = new Listener<MaintenanceOrder>() {
+            @Override
+            public void trigger(MaintenanceOrder sender) {
+                findViewById(R.id.btn_finish).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        finish();
+                    }
+                });
+                getSharedPreferences("activeOrder",MODE_PRIVATE).edit().clear().apply();
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        findViewById(R.id.layout_complete).setVisibility(View.VISIBLE);
+                    }
+                });
+            }
+        };
+
+        socket.DeclineListener = new Listener<MaintenanceOrder>() {
+            @Override
+            public void trigger(MaintenanceOrder sender) {
+                getSharedPreferences("activeOrder",MODE_PRIVATE).edit().clear().apply();
+                findViewById(R.id.btn_finish_denu).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        finish();
+                    }
+                });
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        findViewById(R.id.layout_denied).setVisibility(View.VISIBLE);
+                    }
+                });
+            }
+        };
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1 && resultCode == RESULT_OK) {
+            finish();
+        }
     }
 }

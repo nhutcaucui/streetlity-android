@@ -117,14 +117,33 @@
             android:foreground="?android:attr/selectableItemBackground"
             app:srcCompat="@drawable/phone_call" />
 
-        <ImageButton
-            android:id="@+id/btn_chat"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_marginLeft="5dp"
-            android:background="@drawable/button_background_ground"
-            android:foreground="?android:attr/selectableItemBackground"
-            app:srcCompat="@drawable/chat" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp">
+
+            <ImageButton
+                android:id="@+id/btn_chat"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="@drawable/button_background_ground"
+                android:foreground="?android:attr/selectableItemBackground"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/chat" />
+
+            <ImageView
+                android:id="@+id/img_chat_new"
+                android:layout_width="12dp"
+                android:layout_height="12dp"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="@id/btn_chat"
+                app:layout_constraintTop_toTopOf="@id/btn_chat"
+                app:srcCompat="@drawable/red_dot" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </LinearLayout>
 
 </RelativeLayout>

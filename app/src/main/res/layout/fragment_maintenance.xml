@@ -160,6 +160,15 @@
 
         </ListView>
 
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:src="@drawable/aura"
+            android:id="@+id/aura"
+            android:layout_above="@id/layout_range"
+            android:visibility="gone"
+            />
+
         <LinearLayout
             android:id="@+id/layout_range"
             android:layout_width="match_parent"

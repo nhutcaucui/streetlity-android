@@ -295,6 +295,9 @@ public class BroadcastEmergencyActivity extends AppCompatActivity {
                     setResult(RESULT_OK);
                     finish();
                 }
+
+                countdown.cancel();
+
                 stopThread = true;
                 //denyOrder();
             }
@@ -650,7 +653,7 @@ public class BroadcastEmergencyActivity extends AppCompatActivity {
                 SharedPreferences s = getSharedPreferences("Room", MODE_PRIVATE);
                 s.edit().putString("room",intent.getStringExtra("id")).apply();
 
-                startActivity(intent);
+                //startActivity(intent);
 
                 finish();
             }

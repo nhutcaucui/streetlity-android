@@ -2,6 +2,7 @@ package com.example.streetlity_android;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -15,9 +16,11 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 
+import com.example.streetlity_android.Contribution.ConfirmLocationsHolder;
 import com.example.streetlity_android.MainFragment.BankObject;
 import com.example.streetlity_android.MainFragment.BankObjectAdapter;
 import com.example.streetlity_android.MainFragment.MapObject;
+import com.example.streetlity_android.MainFragment.WCFragment;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -167,24 +170,19 @@ public class AllServiceMap extends AppCompatActivity implements GoogleMap.OnMark
 
             //final LayoutInflater inflater = LayoutInflater.from(this.getApplicationContext());
 
-            final View dialogView = View.inflate(this,R.layout.dialog_point_info, null);
+            final View dialogView = View.inflate(AllServiceMap.this,R.layout.dialog_simple_map_info, null);
 
-            TextView tvNote = dialogView.findViewById(R.id.tv_note);
-            TextView tvName = dialogView.findViewById(R.id.tv_name);
-            TextView tvAddress = dialogView.findViewById(R.id.tv_address);
-            TextView tvDistance = dialogView.findViewById(R.id.tv_distance);
-            RatingBar rb = dialogView.findViewById(R.id.ratingbar_map_object);
-            TextView tvRating =dialogView.findViewById(R.id.tv_rating);
-            LinearLayout imgHolder = dialogView.findViewById(R.id.img_holder);
-            TextView tvNoImg = dialogView.findViewById(R.id.tv_no_img);
-            ListView lv = dialogView.findViewById(R.id.lv_review);
-            Button btnShowHide = dialogView.findViewById(R.id.btn_show_hide);
-            ProgressBar loadingImg = dialogView.findViewById(R.id.loading_img);
-            ProgressBar loadingReview = dialogView.findViewById(R.id.loading_review);
-            TextView tvNoReview = dialogView.findViewById(R.id.tv_no_review);
+            Button btnInfo = dialogView.findViewById(R.id.btn_more_info);
 
-            final BottomSheetDialog dialog = new BottomSheetDialog(this, android.R.style.Theme_Black_NoTitleBar);
-            //dialog.getWindow().setWindowAnimations(R.style.PauseDialog);
+            final TextView tvName = dialogView.findViewById(R.id.tv_name);
+
+            final TextView tvAddress = dialogView.findViewById(R.id.tv_address);
+
+            final TextView tvDistance = dialogView.findViewById(R.id.tv_distance);
+
+            DecimalFormat df = new DecimalFormat("#.#");
+
+            final BottomSheetDialog dialog = new BottomSheetDialog(AllServiceMap.this, android.R.style.Theme_Black_NoTitleBar);
             dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.argb(100, 0, 0, 0)));
             dialog.setContentView(dialogView);
             dialog.setCanceledOnTouchOutside(true);
@@ -194,7 +192,7 @@ public class AllServiceMap extends AppCompatActivity implements GoogleMap.OnMark
                 if(mMarkers.get(key).equals(marker)){
                     Log.e("", "onMarkerClick: found it");
                         String[] split = key.split(";");
-                        MapObject item= new MapObject();
+                         MapObject item= new MapObject();
                         if(split[0].equals("1")){
                             for(int i = 0; i<atmArray.size();i++){
                                 if(atmArray.get(i).getId() == Integer.parseInt(split[1])){
@@ -227,21 +225,32 @@ public class AllServiceMap extends AppCompatActivity implements GoogleMap.OnMark
                             }
                         }
                     }
+                    final MapObject fItem = item;
                     if(null != item){
-                        lv.setAdapter(adapter);
-                        tvNote.setText(item.getNote());
+
                         tvName.setText(item.getName());
                         tvAddress.setText(item.getAddress());
+
                         float distance = item.getDistance();
                         String dis = "m";
                         if(distance > 1000){
                             dis = "km";
                             distance = distance / 1000;
                         }
-                        DecimalFormat df = new DecimalFormat("#.#");
                         tvDistance.setText("~" + df.format(distance) + dis);
-                        loadReviews(item, rb, tvRating,btnShowHide, loadingReview,tvNoReview);
-                        addImages(imgHolder, item, tvNoImg, loadingImg);
+
+                        btnInfo.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                findViewById(R.id.layout_loading).setVisibility(View.VISIBLE);
+                                Intent t = new Intent(AllServiceMap.this, MapsActivity.class);
+                                t.putExtra("currLat", (float)latitude);
+                                t.putExtra("currLon", (float)longitude);
+                                t.putExtra("item", fItem);
+                                locationManager.removeUpdates(AllServiceMap.this);
+                                startActivity(t);
+                            }
+                        });
                     }
                     break;
                 }
@@ -488,7 +497,7 @@ public class AllServiceMap extends AppCompatActivity implements GoogleMap.OnMark
                                 JSONObject jsonObject1 = jsonArray.getJSONObject(i);
                                 Log.e("", "onResponse: " + jsonObject1.toString());
                                 Log.e("", "onResponse: " + jsonObject1.getInt("Id"));
-                                MapObject item = new MapObject(jsonObject1.getInt("Id"), getString(R.string.fuel), 3,
+                                MapObject item = new MapObject(jsonObject1.getInt("Id"), getString(R.string.wc), 3,
                                         jsonObject1.getString("Address"), (float) jsonObject1.getDouble("Lat"),
                                         (float) jsonObject1.getDouble("Lon"), jsonObject1.getString("Note"), 2);
 
@@ -581,197 +590,197 @@ public class AllServiceMap extends AppCompatActivity implements GoogleMap.OnMark
         });
     }
 
-    public void loadReviews(MapObject item, final RatingBar rb, final TextView tvRating, Button btnShowHide,
-                            ProgressBar loading, TextView noReview){
-        loading.setVisibility(View.VISIBLE);
-        reviewItems.clear();
-        displayReviewItems.clear();
-        // MapObject item = (MapObject) getIntent().getSerializableExtra("item");
-        Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getServiceURL())
-                .addConverterFactory(GsonConverterFactory.create()).build();
-        final MapAPI tour = retro.create(MapAPI.class);
-        Call<ResponseBody> call = tour.getFuelReview("1.0.0", item.getId(), 0,-1);
-        switch (item.getType()){
-            case 1:{
-                call = tour.getFuelReview("1.0.0", item.getId(), 0,-1);
-                break;
-            }
-            case 2:{
-                call = tour.getWCReview("1.0.0", item.getId(), 0,-1);
-                break;
-            }
-            case 3:{
-                call = tour.getMaintenanceReview("1.0.0", item.getId(), 0,-1);
-                break;
-            }
-            case 4:{
-                call = tour.getAtmReview("1.0.0", item.getId(), 0, -1);
-                break;
-            }
-        }
+//    public void loadReviews(MapObject item, final RatingBar rb, final TextView tvRating, Button btnShowHide,
+//                            ProgressBar loading, TextView noReview){
+//        loading.setVisibility(View.VISIBLE);
+//        reviewItems.clear();
+//        displayReviewItems.clear();
+//        // MapObject item = (MapObject) getIntent().getSerializableExtra("item");
+//        Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getServiceURL())
+//                .addConverterFactory(GsonConverterFactory.create()).build();
+//        final MapAPI tour = retro.create(MapAPI.class);
+//        Call<ResponseBody> call = tour.getFuelReview("1.0.0", item.getId(), 0,-1);
+//        switch (item.getType()){
+//            case 1:{
+//                call = tour.getFuelReview("1.0.0", item.getId(), 0,-1);
+//                break;
+//            }
+//            case 2:{
+//                call = tour.getWCReview("1.0.0", item.getId(), 0,-1);
+//                break;
+//            }
+//            case 3:{
+//                call = tour.getMaintenanceReview("1.0.0", item.getId(), 0,-1);
+//                break;
+//            }
+//            case 4:{
+//                call = tour.getAtmReview("1.0.0", item.getId(), 0, -1);
+//                break;
+//            }
+//        }
+//
+//        call.enqueue(new Callback<ResponseBody>() {
+//            @Override
+//            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+//                if(response.code() == 200){
+//                    final JSONObject jsonObject;
+//                    try {
+//                        jsonObject = new JSONObject(response.body().string());
+//                        Log.e("", "onResponse: " + jsonObject.toString() + " reviewload" + item.getId());
+//                        if (jsonObject.getBoolean("Status")) {
+//
+//                            JSONArray jsonArray = jsonObject.getJSONArray("Reviews");
+//                            for (int i = 0; i < jsonArray.length(); i++) {
+//                                JSONObject jsonObject1 = jsonArray.getJSONObject(i);
+//                                Review review = new Review(jsonObject1.getString("Reviewer"),
+//                                        jsonObject1.getString("Body"),
+//                                        (float) jsonObject1.getDouble("Score"));
+//                                review.setId(jsonObject1.getInt("Id"));
+//                                reviewItems.add(review);
+//                            }
+//
+//                            if (reviewItems.size() <= 0) {
+//                                noReview.setVisibility(View.VISIBLE);
+//                                loading.setVisibility(View.GONE);
+//                            } else {
+//
+//                                Collections.reverse(reviewItems);
+//
+//                                int number = 0;
+//                                if (reviewItems.size() > 3) {
+//                                    number = reviewItems.size() - 3;
+//
+//                                }
+//
+//                                for (int i = reviewItems.size() - 1; i >= number; i--) {
+//                                    displayReviewItems.add(reviewItems.get(i));
+//                                }
+//
+//                                adapter.notifyDataSetChanged();
+//
+//                                loading.setVisibility(View.GONE);
+//
+//                                item.setRating(calculateRating(reviewItems));
+//                                rb.setRating(item.getRating());
+//
+//                                DecimalFormat df = new DecimalFormat("#.#");
+//
+//                                tvRating.setText("(" + df.format(item.getRating()) + ")");
+//
+//                                LayerDrawable stars = (LayerDrawable) rb.getProgressDrawable();
+//                                stars.getDrawable(2).setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP);
+//                                stars.getDrawable(0).setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP);
+//                                stars.getDrawable(1).setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP);
+//                            }
+//                            if (reviewItems.size() <= 3) {
+//                                btnShowHide.setVisibility(View.GONE);
+//                            }
+//                            btnShowHide.setOnClickListener(new View.OnClickListener() {
+//                                @Override
+//                                public void onClick(View v) {
+//                                    if (isExpanded) {
+//                                        isExpanded = false;
+//                                        btnShowHide.setText(R.string.show_more);
+//                                        for (int i = 3; i < reviewItems.size(); i++) {
+//                                            displayReviewItems.remove(3);
+//                                        }
+//                                        adapter.notifyDataSetChanged();
+//                                    } else {
+//                                        isExpanded = true;
+//                                        displayReviewItems.clear();
+//                                        for (int i = reviewItems.size() - 1; i >= 0; i--) {
+//                                            displayReviewItems.add(reviewItems.get(i));
+//                                        }
+//                                        btnShowHide.setText(R.string.show_less);
+//                                        adapter.notifyDataSetChanged();
+//                                    }
+//                                }
+//                            });
+//                        }
+//                    }catch (Exception e){
+//                        e.printStackTrace();
+//                    }
+//                }else{
+//                    Log.e("", "onResponse: " +response.code() );
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(Call<ResponseBody> call, Throwable t) {
+//                t.printStackTrace();
+//            }
+//        });
+//    }
 
-        call.enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                if(response.code() == 200){
-                    final JSONObject jsonObject;
-                    try {
-                        jsonObject = new JSONObject(response.body().string());
-                        Log.e("", "onResponse: " + jsonObject.toString() + " reviewload" + item.getId());
-                        if (jsonObject.getBoolean("Status")) {
+//    public float calculateRating(ArrayList<Review> list){
+//        float temp = 0;
+//        if(list.size()>0) {
+//            for (int i = 0; i < list.size(); i++) {
+//                temp += list.get(i).rating;
+//            }
+//
+//            temp = temp / list.size();
+//        }
+//
+//        return temp;
+//    }
 
-                            JSONArray jsonArray = jsonObject.getJSONArray("Reviews");
-                            for (int i = 0; i < jsonArray.length(); i++) {
-                                JSONObject jsonObject1 = jsonArray.getJSONObject(i);
-                                Review review = new Review(jsonObject1.getString("Reviewer"),
-                                        jsonObject1.getString("Body"),
-                                        (float) jsonObject1.getDouble("Score"));
-                                review.setId(jsonObject1.getInt("Id"));
-                                reviewItems.add(review);
-                            }
-
-                            if (reviewItems.size() <= 0) {
-                                noReview.setVisibility(View.VISIBLE);
-                                loading.setVisibility(View.GONE);
-                            } else {
-
-                                Collections.reverse(reviewItems);
-
-                                int number = 0;
-                                if (reviewItems.size() > 3) {
-                                    number = reviewItems.size() - 3;
-
-                                }
-
-                                for (int i = reviewItems.size() - 1; i >= number; i--) {
-                                    displayReviewItems.add(reviewItems.get(i));
-                                }
-
-                                adapter.notifyDataSetChanged();
-
-                                loading.setVisibility(View.GONE);
-
-                                item.setRating(calculateRating(reviewItems));
-                                rb.setRating(item.getRating());
-
-                                DecimalFormat df = new DecimalFormat("#.#");
-
-                                tvRating.setText("(" + df.format(item.getRating()) + ")");
-
-                                LayerDrawable stars = (LayerDrawable) rb.getProgressDrawable();
-                                stars.getDrawable(2).setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP);
-                                stars.getDrawable(0).setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP);
-                                stars.getDrawable(1).setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP);
-                            }
-                            if (reviewItems.size() <= 3) {
-                                btnShowHide.setVisibility(View.GONE);
-                            }
-                            btnShowHide.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    if (isExpanded) {
-                                        isExpanded = false;
-                                        btnShowHide.setText(R.string.show_more);
-                                        for (int i = 3; i < reviewItems.size(); i++) {
-                                            displayReviewItems.remove(3);
-                                        }
-                                        adapter.notifyDataSetChanged();
-                                    } else {
-                                        isExpanded = true;
-                                        displayReviewItems.clear();
-                                        for (int i = reviewItems.size() - 1; i >= 0; i--) {
-                                            displayReviewItems.add(reviewItems.get(i));
-                                        }
-                                        btnShowHide.setText(R.string.show_less);
-                                        adapter.notifyDataSetChanged();
-                                    }
-                                }
-                            });
-                        }
-                    }catch (Exception e){
-                        e.printStackTrace();
-                    }
-                }else{
-                    Log.e("", "onResponse: " +response.code() );
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                t.printStackTrace();
-            }
-        });
-    }
-
-    public float calculateRating(ArrayList<Review> list){
-        float temp = 0;
-        if(list.size()>0) {
-            for (int i = 0; i < list.size(); i++) {
-                temp += list.get(i).rating;
-            }
-
-            temp = temp / list.size();
-        }
-
-        return temp;
-    }
-
-    public void addImages(LinearLayout imgContainer,MapObject item, TextView tvNoImg, ProgressBar loading) {
-        loading.setVisibility(View.VISIBLE);
-        if (!item.getImages().equals("")) {
-            String[] split = item.getImages().split(";");
-            Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getDriverURL())
-                    .addConverterFactory(GsonConverterFactory.create()).build();
-            final MapAPI tour = retro.create(MapAPI.class);
-            for (int i = 0; i < split.length; i++) {
-                Log.e("", "addImages: " + split[i]);
-                Call<ResponseBody> call = tour.download(split[i]);
-                call.enqueue(new Callback<ResponseBody>() {
-                    @Override
-                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                        if (response.code() == 200) {
-                            try {
-
-                                Bitmap bmp = BitmapFactory.decodeStream(response.body().byteStream());
-                                ImageView img = new ImageView(AllServiceMap.this);
-                                img.setImageBitmap(bmp);
-                                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                                        300,
-                                        300
-                                );
-                                lp.setMargins(5, 0, 5, 0);
-                                img.setLayoutParams(lp);
-                                img.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-                                        Bitmap bitmap = ((BitmapDrawable) img.getDrawable()).getBitmap();
-                                        new PhotoFullPopupWindow(AllServiceMap.this, R.layout.popup_photo_full, img, "", bitmap);
-                                    }
-                                });
-                                imgContainer.addView(img);
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<ResponseBody> call, Throwable t) {
-
-                    }
-                });
-            }
-
-            loading.setVisibility(View.GONE);
-
-//        File file = new File("/");
-//        Bitmap myBitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
-
-        } else {
-            loading.setVisibility(View.GONE);
-            tvNoImg.setVisibility(View.VISIBLE);
-        }
-    }
+//    public void addImages(LinearLayout imgContainer,MapObject item, TextView tvNoImg, ProgressBar loading) {
+//        loading.setVisibility(View.VISIBLE);
+//        if (!item.getImages().equals("")) {
+//            String[] split = item.getImages().split(";");
+//            Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getDriverURL())
+//                    .addConverterFactory(GsonConverterFactory.create()).build();
+//            final MapAPI tour = retro.create(MapAPI.class);
+//            for (int i = 0; i < split.length; i++) {
+//                Log.e("", "addImages: " + split[i]);
+//                Call<ResponseBody> call = tour.download(split[i]);
+//                call.enqueue(new Callback<ResponseBody>() {
+//                    @Override
+//                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+//                        if (response.code() == 200) {
+//                            try {
+//
+//                                Bitmap bmp = BitmapFactory.decodeStream(response.body().byteStream());
+//                                ImageView img = new ImageView(AllServiceMap.this);
+//                                img.setImageBitmap(bmp);
+//                                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+//                                        300,
+//                                        300
+//                                );
+//                                lp.setMargins(5, 0, 5, 0);
+//                                img.setLayoutParams(lp);
+//                                img.setOnClickListener(new View.OnClickListener() {
+//                                    @Override
+//                                    public void onClick(View v) {
+//                                        Bitmap bitmap = ((BitmapDrawable) img.getDrawable()).getBitmap();
+//                                        new PhotoFullPopupWindow(AllServiceMap.this, R.layout.popup_photo_full, img, "", bitmap);
+//                                    }
+//                                });
+//                                imgContainer.addView(img);
+//                            } catch (Exception e) {
+//                                e.printStackTrace();
+//                            }
+//                        }
+//                    }
+//
+//                    @Override
+//                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+//
+//                    }
+//                });
+//            }
+//
+//            loading.setVisibility(View.GONE);
+//
+////        File file = new File("/");
+////        Bitmap myBitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
+//
+//        } else {
+//            loading.setVisibility(View.GONE);
+//            tvNoImg.setVisibility(View.VISIBLE);
+//        }
+//    }
 
     @Override
     public  void onStop(){
@@ -817,5 +826,12 @@ public class AllServiceMap extends AppCompatActivity implements GoogleMap.OnMark
     @Override
     public void onProviderDisabled(String provider) {
 
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+
+        findViewById(R.id.layout_loading).setVisibility(View.GONE);
     }
 }

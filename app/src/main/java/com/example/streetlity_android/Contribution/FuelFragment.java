@@ -21,6 +21,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
+import android.view.animation.DecelerateInterpolator;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -634,6 +639,36 @@ public class FuelFragment extends Fragment implements LocationListener, OnMapRea
         } else {
             tvNoItem.setVisibility(View.GONE);
         }
+
+        Toast toast = Toast.makeText(getActivity(), getString(R.string.change_range_to) + " " + (range) + "km", Toast.LENGTH_LONG);
+        toast.show();
+
+        Animation fadeIn = new AlphaAnimation(0, 1);
+        fadeIn.setInterpolator(new DecelerateInterpolator()); //add this
+        fadeIn.setDuration(314);
+
+        Animation fadeOut = new AlphaAnimation(1, 0);
+        fadeOut.setInterpolator(new AccelerateInterpolator()); //and this
+        fadeOut.setStartOffset(314);
+        fadeOut.setDuration(314);
+
+        AnimationSet animation = new AnimationSet(false); //change to false
+        animation.addAnimation(fadeIn);
+        animation.addAnimation(fadeOut);
+
+        getActivity().findViewById(R.id.aura).setAnimation(animation);
+
+        animation.setAnimationListener(new Animation.AnimationListener() {
+            public void onAnimationEnd(Animation animation) {
+                getActivity().findViewById(R.id.aura).setVisibility(View.GONE);
+            }
+            public void onAnimationRepeat(Animation animation) {
+                // TODO Auto-generated method stub
+            }
+            public void onAnimationStart(Animation animation) {
+                getActivity().findViewById(R.id.aura).setVisibility(View.VISIBLE);
+            }
+        });
     }
 
     public void callFuel(double lat, double lon, float range) {
@@ -774,7 +809,7 @@ public class FuelFragment extends Fragment implements LocationListener, OnMapRea
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == 1) {
+        if (requestCode == 1) {
             boolean gps_enabled = false;
             boolean network_enabled = false;
 

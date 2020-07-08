@@ -363,6 +363,14 @@ public class MaintenanceOrder {
     }
 
     /**
+     *
+     * Complete the order
+     */
+    public void complete() {
+        mSocket.emit("complete");
+    }
+
+    /**
      * Close the current connection.
      */
     public void close() {
