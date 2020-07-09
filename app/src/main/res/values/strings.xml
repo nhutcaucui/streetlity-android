@@ -268,4 +268,7 @@
     <string name="found_maintainer">A REPAIRMAN ACCEPTED YOUR ORDER</string>
     <string name="order_completed">ORDER IS COMPLETED</string>
     <string name="order_cancel">ORDER IS CANCELED</string>
+    <string name="name_of_place">Tên địa điểm</string>
+    <string name="search_for_location">Search for locations</string>
+    <string name="result">Search results</string>
 </resources>

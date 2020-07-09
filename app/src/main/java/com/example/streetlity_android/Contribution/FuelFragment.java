@@ -31,6 +31,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -324,7 +325,14 @@ public class FuelFragment extends Fragment implements LocationListener, OnMapRea
                                                     JSONObject jsonObject1 = jsonArray.getJSONObject(i);
                                                     Log.e("", "onResponse: " + jsonObject1.toString());
                                                     Log.e("", "onResponse: " + jsonObject1.getInt("Id"));
-                                                    MapObject item = new MapObject(jsonObject1.getInt("Id"), getString(R.string.fuel), 3,
+
+                                                    String name = getString(R.string.fuel);
+
+                                                    if(!jsonObject1.getString("Name").equals("")){
+                                                        name = jsonObject1.getString("Name");
+                                                    }
+
+                                                    MapObject item = new MapObject(jsonObject1.getInt("Id"), name, 3,
                                                             jsonObject1.getString("Address"), (float) jsonObject1.getDouble("Lat"),
                                                             (float) jsonObject1.getDouble("Lon"), jsonObject1.getString("Note"), 1);
 
@@ -545,6 +553,10 @@ public class FuelFragment extends Fragment implements LocationListener, OnMapRea
 
                     tvAddress.setText(displayItems.get(i).getAddress());
 
+                    ImageView imgIcon = dialogView.findViewById(R.id.img_service_icon);
+
+                    imgIcon.setImageResource(R.drawable.fuel_big_icon);
+
                     TextView tvDistance = dialogView.findViewById(R.id.tv_distance);
 
                     DecimalFormat df = new DecimalFormat("#.#");
@@ -700,7 +712,14 @@ public class FuelFragment extends Fragment implements LocationListener, OnMapRea
                                     JSONObject jsonObject1 = jsonArray.getJSONObject(i);
                                     Log.e("", "onResponse: " + jsonObject1.toString());
                                     Log.e("", "onResponse: " + jsonObject1.getInt("Id"));
-                                    MapObject item = new MapObject(jsonObject1.getInt("Id"), getString(R.string.fuel), 3,
+
+                                    String name = getString(R.string.fuel);
+
+                                    if(!jsonObject1.getString("Name").equals("")){
+                                        name = jsonObject1.getString("Name");
+                                    }
+
+                                    MapObject item = new MapObject(jsonObject1.getInt("Id"), name, 3,
                                             jsonObject1.getString("Address"), (float) jsonObject1.getDouble("Lat"),
                                             (float) jsonObject1.getDouble("Lon"), jsonObject1.getString("Note"), 1);
 

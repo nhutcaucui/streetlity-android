@@ -1,6 +1,7 @@
 package com.example.streetlity_android;
 
 import android.Manifest;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -8,6 +9,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -56,12 +58,14 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -123,6 +127,40 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
         startService(new Intent(getBaseContext(), ServiceChecking.class));
 
         //getSharedPreferences("activeOrder",MODE_PRIVATE).edit().clear().apply();
+
+        ImageView imgSearch = findViewById(R.id.img_search_all);
+        imgSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final Dialog dialog = new Dialog(MainNavigationHolder.this);
+
+                //final LayoutInflater inflater = LayoutInflater.from(MainNavigationHolder.this);
+
+                final View dialogView = View.inflate(MainNavigationHolder.this ,R.layout.dialog_search_main_menu, null);
+
+                EditText editText = dialogView.findViewById(R.id.edt_search);
+                ImageButton imgBtnSearch = dialogView.findViewById(R.id.img_btn_search);
+                imgBtnSearch.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if(!editText.getText().toString().equals("")){
+                            dialog.dismiss();
+
+                            Intent t = new Intent(MainNavigationHolder.this, AllServiceMap.class);
+                            t.putExtra("search", true);
+                            t.putExtra("query", editText.getText().toString());
+                            startActivity(t);
+                        }
+                    }
+                });
+
+                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.argb(100, 0, 0, 0)));
+
+                dialog.setContentView(dialogView);
+
+                dialog.show();
+            }
+        });
 
         ImageView imgSwitch = findViewById(R.id.img_switch);
         imgSwitch.setOnClickListener(new View.OnClickListener() {
@@ -368,6 +406,7 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
             current= R.id.btn_home_bottom;
             setToSelect(current);
             findViewById(R.id.img_switch).setVisibility(GONE);
+            findViewById(R.id.img_search_all).setVisibility(VISIBLE);
             notTheSame = true;
         }else if(v.getId() == R.id.btn_fuel_bottom && current != R.id.btn_fuel_bottom){
             fragment = new FuelFragment();
@@ -377,6 +416,7 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
 
             findViewById(R.id.img_switch).setVisibility(View.VISIBLE);
             ((ImageView) findViewById(R.id.img_switch)).setImageResource(R.drawable.location);
+            findViewById(R.id.img_search_all).setVisibility(GONE);
 
             notTheSame = true;
         }else if(v.getId() == R.id.btn_wc_bottom && current != R.id.btn_wc_bottom) {
@@ -387,6 +427,7 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
 
             findViewById(R.id.img_switch).setVisibility(View.VISIBLE);
             ((ImageView) findViewById(R.id.img_switch)).setImageResource(R.drawable.location);
+            findViewById(R.id.img_search_all).setVisibility(GONE);
 
             notTheSame = true;
         }else if(v.getId() == R.id.btn_atm_bottom && current != R.id.btn_atm_bottom) {
@@ -397,6 +438,7 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
 
             findViewById(R.id.img_switch).setVisibility(View.VISIBLE);
             ((ImageView) findViewById(R.id.img_switch)).setImageResource(R.drawable.location);
+            findViewById(R.id.img_search_all).setVisibility(GONE);
 
             notTheSame = true;
         }
@@ -408,6 +450,7 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
 
             findViewById(R.id.img_switch).setVisibility(View.VISIBLE);
             ((ImageView) findViewById(R.id.img_switch)).setImageResource(R.drawable.location);
+            findViewById(R.id.img_search_all).setVisibility(GONE);
 
             notTheSame = true;
         }

@@ -25,13 +25,13 @@ import com.example.streetlity_android.R;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
-public class MapObjectAdapter extends ArrayAdapter implements Filterable {
+public class MapObjectAllSearchAdapter extends ArrayAdapter implements Filterable {
 
     Context context;
     private ArrayList<MapObject> mDisplayedValues;
     private ArrayList<MapObject> mOriginalValues;
 
-    public MapObjectAdapter(@NonNull Context context, int resource, @NonNull ArrayList<MapObject> objects) {
+    public MapObjectAllSearchAdapter(@NonNull Context context, int resource, @NonNull ArrayList<MapObject> objects) {
         super(context, resource, objects);
         this.context = context;
         this.mDisplayedValues = objects;
@@ -64,7 +64,7 @@ public class MapObjectAdapter extends ArrayAdapter implements Filterable {
         if (convertView == null) {
 
             holder = new ViewHolder();
-            convertView = inflater.inflate(R.layout.lv_item_map_object, null);
+            convertView = inflater.inflate(R.layout.lv_item_all_seach, null);
 
             holder.tvName = convertView.findViewById(R.id.tv_name);
             holder.tvRating = convertView.findViewById(R.id.tv_rating);
@@ -81,7 +81,7 @@ public class MapObjectAdapter extends ArrayAdapter implements Filterable {
         holder.tvName.setText(this.mDisplayedValues.get(position).getName());
 
         DecimalFormat df = new DecimalFormat("#.#");
-//        holder.tvRating.setText("("+ df.format(this.mDisplayedValues.get(position).getRating()) +")");
+        //holder.tvRating.setText("("+ df.format(this.mDisplayedValues.get(position).getRating()) +")");
 
         holder.tvAdrress.setText(this.mDisplayedValues.get(position).getAddress());
 
@@ -94,7 +94,7 @@ public class MapObjectAdapter extends ArrayAdapter implements Filterable {
         holder.tvDistance.setText("~" + df.format(distance) + dis);
 
 //        holder.rb.setRating(this.mDisplayedValues.get(position).getRating());
-//
+
 //        LayerDrawable stars = (LayerDrawable) holder.rb.getProgressDrawable();
 //        stars.getDrawable(2).setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP);
 //        stars.getDrawable(0).setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP);

@@ -178,12 +178,25 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         item = (MapObject) getIntent().getSerializableExtra("item");
 
         LinearLayout layoutNote = findViewById(R.id.layout_note);
+
         TextView tvNote =findViewById(R.id.tv_note);
         if(!item.getNote().equals("")) {
             layoutNote.setVisibility(View.VISIBLE);
             tvNote.setText(item.getNote());
         }else{
             tvNote.setText(getString(R.string.no_note));
+        }
+
+        ImageView imgIcon = findViewById(R.id.img_service_icon);
+
+        if(item.getType() == 1){
+            imgIcon.setImageResource(R.drawable.fuel_big_icon);
+        }else if(item.getType() == 2){
+            imgIcon.setImageResource(R.drawable.wc_big_icon);
+        }else if(item.getType() == 3){
+            imgIcon.setImageResource(R.drawable.fix_big_icon);
+        }else if(item.getType() == 4){
+            imgIcon.setImageResource(R.drawable.atm_big_icon);
         }
 
         TextView tvName = findViewById(R.id.tv_name);
@@ -472,7 +485,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
             @Override
             public void onMapLoaded() {
-                int padding = 50; // offset from edges of the map in pixels
+                int padding = 150; // offset from edges of the map in pixels
                 CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
                 googleMap.animateCamera(cu);
             }

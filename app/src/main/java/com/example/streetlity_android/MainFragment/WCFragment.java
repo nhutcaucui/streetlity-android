@@ -31,6 +31,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -584,6 +585,10 @@ public class WCFragment extends Fragment implements LocationListener, OnMapReady
                     TextView tvAddress = dialogView.findViewById(R.id.tv_address);
 
                     tvAddress.setText(displayItems.get(i).getAddress());
+
+                    ImageView imgIcon = dialogView.findViewById(R.id.img_service_icon);
+
+                    imgIcon.setImageResource(R.drawable.wc_big_icon);
 
                     TextView tvDistance = dialogView.findViewById(R.id.tv_distance);
 

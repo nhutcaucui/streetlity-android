@@ -94,7 +94,7 @@ public interface MapAPI {
     @FormUrlEncoded
     @POST("service/fuel/create")
     Call<ResponseBody> addFuel(@Header("Version") String version, @Header("Auth") String token, @Field("location") float lat, @Field("location" )float lon,
-                               @Field("address") String address, @Field("note") String note, @Field("images") String[] images);
+                               @Field("address") String address, @Field("note") String note, @Field("images") String[] images, @Field("name") String name);
 
     @FormUrlEncoded
     @POST("service/atm/create")
@@ -104,7 +104,7 @@ public interface MapAPI {
     @FormUrlEncoded
     @POST("service/toilet/create")
     Call<ResponseBody> addWC(@Header("Version") String version, @Header("Auth") String token,@Field("location") float lat, @Field("location" )float lon,
-                             @Field("address") String address, @Field("note") String note, @Field("images") String[] images);
+                             @Field("address") String address, @Field("note") String note, @Field("images") String[] images, @Field("name") String name);
 
     @FormUrlEncoded
     @POST("service/maintenance/create")

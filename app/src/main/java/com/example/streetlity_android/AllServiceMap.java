@@ -1,6 +1,7 @@
 package com.example.streetlity_android;
 
 import android.Manifest;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -20,7 +21,9 @@ import com.example.streetlity_android.Contribution.ConfirmLocationsHolder;
 import com.example.streetlity_android.MainFragment.BankObject;
 import com.example.streetlity_android.MainFragment.BankObjectAdapter;
 import com.example.streetlity_android.MainFragment.MapObject;
+import com.example.streetlity_android.MainFragment.MapObjectAllSearchAdapter;
 import com.example.streetlity_android.MainFragment.WCFragment;
+import com.example.streetlity_android.Util.VNCharacterUtils;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -43,6 +46,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -61,6 +66,7 @@ import java.lang.reflect.Field;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -85,7 +91,9 @@ public class AllServiceMap extends AppCompatActivity implements GoogleMap.OnMark
     ArrayList<MapObject> fuelArray = new ArrayList<>();
     ArrayList<MapObject> wcArray = new ArrayList<>();
 
-    ArrayList<Review> reviewItems = new ArrayList<>();
+    ArrayList<MapObject> searchItems = new ArrayList<>();
+    ArrayList<Marker> searchMarker = new ArrayList<>();
+
     ArrayList<Review> displayReviewItems = new ArrayList<>();
 
     ReviewAdapter adapter;
@@ -98,6 +106,10 @@ public class AllServiceMap extends AppCompatActivity implements GoogleMap.OnMark
     boolean isExpanded = false;
 
     LocationManager locationManager;
+
+    BottomSheetDialog dialogSearch;
+
+    ListView lv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,6 +124,141 @@ public class AllServiceMap extends AppCompatActivity implements GoogleMap.OnMark
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        EditText edtSearch = findViewById(R.id.edt_search);
+        ImageButton imgSearch = findViewById(R.id.img_btn_search);
+
+        ProgressBar loading = findViewById(R.id.loading);
+
+        MapObjectAllSearchAdapter adapter2 = new MapObjectAllSearchAdapter(AllServiceMap.this,
+                R.layout.lv_item_all_seach, searchItems);
+
+        imgSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(!edtSearch.getText().toString().equals("")){
+                    searchItems.clear();
+                    searchMarker.clear();
+
+                    loading.setVisibility(View.VISIBLE);
+
+                    final View dialogView = View.inflate(AllServiceMap.this,R.layout.dialog_all_search, null);
+
+                    for(int i = 0;i< atmArray.size();i++){
+                        if(VNCharacterUtils.removeAccent(atmArray.get(i).getName().toLowerCase())
+                                .contains(VNCharacterUtils.removeAccent(edtSearch.getText().toString().toLowerCase())) ||
+                                VNCharacterUtils.removeAccent(edtSearch.getText().toString().toLowerCase()).equals("atm") ){
+                            searchItems.add(atmArray.get(i));
+
+                        }
+                    }
+
+                    for(int i = 0;i< fuelArray.size();i++){
+                        if(VNCharacterUtils.removeAccent(fuelArray.get(i).getName().toLowerCase()).
+                                contains(VNCharacterUtils.removeAccent(edtSearch.getText().toString().toLowerCase()))||
+                                VNCharacterUtils.removeAccent(edtSearch.getText().toString().toLowerCase()).equals("fuel") ||
+                        VNCharacterUtils.removeAccent(edtSearch.getText().toString().toLowerCase()).equals("tram xang") ){
+                            searchItems.add(fuelArray.get(i));
+
+                        }
+                    }
+
+                    for(int i = 0;i< maintenanceArray.size();i++){
+                        if(VNCharacterUtils.removeAccent(maintenanceArray.get(i).getName().toLowerCase()).
+                                contains(VNCharacterUtils.removeAccent(edtSearch.getText().toString().toLowerCase()))||
+                                VNCharacterUtils.removeAccent(edtSearch.getText().toString().toLowerCase()).equals("maintenance") ||
+                                VNCharacterUtils.removeAccent(edtSearch.getText().toString().toLowerCase()).equals("tiem sua xe") ){
+                            searchItems.add(maintenanceArray.get(i));
+
+                        }
+                    }
+
+                    for(int i = 0;i< wcArray.size();i++){
+                        if(VNCharacterUtils.removeAccent(wcArray.get(i).getName().toLowerCase())
+                                .contains(VNCharacterUtils.removeAccent(edtSearch.getText().toString().toLowerCase()))||
+                                VNCharacterUtils.removeAccent(edtSearch.getText().toString().toLowerCase()).equals("wc") ||
+                                VNCharacterUtils.removeAccent(edtSearch.getText().toString().toLowerCase()).equals("toilet") ||
+                                VNCharacterUtils.removeAccent(edtSearch.getText().toString().toLowerCase()).equals("nha ve sinh") ){
+                            searchItems.add(wcArray.get(i));
+
+                        }
+                    }
+
+                    Collections.sort(searchItems, new Comparator<MapObject>() {
+                        @Override
+                        public int compare(MapObject o1, MapObject o2) {
+                            return Float.compare(o1.getDistance(), o2.getDistance());
+                        }
+                    });
+
+                    if(searchItems.size() <= 0){
+                        dialogView.findViewById(R.id.tv_no_result).setVisibility(View.VISIBLE);
+                    }else{
+                        dialogView.findViewById(R.id.tv_no_result).setVisibility(View.GONE);
+                    }
+
+                    for (MapObject o : searchItems){
+                        if(o.getType() == 1) {
+                            searchMarker.add(mMarkers.get("1;" + o.getId()));
+                        }else if (o.getType() == 2) {
+                            searchMarker.add(mMarkers.get("2;" + o.getId()));
+                        }else if (o.getType() == 3) {
+                            searchMarker.add(mMarkers.get("3;" + o.getId()));
+                        }else if (o.getType() == 4) {
+                            searchMarker.add(mMarkers.get("4;" + o.getId()));
+                        }
+                    }
+
+//                    for(int i = 0 ; i< searchItems.size(); i  ++){
+//                        Log.e("TAG", "onClick: " + searchItems.get(i).getName() );
+//                    }
+
+                    adapter2.notifyDataSetChanged();
+
+                    if(dialogSearch == null){
+                        dialogSearch = new BottomSheetDialog(AllServiceMap.this, android.R.style.Theme_Black_NoTitleBar);
+                        dialogSearch.getWindow().setBackgroundDrawable(new ColorDrawable(Color.argb(100, 0, 0, 0)));
+                        dialogSearch.setContentView(dialogView);
+                        dialogSearch.setCancelable(false);
+                        dialogSearch.setCanceledOnTouchOutside(false);
+
+                        lv = dialogView.findViewById(R.id.lv_search);
+
+                        lv.setAdapter(adapter2);
+
+                        adapter2.notifyDataSetChanged();
+
+                        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                            @Override
+                            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                dialogSearch.hide();
+
+                                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(searchItems.get(position).getLat(),
+                                        searchItems.get(position).getLon()), 15f));
+
+                                onMarkerClick(searchMarker.get(position));
+                            }
+                        });
+
+                        ImageView imgClose = dialogView.findViewById(R.id.img_close);
+
+                        imgClose.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                dialogSearch.hide();
+                            }
+                        });
+
+                        loading.setVisibility(View.INVISIBLE);
+                        dialogSearch.show();
+                    }else{
+                        adapter2.notifyDataSetChanged();
+                        loading.setVisibility(View.INVISIBLE);
+                        dialogSearch.show();
+                    }
+                }
+            }
+        });
     }
 
     public boolean onOptionsItemSelected(MenuItem item){
@@ -158,6 +305,15 @@ public class AllServiceMap extends AppCompatActivity implements GoogleMap.OnMark
                 currentPosition = mMap.addMarker(curPositionMark);
 
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude, longitude), 15f));
+
+                FloatingActionButton fabLocation = findViewById(R.id.fab_user_location);
+                fabLocation.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude, longitude), 15f));
+                        currentPosition.showInfoWindow();
+                    }
+                });
             }
         }
     }
@@ -193,7 +349,7 @@ public class AllServiceMap extends AppCompatActivity implements GoogleMap.OnMark
                     Log.e("", "onMarkerClick: found it");
                         String[] split = key.split(";");
                          MapObject item= new MapObject();
-                        if(split[0].equals("1")){
+                        if(split[0].equals("4")){
                             for(int i = 0; i<atmArray.size();i++){
                                 if(atmArray.get(i).getId() == Integer.parseInt(split[1])){
                                     item = atmArray.get(i);
@@ -201,7 +357,7 @@ public class AllServiceMap extends AppCompatActivity implements GoogleMap.OnMark
                                 }
                             }
                         }
-                    else if(split[0].equals("3")){
+                    else if(split[0].equals("1")){
                         for(int i = 0; i<fuelArray.size();i++){
                             if(fuelArray.get(i).getId() == Integer.parseInt(split[1])){
                                 item = fuelArray.get(i);
@@ -209,7 +365,7 @@ public class AllServiceMap extends AppCompatActivity implements GoogleMap.OnMark
                             }
                         }
                     }
-                    else if(split[0].equals("4")){
+                    else if(split[0].equals("2")){
                         for(int i = 0; i<wcArray.size();i++){
                             if(wcArray.get(i).getId() == Integer.parseInt(split[1])){
                                 item = wcArray.get(i);
@@ -217,7 +373,7 @@ public class AllServiceMap extends AppCompatActivity implements GoogleMap.OnMark
                             }
                         }
                     }
-                    else if(split[0].equals("2")){
+                    else if(split[0].equals("3")){
                         for(int i = 0; i<maintenanceArray.size();i++){
                             if(maintenanceArray.get(i).getId() == Integer.parseInt(split[1])){
                                 item = maintenanceArray.get(i);
@@ -238,6 +394,18 @@ public class AllServiceMap extends AppCompatActivity implements GoogleMap.OnMark
                             distance = distance / 1000;
                         }
                         tvDistance.setText("~" + df.format(distance) + dis);
+
+                        ImageView imgIcon = dialogView.findViewById(R.id.img_service_icon);
+
+                        if(item.getType() == 1){
+                            imgIcon.setImageResource(R.drawable.fuel_big_icon);
+                        }else if(item.getType() == 2){
+                            imgIcon.setImageResource(R.drawable.wc_big_icon);
+                        }else if(item.getType() == 3){
+                            imgIcon.setImageResource(R.drawable.fix_big_icon);
+                        }else if(item.getType() == 4){
+                            imgIcon.setImageResource(R.drawable.atm_big_icon);
+                        }
 
                         btnInfo.setOnClickListener(new View.OnClickListener() {
                             @Override
@@ -271,7 +439,7 @@ public class AllServiceMap extends AppCompatActivity implements GoogleMap.OnMark
         option.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_atm));
         option.position(pos);
         Marker marker = mMap.addMarker(option);
-        mMarkers.put("1;"+id,marker);
+        mMarkers.put("4;"+id,marker);
     }
 
     public void addMaintenanceMarker(float lat, float lon, String name , int id){
@@ -281,7 +449,7 @@ public class AllServiceMap extends AppCompatActivity implements GoogleMap.OnMark
         option.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_maintenance));
         option.position(pos);
         Marker marker = mMap.addMarker(option);
-        mMarkers.put("2;"+id,marker);
+        mMarkers.put("3;"+id,marker);
     }
 
     public void addFuelMarker(float lat, float lon, int id){
@@ -291,7 +459,7 @@ public class AllServiceMap extends AppCompatActivity implements GoogleMap.OnMark
         option.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_fuel));
         option.position(pos);
         Marker marker = mMap.addMarker(option);
-        mMarkers.put("3;"+id,marker);
+        mMarkers.put("1;"+id,marker);
     }
 
     public void addWCMarkerTo(float lat, float lon, int id){
@@ -301,7 +469,7 @@ public class AllServiceMap extends AppCompatActivity implements GoogleMap.OnMark
         option.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_wc));
         option.position(pos);
         Marker marker = mMap.addMarker(option);
-        mMarkers.put("4;"+id,marker);
+        mMarkers.put("2;"+id,marker);
     }
 
     public void callATM(double lat, double lon){
@@ -350,6 +518,13 @@ public class AllServiceMap extends AppCompatActivity implements GoogleMap.OnMark
                             atmArray.add(item);
                         }
 
+                        if(getIntent().getBooleanExtra("search", false)){
+                            EditText edtSearch = findViewById(R.id.edt_search);
+                            edtSearch.setText(getIntent().getStringExtra("query"));
+
+                            ImageButton imgBtnSearch = findViewById(R.id.img_btn_search);
+                            imgBtnSearch.callOnClick();
+                        }
 
 //                        for (int i = 0; i < mMarkers.size(); i++){
 //                            Log.e("", mMarkers.get(i).getTitle());
@@ -443,7 +618,14 @@ public class AllServiceMap extends AppCompatActivity implements GoogleMap.OnMark
                                 JSONObject jsonObject1 = jsonArray.getJSONObject(i);
                                 Log.e("", "onResponse: " + jsonObject1.toString());
                                 Log.e("", "onResponse: " + jsonObject1.getInt("Id"));
-                                MapObject item = new MapObject(jsonObject1.getInt("Id"), getString(R.string.fuel), 3,
+
+                                String name = getString(R.string.fuel);
+
+                                if(!jsonObject1.getString("Name").equals("")){
+                                    name = jsonObject1.getString("Name");
+                                }
+
+                                MapObject item = new MapObject(jsonObject1.getInt("Id"), name, 3,
                                         jsonObject1.getString("Address"), (float) jsonObject1.getDouble("Lat"),
                                         (float) jsonObject1.getDouble("Lon"), jsonObject1.getString("Note"), 1);
 
@@ -809,6 +991,15 @@ public class AllServiceMap extends AppCompatActivity implements GoogleMap.OnMark
         curPositionMark.title(getString(R.string.you_r_here));
 
         currentPosition = mMap.addMarker(curPositionMark);
+
+        FloatingActionButton fabLocation = findViewById(R.id.fab_user_location);
+        fabLocation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude, longitude), 15f));
+                currentPosition.showInfoWindow();
+            }
+        });
 
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude, longitude), 15f));
     }

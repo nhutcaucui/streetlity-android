@@ -457,6 +457,10 @@ public class ATMFragment extends Fragment implements LocationListener, OnMapRead
 
                     tvAddress.setText(displayItems.get(i).getAddress());
 
+                    ImageView imgIcon = dialogView.findViewById(R.id.img_service_icon);
+
+                    imgIcon.setImageResource(R.drawable.atm_big_icon);
+
                     TextView tvDistance = dialogView.findViewById(R.id.tv_distance);
 
                     DecimalFormat df = new DecimalFormat("#.#");

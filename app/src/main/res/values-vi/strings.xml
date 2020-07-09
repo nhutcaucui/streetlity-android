@@ -252,4 +252,7 @@
     <string name="found_maintainer">MỘT THỢ SỬA ĐÃ CHẤP NHẬN YÊU CẦU CỦA BẠN</string>
     <string name="order_completed">YÊU CẦU ĐÃ HOÀN THÀNH</string>
     <string name="order_cancel">YÊU CẦU BỊ HỦY BỎ</string>
+    <string name="name_of_place">Name of location</string>
+    <string name="search_for_location">Tìm địa điểm</string>
+    <string name="result">Kết quả</string>
 </resources>
