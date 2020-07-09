@@ -173,144 +173,161 @@
         </LinearLayout>
     </RelativeLayout>
 
-    <ScrollView
-        android:id="@+id/scroll_view"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@id/btn_broadcast"
-        android:layout_below="@id/top_bar">
+        android:layout_height="match_parent"
+        android:layout_below="@id/top_bar"
+        android:gravity="center_vertical"
+        android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_below="@id/appbarlayout"
-            android:orientation="vertical">
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:background="@drawable/white_cardview"
+            android:elevation="10dp"
+            android:gravity="center_vertical"
+            android:orientation="vertical"
+            android:padding="5dp">
 
-
-            <LinearLayout
-                android:id="@+id/layout_reason"
+            <ScrollView
+                android:id="@+id/scroll_view"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginRight="10dp"
-                android:orientation="horizontal">
+                android:layout_height="wrap_content">
 
-                <Spinner
-                    android:id="@+id/spn_reason"
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:popupBackground="#fff"
-                    android:textColor="#000" />
-
-                <ImageButton
-                    android:id="@+id/img_remove"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@null"
-                    android:foreground="?android:attr/selectableItemBackground"
-                    app:srcCompat="@drawable/remove" />
-            </LinearLayout>
+                    android:layout_height="match_parent"
+                    android:layout_below="@id/appbarlayout"
+                    android:orientation="vertical">
 
 
-            <LinearLayout
-                android:id="@+id/layout_other_reason"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginRight="10dp"
-                android:orientation="horizontal">
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/edt_reason"
+                    <LinearLayout
+                        android:id="@+id/layout_reason"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:ems="10"
-                        android:hint="@string/reason"
-                        android:inputType="textPersonName"
-                        android:textColor="#000"
-                        android:visibility="visible" />
-                </com.google.android.material.textfield.TextInputLayout>
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginRight="10dp"
+                        android:orientation="horizontal">
 
-                <ImageButton
-                    android:id="@+id/img_add"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@null"
-                    android:foreground="?android:attr/selectableItemBackground"
-                    app:srcCompat="@drawable/add" />
-            </LinearLayout>
+                        <Spinner
+                            android:id="@+id/spn_reason"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:popupBackground="#fff"
+                            android:textColor="#000" />
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/edt_phone"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginRight="10dp"
-                    android:ems="10"
-                    android:hint="@string/phone"
-                    android:inputType="phone"
-                    android:textColor="#000" />
-            </com.google.android.material.textfield.TextInputLayout>
+                        <ImageButton
+                            android:id="@+id/img_remove"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@null"
+                            android:foreground="?android:attr/selectableItemBackground"
+                            app:srcCompat="@drawable/remove" />
+                    </LinearLayout>
 
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                    <LinearLayout
+                        android:id="@+id/layout_other_reason"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginRight="10dp"
+                        android:orientation="horizontal">
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/edt_note"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginRight="10dp"
-                    android:ems="10"
-                    android:hint="@string/note_without"
-                    android:inputType="textPersonName"
-                    android:textColor="#000" />
-            </com.google.android.material.textfield.TextInputLayout>
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1">
 
-            <LinearLayout
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/edt_reason"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:ems="10"
+                                android:hint="@string/reason"
+                                android:inputType="textPersonName"
+                                android:textColor="#000"
+                                android:visibility="visible" />
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <ImageButton
+                            android:id="@+id/img_add"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@null"
+                            android:foreground="?android:attr/selectableItemBackground"
+                            app:srcCompat="@drawable/add" />
+                    </LinearLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/edt_phone"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="10dp"
+                            android:layout_marginTop="10dp"
+                            android:layout_marginRight="10dp"
+                            android:ems="10"
+                            android:hint="@string/phone"
+                            android:inputType="phone"
+                            android:textColor="#000" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/edt_note"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="10dp"
+                            android:layout_marginTop="10dp"
+                            android:layout_marginRight="10dp"
+                            android:ems="10"
+                            android:hint="@string/note_without"
+                            android:inputType="textPersonName"
+                            android:textColor="#000" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="10dp"
+                        android:gravity="right"
+                        android:orientation="horizontal">
+
+                    </LinearLayout>
+
+                </LinearLayout>
+            </ScrollView>
+
+            <Button
+                android:id="@+id/btn_broadcast"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:gravity="right"
-                android:orientation="horizontal">
-
-            </LinearLayout>
-
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginEnd="15dp"
+                android:layout_marginBottom="15dp"
+                android:background="@drawable/button_background"
+                android:elevation="5dp"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                android:text="@string/emit_signal"
+                android:textColor="@color/black" />
         </LinearLayout>
-    </ScrollView>
 
-    <Button
-        android:id="@+id/btn_broadcast"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="15dp"
-        android:layout_marginTop="15dp"
-        android:layout_marginEnd="15dp"
-        android:layout_marginBottom="15dp"
-        android:background="@drawable/button_background"
-        android:elevation="5dp"
-        android:foreground="?android:attr/selectableItemBackground"
-        android:paddingLeft="5dp"
-        android:paddingRight="5dp"
-        android:text="@string/emit_signal"
-        android:textColor="@color/black" />
+    </LinearLayout>
 
 
 </RelativeLayout>
