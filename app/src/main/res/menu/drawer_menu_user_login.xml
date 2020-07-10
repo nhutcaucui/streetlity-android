@@ -12,10 +12,10 @@
         android:icon="@drawable/change_pass"
         android:title="@string/change_password" />
 
-    <item
-        android:id="@+id/works"
-        android:icon="@drawable/work"
-        android:title="@string/my_works" />
+<!--    <item-->
+<!--        android:id="@+id/works"-->
+<!--        android:icon="@drawable/work"-->
+<!--        android:title="@string/my_works" />-->
 
     <item
         android:id="@+id/my_orders"

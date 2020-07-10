@@ -273,7 +273,7 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
 
             if(s.getInt("userType",0) == 1) {
                 Menu nav_Menu = navView.getMenu();
-                nav_Menu.findItem(R.id.works).setVisible(false);
+                //nav_Menu.findItem(R.id.works).setVisible(false);
             }
 
             MyApplication.getInstance().setToken(s.getString("token",""));
@@ -626,7 +626,7 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
     public void setDrawerForUser(NavigationView navView){
         if(MyApplication.getInstance().getUserType() == 1){
             Menu navMenu = navView.getMenu();
-            navMenu.findItem(R.id.works).setVisible(false);
+           // navMenu.findItem(R.id.works).setVisible(false);
             navMenu.findItem(R.id.settings).setVisible(false);
         }
 
@@ -647,9 +647,9 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
                     case R.id.logout:
                         logout(navView);
                         break;
-                    case R.id.works:
-                        startActivity(new Intent(MainNavigationHolder.this, Works.class));
-                        break;
+//                    case R.id.works:
+//                        startActivity(new Intent(MainNavigationHolder.this, Works.class));
+//                        break;
                     case R.id.my_orders: {
                         if(getSharedPreferences("activeOrder",MODE_PRIVATE).contains("activeOrder")) {
                             //Intent t = new Intent(MainNavigationHolder.this, Chat.class);

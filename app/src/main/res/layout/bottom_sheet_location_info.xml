@@ -138,11 +138,24 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
+                        android:layout_weight="1"
                         android:gravity="center_vertical"
                         android:paddingLeft="5dp"
-                        android:paddingRight="20dp"
-                        android:text="150 Đinh bộ lĩnh, something"
+                        android:paddingRight="5dp"
+                        android:text="150 Đinh bộ lĩnh, something asd ad a kjahdjsdlsakjdlks ajd lak j"
                         android:textColor="@color/black" />
+
+                    <ImageView
+                        android:id="@+id/btn_edit_address"
+                        android:layout_width="wrap_content"
+                        android:layout_height="32dp"
+                        android:layout_gravity="end|center_vertical"
+                        android:background="@drawable/button_background"
+                        android:foreground="?android:attr/selectableItemBackground"
+                        android:padding="5dp"
+                        android:visibility="gone"
+                        android:src="@drawable/edit"
+                        android:clickable="true"/>
                 </LinearLayout>
 
             </LinearLayout>
@@ -153,7 +166,8 @@
                 android:layout_height="match_parent"
                 android:gravity="center"
                 android:orientation="vertical"
-                android:padding="8dp">
+                android:padding="8dp"
+                android:visibility="gone">
 
                 <ImageView
                     android:id="@+id/img_upvote"
@@ -184,20 +198,7 @@
     android:layout_height="wrap_content"
     android:layout_marginTop="5dp">
 
-    <Button
-        android:id="@+id/btn_edit_address"
-        android:layout_width="wrap_content"
-        android:layout_height="32dp"
-        android:layout_gravity="right"
-        android:layout_marginStart="20dp"
-        android:background="@drawable/button_background"
-        android:foreground="?android:attr/selectableItemBackground"
-        android:padding="5dp"
-        android:text="@string/edit_address"
-        android:textAllCaps="false"
-        android:textColor="#000"
-        android:visibility="gone" />
-        <TextView
+    <TextView
             android:id="@+id/tv_distance"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -295,7 +296,7 @@
 
         <TextView
             android:id="@+id/tv_no_img"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="@string/no_image"
@@ -325,18 +326,17 @@
 
             </LinearLayout>
         </HorizontalScrollView>
-        <Button
+        <ImageView
             android:id="@+id/btn_add_photo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            android:text="@string/add_phote"
-            android:drawableTop="@drawable/add"
             android:background="@drawable/button_background"
             android:padding="5dp"
-            android:visibility="gone"/>
+            android:visibility="gone"
+            android:src="@drawable/add"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -369,19 +369,18 @@
                 android:textColor="#000"
                 android:textSize="16sp" />
 
-            <Button
+            <ImageView
                 android:id="@+id/btn_edit_note"
                 android:layout_width="wrap_content"
                 android:layout_height="32dp"
-                android:layout_gravity="right"
-                android:layout_marginRight="15dp"
+                android:layout_gravity="end"
+                android:layout_marginEnd="15dp"
                 android:background="@drawable/button_background"
                 android:foreground="?android:attr/selectableItemBackground"
                 android:padding="5dp"
-                android:text="@string/edit_note"
-                android:textAllCaps="false"
-                android:textColor="#000"
-                android:visibility="gone" />
+                android:visibility="gone"
+                android:src="@drawable/edit"
+                android:clickable="true"/>
         </LinearLayout>
 
         <TextView

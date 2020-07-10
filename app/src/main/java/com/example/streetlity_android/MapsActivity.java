@@ -9,8 +9,11 @@ import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.ClipData;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -25,6 +28,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.media.Rating;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -49,6 +53,7 @@ import com.akexorcist.googledirection.model.Leg;
 import com.akexorcist.googledirection.model.Route;
 import com.akexorcist.googledirection.util.DirectionConverter;
 import com.example.streetlity_android.Achievement.ActionObject;
+import com.example.streetlity_android.Contribution.AddAMaintenance;
 import com.example.streetlity_android.Events.EListener;
 import com.example.streetlity_android.Events.Event;
 import com.example.streetlity_android.Events.GlobalEvents;
@@ -56,6 +61,8 @@ import com.example.streetlity_android.Firebase.StreetlityFirebaseMessagingServic
 import com.example.streetlity_android.MainFragment.MapObject;
 import com.example.streetlity_android.User.Login;
 import com.example.streetlity_android.User.UserInfoOther;
+import com.example.streetlity_android.Util.ImageFilePath;
+import com.example.streetlity_android.Util.RandomString;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -89,12 +96,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.http.Multipart;
 
 import static android.view.View.VISIBLE;
 import static androidx.constraintlayout.widget.Constraints.TAG;
@@ -125,6 +136,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     Event<String, String> e = GlobalEvents.Example;
 
     EListener<String, String> listener;
+
+    String imageName = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -278,58 +291,143 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         addImages(imgContainer);
 
         Button leaveReview = findViewById(R.id.btn_leave_comment);
-        Button addPhoto = findViewById(R.id.btn_add_photo);
-        Button editNote = findViewById(R.id.btn_edit_note);
-        Button editAddress = findViewById(R.id.btn_edit_address);
+        ImageView addPhoto = findViewById(R.id.btn_add_photo);
+        ImageView editNote = findViewById(R.id.btn_edit_note);
+        ImageView editAddress = findViewById(R.id.btn_edit_address);
+        LinearLayout layoutVote = findViewById(R.id.layout_vote);
 
         if(!MyApplication.getInstance().getToken().equals("")){
             leaveReview.setVisibility(View.VISIBLE);
             addPhoto.setVisibility(View.VISIBLE);
             editNote.setVisibility(View.VISIBLE);
             editAddress.setVisibility(View.VISIBLE);
+            //layoutVote.setVisibility(VISIBLE);
+
+            addPhoto.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent();
+                    intent.setType("image/*");
+                    intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+                    intent.setAction(Intent.ACTION_GET_CONTENT);
+                    startActivityForResult(Intent.createChooser(intent,"Select Picture"), 1);
+                }
+            });
+
+            leaveReview.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Dialog dialogComment = new Dialog(MapsActivity.this);
+
+                    final LayoutInflater inflater2 = LayoutInflater.from(MapsActivity.this.getApplicationContext());
+
+                    final View dialogView2 = View.inflate(MapsActivity.this,R.layout.dialog_review ,null);
+
+                    com.google.android.material.textfield.TextInputEditText edtComment = dialogView2.findViewById(R.id.edt_comment);
+                    RatingBar rtReview = dialogView2.findViewById(R.id.rating_review);
+
+                    LayerDrawable stars = (LayerDrawable) rtReview.getProgressDrawable();
+                    stars.getDrawable(2).setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP);
+                    //stars.getDrawable(0).setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP);
+                    stars.getDrawable(1).setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP);
+
+                    Button confirmReview = dialogView2.findViewById(R.id.btn_confrim_review);
+
+                    confirmReview.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if(edtComment.getText().toString().equals("")){
+                                Toast toast = Toast.makeText(MapsActivity.this, R.string.empty_comment, Toast.LENGTH_LONG);
+                                TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
+                                tv.setTextColor(Color.RED);
+
+                                toast.show();
+                            }
+                            else{
+                                createReviews(rtReview.getRating(),edtComment.getText().toString());
+                                dialogComment.cancel();
+                            }
+                        }
+                    });
+
+                    dialogComment.setContentView(dialogView2);
+
+                    dialogComment.show();
+                }
+            });
+
+            editAddress.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Dialog dialog = new Dialog(MapsActivity.this);
+
+                    final LayoutInflater inflater2 = LayoutInflater.from(MapsActivity.this.getApplicationContext());
+
+                    final View dialogView2 = View.inflate(MapsActivity.this,R.layout.dialog_edit_address ,null);
+
+                    com.google.android.material.textfield.TextInputEditText edtAddress = dialogView2.findViewById(R.id.edt_address);
+
+                    Button confirm = dialogView2.findViewById(R.id.btn_confirm);
+
+                    confirm.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if(edtAddress.getText().toString().equals("")){
+                                Toast toast = Toast.makeText(MapsActivity.this, R.string.empty_address, Toast.LENGTH_LONG);
+                                TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
+                                tv.setTextColor(Color.RED);
+
+                                toast.show();
+                            }
+                            else{
+                                editAddress(edtAddress.getText().toString());
+                                tvAddress.setText(edtAddress.getText().toString());
+                                dialog.cancel();
+                            }
+                        }
+                    });
+
+                    dialog.setContentView(dialogView2);
+
+                    dialog.show();
+                }
+            });
+
+            editNote.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Dialog dialog = new Dialog(MapsActivity.this);
+
+                    final LayoutInflater inflater2 = LayoutInflater.from(MapsActivity.this.getApplicationContext());
+
+                    final View dialogView2 = View.inflate(MapsActivity.this,R.layout.dialog_edit_note ,null);
+
+                    com.google.android.material.textfield.TextInputEditText edtNote = dialogView2.findViewById(R.id.edt_note);
+
+                    Button confirm = dialogView2.findViewById(R.id.btn_confirm);
+
+                    confirm.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if(edtNote.getText().toString().equals("")){
+
+                            }
+                            else{
+                                editNote(edtNote.getText().toString());
+                                tvNote.setText(edtNote.getText().toString());
+                                dialog.cancel();
+                            }
+                        }
+                    });
+
+                    dialog.setContentView(dialogView2);
+
+                    dialog.show();
+                }
+            });
         }
 
-        leaveReview.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Dialog dialogComment = new Dialog(MapsActivity.this);
 
-                final LayoutInflater inflater2 = LayoutInflater.from(MapsActivity.this.getApplicationContext());
-
-                final View dialogView2 = View.inflate(MapsActivity.this,R.layout.dialog_review ,null);
-
-                com.google.android.material.textfield.TextInputEditText edtComment = dialogView2.findViewById(R.id.edt_comment);
-                RatingBar rtReview = dialogView2.findViewById(R.id.rating_review);
-
-                LayerDrawable stars = (LayerDrawable) rtReview.getProgressDrawable();
-                stars.getDrawable(2).setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP);
-                //stars.getDrawable(0).setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP);
-                stars.getDrawable(1).setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP);
-
-                Button confirmReview = dialogView2.findViewById(R.id.btn_confrim_review);
-
-                confirmReview.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if(edtComment.getText().toString().equals("")){
-                            Toast toast = Toast.makeText(MapsActivity.this, R.string.empty_comment, Toast.LENGTH_LONG);
-                            TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
-                            tv.setTextColor(Color.RED);
-
-                            toast.show();
-                        }
-                        else{
-                            createReviews(rtReview.getRating(),edtComment.getText().toString());
-                            dialogComment.cancel();
-                        }
-                    }
-                });
-
-                dialogComment.setContentView(dialogView2);
-
-                dialogComment.show();
-            }
-        });
 
         LinearLayout peekLayout = findViewById(R.id.layout_peek);
         peekLayout.setOnClickListener(new View.OnClickListener() {
@@ -388,6 +486,15 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
     }
+
+    public void editAddress(String newAddress){
+
+    }
+
+    public void editNote(String newNote){
+
+    }
+
 
 
     /**
@@ -522,6 +629,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     .addConverterFactory(GsonConverterFactory.create()).build();
             final MapAPI tour = retro.create(MapAPI.class);
             for (int i = 0; i < split.length; i++) {
+                imageName = split[i].substring(0,9) + i;
                 Log.e("", "addImages: " + split[i]);
                 Call<ResponseBody> call = tour.download(split[i]);
                 call.enqueue(new Callback<ResponseBody>() {
@@ -979,5 +1087,198 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         locationManager.removeUpdates(this);
         e.unsubcribe(listener);
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        try {
+            if (requestCode == 1) {
+
+                if(imageName.equals("")){
+                    imageName = RandomString.getAlphaNumericString(10);
+                }
+
+                LinearLayout imgContainer= findViewById(R.id.img_holder);
+                if(null == data) {
+//                    arrImg.clear();
+//                    paramMap.clear();
+//                    bodyMap.clear();
+//                    fileName.clear();
+                    //EditText edtSelectImg = findViewById(R.id.edt_select_img);
+                    //edtSelectImg.setHint(R.string.select_img);
+                }else {
+                    if (data.getData() != null) {
+//                        arrImg.clear();
+//                        paramMap.clear();
+//                        bodyMap.clear();
+//                        body.clear();
+//                        //Uri mImageUri = data.getData();
+//                        fileName.clear();
+
+                        String path = ImageFilePath.getPath(MapsActivity.this, data.getData());
+
+                        File file = new File(path);
+
+                        String extension = path.substring(path.lastIndexOf("."));
+
+                        Bitmap bmp = BitmapFactory.decodeFile(file.getAbsolutePath());
+
+                        EditText edtSelectImg = findViewById(R.id.edt_select_img);
+
+                        ImageView img = new ImageView(MapsActivity.this);
+                        img.setImageBitmap(bmp);
+                        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                                300,
+                                300
+                        );
+                        lp.setMargins(5,0,5,0);
+                        img.setLayoutParams(lp);
+                        img.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Bitmap bitmap = ((BitmapDrawable)img.getDrawable()).getBitmap();
+                                new PhotoFullPopupWindow(MapsActivity.this, R.layout.popup_photo_full, img, "", bitmap);
+                            }
+                        });
+                        imgContainer.addView(img);
+
+                        RequestBody fbody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
+                        MultipartBody.Part mBody =
+                                MultipartBody.Part.createFormData(imageName+imgContainer.getChildCount()+extension, file.getName(), fbody);
+
+                        List<MultipartBody.Part> body = new ArrayList<>();
+                        body.add(mBody);
+
+                        String[] f =new String[1];
+                        f[0] = imageName+imgContainer.getChildCount()+extension;
+
+                        Retrofit retro2 = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getDriverURL())
+                                .addConverterFactory(GsonConverterFactory.create()).build();
+                        final MapAPI tour2 = retro2.create(MapAPI.class);
+                        Call<ResponseBody> call2 = tour2.upload(f, body);
+                        call2.enqueue(new Callback<ResponseBody>() {
+                            @Override
+                            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                if (response.code() == 200) {
+                                    final JSONObject jsonObject;
+                                    try {
+                                        jsonObject = new JSONObject(response.body().string());
+                                        Log.e("", "onResponse: " + jsonObject.toString());
+
+                                        if (jsonObject.getBoolean("Status")) {
+
+                                        }
+                                    }catch (Exception e){
+                                        e.printStackTrace();
+                                    }
+                                }else{
+                                    Log.e("", "onResponse: " + response.code());
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                            }
+                        });
+
+                        //bodyMap.put(generatedString+0, body);
+                    } else {
+                        if (data.getClipData() != null) {
+//                            arrImg.clear();
+//                            paramMap.clear();
+//                            bodyMap.clear();
+//                            fileName.clear();
+
+                            ClipData mClipData = data.getClipData();
+
+                            //body.clear();
+
+                            EditText edtSelectImg = findViewById(R.id.edt_select_img);
+
+                            List<MultipartBody.Part> body = new ArrayList<>();
+                            ArrayList<String> fName = new ArrayList<>();
+
+                            for (int i = 0; i < mClipData.getItemCount(); i++) {
+
+                                ClipData.Item item = mClipData.getItemAt(i);
+                                Uri uri = item.getUri();
+                                String path = ImageFilePath.getPath(MapsActivity.this, uri);
+
+                                File file = new File(path);
+
+                                String extension = path.substring(path.lastIndexOf("."));
+
+
+                                RequestBody fbody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
+                                MultipartBody.Part mBody =
+                                        MultipartBody.Part.createFormData(imageName+imgContainer.getChildCount()+extension,
+                                                file.getName(), fbody);
+
+                                fName.add(imageName+imgContainer.getChildCount());
+                                body.add(mBody);
+
+                                Bitmap bmp = BitmapFactory.decodeFile(file.getAbsolutePath());
+                                ImageView img = new ImageView(MapsActivity.this);
+                                img.setImageBitmap(bmp);
+                                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                                        300,
+                                        300
+                                );
+                                lp.setMargins(5,0,5,0);
+                                img.setLayoutParams(lp);
+                                img.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        Bitmap bitmap = ((BitmapDrawable)img.getDrawable()).getBitmap();
+                                        new PhotoFullPopupWindow(MapsActivity.this, R.layout.popup_photo_full, img, "", bitmap);
+                                    }
+                                });
+                                imgContainer.addView(img);
+                            }
+
+                            String[] f = new String[body.size()];
+                            for(int i =0 ;i<body.size();i++){
+                                f[i] = fName.get(i);
+                            }
+
+                            Retrofit retro2 = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getDriverURL())
+                                    .addConverterFactory(GsonConverterFactory.create()).build();
+                            final MapAPI tour2 = retro2.create(MapAPI.class);
+                            Call<ResponseBody> call2 = tour2.upload(f, body);
+                            call2.enqueue(new Callback<ResponseBody>() {
+                                @Override
+                                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                    if (response.code() == 200) {
+                                        final JSONObject jsonObject;
+                                        try {
+                                            jsonObject = new JSONObject(response.body().string());
+                                            Log.e("", "onResponse: " + jsonObject.toString());
+
+                                            if (jsonObject.getBoolean("Status")) {
+
+                                            }
+                                        }catch (Exception e){
+                                            e.printStackTrace();
+                                        }
+                                    }else{
+                                        Log.e("", "onResponse: " + response.code());
+                                    }
+                                }
+
+                                @Override
+                                public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                                }
+                            });
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            Toast.makeText(this, R.string.something_wrong, Toast.LENGTH_LONG).show();
+            e.printStackTrace();
+        }
+
     }
 }
