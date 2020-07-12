@@ -348,7 +348,7 @@ public class WCFragment extends Fragment implements LocationListener, OnMapReady
                             EditText edtFind = getActivity().findViewById(R.id.edt_find);
                             edtFind.setText(jsonObject1.getString("formatted_address"));
 
-                            Call<ResponseBody> call2 = tour2.getWCInRange("1.0.0", (float)mLat, (float)mLon,(float)0.1);
+                            Call<ResponseBody> call2 = tour2.getWCInRange(MyApplication.getInstance().getVersion(), (float)mLat, (float)mLon,(float)0.1);
                             call2.enqueue(new Callback<ResponseBody>() {
                                 @Override
                                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -365,7 +365,14 @@ public class WCFragment extends Fragment implements LocationListener, OnMapReady
                                                     JSONObject jsonObject1 = jsonArray.getJSONObject(i);
                                                     Log.e("", "onResponse: " + jsonObject1.toString());
                                                     Log.e("", "onResponse: " + jsonObject1.getInt("Id"));
-                                                    MapObject item = new MapObject(jsonObject1.getInt("Id"), getString(R.string.wc), 3,
+
+                                                    String name = getString(R.string.wc);
+
+                                                    if(!jsonObject1.getString("Name").equals("")){
+                                                        name = jsonObject1.getString("Name");
+                                                    }
+
+                                                    MapObject item = new MapObject(jsonObject1.getInt("Id"), name, 3,
                                                             jsonObject1.getString("Address"), (float) jsonObject1.getDouble("Lat"),
                                                             (float) jsonObject1.getDouble("Lon"), jsonObject1.getString("Note"), 2);
 
@@ -491,7 +498,9 @@ public class WCFragment extends Fragment implements LocationListener, OnMapReady
         super.onAttach(context);
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
-            ((MainNavigationHolder)getActivity()).getLoading().setVisibility(View.GONE);
+
+            if(((MainNavigationHolder)getActivity()).getLoading() != null)
+                ((MainNavigationHolder)getActivity()).getLoading().setVisibility(View.GONE);
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
@@ -726,7 +735,7 @@ public class WCFragment extends Fragment implements LocationListener, OnMapReady
             Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getServiceURL())
                     .addConverterFactory(GsonConverterFactory.create()).build();
             final MapAPI tour = retro.create(MapAPI.class);
-            Call<ResponseBody> call = tour.getWCInRange("1.0.0", (float) lat, (float) lon, (float)0.1);
+            Call<ResponseBody> call = tour.getWCInRange(MyApplication.getInstance().getVersion(), (float) lat, (float) lon, (float)0.1);
             //Call<ResponseBody> call = tour.getAllFuel();
             call.enqueue(new Callback<ResponseBody>() {
                 @Override
@@ -743,7 +752,14 @@ public class WCFragment extends Fragment implements LocationListener, OnMapReady
                                 for (int i = 0; i < jsonArray.length(); i++) {
                                     JSONObject jsonObject1 = jsonArray.getJSONObject(i);
                                     Log.e("", "onResponse: " + jsonObject1.toString());
-                                    MapObject item = new MapObject(jsonObject1.getInt("Id"), getString(R.string.wc), 3,
+
+                                    String name = getString(R.string.wc);
+
+                                    if(!jsonObject1.getString("Name").equals("")){
+                                        name = jsonObject1.getString("Name");
+                                    }
+
+                                    MapObject item = new MapObject(jsonObject1.getInt("Id"), name, 3,
                                             jsonObject1.getString("Address"), (float) jsonObject1.getDouble("Lat"),
                                             (float) jsonObject1.getDouble("Lon"), jsonObject1.getString("Note"), 2);
 

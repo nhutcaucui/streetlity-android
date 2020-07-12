@@ -51,6 +51,8 @@ public class MyApplication extends Application { //35.240.232.218 auth server
 
     private Bitmap image;
 
+    private String version = "1.0.0";
+
     private MaintenanceOrder socket;
 
     public String getUserId() {
@@ -73,6 +75,7 @@ public class MyApplication extends Application { //35.240.232.218 auth server
     private Map<String, Map<String, ActionObject>> reviewedMap;
     private Map<String, Map<String, ActionObject>> contributeMap;
     private Map<String, Map<String, ActionObject>> upvoteMap;
+    private Map<String, Map<String, ActionObject>> downvoteMap;
 
     private OptionInterface option;
 
@@ -192,6 +195,10 @@ public class MyApplication extends Application { //35.240.232.218 auth server
         this.upvoteMap = upvoteMap;
     }
 
+    public void setDownvoteMap(Map<String, Map<String, ActionObject>> downvoteMap) {
+        this.downvoteMap = downvoteMap;
+    }
+
     public Map<String, Map<String, ActionObject>> getReviewedMap() {
         return reviewedMap;
     }
@@ -204,6 +211,10 @@ public class MyApplication extends Application { //35.240.232.218 auth server
         return upvoteMap;
     }
 
+    public Map<String, Map<String, ActionObject>> getDownvoteMap() {
+        return downvoteMap;
+    }
+
     private Timer thread = new Timer();
 
     public Timer getThread() {
@@ -212,5 +223,9 @@ public class MyApplication extends Application { //35.240.232.218 auth server
 
     public void setThread() {
         thread = new Timer();
+    }
+
+    public String getVersion(){
+        return version;
     }
 }

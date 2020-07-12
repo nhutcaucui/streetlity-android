@@ -18,6 +18,7 @@ public class MapObject implements Serializable {
     String contributor;
     boolean upvoted;
     boolean downvoted;
+    int confident;
 
     public MapObject(int id, String name, float rating, String address, float lat, float lon, String note, int type) {
         this.id = id;
@@ -138,5 +139,13 @@ public class MapObject implements Serializable {
 
     public boolean isDownvoted() {
         return downvoted;
+    }
+
+    public int getConfident() {
+        return confident;
+    }
+
+    public void setConfident(int confident) {
+        this.confident = confident;
     }
 }

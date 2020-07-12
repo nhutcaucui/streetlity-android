@@ -254,9 +254,9 @@ public class MaintenanceFragment extends Fragment implements LocationListener, O
 
         FloatingActionButton fab = rootView.findViewById(R.id.fab_broadcast);
 
-//        if(MyApplication.getInstance().getUsername().equals("")){
-//            fab.hide();
-//        }else {
+        if(MyApplication.getInstance().getUserType() == 7){
+            fab.hide();
+        }else{
 
             fab.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -320,7 +320,7 @@ public class MaintenanceFragment extends Fragment implements LocationListener, O
                     }
                 }
             });
-        //}
+        }
 
 
         final SeekBar sb = rootView.findViewById(R.id.sb_range);
@@ -425,7 +425,7 @@ public class MaintenanceFragment extends Fragment implements LocationListener, O
                             EditText edtFind = getActivity().findViewById(R.id.edt_find);
                             edtFind.setText(jsonObject1.getString("formatted_address"));
 
-                            Call<ResponseBody> call2 = tour2.getMaintenanceInRange("1.0.0", (float)mLat, (float)mLon,(float)0.1);
+                            Call<ResponseBody> call2 = tour2.getMaintenanceInRange(MyApplication.getInstance().getVersion(), (float)mLat, (float)mLon,(float)0.1);
                             call2.enqueue(new Callback<ResponseBody>() {
                                 @Override
                                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -570,7 +570,8 @@ public class MaintenanceFragment extends Fragment implements LocationListener, O
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
 
-            ((MainNavigationHolder)getActivity()).getLoading().setVisibility(View.GONE);
+            if(((MainNavigationHolder)getActivity()).getLoading() != null)
+                ((MainNavigationHolder)getActivity()).getLoading().setVisibility(View.GONE);
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
@@ -805,7 +806,7 @@ public class MaintenanceFragment extends Fragment implements LocationListener, O
             Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getServiceURL())
                     .addConverterFactory(GsonConverterFactory.create()).build();
             final MapAPI tour = retro.create(MapAPI.class);
-            Call<ResponseBody> call = tour.getMaintenanceInRange("1.0.0", (float) lat, (float) lon, (float)0.1);
+            Call<ResponseBody> call = tour.getMaintenanceInRange(MyApplication.getInstance().getVersion(), (float) lat, (float) lon, (float)0.1);
             //Call<ResponseBody> call = tour.getAllFuel();
             call.enqueue(new Callback<ResponseBody>() {
                 @Override

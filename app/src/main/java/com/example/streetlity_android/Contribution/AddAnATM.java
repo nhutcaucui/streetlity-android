@@ -432,7 +432,7 @@ public class AddAnATM extends AppCompatActivity implements OnMapReadyCallback {
                                     mImages[i] = jsonObject2.getString("Message");
                                 }
 
-                                Call<ResponseBody> call1 = tour.addATM("1.0.0",token,(float) mLat,(float) mLon, mBankId, mAddress, mNote,mImages);
+                                Call<ResponseBody> call1 = tour.addATM(MyApplication.getInstance().getVersion(),token,(float) mLat,(float) mLon, mBankId, mAddress, mNote,mImages);
 
                                 call1.enqueue(new Callback<ResponseBody>() {
                                     @Override
@@ -533,7 +533,7 @@ public class AddAnATM extends AppCompatActivity implements OnMapReadyCallback {
         }
         else{
          mImages=new String[0];
-        Call<ResponseBody> call = tour.addATM("1.0.0",token,(float) mLat,(float) mLon, mBankId, mAddress, mNote,mImages);
+        Call<ResponseBody> call = tour.addATM(MyApplication.getInstance().getVersion(),token,(float) mLat,(float) mLon, mBankId, mAddress, mNote,mImages);
 
         call.enqueue(new Callback<ResponseBody>() {
             @Override
@@ -724,7 +724,7 @@ public class AddAnATM extends AppCompatActivity implements OnMapReadyCallback {
 
         String token = MyApplication.getInstance().getToken();
 
-        Call<ResponseBody> call = tour.getBank("1.0.0",token);
+        Call<ResponseBody> call = tour.getBank(MyApplication.getInstance().getVersion(),token);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -806,7 +806,7 @@ public class AddAnATM extends AppCompatActivity implements OnMapReadyCallback {
 
         String token = MyApplication.getInstance().getToken();
 
-        Call<ResponseBody> call = tour.addBank("1.0.0",token, name);
+        Call<ResponseBody> call = tour.addBank(MyApplication.getInstance().getVersion(),token, name);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {

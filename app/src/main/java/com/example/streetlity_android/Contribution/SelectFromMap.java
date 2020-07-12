@@ -350,7 +350,7 @@ public class SelectFromMap extends AppCompatActivity implements OnMapReadyCallba
                                 for(int i = 0;i<mImages.length;i++)
                                     Log.e("", "addFuel: "+mImages[i] );
 
-                                Call<ResponseBody> call1 = tour.addFuel("1.0.0", ((MyApplication) SelectFromMap.this.getApplication()).getToken(),
+                                Call<ResponseBody> call1 = tour.addFuel(MyApplication.getInstance().getVersion(), ((MyApplication) SelectFromMap.this.getApplication()).getToken(),
                                         (float) latToAdd, (float) lonToAdd, mAddress, mNote, mImages, mName);
                                 call1.enqueue(new Callback<ResponseBody>() {
                                     @Override
@@ -459,7 +459,7 @@ public class SelectFromMap extends AppCompatActivity implements OnMapReadyCallba
             });
         }else{
             mImages = new String[0];
-            Call<ResponseBody> call1 = tour.addFuel("1.0.0",token,(float)latToAdd,(float)lonToAdd, mAddress, mNote,mImages, mName);
+            Call<ResponseBody> call1 = tour.addFuel(MyApplication.getInstance().getVersion(),token,(float)latToAdd,(float)lonToAdd, mAddress, mNote,mImages, mName);
             call1.enqueue(new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -565,7 +565,7 @@ public class SelectFromMap extends AppCompatActivity implements OnMapReadyCallba
                                     mImages[i] = jsonObject2.getString("Message");
                                 }
 
-                                Call<ResponseBody> call1 = tour.addWC("1.0.0",token,(float)latToAdd,(float)lonToAdd,
+                                Call<ResponseBody> call1 = tour.addWC(MyApplication.getInstance().getVersion(),token,(float)latToAdd,(float)lonToAdd,
                                         mAddress, mNote,mImages, mName);
                                 call1.enqueue(new Callback<ResponseBody>() {
                                     @Override
@@ -647,7 +647,7 @@ public class SelectFromMap extends AppCompatActivity implements OnMapReadyCallba
 
         }else{
             mImages = new String[0];
-            Call<ResponseBody> call1 = tour.addWC("1.0.0",token,(float)latToAdd,(float)lonToAdd, mAddress, mNote,mImages,mName);
+            Call<ResponseBody> call1 = tour.addWC(MyApplication.getInstance().getVersion(),token,(float)latToAdd,(float)lonToAdd, mAddress, mNote,mImages,mName);
             call1.enqueue(new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {

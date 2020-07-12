@@ -17,21 +17,22 @@ public class ServiceChecking extends Service {
     }
 
     @Override
-        public void onTaskRemoved(Intent rootIntent) {
-            System.out.println("onTaskRemoved called");
-            super.onTaskRemoved(rootIntent);
+    public void onTaskRemoved(Intent rootIntent) {
+        System.out.println("onTaskRemoved called");
+        super.onTaskRemoved(rootIntent);
 
-            Gson gs = new Gson();
+        Gson gs = new Gson();
 
-            SharedPreferences s = getSharedPreferences("map", MODE_PRIVATE);
-            SharedPreferences.Editor e = s.edit();
+        SharedPreferences s = getSharedPreferences("map", MODE_PRIVATE);
+        SharedPreferences.Editor e = s.edit();
 
-            e.putString("review", gs.toJson(MyApplication.getInstance().getReviewedMap()));
-            e.putString("contribute", gs.toJson(MyApplication.getInstance().getContributeMap()));
-            e.putString("upvote", gs.toJson(MyApplication.getInstance().getUpvoteMap()));
+        e.putString("review", gs.toJson(MyApplication.getInstance().getReviewedMap()));
+        e.putString("contribute", gs.toJson(MyApplication.getInstance().getContributeMap()));
+        e.putString("upvote", gs.toJson(MyApplication.getInstance().getUpvoteMap()));
+        e.putString("downvote", gs.toJson(MyApplication.getInstance().getDownvoteMap()));
 
-            e.apply();
+        e.apply();
 
-            this.stopSelf();
-        }
+        this.stopSelf();
     }
+}

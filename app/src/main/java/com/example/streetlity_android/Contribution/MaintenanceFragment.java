@@ -361,7 +361,7 @@ public class MaintenanceFragment extends Fragment implements LocationListener, O
                             EditText edtFind = getActivity().findViewById(R.id.edt_find);
                             edtFind.setText(jsonObject1.getString("formatted_address"));
 
-                            Call<ResponseBody> call2 = tour2.getUcfMaintenanceRange("1.0.0", (float)mLat, (float)mLon,(float)0.1);
+                            Call<ResponseBody> call2 = tour2.getUcfMaintenanceRange(MyApplication.getInstance().getVersion(), (float)mLat, (float)mLon,(float)0.1);
                             call2.enqueue(new Callback<ResponseBody>() {
                                 @Override
                                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -390,15 +390,37 @@ public class MaintenanceFragment extends Fragment implements LocationListener, O
 
                                                     item.setContributor(jsonObject1.getString("Contributor"));
 
-                                                    searchItems.add(item);
+                                                    item.setDownvoted(false);
+                                                    item.setUpvoted(false);
+
+                                                    if(MyApplication.getInstance().getUpvoteMap().containsKey("Maintenance")) {
+                                                        Map<String, ActionObject> map = MyApplication.getInstance().getUpvoteMap().get("Maintenance");
+                                                        for (String key : map.keySet()) {
+                                                            Log.e(TAG, "onResponse: " + key + " " + map.get(key).getAffected());
+                                                            if (map.get(key).getAffected().equals(Integer.toString(item.getId()))) {
+                                                                item.setUpvoted(true);
+                                                                break;
+                                                            }
+                                                        }
+                                                        searchItems.add(item);
+                                                    }else {
+                                                        searchItems.add(item);
+                                                    }
                                                 }
 
-                                                if(searchItems.size()>0) {
+                                                if(searchItems.size()>0){
                                                     nothingFound.setVisibility(View.GONE);
                                                     Collections.sort(searchItems, new Comparator<MapObject>() {
                                                         @Override
                                                         public int compare(MapObject o1, MapObject o2) {
                                                             return Float.compare(o1.getDistance(), o2.getDistance());
+                                                        }
+                                                    });
+
+                                                    Collections.sort(searchItems, new Comparator<MapObject>() {
+                                                        @Override
+                                                        public int compare(MapObject o1, MapObject o2) {
+                                                            return Boolean.compare(o1.isUpvoted(), o2.isUpvoted());
                                                         }
                                                     });
 
@@ -505,7 +527,8 @@ public class MaintenanceFragment extends Fragment implements LocationListener, O
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
 
-            ((ConfirmLocationsHolder)getActivity()).getLoading().setVisibility(View.GONE);
+            if(((ConfirmLocationsHolder)getActivity()).getLoading() != null)
+                ((ConfirmLocationsHolder)getActivity()).getLoading().setVisibility(View.GONE);
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
@@ -741,7 +764,7 @@ public class MaintenanceFragment extends Fragment implements LocationListener, O
             Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getServiceURL())
                     .addConverterFactory(GsonConverterFactory.create()).build();
             final MapAPI tour = retro.create(MapAPI.class);
-            Call<ResponseBody> call = tour.getUcfMaintenanceRange("1.0.0", (float) lat, (float) lon, (float)0.1);
+            Call<ResponseBody> call = tour.getUcfMaintenanceRange(MyApplication.getInstance().getVersion(), (float) lat, (float) lon, (float)0.1);
             //Call<ResponseBody> call = tour.getAllFuel();
             call.enqueue(new Callback<ResponseBody>() {
                 @Override
@@ -758,7 +781,7 @@ public class MaintenanceFragment extends Fragment implements LocationListener, O
                                 for (int i = 0; i < jsonArray.length(); i++) {
                                     JSONObject jsonObject1 = jsonArray.getJSONObject(i);
                                     Log.e("", "onResponse: " + jsonObject1.toString());
-                                    MapObject item = new MapObject(jsonObject1.getInt("Id"), jsonObject1.getString("Name"), 3,
+                                    MapObject item = new MapObject(jsonObject1.getInt("Id"), jsonObject1.getString("Name"), 0,
                                             jsonObject1.getString("Address"), (float) jsonObject1.getDouble("Lat"),
                                             (float) jsonObject1.getDouble("Lon"), jsonObject1.getString("Note"), 3);
 
@@ -770,13 +793,34 @@ public class MaintenanceFragment extends Fragment implements LocationListener, O
 
                                     item.setContributor(jsonObject1.getString("Contributor"));
 
-                                    items.add(item);
-                                }
+                                    item.setDownvoted(false);
+                                    item.setUpvoted(false);
 
+                                    if(MyApplication.getInstance().getUpvoteMap().containsKey("Maintenance")) {
+                                        Map<String, ActionObject> map = MyApplication.getInstance().getUpvoteMap().get("Maintenance");
+                                        for (String key : map.keySet()) {
+                                            Log.e(TAG, "onResponse: " + key + " " + map.get(key).getAffected());
+                                            if (map.get(key).getAffected().equals(Integer.toString(item.getId()))) {
+                                                item.setUpvoted(true);
+                                                break;
+                                            }
+                                        }
+                                        items.add(item);
+                                    }else {
+                                        items.add(item);
+                                    }
+                                }
                                 Collections.sort(items, new Comparator<MapObject>() {
                                     @Override
                                     public int compare(MapObject o1, MapObject o2) {
                                         return Float.compare(o1.getDistance(), o2.getDistance());
+                                    }
+                                });
+
+                                Collections.sort(items, new Comparator<MapObject>() {
+                                    @Override
+                                    public int compare(MapObject o1, MapObject o2) {
+                                        return Boolean.compare(o1.isUpvoted(), o2.isUpvoted());
                                     }
                                 });
 
@@ -867,53 +911,30 @@ public class MaintenanceFragment extends Fragment implements LocationListener, O
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 1) {
-            boolean gps_enabled = false;
-            boolean network_enabled = false;
-
-            try {
-                gps_enabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-            } catch(Exception ex) {}
-
-            try {
-                network_enabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-            } catch(Exception ex) {}
-
-            if(!gps_enabled && !network_enabled) {
-                // notify user
-                AlertDialog al =new AlertDialog.Builder(getActivity())
-                        .setMessage(R.string.location_services_off)
-                        .setPositiveButton(R.string.open_settings, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface paramDialogInterface, int paramInt) {
-                                getActivity().startActivityForResult(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS),1);
-                                paramDialogInterface.dismiss();
-                            }
-                        })
-                        .setCancelable(false)
-                        .show();
-            }
-            else {
-
-                if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
-                        ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                    Location location = locationManager.getLastKnownLocation(locationManager
-                            .GPS_PROVIDER);
-                    if (location == null) {
-                        loading.setVisibility(View.GONE);
-                        //((ConfirmLocationsHolder) getActivity()).getCantFind().setVisibility(View.VISIBLE);
-                        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, MIN_TIME, MIN_DISTANCE, this);
-                        Log.e("", "onMapReady: MULL");
-                    } else {
-                        currLat = (float) location.getLatitude();
-                        currLon = (float) location.getLongitude();
-                        callMaintenance(currLat, currLon, (float) 0);
+        try {
+            if (requestCode == 1 && resultCode == RESULT_OK && data != null) {
+                if(data.getIntExtra("action", -1 )== 1) {
+                    if (data.getIntExtra("index", -1) != -1) {
+                        items.get((data.getIntExtra("index", -1))).setUpvoted(true);
+                        adapter.notifyDataSetChanged();
                     }
-                    Log.e("", "onMapReady: " + currLat + " , " + currLon);
                 }
-
+                if(data.getIntExtra("action", -1 )== 2) {
+                    if (data.getIntExtra("index", -1) != -1) {
+                        items.get((data.getIntExtra("index", -1))).setDownvoted(true);
+                        adapter.notifyDataSetChanged();
+                    }
+                }
+                if(data.getIntExtra("action", -1 )== 3) {
+                    if (data.getIntExtra("index", -1) != -1) {
+                        items.get((data.getIntExtra("index", -1))).setUpvoted(false);
+                        items.get((data.getIntExtra("index", -1))).setDownvoted(false);
+                        adapter.notifyDataSetChanged();
+                    }
+                }
             }
-        }
+        }catch (Exception e){
+            e.printStackTrace();}
     }
 
     public void addMaintenanceMarkerToList(float lat, float lon, String name){

@@ -414,7 +414,7 @@ public class AddAMaintenance extends AppCompatActivity implements OnMapReadyCall
                                     mImages[i] = jsonObject2.getString("Message");
                                 }
 
-                                Call<ResponseBody> call1 = tour.addMaintenance("1.0.0",token,(float) mLat,(float) mLon, mAddress, mName, mNote);
+                                Call<ResponseBody> call1 = tour.addMaintenance(MyApplication.getInstance().getVersion(),token,(float) mLat,(float) mLon, mAddress, mName, mNote);
 
                                 call1.enqueue(new Callback<ResponseBody>() {
                                     @Override
@@ -534,7 +534,7 @@ public class AddAMaintenance extends AppCompatActivity implements OnMapReadyCall
         }
         else{
             mImages=new String[0];
-            Call<ResponseBody> call = tour.addMaintenance("1.0.0",token,(float) mLat,(float) mLon, mAddress, mName, mNote);
+            Call<ResponseBody> call = tour.addMaintenance(MyApplication.getInstance().getVersion(),token,(float) mLat,(float) mLon, mAddress, mName, mNote);
 
             call.enqueue(new Callback<ResponseBody>() {
                 @Override

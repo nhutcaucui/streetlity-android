@@ -476,7 +476,7 @@ public class AllServiceMap extends AppCompatActivity implements GoogleMap.OnMark
         Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getServiceURL())
                 .addConverterFactory(GsonConverterFactory.create()).build();
         final MapAPI tour = retro.create(MapAPI.class);
-        Call<ResponseBody> call = tour.getATMInRange("1.0.0",(float)lat,(float)lon,(float)0.1);
+        Call<ResponseBody> call = tour.getATMInRange(MyApplication.getInstance().getVersion(),(float)lat,(float)lon,(float)0.1);
         //Call<ResponseBody> call = tour.getAllATM();
         call.enqueue(new Callback<ResponseBody>() {
             @Override
@@ -547,7 +547,7 @@ public class AllServiceMap extends AppCompatActivity implements GoogleMap.OnMark
         Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getServiceURL())
                 .addConverterFactory(GsonConverterFactory.create()).build();
         final MapAPI tour = retro.create(MapAPI.class);
-        Call<ResponseBody> call = tour.getMaintenanceInRange("1.0.0",(float)lat,(float)lon,(float)0.1);
+        Call<ResponseBody> call = tour.getMaintenanceInRange(MyApplication.getInstance().getVersion(),(float)lat,(float)lon,(float)0.1);
         //Call<ResponseBody> call = tour.getAllATM();
         call.enqueue(new Callback<ResponseBody>() {
             @Override
@@ -600,7 +600,7 @@ public class AllServiceMap extends AppCompatActivity implements GoogleMap.OnMark
         Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getServiceURL())
                 .addConverterFactory(GsonConverterFactory.create()).build();
         final MapAPI tour = retro.create(MapAPI.class);
-        Call<ResponseBody> call = tour.getFuelInRange("1.0.0",(float)lat,(float)lon,(float)0.1);
+        Call<ResponseBody> call = tour.getFuelInRange(MyApplication.getInstance().getVersion(),(float)lat,(float)lon,(float)0.1);
         //Call<ResponseBody> call = tour.getAllATM();
         call.enqueue(new Callback<ResponseBody>() {
             @Override
@@ -661,7 +661,7 @@ public class AllServiceMap extends AppCompatActivity implements GoogleMap.OnMark
         Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getServiceURL())
                 .addConverterFactory(GsonConverterFactory.create()).build();
         final MapAPI tour = retro.create(MapAPI.class);
-        Call<ResponseBody> call = tour.getWCInRange("1.0.0",(float)lat,(float)lon,(float)0.1);
+        Call<ResponseBody> call = tour.getWCInRange(MyApplication.getInstance().getVersion(),(float)lat,(float)lon,(float)0.1);
         //Call<ResponseBody> call = tour.getAllATM();
         call.enqueue(new Callback<ResponseBody>() {
             @Override
@@ -731,7 +731,7 @@ public class AllServiceMap extends AppCompatActivity implements GoogleMap.OnMark
 
         String token = MyApplication.getInstance().getToken();
 
-        Call<ResponseBody> call = tour.getBank("1.0.0",token);
+        Call<ResponseBody> call = tour.getBank(MyApplication.getInstance().getVersion(),token);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {

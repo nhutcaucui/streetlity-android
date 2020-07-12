@@ -495,7 +495,7 @@ public class FuelFragment extends Fragment implements OnMapReadyCallback, Google
         Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getServiceURL())
                 .addConverterFactory(GsonConverterFactory.create()).build();
         final MapAPI tour = retro.create(MapAPI.class);
-        Call<ResponseBody> call = tour.getFuelInRange("1.0.0",(float)lat, (float)lon,range+1);
+        Call<ResponseBody> call = tour.getFuelInRange(MyApplication.getInstance().getVersion(),(float)lat, (float)lon,range+1);
         //Call<ResponseBody> call = tour.getAllFuel();
         call.enqueue(new Callback<ResponseBody>() {
             @Override

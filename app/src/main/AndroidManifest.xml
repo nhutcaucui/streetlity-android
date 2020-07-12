@@ -25,8 +25,12 @@
         android:theme="@style/AppTheme">
         <service
             android:name=".UpdateLocationService"
-            android:exported="false"></service>
+            android:exported="false"/>
 
+        <activity
+            android:name=".Achievement.AchievementOther"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".MaintainerDirection"
             android:screenOrientation="portrait"

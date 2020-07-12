@@ -302,7 +302,7 @@ public class SignupAsMaintainer extends AppCompatActivity implements OnMapReadyC
         Retrofit retro = new Retrofit.Builder().baseUrl("http://34.87.144.190/")
                 .addConverterFactory(GsonConverterFactory.create()).build();
         final MapAPI tour = retro.create(MapAPI.class);
-        Call<ResponseBody> call = tour.getMaintenanceInRange("1.0.0",(float)lat,(float)lon,(float)15);
+        Call<ResponseBody> call = tour.getMaintenanceInRange(MyApplication.getInstance().getVersion(),(float)lat,(float)lon,(float)15);
         //Call<ResponseBody> call = tour.getAllATM();
         call.enqueue(new Callback<ResponseBody>() {
             @Override

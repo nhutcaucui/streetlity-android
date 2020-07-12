@@ -589,7 +589,7 @@ public class ATMFragment extends Fragment implements LocationListener, OnMapRead
                             editText.setText(jsonObject1.getString("formatted_address"));
                             editTextFind.setText(jsonObject1.getString("formatted_address"));
 
-                            Call<ResponseBody> call2 = tour2.getATMInRange("1.0.0", (float)mLat, (float)mLon,(float)0.1);
+                            Call<ResponseBody> call2 = tour2.getATMInRange(MyApplication.getInstance().getVersion(), (float)mLat, (float)mLon,(float)0.1);
                             call2.enqueue(new Callback<ResponseBody>() {
                                 @Override
                                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -749,7 +749,8 @@ public class ATMFragment extends Fragment implements LocationListener, OnMapRead
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
 
-            ((MainNavigationHolder)getActivity()).getLoading().setVisibility(View.GONE);
+            if(((MainNavigationHolder)getActivity()).getLoading() != null)
+                ((MainNavigationHolder)getActivity()).getLoading().setVisibility(View.GONE);
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
@@ -856,7 +857,7 @@ public class ATMFragment extends Fragment implements LocationListener, OnMapRead
             Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getServiceURL())
                     .addConverterFactory(GsonConverterFactory.create()).build();
             final MapAPI tour = retro.create(MapAPI.class);
-            Call<ResponseBody> call = tour.getATMInRange("1.0.0", (float) lat, (float) lon, (float)0.1);
+            Call<ResponseBody> call = tour.getATMInRange(MyApplication.getInstance().getVersion(), (float) lat, (float) lon, (float)0.1);
             //Call<ResponseBody> call = tour.getAllFuel();
             call.enqueue(new Callback<ResponseBody>() {
                 @Override
@@ -965,7 +966,7 @@ loading.setVisibility(View.GONE);
 
         String token = MyApplication.getInstance().getToken();
 
-        Call<ResponseBody> call = tour.getBank("1.0.0",token);
+        Call<ResponseBody> call = tour.getBank(MyApplication.getInstance().getVersion(),token);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {

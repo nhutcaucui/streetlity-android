@@ -174,12 +174,58 @@ public class MapsActivityConfirmation extends AppCompatActivity implements OnMap
                         Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getAuthURL())
                                 .addConverterFactory(GsonConverterFactory.create()).build();
                         final MapAPI tour = retro.create(MapAPI.class);
-                        Call<ResponseBody> call = tour.deleteActionUpvote(Integer.toString(item.getId()), type);
+                        Call<ResponseBody> call = tour.deleteActionUpvote(Integer.toString(item.getId()), type, MyApplication.getInstance().getUsername());
+                        call.enqueue(new Callback<ResponseBody>() {
+                            @Override
+                            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                try{
+                                    if(response.code()==200){
+                                        Log.e(TAG, "onResponse: " + response.body().string());
+                                        downvote(true);
+                                        finish();
+                                    }
+                                    else{
+                                        Log.e(TAG, "onResponse: " + response.code() );
+                                    }
 
+                                }catch (Exception e) {e.printStackTrace();}
+                            }
+
+                            @Override
+                            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                t.printStackTrace();
+                            }
+                        });
                     } else {
-                        //reserve for downvote
+                        MyApplication.getInstance().getDownvoteMap().get(type).remove("downvote " + item.getId());
+
+                        Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getAuthURL())
+                                .addConverterFactory(GsonConverterFactory.create()).build();
+                        final MapAPI tour = retro.create(MapAPI.class);
+                        Call<ResponseBody> call = tour.deleteActionDownvote(Integer.toString(item.getId()), type, MyApplication.getInstance().getUsername());
+                        call.enqueue(new Callback<ResponseBody>() {
+                            @Override
+                            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                try{
+                                    if(response.code()==200){
+                                        Log.e(TAG, "onResponse: " + response.body().string());
+                                        upvote(true);
+                                        finish();
+                                    }
+                                    else{
+                                        Log.e(TAG, "onResponse: " + response.code() );
+                                    }
+
+                                }catch (Exception e) {e.printStackTrace();}
+                            }
+
+                            @Override
+                            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                t.printStackTrace();
+                            }
+                        });
                     }
-                    finish();
+
                 }
             });
 
@@ -192,18 +238,15 @@ public class MapsActivityConfirmation extends AppCompatActivity implements OnMap
             btnExist.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    upvote();
+                    upvote(false);
                 }
             });
 
             btnNonExist.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent data = new Intent();
-                    data.putExtra("index", getIntent().getIntExtra("index", -1));
-                    data.putExtra("action", 2);
-                    setResult(RESULT_OK, data);
-                    finish();
+                    downvote(false);
+
                 }
             });
         }
@@ -432,20 +475,20 @@ public class MapsActivityConfirmation extends AppCompatActivity implements OnMap
         }
     }
 
-    public void upvote() {
+    public void upvote(boolean isClear) {
         Log.e(TAG, "onActivityResult: " + getIntent().getIntExtra("index", -1));
         Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getServiceURL())
                 .addConverterFactory(GsonConverterFactory.create()).build();
         final MapAPI tour = retro.create(MapAPI.class);
-        Call<ResponseBody> call = tour.upvoteATM("1.0.0", item.getId(), MyApplication.getInstance().getUsername());
+        Call<ResponseBody> call = tour.upvoteATM(MyApplication.getInstance().getVersion(), item.getId(), MyApplication.getInstance().getUsername());
         if (item.getType() == 1) {
-            call = tour.upvoteFuel("1.0.0", item.getId(), MyApplication.getInstance().getUsername());
+            call = tour.upvoteFuel(MyApplication.getInstance().getVersion(), item.getId(), MyApplication.getInstance().getUsername());
         } else if (item.getType() == 2) {
-            call = tour.upvoteWC("1.0.0", item.getId(), MyApplication.getInstance().getUsername());
+            call = tour.upvoteWC(MyApplication.getInstance().getVersion(), item.getId(), MyApplication.getInstance().getUsername());
         } else if (item.getType() == 3) {
-            call = tour.upvoteMaintenance("1.0.0", item.getId(), MyApplication.getInstance().getUsername());
+            call = tour.upvoteMaintenance(MyApplication.getInstance().getVersion(), item.getId(), MyApplication.getInstance().getUsername());
         } else if (item.getType() == 4) {
-            call = tour.upvoteATM("1.0.0", item.getId(), MyApplication.getInstance().getUsername());
+            call = tour.upvoteATM(MyApplication.getInstance().getVersion(), item.getId(), MyApplication.getInstance().getUsername());
         }
         call.enqueue(new Callback<ResponseBody>() {
             @Override
@@ -483,18 +526,127 @@ public class MapsActivityConfirmation extends AppCompatActivity implements OnMap
                             data.putExtra("action", 1);
                             setResult(RESULT_OK, data);
 
-                            e.trigger(MyApplication.getInstance().getUsername(), builder);
-                            ActionObject ao = new ActionObject("upvote " + item.getId(), time, "Upvote", Integer.toString(item.getId()));
+                            if(!isClear) {
+                                e.trigger(MyApplication.getInstance().getUsername(), builder);
+                                ActionObject ao = new ActionObject("upvote " + item.getId(), time, "Upvote", Integer.toString(item.getId()));
 
-                            if (MyApplication.getInstance().getUpvoteMap().containsKey(type)) {
-                                MyApplication.getInstance().getUpvoteMap().get(type).put("upvote " + item.getId(), ao);
-                            } else {
-                                Map<String, ActionObject> map = new HashMap<>();
-                                map.put("upvote " + item.getId(), ao);
-                                MyApplication.getInstance().getUpvoteMap().put(type, map);
+                                if (MyApplication.getInstance().getUpvoteMap().containsKey(type)) {
+                                    MyApplication.getInstance().getUpvoteMap().get(type).put("upvote " + item.getId(), ao);
+                                } else {
+                                    Map<String, ActionObject> map = new HashMap<>();
+                                    map.put("upvote " + item.getId(), ao);
+                                    MyApplication.getInstance().getUpvoteMap().put(type, map);
+                                }
                             }
 
                             Log.e(TAG, "onResponse: " + MyApplication.getInstance().getUpvoteMap());
+
+                            finish();
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                t.printStackTrace();
+            }
+        });
+    }
+
+    public void downvote(boolean isClear) {
+        Log.e(TAG, "onActivityResult: " + getIntent().getIntExtra("index", -1));
+        Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getServiceURL())
+                .addConverterFactory(GsonConverterFactory.create()).build();
+        final MapAPI tour = retro.create(MapAPI.class);
+        Call<ResponseBody> call = tour.downvoteFuel(MyApplication.getInstance().getVersion(), item.getId(), MyApplication.getInstance().getUsername());
+        if (item.getType() == 1) {
+            call = tour.downvoteFuel(MyApplication.getInstance().getVersion(), item.getId(), MyApplication.getInstance().getUsername());
+        } else if (item.getType() == 2) {
+            call = tour.downvoteWC(MyApplication.getInstance().getVersion(), item.getId(), MyApplication.getInstance().getUsername());
+        } else if (item.getType() == 3) {
+            call = tour.downvoteMaintenance(MyApplication.getInstance().getVersion(), item.getId(), MyApplication.getInstance().getUsername());
+        } else if (item.getType() == 4) {
+            call = tour.downvoteATM(MyApplication.getInstance().getVersion(), item.getId(), MyApplication.getInstance().getUsername());
+        }
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.code() == 200) {
+                    final JSONObject jsonObject;
+                    try {
+                        Log.e("", "onResponse: " + response);
+                        jsonObject = new JSONObject(response.body().string());
+                        Log.e("", "onResponse: " + jsonObject.toString());
+
+                        Calendar calendar = Calendar.getInstance();
+                        long time = calendar.getTimeInMillis();
+                        String builder = "";
+                        builder = builder + time + ";" + item.getId() + ";";
+                        String type = "";
+
+                        if (item.getType() == 1) {
+                            builder += "Fuel";
+                            type = "Fuel";
+                        } else if (item.getType() == 2) {
+                            builder += "Toilet";
+                            type = "Toilet";
+                        } else if (item.getType() == 3) {
+                            builder += "Maintenance";
+                            type = "Maintenance";
+                        } else if (item.getType() == 4) {
+                            builder += "Atm";
+                            type = "Atm";
+                        }
+
+                        if (jsonObject.getBoolean("Status")) {
+                            Intent data = new Intent();
+                            data.putExtra("index", getIntent().getIntExtra("index", -1));
+                            data.putExtra("action", 2);
+                            setResult(RESULT_OK, data);
+                            if(!isClear) {
+//                            e.trigger(MyApplication.getInstance().getUsername(), builder);
+
+                                Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getAuthURL())
+                                        .addConverterFactory(GsonConverterFactory.create()).build();
+                                final MapAPI tour = retro.create(MapAPI.class);
+                                Call<ResponseBody> call2 = tour.addActionDownvote(MyApplication.getInstance().getUsername(), time,Integer.toString(item.getId()), type);
+                                call2.enqueue(new Callback<ResponseBody>() {
+                                    @Override
+                                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                        if (response.code() == 200) {
+                                            try {
+                                                JSONObject jsonObject1 = new JSONObject(response.body().string());
+                                                Log.e("TAG", "onResponse: " + jsonObject1.toString());
+                                            } catch (Exception e) {
+                                                e.printStackTrace();
+                                            }
+                                        } else {
+                                            Log.e(TAG, "onResponse: " + response.code());
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                        t.printStackTrace();
+                                    }
+                                });
+
+                            ActionObject ao = new ActionObject("downvote " + item.getId(), time, "Downvote", Integer.toString(item.getId()));
+
+
+                                if (MyApplication.getInstance().getDownvoteMap().containsKey(type)) {
+                                    MyApplication.getInstance().getDownvoteMap().get(type).put("upvote " + item.getId(), ao);
+                                } else {
+                                    Map<String, ActionObject> map = new HashMap<>();
+                                    map.put("upvote " + item.getId(), ao);
+                                    MyApplication.getInstance().getDownvoteMap().put(type, map);
+                                }
+                            }
+
+                            Log.e(TAG, "onResponse: " + MyApplication.getInstance().getDownvoteMap());
 
                             finish();
                         }

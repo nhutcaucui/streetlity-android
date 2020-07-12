@@ -408,7 +408,7 @@ public class BroadcastActivity extends AppCompatActivity {
         Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getServiceURL())
                 .addConverterFactory(GsonConverterFactory.create()).build();
         final MapAPI tour = retro.create(MapAPI.class);
-        Call<ResponseBody> call = tour.getMaintenanceInRange("1.0.0", (float) lat, (float) lon, (float) 0.1);
+        Call<ResponseBody> call = tour.getMaintenanceInRange(MyApplication.getInstance().getVersion(), (float) lat, (float) lon, (float) 0.1);
         //Call<ResponseBody> call = tour.getAllATM();
         call.enqueue(new Callback<ResponseBody>() {
             @Override
@@ -463,7 +463,7 @@ public class BroadcastActivity extends AppCompatActivity {
 
                         if (count > 0) {
 
-                            Call<ResponseBody> call2 = tour.broadcast("1.0.0", MyApplication.getInstance().getUsername()
+                            Call<ResponseBody> call2 = tour.broadcast(MyApplication.getInstance().getVersion(), MyApplication.getInstance().getUsername()
                                     , reason, phone, note, maintenance, id, 1);
                             call2.enqueue(new Callback<ResponseBody>() {
                                 @Override

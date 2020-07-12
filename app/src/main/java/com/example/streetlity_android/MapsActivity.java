@@ -121,6 +121,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     RatingBar rb;
     TextView tvRating;
     DecimalFormat df = new DecimalFormat("#.#");
+    Button leaveReview;
 
     Marker currMarker;
 
@@ -228,6 +229,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         rb=findViewById(R.id.ratingbar_map_object);
 
+        leaveReview = findViewById(R.id.btn_leave_comment);
+
         loadReviews();
 
         ListView reviewList = findViewById(R.id.lv_review);
@@ -244,9 +247,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 if (reviewItems.get(position).getUsername().equals(MyApplication.getInstance().getUsername())) {
                     Dialog dialogUpdate = new Dialog(MapsActivity.this);
 
-                    final LayoutInflater inflater2 = LayoutInflater.from(MapsActivity.this.getApplicationContext());
+                    //final LayoutInflater inflater2 = LayoutInflater.from(MapsActivity.this.getApplicationContext());
 
-                    final android.view.View dialogView2 = inflater2.inflate(R.layout.dialog_edit_review, null);
+                    final View dialogView2 = View.inflate(MapsActivity.this,R.layout.dialog_edit_review, null);
 
                     com.google.android.material.textfield.TextInputEditText edtComment = dialogView2.findViewById(R.id.edt_comment);
                     edtComment.setText(reviewItems.get(position).getReviewBody());
@@ -290,7 +293,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         addImages(imgContainer);
 
-        Button leaveReview = findViewById(R.id.btn_leave_comment);
         ImageView addPhoto = findViewById(R.id.btn_add_photo);
         ImageView editNote = findViewById(R.id.btn_edit_note);
         ImageView editAddress = findViewById(R.id.btn_edit_address);
@@ -344,7 +346,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                 toast.show();
                             }
                             else{
-                                createReviews(rtReview.getRating(),edtComment.getText().toString());
+                                createReviews(rtReview.getRating(),edtComment.getText().toString(), leaveReview);
                                 dialogComment.cancel();
                             }
                         }
@@ -361,13 +363,15 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 public void onClick(View v) {
                     Dialog dialog = new Dialog(MapsActivity.this);
 
-                    final LayoutInflater inflater2 = LayoutInflater.from(MapsActivity.this.getApplicationContext());
+                    //final LayoutInflater inflater2 = LayoutInflater.from(MapsActivity.this.getApplicationContext());
 
                     final View dialogView2 = View.inflate(MapsActivity.this,R.layout.dialog_edit_address ,null);
 
                     com.google.android.material.textfield.TextInputEditText edtAddress = dialogView2.findViewById(R.id.edt_address);
 
                     Button confirm = dialogView2.findViewById(R.id.btn_confirm);
+
+                    edtAddress.setText(tvAddress.getText().toString());
 
                     confirm.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -398,13 +402,17 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 public void onClick(View v) {
                     Dialog dialog = new Dialog(MapsActivity.this);
 
-                    final LayoutInflater inflater2 = LayoutInflater.from(MapsActivity.this.getApplicationContext());
+                    //final LayoutInflater inflater2 = LayoutInflater.from(MapsActivity.this.getApplicationContext());
 
                     final View dialogView2 = View.inflate(MapsActivity.this,R.layout.dialog_edit_note ,null);
 
                     com.google.android.material.textfield.TextInputEditText edtNote = dialogView2.findViewById(R.id.edt_note);
 
                     Button confirm = dialogView2.findViewById(R.id.btn_confirm);
+
+                    if(!tvNote.getText().toString().equals(getString(R.string.no_note))) {
+                        edtNote.setText(tvNote.getText().toString());
+                    }
 
                     confirm.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -594,7 +602,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             public void onMapLoaded() {
                 int padding = 150; // offset from edges of the map in pixels
                 CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
-                googleMap.animateCamera(cu);
+                googleMap.moveCamera(cu);
             }
         });
 
@@ -678,31 +686,31 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
-    public void createReviews(float rating,String comment){
+    public void createReviews(float rating,String comment, Button btnReview){
         //MapObject item = (MapObject) getIntent().getSerializableExtra("item");
         Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getServiceURL())
                 .addConverterFactory(GsonConverterFactory.create()).build();
         final MapAPI tour = retro.create(MapAPI.class);
-        Call<ResponseBody> call = tour.createFuelReview("1.0.0", item.getId(), MyApplication.getInstance().getUsername(),
+        Call<ResponseBody> call = tour.createFuelReview(MyApplication.getInstance().getVersion(), item.getId(), MyApplication.getInstance().getUsername(),
                 rating, comment);
         switch (item.getType()) {
             case 1: {
-                call = tour.createFuelReview("1.0.0", item.getId(), MyApplication.getInstance().getUsername(),
+                call = tour.createFuelReview(MyApplication.getInstance().getVersion(), item.getId(), MyApplication.getInstance().getUsername(),
                         rating, comment);
                 break;
             }
             case 2: {
-                 call = tour.createWCReview("1.0.0", item.getId(), MyApplication.getInstance().getUsername(),
+                 call = tour.createWCReview(MyApplication.getInstance().getVersion(), item.getId(), MyApplication.getInstance().getUsername(),
                         rating, comment);
                 break;
             }
             case 3: {
-                call = tour.createMaintenanceReview("1.0.0", item.getId(), MyApplication.getInstance().getUsername(),
+                call = tour.createMaintenanceReview(MyApplication.getInstance().getVersion(), item.getId(), MyApplication.getInstance().getUsername(),
                         rating, comment);
                 break;
             }
             case 4: {
-                call = tour.createAtmReview("1.0.0", item.getId(), MyApplication.getInstance().getUsername(),
+                call = tour.createAtmReview(MyApplication.getInstance().getVersion(), item.getId(), MyApplication.getInstance().getUsername(),
                         rating, comment);
                 break;
             }
@@ -735,7 +743,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                             item.setRating(calculateRating(reviewItems));
                             rb.setRating(calculateRating(reviewItems));
 
+                            tvRating = findViewById(R.id.tv_rating);
                             tvRating.setText("("+ df.format(item.getRating()) +")");
+
+                            btnReview.setVisibility(View.GONE);
 
                             TextView tvNoReview = findViewById(R.id.tv_no_review);
                             tvNoReview.setVisibility(View.GONE);
@@ -798,22 +809,22 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getServiceURL())
                 .addConverterFactory(GsonConverterFactory.create()).build();
         final MapAPI tour = retro.create(MapAPI.class);
-        Call<ResponseBody> call = tour.updateFuelReview("1.0.0", id, rating, comment);
+        Call<ResponseBody> call = tour.updateFuelReview(MyApplication.getInstance().getVersion(), id, rating, comment);
         switch (item.getType()) {
             case 1: {
-                call = tour.updateFuelReview("1.0.0", id, rating, comment);
+                call = tour.updateFuelReview(MyApplication.getInstance().getVersion(), id, rating, comment);
                 break;
             }
             case 2: {
-                call = tour.updateWCReview("1.0.0", id, rating, comment);
+                call = tour.updateWCReview(MyApplication.getInstance().getVersion(), id, rating, comment);
                 break;
             }
             case 3: {
-                call = tour.updateMaintenanceReview("1.0.0", id, rating, comment);
+                call = tour.updateMaintenanceReview(MyApplication.getInstance().getVersion(), id, rating, comment);
                 break;
             }
             case 4: {
-                call = tour.updateATMReview("1.0.0", id, rating, comment);
+                call = tour.updateATMReview(MyApplication.getInstance().getVersion(), id, rating, comment);
                 break;
             }
         }
@@ -857,31 +868,36 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     public void deleteReviews(int pos, int id, Dialog dialog){
        // MapObject item = (MapObject) getIntent().getSerializableExtra("item");
+        Log.e(TAG, "deleteReviews: "+ id );
         Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getServiceURL())
                 .addConverterFactory(GsonConverterFactory.create()).build();
         final MapAPI tour = retro.create(MapAPI.class);
-        Call<ResponseBody> call = tour.deleteFuelReview("1.0.0", id);
+        Call<ResponseBody> call = tour.deleteFuelReview(MyApplication.getInstance().getVersion(), id);
+        String type1 = "Fuel";
         switch (item.getType()) {
             case 1: {
-                call = tour.deleteFuelReview("1.0.0", id);
+                call = tour.deleteFuelReview(MyApplication.getInstance().getVersion(), id);
+                type1 = "Fuel";
                 break;
             }
             case 2: {
-               call = tour.deleteWCReview("1.0.0", id);
-
+               call = tour.deleteWCReview(MyApplication.getInstance().getVersion(), id);
+                type1 = "Toilet";
                 break;
             }
             case 3: {
-                call = tour.deleteMaintenanceReview("1.0.0", id);
-
+                call = tour.deleteMaintenanceReview(MyApplication.getInstance().getVersion(), id);
+                type1 = "Maintenance";
                 break;
             }
             case 4: {
-                call = tour.deleteATMReview("1.0.0", id);
-
+                call = tour.deleteATMReview(MyApplication.getInstance().getVersion(), id);
+                type1 = "Atm";
                 break;
             }
         }
+
+        final String type = type1;
 
         call.enqueue(new Callback<ResponseBody>() {
             @Override
@@ -911,6 +927,34 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                             adapter.notifyDataSetChanged();
 
                             tvRating.setText("("+ df.format(item.getRating()) +")");
+
+                            MyApplication.getInstance().getReviewedMap().get(type).remove("review " + item.getId());
+
+                            Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getAuthURL())
+                                    .addConverterFactory(GsonConverterFactory.create()).build();
+                            final MapAPI tour = retro.create(MapAPI.class);
+                            Call<ResponseBody> call2 = tour.deleteActionReview(Integer.toString(item.getId()), type,
+                                    MyApplication.getInstance().getUsername());
+                            call2.enqueue(new Callback<ResponseBody>() {
+                                @Override
+                                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                    try{
+                                        if(response.code()==200){
+                                            Log.e(TAG, "onResponse: " + response.body().string());
+                                        }
+                                        else{
+                                            Log.e(TAG, "onResponse: " + response.code());
+                                        }
+
+                                    }catch (Exception e) {e.printStackTrace();}
+                                }
+
+                                @Override
+                                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                    t.printStackTrace();
+                                }
+                            });
+
                             dialog.cancel();
                         }
                     }catch (Exception e){
@@ -937,22 +981,22 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getServiceURL())
                 .addConverterFactory(GsonConverterFactory.create()).build();
         final MapAPI tour = retro.create(MapAPI.class);
-        Call<ResponseBody> call = tour.getFuelReview("1.0.0", item.getId(), 0,-1);
+        Call<ResponseBody> call = tour.getFuelReview(MyApplication.getInstance().getVersion(), item.getId(), 0,-1);
         switch (item.getType()){
             case 1:{
-                call = tour.getFuelReview("1.0.0", item.getId(), 0,-1);
+                call = tour.getFuelReview(MyApplication.getInstance().getVersion(), item.getId(), 0,-1);
                 break;
             }
             case 2:{
-                call = tour.getWCReview("1.0.0", item.getId(), 0,-1);
+                call = tour.getWCReview(MyApplication.getInstance().getVersion(), item.getId(), 0,-1);
                 break;
             }
             case 3:{
-                call = tour.getMaintenanceReview("1.0.0", item.getId(), 0,-1);
+                call = tour.getMaintenanceReview(MyApplication.getInstance().getVersion(), item.getId(), 0,-1);
                 break;
             }
             case 4:{
-                call = tour.getAtmReview("1.0.0", item.getId(), 0, -1);
+                call = tour.getAtmReview(MyApplication.getInstance().getVersion(), item.getId(), 0, -1);
                 break;
             }
         }
@@ -1166,7 +1210,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                         Log.e("", "onResponse: " + jsonObject.toString());
 
                                         if (jsonObject.getBoolean("Status")) {
-
+                                            findViewById(R.id.tv_no_img).setVisibility(View.GONE);
                                         }
                                     }catch (Exception e){
                                         e.printStackTrace();
@@ -1215,7 +1259,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                         MultipartBody.Part.createFormData(imageName+imgContainer.getChildCount()+extension,
                                                 file.getName(), fbody);
 
-                                fName.add(imageName+imgContainer.getChildCount());
+                                fName.add(imageName+imgContainer.getChildCount()+extension);
                                 body.add(mBody);
 
                                 Bitmap bmp = BitmapFactory.decodeFile(file.getAbsolutePath());
@@ -1256,7 +1300,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                             Log.e("", "onResponse: " + jsonObject.toString());
 
                                             if (jsonObject.getBoolean("Status")) {
-
+                                                findViewById(R.id.tv_no_img).setVisibility(View.GONE);
                                             }
                                         }catch (Exception e){
                                             e.printStackTrace();

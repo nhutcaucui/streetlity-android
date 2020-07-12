@@ -750,7 +750,7 @@ public class SignUp extends AppCompatActivity implements OnMapReadyCallback, Goo
         Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getServiceURL())
                 .addConverterFactory(GsonConverterFactory.create()).build();
         final MapAPI tour = retro.create(MapAPI.class);
-        Call<ResponseBody> call = tour.getMaintenanceInRange("1.0.0",(float)lat,(float)lon,(float)0.1);
+        Call<ResponseBody> call = tour.getMaintenanceInRange(MyApplication.getInstance().getVersion(),(float)lat,(float)lon,(float)0.1);
         //Call<ResponseBody> call = tour.getAllATM();
         call.enqueue(new Callback<ResponseBody>() {
             @Override
@@ -1042,7 +1042,7 @@ public class SignUp extends AppCompatActivity implements OnMapReadyCallback, Goo
                                     mImages[i] = jsonObject2.getString("Message");
                                 }
 
-                                Call<ResponseBody> call1 = tour.addMaintenance("1.0.0",token,(float) mLat,(float) mLon, mAddress, mName, mNote);
+                                Call<ResponseBody> call1 = tour.addMaintenance(MyApplication.getInstance().getVersion(),token,(float) mLat,(float) mLon, mAddress, mName, mNote);
 
                                 call1.enqueue(new Callback<ResponseBody>() {
                                     @Override
@@ -1143,7 +1143,7 @@ public class SignUp extends AppCompatActivity implements OnMapReadyCallback, Goo
         }
         else{
             mImages=new String[0];
-            Call<ResponseBody> call = tour.addMaintenance("1.0.0",token,(float) mLat,(float) mLon, mAddress, mName, mNote);
+            Call<ResponseBody> call = tour.addMaintenance(MyApplication.getInstance().getVersion(),token,(float) mLat,(float) mLon, mAddress, mName, mNote);
 
             call.enqueue(new Callback<ResponseBody>() {
                 @Override

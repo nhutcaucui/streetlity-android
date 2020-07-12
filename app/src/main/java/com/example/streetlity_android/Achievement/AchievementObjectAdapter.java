@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Filterable;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -17,6 +18,7 @@ import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 
 import com.example.streetlity_android.Chat.ChatObject;
+import com.example.streetlity_android.MainFragment.MapObject;
 import com.example.streetlity_android.MyApplication;
 import com.example.streetlity_android.R;
 
@@ -27,9 +29,9 @@ import java.util.Random;
 public class AchievementObjectAdapter extends ArrayAdapter implements Filterable {
 
     Context context;
-    private ArrayList<AchievementObject> mDisplayedValues;
+    private ArrayList<MapObject> mDisplayedValues;
 
-    public AchievementObjectAdapter(@NonNull Context context, int resource, @NonNull ArrayList<AchievementObject> objects) {
+    public AchievementObjectAdapter(@NonNull Context context, int resource, @NonNull ArrayList<MapObject> objects) {
         super(context, resource, objects);
         this.context = context;
         this.mDisplayedValues = objects;
@@ -47,7 +49,8 @@ public class AchievementObjectAdapter extends ArrayAdapter implements Filterable
 
     private class ViewHolder {
         TextView tvName;
-        TextView tvPoint;
+        TextView tvAddress;
+        ImageView imgIcon;
     }
 
     @NonNull
@@ -62,9 +65,11 @@ public class AchievementObjectAdapter extends ArrayAdapter implements Filterable
             holder = new ViewHolder();
             convertView = inflater.inflate(R.layout.lv_item_achievement, null);
 
-            holder.tvName = convertView.findViewById(R.id.tv_achievement_name);
+            holder.tvName = convertView.findViewById(R.id.tv_name);
 
-            holder.tvPoint = convertView.findViewById(R.id.tv_point);
+            holder.tvAddress = convertView.findViewById(R.id.tv_address);
+
+            holder.imgIcon = convertView.findViewById(R.id.img_service_icon);
 
             convertView.setTag(holder);
         } else {
@@ -72,16 +77,16 @@ public class AchievementObjectAdapter extends ArrayAdapter implements Filterable
         }
 
         holder.tvName.setText(this.mDisplayedValues.get(position).getName());
-        holder.tvPoint.setText(Integer.toString(this.mDisplayedValues.get(position).getPoint()));
+        holder.tvAddress.setText(this.mDisplayedValues.get(position).getAddress());
 
-        if(this.mDisplayedValues.get(position).isEarned()){
-            holder.tvName.setTextColor(context.getResources().getColor(R.color.black));
-            holder.tvName.setTypeface(null, Typeface.BOLD);
-            holder.tvPoint.setTextColor(context.getResources().getColor(R.color.black));
-        }else{
-            holder.tvName.setTextColor(context.getResources().getColor(android.R.color.tab_indicator_text));
-            holder.tvName.setTypeface(null, Typeface.NORMAL);
-            holder.tvPoint.setTextColor(context.getResources().getColor(android.R.color.tab_indicator_text));
+        if(this.mDisplayedValues.get(position).getType() == 1){
+            holder.imgIcon.setImageResource(R.drawable.fuel_big_icon);
+        }else if(this.mDisplayedValues.get(position).getType() == 2){
+            holder.imgIcon.setImageResource(R.drawable.wc_big_icon);
+        }else if(this.mDisplayedValues.get(position).getType() == 3){
+            holder.imgIcon.setImageResource(R.drawable.fix_big_icon);
+        }else if(this.mDisplayedValues.get(position).getType() == 4){
+            holder.imgIcon.setImageResource(R.drawable.atm_big_icon);
         }
 
         return convertView;

@@ -376,6 +376,12 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
                             new TypeToken<Map<String, Map<String, ActionObject>>>() {
                             }.getType()));
             Log.e("TAG", "onCreate: " + MyApplication.getInstance().getContributeMap());
+        }if(s.contains("downvote")) {
+            MyApplication.getInstance().setDownvoteMap(
+                    gson.fromJson(s.getString("downvote", ""),
+                            new TypeToken<Map<String, Map<String, ActionObject>>>() {
+                            }.getType()));
+            Log.e("TAG", "onCreate: " + MyApplication.getInstance().getDownvoteMap());
         }
 
         fragment = new HomeFragment();
@@ -536,15 +542,17 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
                     ((ImageView) navView.findViewById(R.id.avatar)).setImageBitmap(MyApplication.getInstance().getImage());
                 }
 
-//                LinearLayout btnBroadcast = findViewById(R.id.btn_broadcast);
-//                if(btnBroadcast != null){
-//                    btnBroadcast.setVisibility(View.VISIBLE);
-//                }
-//
-//                LinearLayout btnBroadcastE = findViewById(R.id.btn_emergency);
-//                if(btnBroadcastE != null){
-//                    btnBroadcastE.setVisibility(View.VISIBLE);
-//                }
+                if(MyApplication.getInstance().getUserType() == 7) {
+                    LinearLayout btnBroadcast = findViewById(R.id.btn_broadcast);
+                    if (btnBroadcast != null) {
+                        btnBroadcast.setVisibility(View.GONE);
+                    }
+
+                    LinearLayout btnBroadcastE = findViewById(R.id.btn_emergency);
+                    if (btnBroadcastE != null) {
+                        btnBroadcastE.setVisibility(View.GONE);
+                    }
+                }
 
             }else if (requestCode == 2 && resultCode == RESULT_OK) {
                 Toast toast = Toast.makeText(MainNavigationHolder.this, R.string.location_added, Toast.LENGTH_LONG);
@@ -987,8 +995,52 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
                     try {
                         Bitmap bmp = BitmapFactory.decodeStream(response.body().byteStream());
                         MyApplication.getInstance().setImage(bmp);
+
                         NavigationView navView = findViewById(R.id.nav_view);
-                        ((ImageView) navView.findViewById(R.id.avatar)).setImageBitmap(MyApplication.getInstance().getImage());
+                        if(navView!= null) {
+                            if (navView.findViewById(R.id.avatar) != null) {
+                                ((ImageView) navView.findViewById(R.id.avatar)).setImageBitmap(MyApplication.getInstance().getImage());
+                            }else{
+                                new CountDownTimer(3000,1000){
+
+                                    @Override
+                                    public void onTick(long millisUntilFinished) {
+
+                                    }
+
+                                    @Override
+                                    public void onFinish() {
+                                        runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+
+                                                ((ImageView) navView.findViewById(R.id.avatar)).setImageBitmap(MyApplication.getInstance().getImage());
+                                            }
+                                        });
+                                    }
+                                };
+                            }
+                        }else {
+                            new CountDownTimer(3000,1000){
+
+                                @Override
+                                public void onTick(long millisUntilFinished) {
+
+                                }
+
+                                @Override
+                                public void onFinish() {
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            NavigationView navView = findViewById(R.id.nav_view);
+                                            ((ImageView) navView.findViewById(R.id.avatar)).setImageBitmap(MyApplication.getInstance().getImage());
+                                        }
+                                    });
+                                }
+                            };
+                        }
+
                     }catch (Exception e){
                         e.printStackTrace();
                     }
@@ -1005,15 +1057,18 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
     public void onStop(){
         super.onStop();
 
-        Gson gs = new Gson();
+        if(!MyApplication.getInstance().getToken().equals("")) {
+            Gson gs = new Gson();
 
-        SharedPreferences s = getSharedPreferences("map", MODE_PRIVATE);
-        SharedPreferences.Editor e = s.edit();
+            SharedPreferences s = getSharedPreferences("map", MODE_PRIVATE);
+            SharedPreferences.Editor e = s.edit();
 
-        e.putString("review", gs.toJson(MyApplication.getInstance().getReviewedMap()));
-        e.putString("contribute", gs.toJson(MyApplication.getInstance().getContributeMap()));
-        e.putString("upvote", gs.toJson(MyApplication.getInstance().getUpvoteMap()));
+            e.putString("review", gs.toJson(MyApplication.getInstance().getReviewedMap()));
+            e.putString("contribute", gs.toJson(MyApplication.getInstance().getContributeMap()));
+            e.putString("upvote", gs.toJson(MyApplication.getInstance().getUpvoteMap()));
+            e.putString("downvote", gs.toJson(MyApplication.getInstance().getDownvoteMap()));
 
-        e.apply();
+            e.apply();
+        }
     }
 }

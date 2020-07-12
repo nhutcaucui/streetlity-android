@@ -461,7 +461,7 @@ public class BroadcastEmergencyActivity extends AppCompatActivity {
                                     .addConverterFactory(GsonConverterFactory.create()).build();
                             final MapAPI tour2 = retro2.create(MapAPI.class);
 
-                            Call<ResponseBody> call2 = tour2.broadcast("1.0.0", MyApplication.getInstance().getUsername()
+                            Call<ResponseBody> call2 = tour2.broadcast(MyApplication.getInstance().getVersion(), MyApplication.getInstance().getUsername()
                                     , reason, phone, note, maintenance, id, 2);
                             call2.enqueue(new Callback<ResponseBody>() {
                                 @Override

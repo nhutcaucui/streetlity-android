@@ -26,6 +26,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.example.streetlity_android.MapAPI;
+import com.example.streetlity_android.MyApplication;
 import com.example.streetlity_android.R;
 import com.example.streetlity_android.Review;
 import com.example.streetlity_android.ReviewAdapter;
@@ -268,7 +269,7 @@ public class WCFragment extends Fragment implements OnMapReadyCallback, GoogleMa
         Retrofit retro = new Retrofit.Builder().baseUrl("http://34.87.144.190/")
                 .addConverterFactory(GsonConverterFactory.create()).build();
         final MapAPI tour = retro.create(MapAPI.class);
-        Call<ResponseBody> call = tour.getWCInRange("1.0.0",(float)lat,(float)lon,(float)range + 1);
+        Call<ResponseBody> call = tour.getWCInRange(MyApplication.getInstance().getVersion(),(float)lat,(float)lon,(float)range + 1);
         //Call<ResponseBody> call = tour.getAllWC();
         call.enqueue(new Callback<ResponseBody>() {
             @Override

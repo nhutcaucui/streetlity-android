@@ -264,7 +264,7 @@ public class ATMFragment extends Fragment implements OnMapReadyCallback, GoogleM
         Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getServiceURL())
                 .addConverterFactory(GsonConverterFactory.create()).build();
         final MapAPI tour = retro.create(MapAPI.class);
-        Call<ResponseBody> call = tour.getATMInRange("1.0.0",(float)lat,(float)lon,(float)range + 1);
+        Call<ResponseBody> call = tour.getATMInRange(MyApplication.getInstance().getVersion(),(float)lat,(float)lon,(float)range + 1);
         //Call<ResponseBody> call = tour.getAllATM();
         call.enqueue(new Callback<ResponseBody>() {
             @Override

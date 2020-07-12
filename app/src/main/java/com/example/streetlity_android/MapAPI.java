@@ -84,6 +84,22 @@ public interface MapAPI {
     Call<ResponseBody> upvoteWC(@Header("Version") String version, @Field("id") int id, @Field("upvote_user") String username);
 
     @FormUrlEncoded
+    @POST("service/atm_ucf/downvote")
+    Call<ResponseBody> downvoteATM(@Header("Version") String version, @Field("id") int id, @Field("upvote_user") String username);
+
+    @FormUrlEncoded
+    @POST("service/fuel_ucf/downvote")
+    Call<ResponseBody> downvoteFuel(@Header("Version") String version, @Field("id") int id, @Field("upvote_user") String username);
+
+    @FormUrlEncoded
+    @POST("service/maintenance_ucf/downvote")
+    Call<ResponseBody> downvoteMaintenance(@Header("Version") String version, @Field("id") int id, @Field("upvote_user") String username);
+
+    @FormUrlEncoded
+    @POST("service/toilet_ucf/downvote")
+    Call<ResponseBody> downvoteWC(@Header("Version") String version, @Field("id") int id, @Field("upvote_user") String username);
+
+    @FormUrlEncoded
     @POST("service/atm_ucf/upvote")
     Call<ResponseBody> upvoteATM(@Header("Version") String version, @Field("id") int id, @Field("upvote_user") String username);
 
@@ -282,44 +298,57 @@ public interface MapAPI {
                                   @Field("address") String address, @Field("phone") String phone);
 
     @FormUrlEncoded
-    @POST("user/action/review")
+    @POST("user/action/review/")
     Call<ResponseBody> addActionReview(@Field("id") String id, @Field("time") long time,
                                  @Field("affect") String affect, @Field("service") String service);
 
     @FormUrlEncoded
-    @POST("user/action/review")
+    @POST("user/action/review/")
     Call<ResponseBody> addActionReview(@Field("id") String id, @Field("time") long[] time,
                                  @Field("affect") String[] affect, @Field("service") String[] service);
 
-    @DELETE("user/action/review")
-    Call<ResponseBody> deleteActionReview(@Query("affect") String affect, @Query("service") String service);
+    @DELETE("user/action/review/")
+    Call<ResponseBody> deleteActionReview(@Query("affect") String affect, @Query("service") String service, @Query("id") String username);
 
     @FormUrlEncoded
-    @POST("user/action/contribute")
+    @POST("user/action/contribute/")
     Call<ResponseBody> addActionContribute(@Field("id") String id, @Field("time") long time,
                                        @Field("affect") String affect, @Field("service") String service);
 
     @FormUrlEncoded
-    @POST("user/action/contribute")
+    @POST("user/action/contribute/")
     Call<ResponseBody> addActionContribute(@Field("id") String id, @Field("time") long[] time,
                                        @Field("affect") String[] affect, @Field("service") String[] service);
 
-    @DELETE("user/action/contribute")
+    @DELETE("user/action/contribute/")
     Call<ResponseBody> deleteActionContribute(@Query("affect") String affect, @Query("service") String service);
 
     @FormUrlEncoded
-    @POST("user/action/upvote")
+    @POST("user/action/upvote/")
     Call<ResponseBody> addActionUpvote(@Field("id") String id, @Field("time") long time,
                                        @Field("affect") String affect, @Field("service") String service);
 
     @FormUrlEncoded
-    @POST("user/action/upvote")
+    @POST("user/action/upvote/")
     Call<ResponseBody> addActionUpvote(@Field("id") String id, @Field("time") long[] time,
                                        @Field("affect") String[] affect, @Field("service") String[] service);
 
-    @DELETE("user/action/upvote")
-    Call<ResponseBody> deleteActionUpvote(@Query("affect") String affect, @Query("service") String service);
+    @DELETE("user/action/upvote/")
+    Call<ResponseBody> deleteActionUpvote(@Query("affect") String affect, @Query("service") String service , @Query("id") String username);
 
+
+    @FormUrlEncoded
+    @POST("user/action/downvote")
+    Call<ResponseBody> addActionDownvote(@Field("id") String id, @Field("time") long time,
+                                       @Field("affect") String affect, @Field("service") String service);
+
+    @FormUrlEncoded
+    @POST("user/action/downvote/")
+    Call<ResponseBody> addActionDownvote(@Field("id") String id, @Field("time") long[] time,
+                                       @Field("affect") String[] affect, @Field("service") String[] service);
+
+    @DELETE("user/action/downvote/")
+    Call<ResponseBody> deleteActionDownvote(@Query("affect") String affect, @Query("service") String service , @Query("id") String username);
 
 
     @GET("user/achievement/progress")
@@ -342,5 +371,20 @@ public interface MapAPI {
 
     @GET("emergency/range")
     Call<ResponseBody> getEmergency(@Query("range") float range, @Query("lat") float lat, @Query("lon") float lon);
+
+    @GET("service/fuel/")
+    Call<ResponseBody> getFuel(@Header("Version") String version, @Query("id") int id);
+
+    @GET("service/toilet/")
+    Call<ResponseBody> getWC(@Header("Version") String version, @Query("id") int id);
+
+    @GET("service/atm/")
+    Call<ResponseBody> getAtm(@Header("Version") String version, @Query("id") int id);
+
+    @GET("service/maintenance/")
+    Call<ResponseBody> getMaintenance(@Header("Version") String version, @Query("id") int id);
+
+    @GET("user/achievement/reputation")
+    Call<ResponseBody> getReputation(@Query("id") String username);
 
 }
