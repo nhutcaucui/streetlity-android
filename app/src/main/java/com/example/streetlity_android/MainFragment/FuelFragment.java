@@ -45,6 +45,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.streetlity_android.Achievement.ActionObject;
 import com.example.streetlity_android.Contribution.AddAMaintenance;
 import com.example.streetlity_android.MainNavigationHolder;
 import com.example.streetlity_android.MapAPI;
@@ -69,6 +70,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Map;
 
 import okhttp3.ResponseBody;
 //import pl.droidsonroids.gif.AnimationListener;
@@ -342,6 +344,21 @@ public class FuelFragment extends Fragment implements LocationListener, OnMapRea
 
                                                     item.setContributor(jsonObject1.getString("Contributor"));
 
+                                                    item.setDownvoted(false);
+                                                    item.setUpvoted(false);
+
+                                                    if(MyApplication.getInstance().getUpvoteMap().containsKey("Fuel")) {
+                                                        Map<String, ActionObject> map = MyApplication.getInstance().getUpvoteMap().get("Fuel");
+                                                        if(map.containsKey("upvote "+ item.getId())) {
+                                                            item.setUpvoted(true);
+                                                        }
+
+                                                    }if (MyApplication.getInstance().getDownvoteMap().containsKey("Fuel")){
+                                                        Map<String, ActionObject> map = MyApplication.getInstance().getDownvoteMap().get("Fuel");
+                                                        if(map.containsKey("downvote "+ item.getId())){
+                                                            item.setDownvoted(true);
+                                                        }
+                                                    }
                                                     searchItems.add(item);
                                                 }
 
@@ -733,6 +750,21 @@ public class FuelFragment extends Fragment implements LocationListener, OnMapRea
 
                                     item.setContributor(jsonObject1.getString("Contributor"));
 
+                                    item.setDownvoted(false);
+                                    item.setUpvoted(false);
+
+                                    if(MyApplication.getInstance().getUpvoteMap().containsKey("Fuel")) {
+                                        Map<String, ActionObject> map = MyApplication.getInstance().getUpvoteMap().get("Fuel");
+                                        if(map.containsKey("upvote "+ item.getId())) {
+                                            item.setUpvoted(true);
+                                        }
+
+                                    }if (MyApplication.getInstance().getDownvoteMap().containsKey("Fuel")){
+                                        Map<String, ActionObject> map = MyApplication.getInstance().getDownvoteMap().get("Fuel");
+                                        if(map.containsKey("downvote "+ item.getId())){
+                                            item.setDownvoted(true);
+                                        }
+                                    }
                                     items.add(item);
                                 }
 

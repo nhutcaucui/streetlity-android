@@ -349,17 +349,17 @@ public class FuelFragment extends Fragment implements LocationListener, OnMapRea
 
                                                     if(MyApplication.getInstance().getUpvoteMap().containsKey("Fuel")) {
                                                         Map<String, ActionObject> map = MyApplication.getInstance().getUpvoteMap().get("Fuel");
-                                                        for (String key : map.keySet()) {
-                                                            Log.e(TAG, "onResponse: " + key + " " + map.get(key).getAffected());
-                                                            if (map.get(key).getAffected().equals(Integer.toString(item.getId()))) {
-                                                                item.setUpvoted(true);
-                                                                break;
-                                                            }
+                                                        if(map.containsKey("upvote "+ item.getId())) {
+                                                            item.setUpvoted(true);
                                                         }
-                                                            searchItems.add(item);
-                                                    }else {
-                                                        searchItems.add(item);
+
+                                                    }if (MyApplication.getInstance().getDownvoteMap().containsKey("Fuel")){
+                                                        Map<String, ActionObject> map = MyApplication.getInstance().getDownvoteMap().get("Fuel");
+                                                        if(map.containsKey("downvote "+ item.getId())){
+                                                            item.setDownvoted(true);
+                                                        }
                                                     }
+                                                    searchItems.add(item);
                                                 }
 
                                                 if(searchItems.size()>0){
@@ -759,17 +759,17 @@ public class FuelFragment extends Fragment implements LocationListener, OnMapRea
 
                                     if(MyApplication.getInstance().getUpvoteMap().containsKey("Fuel")) {
                                         Map<String, ActionObject> map = MyApplication.getInstance().getUpvoteMap().get("Fuel");
-                                        for (String key : map.keySet()) {
-                                            Log.e(TAG, "onResponse: " + key + " " + map.get(key).getAffected());
-                                            if (map.get(key).getAffected().equals(Integer.toString(item.getId()))) {
-                                                item.setUpvoted(true);
-                                                break;
-                                            }
+                                        if(map.containsKey("upvote "+ item.getId())) {
+                                            item.setUpvoted(true);
                                         }
-                                            items.add(item);
-                                    }else {
-                                        items.add(item);
+
+                                    }if (MyApplication.getInstance().getDownvoteMap().containsKey("Fuel")){
+                                        Map<String, ActionObject> map = MyApplication.getInstance().getDownvoteMap().get("Fuel");
+                                        if(map.containsKey("downvote "+ item.getId())){
+                                            item.setDownvoted(true);
+                                        }
                                     }
+                                    items.add(item);
                                 }
                                 Collections.sort(items, new Comparator<MapObject>() {
                                     @Override

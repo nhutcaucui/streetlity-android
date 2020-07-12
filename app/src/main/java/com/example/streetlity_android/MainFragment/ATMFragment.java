@@ -46,6 +46,7 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.example.streetlity_android.Achievement.ActionObject;
 import com.example.streetlity_android.MainNavigationHolder;
 import com.example.streetlity_android.MapAPI;
 import com.example.streetlity_android.MapsActivity;
@@ -68,6 +69,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Map;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -627,6 +629,21 @@ public class ATMFragment extends Fragment implements LocationListener, OnMapRead
 
                                                     item.setContributor(jsonObject1.getString("Contributor"));
 
+                                                    item.setDownvoted(false);
+                                                    item.setUpvoted(false);
+
+                                                    if(MyApplication.getInstance().getUpvoteMap().containsKey("Atm")) {
+                                                        Map<String, ActionObject> map = MyApplication.getInstance().getUpvoteMap().get("Atm");
+                                                        if(map.containsKey("upvote "+ item.getId())) {
+                                                            item.setUpvoted(true);
+                                                        }
+
+                                                    }if (MyApplication.getInstance().getDownvoteMap().containsKey("Atm")){
+                                                        Map<String, ActionObject> map = MyApplication.getInstance().getDownvoteMap().get("Atm");
+                                                        if(map.containsKey("downvote "+ item.getId())){
+                                                            item.setDownvoted(true);
+                                                        }
+                                                    }
                                                     searchItems.add(item);
                                                 }
 
@@ -895,6 +912,21 @@ public class ATMFragment extends Fragment implements LocationListener, OnMapRead
 
                                     item.setContributor(jsonObject1.getString("Contributor"));
 
+                                    item.setDownvoted(false);
+                                    item.setUpvoted(false);
+
+                                    if(MyApplication.getInstance().getUpvoteMap().containsKey("Atm")) {
+                                        Map<String, ActionObject> map = MyApplication.getInstance().getUpvoteMap().get("Atm");
+                                        if(map.containsKey("upvote "+ item.getId())) {
+                                            item.setUpvoted(true);
+                                        }
+
+                                    }if (MyApplication.getInstance().getDownvoteMap().containsKey("Atm")){
+                                        Map<String, ActionObject> map = MyApplication.getInstance().getDownvoteMap().get("Atm");
+                                        if(map.containsKey("downvote "+ item.getId())){
+                                            item.setDownvoted(true);
+                                        }
+                                    }
                                     items.add(item);
                                 }
 

@@ -206,6 +206,8 @@ public class Login extends AppCompatActivity {
 
                                 if(!jsonObject1.getString("Avatar").equals("")){
                                     getAvatar(jsonObject1.getString("Avatar"));
+                                }else{
+                                    Log.e("TAG", "onResponse: no avatar" );
                                 }
 
 //                                Call<ResponseBody> call2 = tour.addDevice("1.0.0", ((MyApplication) Login.this.getApplication()).getToken(),
@@ -524,7 +526,6 @@ public class Login extends AppCompatActivity {
 
                                                     e.apply();
 
-
                                                     setResult(RESULT_OK);
                                                     finish();
                                                 }
@@ -605,6 +606,7 @@ public class Login extends AppCompatActivity {
                     try {
                         Bitmap bmp = BitmapFactory.decodeStream(response.body().byteStream());
                         MyApplication.getInstance().setImage(bmp);
+                        Log.e("TAG", "onResponse: getAvatar" );
                     }catch (Exception e){
                         e.printStackTrace();
                     }

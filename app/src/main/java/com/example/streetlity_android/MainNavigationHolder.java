@@ -286,6 +286,9 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
 
             if(!s.getString("avatar","").equals("")){
                 getAvatar(s.getString("avatar",""));
+                Log.e("TAG", "onCreate: get avatar" );
+            }else{
+                Log.e("TAG", "run: no avaatar 1" );
             }
 
             if(MyApplication.getInstance().getUserType() == 7){
@@ -988,6 +991,7 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
                 .addConverterFactory(GsonConverterFactory.create()).build();
         final MapAPI tour = retro.create(MapAPI.class);
         Call<ResponseBody> call = tour.download(avatar);
+        Log.e("TAG", "getAvatar: "+ avatar );
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -996,9 +1000,12 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
                         Bitmap bmp = BitmapFactory.decodeStream(response.body().byteStream());
                         MyApplication.getInstance().setImage(bmp);
 
+                        Log.e("TAG", "onResponse: hey" + avatar);
+
                         NavigationView navView = findViewById(R.id.nav_view);
                         if(navView!= null) {
                             if (navView.findViewById(R.id.avatar) != null) {
+                                Log.e("TAG", "run: no timer 1" );
                                 ((ImageView) navView.findViewById(R.id.avatar)).setImageBitmap(MyApplication.getInstance().getImage());
                             }else{
                                 new CountDownTimer(3000,1000){
@@ -1013,12 +1020,12 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
                                         runOnUiThread(new Runnable() {
                                             @Override
                                             public void run() {
-
+                                                Log.e("TAG", "run: timer 1" );
                                                 ((ImageView) navView.findViewById(R.id.avatar)).setImageBitmap(MyApplication.getInstance().getImage());
                                             }
                                         });
                                     }
-                                };
+                                }.start();
                             }
                         }else {
                             new CountDownTimer(3000,1000){
@@ -1033,17 +1040,20 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
                                     runOnUiThread(new Runnable() {
                                         @Override
                                         public void run() {
+                                            Log.e("TAG", "run: timer 2" );
                                             NavigationView navView = findViewById(R.id.nav_view);
                                             ((ImageView) navView.findViewById(R.id.avatar)).setImageBitmap(MyApplication.getInstance().getImage());
                                         }
                                     });
                                 }
-                            };
+                            }.start();
                         }
 
                     }catch (Exception e){
                         e.printStackTrace();
                     }
+                }else{
+                    Log.e("TAG", "onResponse: "+ response.code() );
                 }
             }
 

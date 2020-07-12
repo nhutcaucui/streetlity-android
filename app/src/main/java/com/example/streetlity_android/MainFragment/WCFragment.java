@@ -43,6 +43,7 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.example.streetlity_android.Achievement.ActionObject;
 import com.example.streetlity_android.MainNavigationHolder;
 import com.example.streetlity_android.MapAPI;
 import com.example.streetlity_android.MapsActivity;
@@ -65,6 +66,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Map;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -384,6 +386,21 @@ public class WCFragment extends Fragment implements LocationListener, OnMapReady
 
                                                     item.setContributor(jsonObject1.getString("Contributor"));
 
+                                                    item.setDownvoted(false);
+                                                    item.setUpvoted(false);
+
+                                                    if(MyApplication.getInstance().getUpvoteMap().containsKey("Toilet")) {
+                                                        Map<String, ActionObject> map = MyApplication.getInstance().getUpvoteMap().get("Toilet");
+                                                        if(map.containsKey("upvote "+ item.getId())) {
+                                                            item.setUpvoted(true);
+                                                        }
+
+                                                    }if (MyApplication.getInstance().getDownvoteMap().containsKey("Toilet")){
+                                                        Map<String, ActionObject> map = MyApplication.getInstance().getDownvoteMap().get("Toilet");
+                                                        if(map.containsKey("downvote "+ item.getId())){
+                                                            item.setDownvoted(true);
+                                                        }
+                                                    }
                                                     searchItems.add(item);
                                                 }
 
@@ -771,6 +788,21 @@ public class WCFragment extends Fragment implements LocationListener, OnMapReady
 
                                     item.setContributor(jsonObject1.getString("Contributor"));
 
+                                    item.setDownvoted(false);
+                                    item.setUpvoted(false);
+
+                                    if(MyApplication.getInstance().getUpvoteMap().containsKey("Toilet")) {
+                                        Map<String, ActionObject> map = MyApplication.getInstance().getUpvoteMap().get("Toilet");
+                                        if(map.containsKey("upvote "+ item.getId())) {
+                                            item.setUpvoted(true);
+                                        }
+
+                                    }if (MyApplication.getInstance().getDownvoteMap().containsKey("Toilet")){
+                                        Map<String, ActionObject> map = MyApplication.getInstance().getDownvoteMap().get("Toilet");
+                                        if(map.containsKey("downvote "+ item.getId())){
+                                            item.setDownvoted(true);
+                                        }
+                                    }
                                     items.add(item);
                                 }
 

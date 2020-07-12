@@ -394,17 +394,17 @@ public class WCFragment extends Fragment implements LocationListener, OnMapReady
 
                                                     if(MyApplication.getInstance().getUpvoteMap().containsKey("Toilet")) {
                                                         Map<String, ActionObject> map = MyApplication.getInstance().getUpvoteMap().get("Toilet");
-                                                        for (String key : map.keySet()) {
-                                                            Log.e(TAG, "onResponse: " + key + " " + map.get(key).getAffected());
-                                                            if (map.get(key).getAffected().equals(Integer.toString(item.getId()))) {
-                                                                item.setUpvoted(true);
-                                                                break;
-                                                            }
+                                                        if(map.containsKey("upvote "+ item.getId())) {
+                                                            item.setUpvoted(true);
                                                         }
-                                                        searchItems.add(item);
-                                                    }else {
-                                                        searchItems.add(item);
+
+                                                    }if (MyApplication.getInstance().getDownvoteMap().containsKey("Toilet")){
+                                                        Map<String, ActionObject> map = MyApplication.getInstance().getDownvoteMap().get("Toilet");
+                                                        if(map.containsKey("downvote "+ item.getId())){
+                                                            item.setDownvoted(true);
+                                                        }
                                                     }
+                                                    searchItems.add(item);
                                                 }
 
                                                 if(searchItems.size()>0){
@@ -803,17 +803,17 @@ public class WCFragment extends Fragment implements LocationListener, OnMapReady
 
                                     if(MyApplication.getInstance().getUpvoteMap().containsKey("Toilet")) {
                                         Map<String, ActionObject> map = MyApplication.getInstance().getUpvoteMap().get("Toilet");
-                                        for (String key : map.keySet()) {
-                                            Log.e(TAG, "onResponse: " + key + " " + map.get(key).getAffected());
-                                            if (map.get(key).getAffected().equals(Integer.toString(item.getId()))) {
-                                                item.setUpvoted(true);
-                                                break;
-                                            }
+                                        if(map.containsKey("upvote "+ item.getId())) {
+                                            item.setUpvoted(true);
                                         }
-                                        items.add(item);
-                                    }else {
-                                        items.add(item);
+
+                                    }if (MyApplication.getInstance().getDownvoteMap().containsKey("Toilet")){
+                                        Map<String, ActionObject> map = MyApplication.getInstance().getDownvoteMap().get("Toilet");
+                                        if(map.containsKey("downvote "+ item.getId())){
+                                            item.setDownvoted(true);
+                                        }
                                     }
+                                    items.add(item);
                                 }
                                 Collections.sort(items, new Comparator<MapObject>() {
                                     @Override
