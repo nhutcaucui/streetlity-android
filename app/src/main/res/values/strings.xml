@@ -268,7 +268,17 @@
     <string name="found_maintainer">A REPAIRMAN ACCEPTED YOUR ORDER</string>
     <string name="order_completed">ORDER IS COMPLETED</string>
     <string name="order_cancel">ORDER IS CANCELED</string>
-    <string name="name_of_place">Tên địa điểm</string>
+
+    <string name="name_of_place">Name of location</string>
     <string name="search_for_location">Search for locations</string>
     <string name="result">Search results</string>
+    <string name="vote_success">Vote successfully</string>
+    <string name="vote_cleared">Vote cleared</string>
+    <string name="contributed">Contributed</string>
+    <string name="reviewed">Reviewed</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment" translatable="false">Hello blank fragment</string>
+    <string name="locations">locations</string>
+    <string name="contributed_locations">Contributed</string>
+    <string name="reviewed_locations">Reviewed</string>
 </resources>

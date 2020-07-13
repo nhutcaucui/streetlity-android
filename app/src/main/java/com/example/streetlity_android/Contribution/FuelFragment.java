@@ -203,7 +203,7 @@ public class FuelFragment extends Fragment implements LocationListener, OnMapRea
                 t.putExtra("index",position);
                 Log.e("", "onItemClick: " + displayItems.get(position).getId());
                 locationManager.removeUpdates(FuelFragment.this);
-                startActivity(t);
+                startActivityForResult(t, 1);
             }
         });
 
@@ -308,7 +308,7 @@ public class FuelFragment extends Fragment implements LocationListener, OnMapRea
                             EditText edtFind = getActivity().findViewById(R.id.edt_find);
                             edtFind.setText(jsonObject1.getString("formatted_address"));
 
-                            Call<ResponseBody> call2 = tour2.getUcfFuelRange(MyApplication.getInstance().getVersion(), (float)mLat, (float)mLon,(float)0.1);
+                            Call<ResponseBody> call2 = tour2.getUcfFuelRange(MyApplication.getInstance().getVersion(), (float)mLat, (float)mLon,(float)0.2);
                             call2.enqueue(new Callback<ResponseBody>() {
                                 @Override
                                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -332,7 +332,7 @@ public class FuelFragment extends Fragment implements LocationListener, OnMapRea
                                                         name = jsonObject1.getString("Name");
                                                     }
 
-                                                    MapObject item = new MapObject(jsonObject1.getInt("Id"), name, 3,
+                                                    MapObject item = new MapObject(jsonObject1.getInt("Id"), name, 0,
                                                             jsonObject1.getString("Address"), (float) jsonObject1.getDouble("Lat"),
                                                             (float) jsonObject1.getDouble("Lon"), jsonObject1.getString("Note"), 1);
 
@@ -344,17 +344,23 @@ public class FuelFragment extends Fragment implements LocationListener, OnMapRea
 
                                                     item.setContributor(jsonObject1.getString("Contributor"));
 
+                                                    item.setConfident(jsonObject1.getInt("Confident"));
+
                                                     item.setDownvoted(false);
                                                     item.setUpvoted(false);
 
+                                                    Log.e(TAG, "upvoteMap: " + "upvote " +MyApplication.getInstance().getUpvoteMap()+
+                                                            MyApplication.getInstance().getUpvoteMap().containsKey("Fuel") );
                                                     if(MyApplication.getInstance().getUpvoteMap().containsKey("Fuel")) {
                                                         Map<String, ActionObject> map = MyApplication.getInstance().getUpvoteMap().get("Fuel");
+                                                        Log.e(TAG, "onResponse: " + "upvote "+ item.getId() );
                                                         if(map.containsKey("upvote "+ item.getId())) {
                                                             item.setUpvoted(true);
                                                         }
 
                                                     }if (MyApplication.getInstance().getDownvoteMap().containsKey("Fuel")){
                                                         Map<String, ActionObject> map = MyApplication.getInstance().getDownvoteMap().get("Fuel");
+                                                        Log.e(TAG, "onResponse: " + "downvote "+ item.getId() );
                                                         if(map.containsKey("downvote "+ item.getId())){
                                                             item.setDownvoted(true);
                                                         }
@@ -605,7 +611,7 @@ public class FuelFragment extends Fragment implements LocationListener, OnMapRea
                             t.putExtra("index", pos);
                             Log.e("", "onItemClick: " + displayItems.get(pos).getId());
                             locationManager.removeUpdates(FuelFragment.this);
-                            startActivity(t);
+                            startActivityForResult(t, 1);
                         }
                     });
 
@@ -717,7 +723,7 @@ public class FuelFragment extends Fragment implements LocationListener, OnMapRea
             Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getServiceURL())
                     .addConverterFactory(GsonConverterFactory.create()).build();
             final MapAPI tour = retro.create(MapAPI.class);
-            Call<ResponseBody> call = tour.getUcfFuelRange(MyApplication.getInstance().getVersion(), (float) lat, (float) lon, (float) 0.1);
+            Call<ResponseBody> call = tour.getUcfFuelRange(MyApplication.getInstance().getVersion(), (float) lat, (float) lon, (float) 0.2);
             //Call<ResponseBody> call = tour.getAllFuel();
             call.enqueue(new Callback<ResponseBody>() {
                 @Override
@@ -742,7 +748,7 @@ public class FuelFragment extends Fragment implements LocationListener, OnMapRea
                                         name = jsonObject1.getString("Name");
                                     }
 
-                                    MapObject item = new MapObject(jsonObject1.getInt("Id"), name, 3,
+                                    MapObject item = new MapObject(jsonObject1.getInt("Id"), name, 0,
                                             jsonObject1.getString("Address"), (float) jsonObject1.getDouble("Lat"),
                                             (float) jsonObject1.getDouble("Lon"), jsonObject1.getString("Note"), 1);
 
@@ -754,21 +760,30 @@ public class FuelFragment extends Fragment implements LocationListener, OnMapRea
 
                                     item.setContributor(jsonObject1.getString("Contributor"));
 
+                                    item.setConfident(jsonObject1.getInt("Confident"));
+
                                     item.setDownvoted(false);
                                     item.setUpvoted(false);
 
+                                    Log.e(TAG, "upvoteMap: " + "upvote " +MyApplication.getInstance().getUpvoteMap()+
+                                            MyApplication.getInstance().getUpvoteMap().containsKey("Fuel") );
                                     if(MyApplication.getInstance().getUpvoteMap().containsKey("Fuel")) {
                                         Map<String, ActionObject> map = MyApplication.getInstance().getUpvoteMap().get("Fuel");
+                                        Log.e(TAG, "onResponse: " + "upvote "+ item.getId() );
                                         if(map.containsKey("upvote "+ item.getId())) {
                                             item.setUpvoted(true);
                                         }
 
                                     }if (MyApplication.getInstance().getDownvoteMap().containsKey("Fuel")){
                                         Map<String, ActionObject> map = MyApplication.getInstance().getDownvoteMap().get("Fuel");
+                                        Log.e(TAG, "onResponse: " + "downvote "+ item.getId() );
                                         if(map.containsKey("downvote "+ item.getId())){
                                             item.setDownvoted(true);
                                         }
                                     }
+
+                                    Log.e(TAG, "onResponse: " + item.isUpvoted() + item.isDownvoted() );
+
                                     items.add(item);
                                 }
                                 Collections.sort(items, new Comparator<MapObject>() {
@@ -876,20 +891,51 @@ public class FuelFragment extends Fragment implements LocationListener, OnMapRea
             if (requestCode == 1 && resultCode == RESULT_OK && data != null) {
                 if(data.getIntExtra("action", -1 )== 1) {
                     if (data.getIntExtra("index", -1) != -1) {
-                        items.get((data.getIntExtra("index", -1))).setUpvoted(true);
+                        displayItems.get((data.getIntExtra("index", -1))).setUpvoted(true);
+                        for(MapObject m: items){
+                            if(m.getId() == displayItems.get((data.getIntExtra("index", -1))).getId()){
+                                m.setUpvoted(true);
+                            }
+                        }
                         adapter.notifyDataSetChanged();
+
+                        Toast toast = Toast.makeText(getActivity(), R.string.vote_success, Toast.LENGTH_LONG);
+
+                        toast.show();
                     }
                 }
                 if(data.getIntExtra("action", -1 )== 2) {
                     if (data.getIntExtra("index", -1) != -1) {
-                        items.get((data.getIntExtra("index", -1))).setDownvoted(true);
+                        displayItems.get((data.getIntExtra("index", -1))).setDownvoted(true);
+
+                        for(MapObject m: items){
+                            if(m.getId() == displayItems.get((data.getIntExtra("index", -1))).getId()){
+                                m.setDownvoted(true);
+                            }
+                        }
                         adapter.notifyDataSetChanged();
+
+                        Toast toast = Toast.makeText(getActivity(), R.string.vote_success, Toast.LENGTH_LONG);
+
+                        toast.show();
+
                     }
                 }
                 if(data.getIntExtra("action", -1 )== 3) {
                     if (data.getIntExtra("index", -1) != -1) {
-                        items.get((data.getIntExtra("index", -1))).setUpvoted(false);
-                        items.get((data.getIntExtra("index", -1))).setDownvoted(false);
+                        displayItems.get((data.getIntExtra("index", -1))).setUpvoted(false);
+                        displayItems.get((data.getIntExtra("index", -1))).setDownvoted(false);
+                        for(MapObject m: items){
+                            if(m.getId() == displayItems.get((data.getIntExtra("index", -1))).getId()){
+                                m.setDownvoted(false);
+                                m.setUpvoted(false);
+                            }
+                        }
+
+                        Toast toast = Toast.makeText(getActivity(), R.string.clear_vote, Toast.LENGTH_LONG);
+
+                        toast.show();
+
                         adapter.notifyDataSetChanged();
                     }
                 }

@@ -617,8 +617,8 @@ public class ATMFragment extends Fragment implements LocationListener, OnMapRead
 
                                                     Log.e("", "onResponse: " + jsonObject1.toString());
                                                     Log.e("", "onResponse: " + jsonObject1.getInt("Id"));
-                                                    MapObject item = new MapObject(jsonObject1.getInt("Id"), bankName, 3,
-                                                            jsonObject1.getString("Address"), (float) jsonObject1.getDouble("Lat"),
+                                                    MapObject item = new MapObject(jsonObject1.getInt("Id"), bankName, 0,
+jsonObject1.getString("Address"), (float) jsonObject1.getDouble("Lat"),
                                                             (float) jsonObject1.getDouble("Lon"), jsonObject1.getString("Note"), 4);
 
                                                     float distance = distance((float)mLat, (float)mLon,(float) jsonObject1.getDouble("Lat"), (float)jsonObject1.getDouble("Lon"));
@@ -628,6 +628,8 @@ public class ATMFragment extends Fragment implements LocationListener, OnMapRead
                                                     item.setDistance(distance);
 
                                                     item.setContributor(jsonObject1.getString("Contributor"));
+
+                                                    item.setConfident(jsonObject1.getInt("Confident"));
 
                                                     item.setDownvoted(false);
                                                     item.setUpvoted(false);
@@ -898,8 +900,8 @@ public class ATMFragment extends Fragment implements LocationListener, OnMapRead
                                             bankName = arrBank.get(j).getName();
                                         }
                                     }
-                                    MapObject item = new MapObject(jsonObject1.getInt("Id"), bankName, 3,
-                                            jsonObject1.getString("Address"), (float) jsonObject1.getDouble("Lat"),
+                                    MapObject item = new MapObject(jsonObject1.getInt("Id"), bankName, 0,
+jsonObject1.getString("Address"), (float) jsonObject1.getDouble("Lat"),
                                             (float) jsonObject1.getDouble("Lon"), jsonObject1.getString("Note"), 4);
 
                                     item.setBankId(jsonObject1.getInt("BankId"));
@@ -911,6 +913,8 @@ public class ATMFragment extends Fragment implements LocationListener, OnMapRead
                                     item.setDistance(distance);
 
                                     item.setContributor(jsonObject1.getString("Contributor"));
+
+                                    item.setConfident(jsonObject1.getInt("Confident"));
 
                                     item.setDownvoted(false);
                                     item.setUpvoted(false);

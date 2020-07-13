@@ -486,7 +486,7 @@ public class ATMFragment extends Fragment implements LocationListener, OnMapRead
                             t.putExtra("index", pos);
                             Log.e("", "onItemClick: " + displayItems.get(pos).getId());
                             locationManager.removeUpdates(ATMFragment.this);
-                            startActivity(t);
+                            startActivityForResult(t, 1);
                         }
                     });
 
@@ -560,7 +560,7 @@ public class ATMFragment extends Fragment implements LocationListener, OnMapRead
                             editText.setText(jsonObject1.getString("formatted_address"));
                             editTextFind.setText(jsonObject1.getString("formatted_address"));
 
-                            Call<ResponseBody> call2 = tour2.getUcfATMRange(MyApplication.getInstance().getVersion(), (float)mLat, (float)mLon,(float)0.1);
+                            Call<ResponseBody> call2 = tour2.getUcfATMRange(MyApplication.getInstance().getVersion(), (float)mLat, (float)mLon,(float)0.2);
                             call2.enqueue(new Callback<ResponseBody>() {
                                 @Override
                                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -584,7 +584,7 @@ public class ATMFragment extends Fragment implements LocationListener, OnMapRead
 
                                                     Log.e("", "onResponse: " + jsonObject1.toString());
                                                     Log.e("", "onResponse: " + jsonObject1.getInt("Id"));
-                                                    MapObject item = new MapObject(jsonObject1.getInt("Id"), bankName, 3,
+                                                    MapObject item = new MapObject(jsonObject1.getInt("Id"), bankName, 0,
                                                             jsonObject1.getString("Address"), (float) jsonObject1.getDouble("Lat"),
                                                             (float) jsonObject1.getDouble("Lon"), jsonObject1.getString("Note"), 4);
 
@@ -595,6 +595,8 @@ public class ATMFragment extends Fragment implements LocationListener, OnMapRead
                                                     item.setDistance(distance);
 
                                                     item.setContributor(jsonObject1.getString("Contributor"));
+
+                                                    item.setConfident(jsonObject1.getInt("Confident"));
 
                                                     item.setDownvoted(false);
                                                     item.setUpvoted(false);
@@ -845,7 +847,7 @@ public class ATMFragment extends Fragment implements LocationListener, OnMapRead
             Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getServiceURL())
                     .addConverterFactory(GsonConverterFactory.create()).build();
             final MapAPI tour = retro.create(MapAPI.class);
-            Call<ResponseBody> call = tour.getUcfATMRange(MyApplication.getInstance().getVersion(), (float) lat, (float) lon, (float)0.1);
+            Call<ResponseBody> call = tour.getUcfATMRange(MyApplication.getInstance().getVersion(), (float) lat, (float) lon, (float)0.2);
             //Call<ResponseBody> call = tour.getAllFuel();
             call.enqueue(new Callback<ResponseBody>() {
                 @Override
@@ -882,6 +884,8 @@ public class ATMFragment extends Fragment implements LocationListener, OnMapRead
                                     item.setDistance(distance);
 
                                     item.setContributor(jsonObject1.getString("Contributor"));
+
+                                    item.setConfident(jsonObject1.getInt("Confident"));
 
                                     item.setDownvoted(false);
                                     item.setUpvoted(false);
@@ -1111,20 +1115,51 @@ public class ATMFragment extends Fragment implements LocationListener, OnMapRead
             if (requestCode == 1 && resultCode == RESULT_OK && data != null) {
                 if(data.getIntExtra("action", -1 )== 1) {
                     if (data.getIntExtra("index", -1) != -1) {
-                        items.get((data.getIntExtra("index", -1))).setUpvoted(true);
+                        displayItems.get((data.getIntExtra("index", -1))).setUpvoted(true);
+                        for(MapObject m: items){
+                            if(m.getId() == displayItems.get((data.getIntExtra("index", -1))).getId()){
+                                m.setUpvoted(true);
+                            }
+                        }
                         adapter.notifyDataSetChanged();
+
+                        Toast toast = Toast.makeText(getActivity(), R.string.vote_success, Toast.LENGTH_LONG);
+
+                        toast.show();
                     }
                 }
                 if(data.getIntExtra("action", -1 )== 2) {
                     if (data.getIntExtra("index", -1) != -1) {
-                        items.get((data.getIntExtra("index", -1))).setDownvoted(true);
+                        displayItems.get((data.getIntExtra("index", -1))).setDownvoted(true);
+
+                        for(MapObject m: items){
+                            if(m.getId() == displayItems.get((data.getIntExtra("index", -1))).getId()){
+                                m.setDownvoted(true);
+                            }
+                        }
                         adapter.notifyDataSetChanged();
+
+                        Toast toast = Toast.makeText(getActivity(), R.string.vote_success, Toast.LENGTH_LONG);
+
+                        toast.show();
+
                     }
                 }
                 if(data.getIntExtra("action", -1 )== 3) {
                     if (data.getIntExtra("index", -1) != -1) {
-                        items.get((data.getIntExtra("index", -1))).setUpvoted(false);
-                        items.get((data.getIntExtra("index", -1))).setDownvoted(false);
+                        displayItems.get((data.getIntExtra("index", -1))).setUpvoted(false);
+                        displayItems.get((data.getIntExtra("index", -1))).setDownvoted(false);
+                        for(MapObject m: items){
+                            if(m.getId() == displayItems.get((data.getIntExtra("index", -1))).getId()){
+                                m.setDownvoted(false);
+                                m.setUpvoted(false);
+                            }
+                        }
+
+                        Toast toast = Toast.makeText(getActivity(), R.string.clear_vote, Toast.LENGTH_LONG);
+
+                        toast.show();
+
                         adapter.notifyDataSetChanged();
                     }
                 }

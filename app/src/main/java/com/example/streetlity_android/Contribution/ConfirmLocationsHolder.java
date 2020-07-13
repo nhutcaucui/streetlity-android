@@ -254,4 +254,10 @@ public class ConfirmLocationsHolder extends AppCompatActivity implements FuelFra
     public ConstraintLayout getLoading() {
         return loading;
     }
+
+    public void onResume(){
+        super.onResume();
+
+        loading.setVisibility(GONE);
+    }
 }

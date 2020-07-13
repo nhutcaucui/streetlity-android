@@ -444,8 +444,8 @@ public class MaintenanceFragment extends Fragment implements LocationListener, O
                                                     JSONObject jsonObject1 = jsonArray.getJSONObject(i);
                                                     Log.e("", "onResponse: " + jsonObject1.toString());
                                                     Log.e("", "onResponse: " + jsonObject1.getInt("Id"));
-                                                    MapObject item = new MapObject(jsonObject1.getInt("Id"), jsonObject1.getString("Name"), 3,
-                                                            jsonObject1.getString("Address"), (float) jsonObject1.getDouble("Lat"),
+                                                    MapObject item = new MapObject(jsonObject1.getInt("Id"), jsonObject1.getString("Name"), 0,
+jsonObject1.getString("Address"), (float) jsonObject1.getDouble("Lat"),
                                                             (float) jsonObject1.getDouble("Lon"), jsonObject1.getString("Note"), 3);
 
                                                     float distance = distance((float)mLat, (float)mLon,(float) jsonObject1.getDouble("Lat"), (float)jsonObject1.getDouble("Lon"));
@@ -455,6 +455,8 @@ public class MaintenanceFragment extends Fragment implements LocationListener, O
                                                     item.setDistance(distance);
 
                                                     item.setContributor(jsonObject1.getString("Contributor"));
+
+                                                    item.setConfident(jsonObject1.getInt("Confident"));
 
                                                     item.setDownvoted(false);
                                                     item.setUpvoted(false);
@@ -840,8 +842,8 @@ public class MaintenanceFragment extends Fragment implements LocationListener, O
                                 for (int i = 0; i < jsonArray.length(); i++) {
                                     JSONObject jsonObject1 = jsonArray.getJSONObject(i);
                                     Log.e("", "onResponse: " + jsonObject1.toString());
-                                    MapObject item = new MapObject(jsonObject1.getInt("Id"), jsonObject1.getString("Name"), 3,
-                                            jsonObject1.getString("Address"), (float) jsonObject1.getDouble("Lat"),
+                                    MapObject item = new MapObject(jsonObject1.getInt("Id"), jsonObject1.getString("Name"), 0,
+jsonObject1.getString("Address"), (float) jsonObject1.getDouble("Lat"),
                                             (float) jsonObject1.getDouble("Lon"), jsonObject1.getString("Note"), 3);
 
                                     float distance = distance(item.getLat(), item.getLon(), currLat, currLon);
@@ -851,6 +853,8 @@ public class MaintenanceFragment extends Fragment implements LocationListener, O
                                     item.setDistance(distance);
 
                                     item.setContributor(jsonObject1.getString("Contributor"));
+
+                                    item.setConfident(jsonObject1.getInt("Confident"));
 
                                     item.setDownvoted(false);
                                     item.setUpvoted(false);

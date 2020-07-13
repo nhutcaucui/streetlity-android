@@ -199,7 +199,7 @@ public class WCFragment extends Fragment implements LocationListener, OnMapReady
 
                 locationManager.removeUpdates(WCFragment.this);
 
-                startActivity(t);
+                startActivityForResult(t, 1);
             }
         });
 
@@ -353,7 +353,7 @@ public class WCFragment extends Fragment implements LocationListener, OnMapReady
                             EditText edtFind = getActivity().findViewById(R.id.edt_find);
                             edtFind.setText(jsonObject1.getString("formatted_address"));
 
-                            Call<ResponseBody> call2 = tour2.getUcfWCRange(MyApplication.getInstance().getVersion(), (float)mLat, (float)mLon,(float)0.1);
+                            Call<ResponseBody> call2 = tour2.getUcfWCRange(MyApplication.getInstance().getVersion(), (float)mLat, (float)mLon,(float)0.2);
                             call2.enqueue(new Callback<ResponseBody>() {
                                 @Override
                                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -377,7 +377,7 @@ public class WCFragment extends Fragment implements LocationListener, OnMapReady
                                                         name = jsonObject1.getString("Name");
                                                     }
 
-                                                    MapObject item = new MapObject(jsonObject1.getInt("Id"), name, 3,
+                                                    MapObject item = new MapObject(jsonObject1.getInt("Id"), name, 0,
                                                             jsonObject1.getString("Address"), (float) jsonObject1.getDouble("Lat"),
                                                             (float) jsonObject1.getDouble("Lon"), jsonObject1.getString("Note"), 2);
 
@@ -388,6 +388,8 @@ public class WCFragment extends Fragment implements LocationListener, OnMapReady
                                                     item.setDistance(distance);
 
                                                     item.setContributor(jsonObject1.getString("Contributor"));
+
+                                                    item.setConfident(jsonObject1.getInt("Confident"));
 
                                                     item.setDownvoted(false);
                                                     item.setUpvoted(false);
@@ -650,7 +652,7 @@ public class WCFragment extends Fragment implements LocationListener, OnMapReady
                             t.putExtra("index", pos);
                             Log.e("", "onItemClick: " + displayItems.get(pos).getId());
                             locationManager.removeUpdates(WCFragment.this);
-                            startActivity(t);
+                            startActivityForResult(t, 1);
                         }
                     });
 
@@ -762,7 +764,7 @@ public class WCFragment extends Fragment implements LocationListener, OnMapReady
             Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getServiceURL())
                     .addConverterFactory(GsonConverterFactory.create()).build();
             final MapAPI tour = retro.create(MapAPI.class);
-            Call<ResponseBody> call = tour.getUcfWCRange(MyApplication.getInstance().getVersion(), (float) lat, (float) lon, (float)0.1);
+            Call<ResponseBody> call = tour.getUcfWCRange(MyApplication.getInstance().getVersion(), (float) lat, (float) lon, (float)0.2);
             //Call<ResponseBody> call = tour.getAllFuel();
             call.enqueue(new Callback<ResponseBody>() {
                 @Override
@@ -786,7 +788,7 @@ public class WCFragment extends Fragment implements LocationListener, OnMapReady
                                         name = jsonObject1.getString("Name");
                                     }
 
-                                    MapObject item = new MapObject(jsonObject1.getInt("Id"), name, 3,
+                                    MapObject item = new MapObject(jsonObject1.getInt("Id"), name, 0,
                                             jsonObject1.getString("Address"), (float) jsonObject1.getDouble("Lat"),
                                             (float) jsonObject1.getDouble("Lon"), jsonObject1.getString("Note"), 2);
 
@@ -797,6 +799,8 @@ public class WCFragment extends Fragment implements LocationListener, OnMapReady
                                     item.setDistance(distance);
 
                                     item.setContributor(jsonObject1.getString("Contributor"));
+
+                                    item.setConfident(jsonObject1.getInt("Confident"));
 
                                     item.setDownvoted(false);
                                     item.setUpvoted(false);
@@ -920,20 +924,51 @@ public class WCFragment extends Fragment implements LocationListener, OnMapReady
             if (requestCode == 1 && resultCode == RESULT_OK && data != null) {
                 if(data.getIntExtra("action", -1 )== 1) {
                     if (data.getIntExtra("index", -1) != -1) {
-                        items.get((data.getIntExtra("index", -1))).setUpvoted(true);
+                        displayItems.get((data.getIntExtra("index", -1))).setUpvoted(true);
+                        for(MapObject m: items){
+                            if(m.getId() == displayItems.get((data.getIntExtra("index", -1))).getId()){
+                                m.setUpvoted(true);
+                            }
+                        }
                         adapter.notifyDataSetChanged();
+
+                        Toast toast = Toast.makeText(getActivity(), R.string.vote_success, Toast.LENGTH_LONG);
+
+                        toast.show();
                     }
                 }
                 if(data.getIntExtra("action", -1 )== 2) {
                     if (data.getIntExtra("index", -1) != -1) {
-                        items.get((data.getIntExtra("index", -1))).setDownvoted(true);
+                        displayItems.get((data.getIntExtra("index", -1))).setDownvoted(true);
+
+                        for(MapObject m: items){
+                            if(m.getId() == displayItems.get((data.getIntExtra("index", -1))).getId()){
+                                m.setDownvoted(true);
+                            }
+                        }
                         adapter.notifyDataSetChanged();
+
+                        Toast toast = Toast.makeText(getActivity(), R.string.vote_success, Toast.LENGTH_LONG);
+
+                        toast.show();
+
                     }
                 }
                 if(data.getIntExtra("action", -1 )== 3) {
                     if (data.getIntExtra("index", -1) != -1) {
-                        items.get((data.getIntExtra("index", -1))).setUpvoted(false);
-                        items.get((data.getIntExtra("index", -1))).setDownvoted(false);
+                        displayItems.get((data.getIntExtra("index", -1))).setUpvoted(false);
+                        displayItems.get((data.getIntExtra("index", -1))).setDownvoted(false);
+                        for(MapObject m: items){
+                            if(m.getId() == displayItems.get((data.getIntExtra("index", -1))).getId()){
+                                m.setDownvoted(false);
+                                m.setUpvoted(false);
+                            }
+                        }
+
+                        Toast toast = Toast.makeText(getActivity(), R.string.clear_vote, Toast.LENGTH_LONG);
+
+                        toast.show();
+
                         adapter.notifyDataSetChanged();
                     }
                 }

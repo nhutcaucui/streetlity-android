@@ -332,8 +332,8 @@ public class FuelFragment extends Fragment implements LocationListener, OnMapRea
                                                         name = jsonObject1.getString("Name");
                                                     }
 
-                                                    MapObject item = new MapObject(jsonObject1.getInt("Id"), name, 3,
-                                                            jsonObject1.getString("Address"), (float) jsonObject1.getDouble("Lat"),
+                                                    MapObject item = new MapObject(jsonObject1.getInt("Id"), name, 0,
+jsonObject1.getString("Address"), (float) jsonObject1.getDouble("Lat"),
                                                             (float) jsonObject1.getDouble("Lon"), jsonObject1.getString("Note"), 1);
 
                                                     float distance = distance((float)mLat, (float)mLon,(float) jsonObject1.getDouble("Lat"), (float)jsonObject1.getDouble("Lon"));
@@ -343,6 +343,8 @@ public class FuelFragment extends Fragment implements LocationListener, OnMapRea
                                                     item.setDistance(distance);
 
                                                     item.setContributor(jsonObject1.getString("Contributor"));
+
+                                                    item.setConfident(jsonObject1.getInt("Confident"));
 
                                                     item.setDownvoted(false);
                                                     item.setUpvoted(false);
@@ -738,8 +740,8 @@ public class FuelFragment extends Fragment implements LocationListener, OnMapRea
                                         name = jsonObject1.getString("Name");
                                     }
 
-                                    MapObject item = new MapObject(jsonObject1.getInt("Id"), name, 3,
-                                            jsonObject1.getString("Address"), (float) jsonObject1.getDouble("Lat"),
+                                    MapObject item = new MapObject(jsonObject1.getInt("Id"), name, 0,
+jsonObject1.getString("Address"), (float) jsonObject1.getDouble("Lat"),
                                             (float) jsonObject1.getDouble("Lon"), jsonObject1.getString("Note"), 1);
 
                                     float distance = distance(item.getLat(), item.getLon(), currLat, currLon);
@@ -749,6 +751,8 @@ public class FuelFragment extends Fragment implements LocationListener, OnMapRea
                                     item.setDistance(distance);
 
                                     item.setContributor(jsonObject1.getString("Contributor"));
+
+                                    item.setConfident(jsonObject1.getInt("Confident"));
 
                                     item.setDownvoted(false);
                                     item.setUpvoted(false);

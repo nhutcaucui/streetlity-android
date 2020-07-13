@@ -5,19 +5,24 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Typeface;
 import android.location.Location;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.example.streetlity_android.MainFragment.BankObject;
 import com.example.streetlity_android.MainFragment.MapObject;
@@ -42,9 +47,11 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+import static android.view.View.VISIBLE;
 import static androidx.constraintlayout.widget.Constraints.TAG;
 
-public class AchievementOther extends AppCompatActivity {
+public class AchievementOther extends AppCompatActivity implements View.OnClickListener, ContributedFragment.OnFragmentInteractionListener,
+        ReviewedFragment.OnFragmentInteractionListener {
 
     ArrayList<AchievementObject> items = new ArrayList<>();
     ArrayList<MapObject> reviewedItems = new ArrayList<>();
@@ -54,11 +61,23 @@ public class AchievementOther extends AppCompatActivity {
     float currLat;
     float currLon;
 
+    boolean gotReviewItems= false;
+    boolean gotContributeItems= false;
+
     Map<String, Map<String, ActionObject>> reviewedMap;
     Map<String, Map<String, ActionObject>> contributedMap;
 
     AchievementObjectAdapter adapterReview;
     AchievementObjectAdapter adapterContribute;
+
+    Fragment fragment;
+
+    int current =R.id.btn_contributed;
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+        //you can leave it empty
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +88,10 @@ public class AchievementOther extends AppCompatActivity {
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("");
+
+        getBank();
+
+        getRepu();
 
         adapterReview = new AchievementObjectAdapter(AchievementOther.this, R.layout.lv_item_achievement, reviewedItems);
         adapterContribute = new AchievementObjectAdapter(AchievementOther.this, R.layout.lv_item_achievement, contributedItems);
@@ -115,15 +138,15 @@ public class AchievementOther extends AppCompatActivity {
         call2.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call2, Response<ResponseBody> response) {
-                if(response.code() == 200){
-                    try{
+                if (response.code() == 200) {
+                    try {
                         JSONObject jsonObject2 = new JSONObject(response.body().string());
-                        Log.e("TAG", "onResponse: " +jsonObject2.toString() );
-                        if(jsonObject2.getBoolean("Status")){
+                        Log.e("TAG", "onResponse: " + jsonObject2.toString());
+                        if (jsonObject2.getBoolean("Status")) {
                             Map<String, Map<String, ActionObject>> reviewMap = new HashMap<>();
                             Map<String, Map<String, ActionObject>> contributeMap = new HashMap<>();
 
-                            if(!jsonObject2.getString("Progress").equals("")) {
+                            if (!jsonObject2.getString("Progress").equals("")) {
                                 jsonObject2 = new JSONObject(jsonObject2.getString("Progress"));
 
                                 JSONObject jsonObject3;
@@ -254,641 +277,9 @@ public class AchievementOther extends AppCompatActivity {
                             reviewedMap = reviewMap;
                             contributedMap = contributeMap;
 
-                            Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getServiceURL())
-                                    .addConverterFactory(GsonConverterFactory.create()).build();
-
-                            final MapAPI tour = retro.create(MapAPI.class);
-
-                            if(reviewedMap.containsKey("Fuel")) {
-                                Map<String, ActionObject> map = reviewedMap.get("Fuel");
-                                for (String key : map.keySet()) {
-                                    Call<ResponseBody> call = tour.getFuel(MyApplication.getInstance().getVersion(),Integer.parseInt(map.get(key).getAffected()));
-                                    Log.e("", "onResponse: " + map.get(key).getAffected());
-                                    call.enqueue(new Callback<ResponseBody>() {
-                                        @Override
-                                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                            try{
-                                                if(response.code() == 200){
-                                                    JSONObject jsonObject = new JSONObject(response.body().string());
-                                                    Log.e("", "onResponse: " + jsonObject.toString());
-
-                                                    if(jsonObject.getBoolean("Status")){
-                                                        JSONObject jsonObject1 = jsonObject.getJSONObject("Service");
-                                                        String name = getString(R.string.fuel);
-                                                        if(!jsonObject1.getString("Name").equals("")){
-                                                            name = jsonObject1.getString("Name");
-                                                        }
-
-                                                        MapObject item = new MapObject(jsonObject1.getInt("Id"), name, 0,
-                                                                jsonObject1.getString("Address"), (float) jsonObject1.getDouble("Lat"),
-                                                                (float) jsonObject1.getDouble("Lon"), jsonObject1.getString("Note"), 1);
-                                                        float distance = distance(item.getLat(), item.getLon(), currLat, currLon);
-
-                                                        item.setImages(jsonObject1.getString("Images"));
-
-                                                        item.setDistance(distance);
-
-                                                        item.setContributor(jsonObject1.getString("Contributor"));
-
-                                                        item.setDownvoted(false);
-                                                        item.setUpvoted(false);
-
-                                                        if(MyApplication.getInstance().getUpvoteMap().containsKey("Fuel")) {
-                                                            Map<String, ActionObject> map = MyApplication.getInstance().getUpvoteMap().get("Fuel");
-                                                            if(map.containsKey("upvote "+ item.getId())) {
-                                                                item.setUpvoted(true);
-                                                            }
-
-                                                        }if (MyApplication.getInstance().getDownvoteMap().containsKey("Fuel")){
-                                                            Map<String, ActionObject> map = MyApplication.getInstance().getDownvoteMap().get("Fuel");
-                                                            if(map.containsKey("downvote "+ item.getId())){
-                                                                item.setDownvoted(true);
-                                                            }
-                                                        }
-                                                        reviewedItems.add(item);
-                                                        adapterReview.notifyDataSetChanged();
-                                                    }
-                                                }else{
-                                                    Log.e(TAG, "onResponse: "+ response.code());
-                                                }
-                                            }catch (Exception e){
-                                                e.printStackTrace();
-                                            }
-                                        }
-
-                                        @Override
-                                        public void onFailure(Call<ResponseBody> call, Throwable t) {
-                                            t.printStackTrace();
-                                        }
-                                    });
-                                }
-                            }
-
-                            if(reviewedMap.containsKey("Toilet")) {
-                                Map<String, ActionObject> map = reviewedMap.get("Toilet");
-                                for (String key : map.keySet()) {
-                                    Call<ResponseBody> call = tour.getWC(MyApplication.getInstance().getVersion(), Integer.parseInt(map.get(key).getAffected()));
-                                    call.enqueue(new Callback<ResponseBody>() {
-                                        @Override
-                                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                            try{
-                                                if(response.code() == 200){
-                                                    JSONObject jsonObject = new JSONObject(response.body().string());
-                                                    Log.e("", "onResponse: " + jsonObject.toString());
-
-                                                    if(jsonObject.getBoolean("Status")){
-                                                        JSONObject jsonObject1 = jsonObject.getJSONObject("Service");
-                                                        String name = getString(R.string.wc);
-                                                        if(!jsonObject1.getString("Name").equals("")){
-                                                            name = jsonObject1.getString("Name");
-                                                        }
-                                                        MapObject item = new MapObject(jsonObject1.getInt("Id"), name, 0,
-                                                                jsonObject1.getString("Address"), (float) jsonObject1.getDouble("Lat"),
-                                                                (float) jsonObject1.getDouble("Lon"), jsonObject1.getString("Note"), 2);
-                                                        float distance = distance(item.getLat(), item.getLon(), currLat, currLon);
-
-                                                        item.setImages(jsonObject1.getString("Images"));
-
-                                                        item.setDistance(distance);
-
-                                                        item.setContributor(jsonObject1.getString("Contributor"));
-
-                                                        item.setDownvoted(false);
-                                                        item.setUpvoted(false);
-
-                                                        if(MyApplication.getInstance().getUpvoteMap().containsKey("Toilet")) {
-                                                            Map<String, ActionObject> map = MyApplication.getInstance().getUpvoteMap().get("Toilet");
-                                                            if(map.containsKey("upvote "+ item.getId())) {
-                                                                item.setUpvoted(true);
-                                                            }
-
-                                                        }if (MyApplication.getInstance().getDownvoteMap().containsKey("Toilet")){
-                                                            Map<String, ActionObject> map = MyApplication.getInstance().getDownvoteMap().get("Toilet");
-                                                            if(map.containsKey("downvote "+ item.getId())){
-                                                                item.setDownvoted(true);
-                                                            }
-                                                        }
-                                                        reviewedItems.add(item);
-                                                        adapterReview.notifyDataSetChanged();
-                                                    }
-                                                }else{
-                                                    Log.e(TAG, "onResponse: "+ response.code());
-                                                }
-                                            }catch (Exception e){
-                                                e.printStackTrace();
-                                            }
-                                        }
-
-                                        @Override
-                                        public void onFailure(Call<ResponseBody> call, Throwable t) {
-                                            t.printStackTrace();
-                                        }
-                                    });
-                                }
-                            }
-
-                            if(reviewedMap.containsKey("Maintenance")) {
-                                Map<String, ActionObject> map = reviewedMap.get("Maintenance");
-                                for (String key : map.keySet()) {
-                                    Call<ResponseBody> call = tour.getMaintenance(MyApplication.getInstance().getVersion(), Integer.parseInt(map.get(key).getAffected()));
-                                    call.enqueue(new Callback<ResponseBody>() {
-                                        @Override
-                                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                            try{
-                                                if(response.code() == 200){
-                                                    JSONObject jsonObject = new JSONObject(response.body().string());
-                                                    Log.e("", "onResponse: " + jsonObject.toString());
-
-                                                    if(jsonObject.getBoolean("Status")){
-                                                        JSONObject jsonObject1 = jsonObject.getJSONObject("Service");
-                                                        MapObject item = new MapObject(jsonObject1.getInt("Id"), jsonObject1.getString("Name"), 0,
-                                                                jsonObject1.getString("Address"), (float) jsonObject1.getDouble("Lat"),
-                                                                (float) jsonObject1.getDouble("Lon"), jsonObject1.getString("Note"), 3);
-                                                        float distance = distance(item.getLat(), item.getLon(), currLat, currLon);
-
-                                                        item.setImages(jsonObject1.getString("Images"));
-
-                                                        item.setDistance(distance);
-
-                                                        item.setContributor(jsonObject1.getString("Contributor"));
-
-                                                        item.setDownvoted(false);
-                                                        item.setUpvoted(false);
-
-                                                        if(MyApplication.getInstance().getUpvoteMap().containsKey("Maintenance")) {
-                                                            Map<String, ActionObject> map = MyApplication.getInstance().getUpvoteMap().get("Maintenance");
-                                                            if(map.containsKey("upvote "+ item.getId())) {
-                                                                item.setUpvoted(true);
-                                                            }
-
-                                                        }if (MyApplication.getInstance().getDownvoteMap().containsKey("Maintenance")){
-                                                            Map<String, ActionObject> map = MyApplication.getInstance().getDownvoteMap().get("Maintenance");
-                                                            if(map.containsKey("downvote "+ item.getId())){
-                                                                item.setDownvoted(true);
-                                                            }
-                                                        }
-                                                        reviewedItems.add(item);
-                                                        adapterReview.notifyDataSetChanged();
-                                                    }
-                                                }else{
-                                                    Log.e(TAG, "onResponse: "+ response.code());
-                                                }
-                                            }catch (Exception e){
-                                                e.printStackTrace();
-                                            }
-                                        }
-
-                                        @Override
-                                        public void onFailure(Call<ResponseBody> call, Throwable t) {
-                                            t.printStackTrace();
-                                        }
-                                    });
-                                }
-                            }
-
-                            if(reviewedMap.containsKey("Atm")) {
-                                Map<String, ActionObject> map = reviewedMap.get("Atm");
-
-                                String token = MyApplication.getInstance().getToken();
-
-                                Call<ResponseBody> call = tour.getBank(MyApplication.getInstance().getVersion(),token);
-
-                                call.enqueue(new Callback<ResponseBody>() {
-                                    @Override
-                                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                        if(response.code() == 200) {
-                                            final JSONObject jsonObject;
-                                            try {
-                                                jsonObject = new JSONObject(response.body().string());
-                                                Log.e("", "onResponse: " + jsonObject.toString());
-
-                                                if(jsonObject.getBoolean("Status")) {
-                                                    JSONArray jsonArray = jsonObject.getJSONArray("Banks");
-                                                    for (int i = 0; i < jsonArray.length(); i++) {
-                                                        JSONObject jsonObject1 = jsonArray.getJSONObject(i);
-                                                        arrBank.add(new BankObject(jsonObject1.getInt("Id"),jsonObject1.getString("Name")));
-                                                        Log.e("", "onResponse: "+ jsonObject1.getString("Name") + getString(R.string.all) );
-                                                    }
-
-                                                    for (String key : map.keySet()) {
-                                                        Call<ResponseBody> call2 = tour.getAtm(MyApplication.getInstance().getVersion(), Integer.parseInt(map.get(key).getAffected()));
-                                                        call2.enqueue(new Callback<ResponseBody>() {
-                                                            @Override
-                                                            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                                                try{
-                                                                    if(response.code() == 200){
-                                                                        JSONObject jsonObject = new JSONObject(response.body().string());
-                                                                        Log.e("", "onResponse: " + jsonObject.toString());
-
-                                                                        if(jsonObject.getBoolean("Status")){
-                                                                            JSONObject jsonObject1 = jsonObject.getJSONObject("Service");
-                                                                            String bankName="";
-                                                                            for (int j=0;j<arrBank.size();j++){
-                                                                                if (jsonObject1.getInt("BankId") == arrBank.get(j).getId()) {
-                                                                                    bankName = arrBank.get(j).getName();
-                                                                                }
-                                                                            }
-                                                                            MapObject item = new MapObject(jsonObject1.getInt("Id"), bankName, 3,
-                                                                                    jsonObject1.getString("Address"), (float) jsonObject1.getDouble("Lat"),
-                                                                                    (float) jsonObject1.getDouble("Lon"), jsonObject1.getString("Note"), 4);
-                                                                            float distance = distance(item.getLat(), item.getLon(), currLat, currLon);
-
-                                                                            item.setImages(jsonObject1.getString("Images"));
-
-                                                                            item.setDistance(distance);
-
-                                                                            item.setContributor(jsonObject1.getString("Contributor"));
-
-                                                                            item.setDownvoted(false);
-                                                                            item.setUpvoted(false);
-
-                                                                            if(MyApplication.getInstance().getUpvoteMap().containsKey("Atm")) {
-                                                                                Map<String, ActionObject> map = MyApplication.getInstance().getUpvoteMap().get("Fuel");
-                                                                                if(map.containsKey("upvote "+ item.getId())) {
-                                                                                    item.setUpvoted(true);
-                                                                                }
-
-                                                                            }if (MyApplication.getInstance().getDownvoteMap().containsKey("Atm")){
-                                                                                Map<String, ActionObject> map = MyApplication.getInstance().getDownvoteMap().get("Fuel");
-                                                                                if(map.containsKey("downvote "+ item.getId())){
-                                                                                    item.setDownvoted(true);
-                                                                                }
-                                                                            }
-                                                                            reviewedItems.add(item);
-
-                                                                            adapterReview.notifyDataSetChanged();
-                                                                        }
-                                                                    }else{
-                                                                        Log.e(TAG, "onResponse: "+ response.code());
-                                                                    }
-                                                                }catch (Exception e){
-                                                                    e.printStackTrace();
-                                                                }
-                                                            }
-
-                                                            @Override
-                                                            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                                                                t.printStackTrace();
-                                                            }
-                                                        });
-                                                    }
-                                                }
-                                            } catch (Exception e){
-                                                e.printStackTrace();
-                                            }
-                                        }
-                                        else{
-                                            try {
-                                                Log.e(", ",response.errorBody().toString() + response.code());
-                                            }catch (Exception e){
-                                                e.printStackTrace();
-                                            }
-                                        }
-                                    }
-
-                                    @Override
-                                    public void onFailure(Call<ResponseBody> call, Throwable t) {
-
-                                    }
-                                });
-                            }
-
-                            if(contributedMap.containsKey("Fuel")) {
-                                Map<String, ActionObject> map = contributedMap.get("Fuel");
-                                for (String key : map.keySet()) {
-                                    Call<ResponseBody> call = tour.getFuel(MyApplication.getInstance().getVersion(), Integer.parseInt(map.get(key).getAffected()));
-                                    Log.e("", "onResponse: " + map.get(key).getAffected());
-                                    call.enqueue(new Callback<ResponseBody>() {
-                                        @Override
-                                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                            try{
-                                                if(response.code() == 200){
-                                                    JSONObject jsonObject = new JSONObject(response.body().string());
-                                                    Log.e("", "onResponse: " + jsonObject.toString());
-                                                    Log.e(TAG, "onResponse: 00" + jsonObject.toString() );
-
-                                                    if(jsonObject.getBoolean("Status")){
-                                                        String name = getString(R.string.fuel);
-                                                        JSONObject jsonObject1 = jsonObject.getJSONObject("Service");
-                                                        if(!jsonObject1.getString("Name").equals("")){
-                                                            name = jsonObject1.getString("Name");
-                                                        }
-                                                        MapObject item = new MapObject(jsonObject1.getInt("Id"), name, 0,
-                                                                jsonObject1.getString("Address"), (float) jsonObject1.getDouble("Lat"),
-                                                                (float) jsonObject1.getDouble("Lon"), jsonObject1.getString("Note"), 1);
-                                                        float distance = distance(item.getLat(), item.getLon(), currLat, currLon);
-
-                                                        item.setImages(jsonObject1.getString("Images"));
-
-                                                        item.setDistance(distance);
-
-                                                        item.setContributor(jsonObject1.getString("Contributor"));
-
-                                                        item.setDownvoted(false);
-                                                        item.setUpvoted(false);
-
-                                                        if(MyApplication.getInstance().getUpvoteMap().containsKey("Fuel")) {
-                                                            Map<String, ActionObject> map = MyApplication.getInstance().getUpvoteMap().get("Fuel");
-                                                            if(map.containsKey("upvote "+ item.getId())) {
-                                                                item.setUpvoted(true);
-                                                            }
-
-                                                        }if (MyApplication.getInstance().getDownvoteMap().containsKey("Fuel")){
-                                                            Map<String, ActionObject> map = MyApplication.getInstance().getDownvoteMap().get("Fuel");
-                                                            if(map.containsKey("downvote "+ item.getId())){
-                                                                item.setDownvoted(true);
-                                                            }
-                                                        }
-                                                        contributedItems.add(item);
-                                                        adapterContribute.notifyDataSetChanged();
-                                                    }
-
-
-                                                }else{
-                                                    Log.e(TAG, "onResponse: "+ response.code());
-                                                }
-                                            }catch (Exception e){
-                                                e.printStackTrace();
-                                            }
-                                        }
-
-                                        @Override
-                                        public void onFailure(Call<ResponseBody> call, Throwable t) {
-                                            t.printStackTrace();
-                                        }
-                                    });
-                                }
-
-                            }
-
-                            if(contributedMap.containsKey("Toilet")) {
-                                Map<String, ActionObject> map = contributedMap.get("Toilet");
-                                for (String key : map.keySet()) {
-                                    Call<ResponseBody> call = tour.getWC(MyApplication.getInstance().getVersion(), Integer.parseInt(map.get(key).getAffected()));
-                                    call.enqueue(new Callback<ResponseBody>() {
-                                        @Override
-                                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                            try{
-                                                if(response.code() == 200){
-                                                    JSONObject jsonObject = new JSONObject(response.body().string());
-                                                    Log.e("", "onResponse: " + jsonObject.toString());
-
-                                                    if(jsonObject.getBoolean("Status")){
-                                                        JSONObject jsonObject1 = jsonObject.getJSONObject("Service");
-                                                        String name = getString(R.string.wc);
-                                                        if(!jsonObject1.getString("Name").equals("")){
-                                                            name = jsonObject1.getString("Name");
-                                                        }
-                                                        MapObject item = new MapObject(jsonObject1.getInt("Id"), name, 0,
-                                                                jsonObject1.getString("Address"), (float) jsonObject1.getDouble("Lat"),
-                                                                (float) jsonObject1.getDouble("Lon"), jsonObject1.getString("Note"), 2);
-                                                        float distance = distance(item.getLat(), item.getLon(), currLat, currLon);
-
-                                                        item.setImages(jsonObject1.getString("Images"));
-
-                                                        item.setDistance(distance);
-
-                                                        item.setContributor(jsonObject1.getString("Contributor"));
-
-                                                        item.setDownvoted(false);
-                                                        item.setUpvoted(false);
-
-                                                        if(MyApplication.getInstance().getUpvoteMap().containsKey("Toilet")) {
-                                                            Map<String, ActionObject> map = MyApplication.getInstance().getUpvoteMap().get("Toilet");
-                                                            if(map.containsKey("upvote "+ item.getId())) {
-                                                                item.setUpvoted(true);
-                                                            }
-
-                                                        }if (MyApplication.getInstance().getDownvoteMap().containsKey("Toilet")){
-                                                            Map<String, ActionObject> map = MyApplication.getInstance().getDownvoteMap().get("Toilet");
-                                                            if(map.containsKey("downvote "+ item.getId())){
-                                                                item.setDownvoted(true);
-                                                            }
-                                                        }
-                                                        contributedItems.add(item);
-                                                        adapterContribute.notifyDataSetChanged();
-                                                    }
-                                                }else{
-                                                    Log.e(TAG, "onResponse: "+ response.code());
-                                                }
-                                            }catch (Exception e){
-                                                e.printStackTrace();
-                                            }
-                                        }
-
-                                        @Override
-                                        public void onFailure(Call<ResponseBody> call, Throwable t) {
-                                            t.printStackTrace();
-                                        }
-                                    });
-                                }
-
-                            }
-
-                            if(contributedMap.containsKey("Maintenance")) {
-                                Map<String, ActionObject> map = contributedMap.get("Maintenance");
-                                for (String key : map.keySet()) {
-                                    Call<ResponseBody> call = tour.getMaintenance(MyApplication.getInstance().getVersion(), Integer.parseInt(map.get(key).getAffected()));
-                                    call.enqueue(new Callback<ResponseBody>() {
-                                        @Override
-                                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                            try{
-                                                if(response.code() == 200){
-                                                    JSONObject jsonObject = new JSONObject(response.body().string());
-                                                    Log.e("", "onResponse: " + jsonObject.toString());
-
-                                                    if(jsonObject.getBoolean("Status")){
-                                                        JSONObject jsonObject1 = jsonObject.getJSONObject("Service");
-                                                        MapObject item = new MapObject(jsonObject1.getInt("Id"), jsonObject1.getString("Name"), 0,
-                                                                jsonObject1.getString("Address"), (float) jsonObject1.getDouble("Lat"),
-                                                                (float) jsonObject1.getDouble("Lon"), jsonObject1.getString("Note"), 3);
-
-                                                        float distance = distance(item.getLat(), item.getLon(), currLat, currLon);
-
-                                                        item.setImages(jsonObject1.getString("Images"));
-
-                                                        item.setDistance(distance);
-
-                                                        item.setContributor(jsonObject1.getString("Contributor"));
-
-                                                        item.setDownvoted(false);
-                                                        item.setUpvoted(false);
-
-                                                        if(MyApplication.getInstance().getUpvoteMap().containsKey("Maintenance")) {
-                                                            Map<String, ActionObject> map = MyApplication.getInstance().getUpvoteMap().get("Maintenance");
-                                                            if(map.containsKey("upvote "+ item.getId())) {
-                                                                item.setUpvoted(true);
-                                                            }
-
-                                                        }if (MyApplication.getInstance().getDownvoteMap().containsKey("Maintenance")){
-                                                            Map<String, ActionObject> map = MyApplication.getInstance().getDownvoteMap().get("Maintenance");
-                                                            if(map.containsKey("downvote "+ item.getId())){
-                                                                item.setDownvoted(true);
-                                                            }
-                                                        }
-                                                        contributedItems.add(item);
-                                                        adapterContribute.notifyDataSetChanged();
-                                                    }
-                                                }else{
-                                                    Log.e(TAG, "onResponse: "+ response.code());
-                                                }
-                                            }catch (Exception e){
-                                                e.printStackTrace();
-                                            }
-                                        }
-
-                                        @Override
-                                        public void onFailure(Call<ResponseBody> call, Throwable t) {
-                                            t.printStackTrace();
-                                        }
-                                    });
-                                }
-                                adapterContribute.notifyDataSetChanged();
-                            }
-
-                            if(contributedMap.containsKey("Atm")) {
-                                Map<String, ActionObject> map = contributedMap.get("Atm");
-
-                                String token = MyApplication.getInstance().getToken();
-
-                                Call<ResponseBody> call = tour.getBank(MyApplication.getInstance().getVersion(),token);
-
-                                call.enqueue(new Callback<ResponseBody>() {
-                                    @Override
-                                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                        if(response.code() == 200) {
-                                            final JSONObject jsonObject;
-                                            try {
-                                                jsonObject = new JSONObject(response.body().string());
-                                                Log.e("", "onResponse: " + jsonObject.toString());
-
-                                                if(jsonObject.getBoolean("Status")) {
-                                                    JSONArray jsonArray = jsonObject.getJSONArray("Banks");
-                                                    for (int i = 0; i < jsonArray.length(); i++) {
-                                                        JSONObject jsonObject1 = jsonArray.getJSONObject(i);
-                                                        arrBank.add(new BankObject(jsonObject1.getInt("Id"),jsonObject1.getString("Name")));
-                                                        Log.e("", "onResponse: "+ jsonObject1.getString("Name") + getString(R.string.all) );
-                                                    }
-
-                                                    for (String key : map.keySet()) {
-                                                        Call<ResponseBody> call2 = tour.getAtm(MyApplication.getInstance().getVersion(), Integer.parseInt(map.get(key).getAffected()));
-                                                        call2.enqueue(new Callback<ResponseBody>() {
-                                                            @Override
-                                                            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                                                try{
-                                                                    if(response.code() == 200){
-                                                                        JSONObject jsonObject = new JSONObject(response.body().string());
-                                                                        Log.e("", "onResponse: " + jsonObject.toString());
-
-                                                                        if(jsonObject.getBoolean("Status")){
-                                                                            JSONObject jsonObject1 = jsonObject.getJSONObject("Service");
-                                                                            String bankName="";
-                                                                            for (int j=0;j<arrBank.size();j++){
-                                                                                if (jsonObject1.getInt("BankId") == arrBank.get(j).getId()) {
-                                                                                    bankName = arrBank.get(j).getName();
-                                                                                }
-                                                                            }
-                                                                            MapObject item = new MapObject(jsonObject1.getInt("Id"), bankName, 3,
-                                                                                    jsonObject1.getString("Address"), (float) jsonObject1.getDouble("Lat"),
-                                                                                    (float) jsonObject1.getDouble("Lon"), jsonObject1.getString("Note"), 4);
-
-                                                                            float distance = distance(item.getLat(), item.getLon(), currLat, currLon);
-
-                                                                            item.setImages(jsonObject1.getString("Images"));
-
-                                                                            item.setDistance(distance);
-
-                                                                            item.setContributor(jsonObject1.getString("Contributor"));
-
-                                                                            item.setDownvoted(false);
-                                                                            item.setUpvoted(false);
-
-                                                                            if(MyApplication.getInstance().getUpvoteMap().containsKey("Atm")) {
-                                                                                Map<String, ActionObject> map = MyApplication.getInstance().getUpvoteMap().get("Atm");
-                                                                                if(map.containsKey("upvote "+ item.getId())) {
-                                                                                    item.setUpvoted(true);
-                                                                                }
-
-                                                                            }if (MyApplication.getInstance().getDownvoteMap().containsKey("Atm")){
-                                                                                Map<String, ActionObject> map = MyApplication.getInstance().getDownvoteMap().get("Atm");
-                                                                                if(map.containsKey("downvote "+ item.getId())){
-                                                                                    item.setDownvoted(true);
-                                                                                }
-                                                                            }
-                                                                            contributedItems.add(item);
-
-                                                                            adapterContribute.notifyDataSetChanged();
-                                                                        }
-                                                                    }else{
-                                                                        Log.e(TAG, "onResponse: "+ response.code());
-                                                                    }
-                                                                }catch (Exception e){
-                                                                    e.printStackTrace();
-                                                                }
-                                                            }
-
-                                                            @Override
-                                                            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                                                                t.printStackTrace();
-                                                            }
-                                                        });
-                                                    }
-                                                    adapterContribute.notifyDataSetChanged();
-                                                }
-                                            } catch (Exception e){
-                                                e.printStackTrace();
-                                            }
-                                        }
-                                        else{
-                                            try {
-                                                Log.e(", ",response.errorBody().toString() + response.code());
-                                            }catch (Exception e){
-                                                e.printStackTrace();
-                                            }
-                                        }
-                                    }
-
-                                    @Override
-                                    public void onFailure(Call<ResponseBody> call, Throwable t) {
-
-                                    }
-                                });
-                            }
-
-
-                            ListView lvReview = findViewById(R.id.lv_review);
-                            ListView lvContribute = findViewById(R.id.lv_contribute);
-
-                            lvReview.setAdapter(adapterReview);
-                            lvContribute.setAdapter(adapterContribute);
-
-                            lvReview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                                @Override
-                                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                                    Intent t = new Intent(AchievementOther.this, MapsActivity.class);
-                                    t.putExtra("currLat", currLat);
-                                    t.putExtra("currLon", currLon);
-                                    MapObject item = (MapObject) adapterReview.getItem(position);
-
-                                    t.putExtra("item", item);
-
-                                    startActivity(t);
-                                }
-                            });
-
-                            lvContribute.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                                @Override
-                                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                                    Intent t = new Intent(AchievementOther.this, MapsActivity.class);
-                                    t.putExtra("currLat", currLat);
-                                    t.putExtra("currLon", currLon);
-                                    MapObject item = (MapObject) adapterContribute.getItem(position);
-
-                                    t.putExtra("item", item);
-
-                                    startActivity(t);
-                                }
-                            });
+                            fragment = new ContributedFragment();
+                            loadFragment(fragment);
+                            current= R.id.btn_contributed;
 
                         }
                     }catch (Exception e){
@@ -902,6 +293,68 @@ public class AchievementOther extends AppCompatActivity {
                 t.printStackTrace();
             }
         });
+
+        LinearLayout btnContributed = findViewById(R.id.btn_contributed);
+        LinearLayout btnReviewed = findViewById(R.id.btn_reviewed);
+
+        btnContributed.setOnClickListener(this);
+        btnReviewed.setOnClickListener(this);
+    }
+
+    @Override
+    public void onClick(View v) {
+        boolean notTheSame = false;
+        if(v.getId() == R.id.btn_contributed && current != R.id.btn_contributed){
+            fragment = new ContributedFragment();
+            setToUnselect(current);
+            current= R.id.btn_contributed;
+            setToSelect(current);
+            notTheSame = true;
+        }else if(v.getId() == R.id.btn_reviewed && current != R.id.btn_reviewed){
+            fragment = new ReviewedFragment();
+            setToUnselect(current);
+            current= R.id.btn_reviewed;
+            setToSelect(current);
+
+            notTheSame = true;
+        }
+        if(notTheSame) {
+            findViewById(R.id.layout_loading).setVisibility(VISIBLE);
+            loadFragment(fragment);
+        }
+    }
+
+    public void setToUnselect(int id){
+        LinearLayout btnCurrent = findViewById(id);
+        if(btnCurrent != null) {
+            btnCurrent.setBackgroundResource(android.R.color.transparent);
+            ((TextView) btnCurrent.getChildAt(0)).setTypeface(Typeface.DEFAULT);
+        }
+    }
+
+    public void setToSelect(int id){
+        LinearLayout btnCurrent = findViewById(id);
+        btnCurrent.setBackgroundResource(R.drawable.bottom_border);
+        ((TextView) btnCurrent.getChildAt(0)).setTypeface(Typeface.DEFAULT_BOLD);
+    }
+
+    private boolean loadFragment(Fragment fragment) {
+        // load fragment
+        if (fragment != null) {
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.frame_container, fragment)
+                    .commit();
+            return true;
+        }
+        return false;
+    }
+
+    private void detachFragment(Fragment fragment) {
+        // load fragment
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.detach(fragment);
+        transaction.commit();
     }
 
     public boolean onOptionsItemSelected(MenuItem item){
@@ -929,7 +382,7 @@ public class AchievementOther extends AppCompatActivity {
 
         final MapAPI tour = retro.create(MapAPI.class);
 
-        Call<ResponseBody> call = tour.getReputation(getIntent().getStringExtra("user"));
+        Call<ResponseBody> call = tour.getReputation(MyApplication.getInstance().getUsername());
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -954,5 +407,106 @@ public class AchievementOther extends AppCompatActivity {
                 t.printStackTrace();
             }
         });
+    }
+
+    public ArrayList<MapObject> getReviewedItems() {
+        return reviewedItems;
+    }
+
+    public ArrayList<MapObject> getContributedItems() {
+        return contributedItems;
+    }
+
+    public ArrayList<BankObject> getArrBank() {
+        return arrBank;
+    }
+
+    public boolean isGotReviewItems() {
+        return gotReviewItems;
+    }
+
+    public boolean isGotContributeItems() {
+        return gotContributeItems;
+    }
+
+    public float getCurrLat() {
+        return currLat;
+    }
+
+    public float getCurrLon() {
+        return currLon;
+    }
+
+    public void setReviewedItems(ArrayList<MapObject> reviewedItems) {
+        this.reviewedItems = reviewedItems;
+    }
+
+    public void setContributedItems(ArrayList<MapObject> contributedItems) {
+        this.contributedItems = contributedItems;
+    }
+
+    public void setArrBank(ArrayList<BankObject> arrBank) {
+        this.arrBank = arrBank;
+    }
+
+    public void setGotReviewItems(boolean gotReviewItems) {
+        this.gotReviewItems = gotReviewItems;
+    }
+
+    public void setGotContributeItems(boolean gotContributeItems) {
+        this.gotContributeItems = gotContributeItems;
+    }
+
+    public void getBank() {
+        Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getServiceURL())
+                .addConverterFactory(GsonConverterFactory.create()).build();
+        final MapAPI tour = retro.create(MapAPI.class);
+
+        String token = MyApplication.getInstance().getToken();
+
+        Call<ResponseBody> call = tour.getBank(MyApplication.getInstance().getVersion(), token);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.code() == 200) {
+                    final JSONObject jsonObject;
+                    try {
+                        jsonObject = new JSONObject(response.body().string());
+                        Log.e("", "onResponse: " + jsonObject.toString());
+
+                        if (jsonObject.getBoolean("Status")) {
+                            JSONArray jsonArray = jsonObject.getJSONArray("Banks");
+                            arrBank.add(new BankObject(0, getString(R.string.all)));
+                            for (int i = 0; i < jsonArray.length(); i++) {
+                                JSONObject jsonObject1 = jsonArray.getJSONObject(i);
+                                arrBank.add(new BankObject(jsonObject1.getInt("Id"), jsonObject1.getString("Name")));
+                                Log.e("", "onResponse: " + jsonObject1.getString("Name") + getString(R.string.all));
+                            }
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    try {
+                        Log.e(", ", response.errorBody().toString() + response.code());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Log.e("", "onFailure: " + t.toString());
+            }
+        });
+    }
+
+    public Map<String, Map<String, ActionObject>> getReviewedMap() {
+        return reviewedMap;
+    }
+
+    public Map<String, Map<String, ActionObject>> getContributedMap() {
+        return contributedMap;
     }
 }

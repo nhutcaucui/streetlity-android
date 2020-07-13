@@ -96,6 +96,8 @@ public class MapsActivityConfirmation extends AppCompatActivity implements OnMap
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("");
 
+        item = (MapObject) getIntent().getSerializableExtra("item");
+
         findViewById(R.id.layout_vote).setVisibility(View.GONE);
 
         listener = new EListener<String, String>() {
@@ -142,10 +144,6 @@ public class MapsActivityConfirmation extends AppCompatActivity implements OnMap
             btnClearVote.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent data = new Intent();
-                    data.putExtra("index", getIntent().getIntExtra("index", -1));
-                    data.putExtra("action", 3);
-                    setResult(RESULT_OK, data);
 
                     String type = "";
 
@@ -180,9 +178,8 @@ public class MapsActivityConfirmation extends AppCompatActivity implements OnMap
                             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                                 try{
                                     if(response.code()==200){
-                                        Log.e(TAG, "onResponse: " + response.body().string());
+                                        Log.e(TAG, "onResponse: " + new JSONObject(response.body().string()).toString());
                                         downvote(true);
-                                        finish();
                                     }
                                     else{
                                         Log.e(TAG, "onResponse: " + response.code() );
@@ -256,7 +253,7 @@ public class MapsActivityConfirmation extends AppCompatActivity implements OnMap
         bottom_sheet = findViewById(R.id.bottom_sheet);
         sheetBehavior = BottomSheetBehavior.from(bottom_sheet);
 
-        item = (MapObject) getIntent().getSerializableExtra("item");
+
 
         ImageView imgIcon = findViewById(R.id.img_service_icon);
 
@@ -272,9 +269,11 @@ public class MapsActivityConfirmation extends AppCompatActivity implements OnMap
 
         LinearLayout layoutNote = findViewById(R.id.layout_note);
         TextView tvNote = findViewById(R.id.tv_note);
-        if (!item.getNote().equals("")) {
-            layoutNote.setVisibility(View.VISIBLE);
+        if(!item.getNote().equals("")) {
+            //layoutNote.setVisibility(View.VISIBLE);
             tvNote.setText(item.getNote());
+        }else{
+            tvNote.setText(getString(R.string.no_note));
         }
 
 
@@ -537,6 +536,12 @@ public class MapsActivityConfirmation extends AppCompatActivity implements OnMap
                                     map.put("upvote " + item.getId(), ao);
                                     MyApplication.getInstance().getUpvoteMap().put(type, map);
                                 }
+                            }else{
+                                Intent data2 = new Intent();
+                                data2.putExtra("index", getIntent().getIntExtra("index", -1));
+                                data2.putExtra("action", 3);
+                                setResult(RESULT_OK, data2);
+                                finish();
                             }
 
                             Log.e(TAG, "onResponse: " + MyApplication.getInstance().getUpvoteMap());
@@ -638,12 +643,18 @@ public class MapsActivityConfirmation extends AppCompatActivity implements OnMap
 
 
                                 if (MyApplication.getInstance().getDownvoteMap().containsKey(type)) {
-                                    MyApplication.getInstance().getDownvoteMap().get(type).put("upvote " + item.getId(), ao);
+                                    MyApplication.getInstance().getDownvoteMap().get(type).put("downvote " + item.getId(), ao);
                                 } else {
                                     Map<String, ActionObject> map = new HashMap<>();
-                                    map.put("upvote " + item.getId(), ao);
+                                    map.put("downvote " + item.getId(), ao);
                                     MyApplication.getInstance().getDownvoteMap().put(type, map);
                                 }
+                            }else{
+                                Intent data2 = new Intent();
+                                data2.putExtra("index", getIntent().getIntExtra("index", -1));
+                                data2.putExtra("action", 3);
+                                setResult(RESULT_OK, data2);
+                                finish();
                             }
 
                             Log.e(TAG, "onResponse: " + MyApplication.getInstance().getDownvoteMap());

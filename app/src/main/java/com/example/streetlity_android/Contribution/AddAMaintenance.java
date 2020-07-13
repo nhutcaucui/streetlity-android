@@ -141,6 +141,7 @@ public class AddAMaintenance extends AppCompatActivity implements OnMapReadyCall
                             try{
                                 JSONObject jsonObject1 = new JSONObject(response.body().string());
                                 Log.e("TAG", "onResponse: " + jsonObject1.toString() );
+
                             }catch (Exception e){
                                 e.printStackTrace();
                             }
@@ -546,6 +547,27 @@ public class AddAMaintenance extends AppCompatActivity implements OnMapReadyCall
                             jsonObject = new JSONObject(response.body().string());
                             Log.e("", "onResponse: " + jsonObject.toString());
                             if(jsonObject.getBoolean("Status")) {
+
+                                Calendar calendar = Calendar.getInstance();
+                                long time = calendar.getTimeInMillis();
+                                String builder = "";
+                                builder = time+ ";"+ jsonObject.getJSONObject("Service").getInt("Id")
+                                        +";"+ "Maintenance";
+                                e.trigger(MyApplication.getInstance().getUsername(), builder);
+
+                                ActionObject ao = new ActionObject("", time,"Contribute", Integer.toString(jsonObject.getJSONObject("Service").getInt("Id")));
+
+                                if(MyApplication.getInstance().getContributeMap().containsKey("Maintenance")){
+                                    MyApplication.getInstance().getContributeMap().get("Maintenance").put("contributed " + jsonObject.getJSONObject("Service").getInt("Id"), ao);
+                                }
+                                else{
+                                    Map<String, ActionObject> map = new HashMap<>();
+                                    map.put("contributed " + jsonObject.getJSONObject("Service").getInt("Id"), ao);
+                                    MyApplication.getInstance().getContributeMap().put("Maintenance", map);
+                                }
+
+                                Log.e(TAG, "onResponse: " + MyApplication.getInstance().getContributeMap());
+
                                 btnNext.setText(R.string.finish);
 
                                 int current = getItem(+1);

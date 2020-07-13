@@ -503,8 +503,8 @@ public class AllServiceMap extends AppCompatActivity implements GoogleMap.OnMark
                             addATMMarkerToList((float)jsonObject1.getDouble("Lat"),
                                     (float)jsonObject1.getDouble("Lon"),bankName, jsonObject1.getInt("Id"));
 
-                            MapObject item = new MapObject(jsonObject1.getInt("Id"), bankName, 3,
-                                    jsonObject1.getString("Address"), (float) jsonObject1.getDouble("Lat"),
+                            MapObject item = new MapObject(jsonObject1.getInt("Id"), bankName, 0,
+jsonObject1.getString("Address"), (float) jsonObject1.getDouble("Lat"),
                                     (float) jsonObject1.getDouble("Lon"), jsonObject1.getString("Note"), 4);
 
                             item.setBankId(jsonObject1.getInt("BankId"));
@@ -564,8 +564,8 @@ public class AllServiceMap extends AppCompatActivity implements GoogleMap.OnMark
                             for (int i = 0; i < jsonArray.length(); i++) {
                                 JSONObject jsonObject1 = jsonArray.getJSONObject(i);
                                 Log.e("", "onResponse: " + jsonObject1.toString());
-                                MapObject item = new MapObject(jsonObject1.getInt("Id"), jsonObject1.getString("Name"), 3,
-                                        jsonObject1.getString("Address"), (float) jsonObject1.getDouble("Lat"),
+                                MapObject item = new MapObject(jsonObject1.getInt("Id"), jsonObject1.getString("Name"), 0,
+jsonObject1.getString("Address"), (float) jsonObject1.getDouble("Lat"),
                                         (float) jsonObject1.getDouble("Lon"), jsonObject1.getString("Note"), 3);
 
                                 float distance = distance(item.getLat(), item.getLon(), (float)latitude, (float)longitude);
@@ -625,8 +625,8 @@ public class AllServiceMap extends AppCompatActivity implements GoogleMap.OnMark
                                     name = jsonObject1.getString("Name");
                                 }
 
-                                MapObject item = new MapObject(jsonObject1.getInt("Id"), name, 3,
-                                        jsonObject1.getString("Address"), (float) jsonObject1.getDouble("Lat"),
+                                MapObject item = new MapObject(jsonObject1.getInt("Id"), name, 0,
+jsonObject1.getString("Address"), (float) jsonObject1.getDouble("Lat"),
                                         (float) jsonObject1.getDouble("Lon"), jsonObject1.getString("Note"), 1);
 
                                 float distance = distance(item.getLat(), item.getLon(), (float)latitude, (float)longitude);
@@ -679,8 +679,8 @@ public class AllServiceMap extends AppCompatActivity implements GoogleMap.OnMark
                                 JSONObject jsonObject1 = jsonArray.getJSONObject(i);
                                 Log.e("", "onResponse: " + jsonObject1.toString());
                                 Log.e("", "onResponse: " + jsonObject1.getInt("Id"));
-                                MapObject item = new MapObject(jsonObject1.getInt("Id"), getString(R.string.wc), 3,
-                                        jsonObject1.getString("Address"), (float) jsonObject1.getDouble("Lat"),
+                                MapObject item = new MapObject(jsonObject1.getInt("Id"), getString(R.string.wc), 0,
+jsonObject1.getString("Address"), (float) jsonObject1.getDouble("Lat"),
                                         (float) jsonObject1.getDouble("Lon"), jsonObject1.getString("Note"), 2);
 
                                 float distance = distance(item.getLat(), item.getLon(), (float)latitude, (float)longitude);
