@@ -16,4 +16,5 @@
     <color name="backgroundShadow">#D8E2F1</color>
     <color name="backgroundIcon">#D8E2F1</color>
     <color name="default_text">#808080</color>
+    <color name="button_negative">#B4B4B4</color>
 </resources>

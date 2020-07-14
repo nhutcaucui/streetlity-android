@@ -49,6 +49,8 @@ public class MyApplication extends Application { //35.240.232.218 auth server
 
     private String phone="";
 
+    private String name = "";
+
     private Bitmap image;
 
     private String version = "1.0.0";
@@ -227,5 +229,13 @@ public class MyApplication extends Application { //35.240.232.218 auth server
 
     public String getVersion(){
         return version;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

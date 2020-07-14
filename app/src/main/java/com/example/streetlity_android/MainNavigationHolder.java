@@ -283,6 +283,7 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
             MyApplication.getInstance().setEmail(s.getString("email",""));
             MyApplication.getInstance().setPhone(s.getString("phone",""));
             MyApplication.getInstance().setAddress(s.getString("address",""));
+            MyApplication.getInstance().setName(s.getString("name",""));
 
             if(!s.getString("avatar","").equals("")){
                 getAvatar(s.getString("avatar",""));
@@ -543,6 +544,25 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
 
                 if(MyApplication.getInstance().getImage()!= null) {
                     ((ImageView) navView.findViewById(R.id.avatar)).setImageBitmap(MyApplication.getInstance().getImage());
+                }else{
+                    new CountDownTimer(2000, 1000) {
+                        @Override
+                        public void onTick(long millisUntilFinished) {
+
+                        }
+
+                        @Override
+                        public void onFinish() {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    if(MyApplication.getInstance().getImage()!= null) {
+                                        ((ImageView) navView.findViewById(R.id.avatar)).setImageBitmap(MyApplication.getInstance().getImage());
+                                    }
+                                }
+                            });
+                        }
+                    };
                 }
 
                 if(MyApplication.getInstance().getUserType() == 7) {
@@ -810,6 +830,7 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
                             ((MyApplication) MainNavigationHolder.this.getApplication()).setAddress("");
                             ((MyApplication) MainNavigationHolder.this.getApplication()).setUserType(-1);
                             ((MyApplication) MainNavigationHolder.this.getApplication()).setImage(null);
+                            MyApplication.getInstance().setName("");
 
 
                             SharedPreferences s = getSharedPreferences("userPref", Context.MODE_PRIVATE);

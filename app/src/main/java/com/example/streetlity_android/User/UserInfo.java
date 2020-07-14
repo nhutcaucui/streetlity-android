@@ -3,6 +3,7 @@ package com.example.streetlity_android.User;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -32,6 +33,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.streetlity_android.R;
+import com.google.android.material.textfield.TextInputEditText;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -78,7 +80,7 @@ public class UserInfo extends AppCompatActivity {
         edtAddress.setText(MyApplication.getInstance().getAddress());
         edtPhone.setText(MyApplication.getInstance().getPhone());
 
-        EditText tvUsername = findViewById(R.id.edt_username);
+        TextView tvUsername = findViewById(R.id.edt_username);
         tvUsername.setText((MyApplication.getInstance().getUsername()));
 
         EditText tvEmail = findViewById(R.id.edt_email);
@@ -88,8 +90,16 @@ public class UserInfo extends AppCompatActivity {
         ImageView imgEditable = findViewById(R.id.img_editable);
         LinearLayout preventClick = findViewById(R.id.prevent_click);
 
+        TextInputEditText edtName = findViewById(R.id.edt_name);
+        edtName.setText(MyApplication.getInstance().getName());
+
+
+        FloatingActionButton fabEdit = findViewById(R.id.fab_edit);
+        FloatingActionButton fabCancel = findViewById(R.id.fab_cancel);
+
         if(MyApplication.getInstance().getImage()!= null){
             imgAvatar.setImageBitmap(MyApplication.getInstance().getImage());
+            avatar = getSharedPreferences("userPref", MODE_PRIVATE).getString("avatar", "");
         }
 
         Button btnAchiviement = findViewById(R.id.btn_to_achievement);
@@ -98,6 +108,56 @@ public class UserInfo extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(UserInfo.this, Achievement.class));
+                if(edtState){
+                    if (getCurrentFocus() != null) {
+                        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+                    }
+
+                    edtState = false;
+                    imgEditable.setVisibility(View.GONE);
+                    preventClick.setVisibility(View.VISIBLE);
+
+                    fabCancel.hide();
+
+                    fabEdit.setImageResource(R.drawable.edit);
+
+                    edtAddress.setFocusable(false);
+                    edtAddress.setFocusableInTouchMode(false);
+
+                    edtPhone.setFocusable(false);
+                    edtAddress.setFocusableInTouchMode(false);
+
+                    edtName.setFocusable(false);
+                    edtName.setFocusableInTouchMode(false);
+
+                    edtAddress.setInputType(InputType.TYPE_NULL);
+                    edtPhone.setInputType(InputType.TYPE_NULL);
+                    edtName.setInputType(InputType.TYPE_NULL);
+
+                    edtAddress.setLongClickable(false);
+                    edtPhone.setLongClickable(false);
+                    edtName.setLongClickable(false);
+
+                    if (getCurrentFocus() != null) {
+                        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+                    }
+
+                    edtName.setText(MyApplication.getInstance().getName());
+                    edtPhone.setText(MyApplication.getInstance().getPhone());
+                    edtPhone.setText(MyApplication.getInstance().getPhone());
+
+                    if(MyApplication.getInstance().getImage()!= null){
+                        imgAvatar.setImageBitmap(MyApplication.getInstance().getImage());
+                        avatar = getSharedPreferences("userPref", MODE_PRIVATE).getString("avatar", "");
+                    }else {
+                        imgAvatar.setImageResource(R.drawable.avatar);
+                        avatar = "";
+                    }
+
+//                    updateInfo(edtPhone.getText().toString(), edtAddress.getText().toString(), edtName.getText().toString());
+                }
             }
         });
 
@@ -117,7 +177,6 @@ public class UserInfo extends AppCompatActivity {
             }
         });
 
-        FloatingActionButton fabEdit = findViewById(R.id.fab_edit);
         fabEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -125,7 +184,10 @@ public class UserInfo extends AppCompatActivity {
                     edtState = true;
                     imgEditable.setVisibility(View.VISIBLE);
                     preventClick.setVisibility(View.GONE);
+
                     fabEdit.setImageResource(R.drawable.checkmark_black);
+
+                    fabCancel.show();
 
                     edtAddress.setFocusable(true);
                     edtAddress.setFocusableInTouchMode(true);
@@ -133,13 +195,18 @@ public class UserInfo extends AppCompatActivity {
                     edtPhone.setFocusable(true);
                     edtPhone.setFocusableInTouchMode(true);
 
+                    edtName.setFocusable(true);
+                    edtName.setFocusableInTouchMode(true);
+
                     edtAddress.setInputType(InputType.TYPE_CLASS_TEXT);
                     edtPhone.setInputType(InputType.TYPE_CLASS_NUMBER);
+                    edtName.setInputType(InputType.TYPE_CLASS_TEXT);
 
                     edtAddress.setLongClickable(true);
                     edtPhone.setLongClickable(true);
+                    edtName.setLongClickable(true);
 
-                    edtAddress.requestFocus();
+                    edtName.requestFocus();
 
                     InputMethodManager imm = (InputMethodManager)   getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
@@ -152,6 +219,7 @@ public class UserInfo extends AppCompatActivity {
                     edtState = false;
                     imgEditable.setVisibility(View.GONE);
                     preventClick.setVisibility(View.VISIBLE);
+                    fabCancel.hide();
 
                     fabEdit.setImageResource(R.drawable.edit);
 
@@ -161,18 +229,65 @@ public class UserInfo extends AppCompatActivity {
                     edtPhone.setFocusable(false);
                     edtAddress.setFocusableInTouchMode(false);
 
+                    edtName.setFocusable(false);
+                    edtName.setFocusableInTouchMode(false);
+
                     edtAddress.setInputType(InputType.TYPE_NULL);
                     edtPhone.setInputType(InputType.TYPE_NULL);
+                    edtName.setInputType(InputType.TYPE_NULL);
 
                     edtAddress.setLongClickable(false);
                     edtPhone.setLongClickable(false);
+                    edtName.setLongClickable(false);
 
-                    if (getCurrentFocus() != null) {
-                        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                        imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
-                    }
+                    updateInfo(edtPhone.getText().toString(), edtAddress.getText().toString(), edtName.getText().toString());
+                }
+            }
+        });
 
-                    updateInfo(edtPhone.getText().toString(), edtAddress.getText().toString());
+        fabCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (getCurrentFocus() != null) {
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+                }
+
+                edtState = false;
+                imgEditable.setVisibility(View.GONE);
+                preventClick.setVisibility(View.VISIBLE);
+
+                fabCancel.hide();
+
+                fabEdit.setImageResource(R.drawable.edit);
+
+                edtAddress.setFocusable(false);
+                edtAddress.setFocusableInTouchMode(false);
+
+                edtPhone.setFocusable(false);
+                edtAddress.setFocusableInTouchMode(false);
+
+                edtName.setFocusable(false);
+                edtName.setFocusableInTouchMode(false);
+
+                edtAddress.setInputType(InputType.TYPE_NULL);
+                edtPhone.setInputType(InputType.TYPE_NULL);
+                edtName.setInputType(InputType.TYPE_NULL);
+
+                edtAddress.setLongClickable(false);
+                edtPhone.setLongClickable(false);
+                edtName.setLongClickable(false);
+
+                edtName.setText(MyApplication.getInstance().getName());
+                edtPhone.setText(MyApplication.getInstance().getPhone());
+                edtPhone.setText(MyApplication.getInstance().getPhone());
+
+                if(MyApplication.getInstance().getImage()!= null){
+                    imgAvatar.setImageBitmap(MyApplication.getInstance().getImage());
+                    avatar = getSharedPreferences("userPref", MODE_PRIVATE).getString("avatar", "");
+                }else {
+                    imgAvatar.setImageResource(R.drawable.avatar);
+                    avatar = "";
                 }
             }
         });
@@ -222,7 +337,7 @@ public class UserInfo extends AppCompatActivity {
         }
     }
 
-    public void updateInfo(String phone, String address){
+    public void updateInfo(String phone, String address,String name){
         Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getAuthURL())
                 .addConverterFactory(GsonConverterFactory.create()).build();
         Retrofit retro2 = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getDriverURL())
@@ -255,8 +370,9 @@ public class UserInfo extends AppCompatActivity {
                                     JSONObject jsonObject2 = jsonObject1.getJSONObject(fileName);
                                     avatar = jsonObject2.getString("Message");
 
+                                    getSharedPreferences("userPref",MODE_PRIVATE).edit().putString("avatar", avatar).apply();
 
-                                Call<ResponseBody> call1 = tour.updateInfo(MyApplication.getInstance().getUsername(),"", address, phone, avatar);
+                                Call<ResponseBody> call1 = tour.updateInfo(MyApplication.getInstance().getUsername(),name, address, phone, avatar);
 
                                 call1.enqueue(new Callback<ResponseBody>() {
                                     @Override
@@ -275,13 +391,17 @@ public class UserInfo extends AppCompatActivity {
                                                 MyApplication.getInstance().setAddress(address);
                                                 MyApplication.getInstance().setPhone(phone);
                                                 MyApplication.getInstance().setImage(((BitmapDrawable)imgAvatar.getDrawable()).getBitmap());
+                                                MyApplication.getInstance().setName(name);
 
                                                 SharedPreferences s = getSharedPreferences("userPref", Context.MODE_PRIVATE);
                                                 SharedPreferences.Editor e = s.edit();
                                                 e.putString("phone", MyApplication.getInstance().getPhone());
                                                 e.putString("address", MyApplication.getInstance().getAddress());
+                                                e.putString("name", MyApplication.getInstance().getName());
                                                 e.putString("avatar", avatar);
                                                 e.apply();
+
+                                                setResult(RESULT_OK);
 
                                                 //finish();
                                             } catch (Exception e){
@@ -354,7 +474,7 @@ public class UserInfo extends AppCompatActivity {
             });
         }
         else{
-            Call<ResponseBody> call1 = tour.updateInfoWithoutAvatar(MyApplication.getInstance().getUsername(),"", address, phone);
+            Call<ResponseBody> call1 = tour.updateInfo(MyApplication.getInstance().getUsername(),name, address, phone, avatar);
 
             call1.enqueue(new Callback<ResponseBody>() {
                 @Override
@@ -372,11 +492,13 @@ public class UserInfo extends AppCompatActivity {
 
                             MyApplication.getInstance().setAddress(address);
                             MyApplication.getInstance().setPhone(phone);
+                            MyApplication.getInstance().setName(name);
 
                             SharedPreferences s = getSharedPreferences("userPref", Context.MODE_PRIVATE);
                             SharedPreferences.Editor e = s.edit();
                             e.putString("phone", MyApplication.getInstance().getPhone());
                             e.putString("address", MyApplication.getInstance().getAddress());
+                            e.putString("name", MyApplication.getInstance().getName());
                             e.apply();
 
                             //finish();

@@ -174,6 +174,7 @@ public class Login extends AppCompatActivity {
                             ((MyApplication) Login.this.getApplication()).setEmail(jsonObject1.getString("Email"));
                             ((MyApplication) Login.this.getApplication()).setPhone(jsonObject1.getString("Phone"));
                             ((MyApplication) Login.this.getApplication()).setAddress(jsonObject1.getString("Address"));
+                            MyApplication.getInstance().setName(jsonObject1.getString("Name"));
 
                             jsonObject = jsonObject.getJSONObject("User");
                             if (jsonObject.getInt("Role") != -1) {
@@ -192,7 +193,8 @@ public class Login extends AppCompatActivity {
                                 e.putString("address", ((MyApplication) Login.this.getApplication()).getAddress());
                                 e.putInt("userType", jsonObject.getInt("Role"));
                                 e.putString("avatar", jsonObject1.getString("Avatar"));
-                                e.commit();
+                                e.putString("name", jsonObject1.getString("Name"));
+
 
                                 if(MyApplication.getInstance().getUserType() == 7){
                                     if(getSharedPreferences("acceptEmergency", MODE_PRIVATE).contains("acceptEmergency")){
@@ -209,6 +211,8 @@ public class Login extends AppCompatActivity {
                                 }else{
                                     Log.e("TAG", "onResponse: no avatar" );
                                 }
+
+                                e.commit();
 
 //                                Call<ResponseBody> call2 = tour.addDevice("1.0.0", ((MyApplication) Login.this.getApplication()).getToken(),
 //                                        username);

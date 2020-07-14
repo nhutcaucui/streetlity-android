@@ -10,6 +10,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -49,7 +50,8 @@ public class UserInfoOther extends AppCompatActivity {
 
         TextInputEditText edtAddress = findViewById(R.id.edt_address);
         TextInputEditText edtPhone = findViewById(R.id.edt_phone);
-        TextInputEditText tvUsername = findViewById(R.id.edt_username);
+        TextInputEditText edtName = findViewById(R.id.edt_name);
+        TextView tvUsername = findViewById(R.id.edt_username);
         TextInputEditText tvEmail = findViewById(R.id.edt_email);
 
         imgAvatar = findViewById(R.id.img_avatar);
@@ -57,7 +59,7 @@ public class UserInfoOther extends AppCompatActivity {
         FloatingActionButton fabEdit = findViewById(R.id.fab_edit);
 
         fabEdit.hide();
-        getInfo(tvUsername, tvEmail, edtPhone, edtAddress);
+        getInfo(tvUsername, tvEmail, edtPhone, edtAddress, edtName);
 
         Button btnAchiviement = findViewById(R.id.btn_to_achievement);
         btnAchiviement.setText(Html.fromHtml(getString(R.string.underline_achievement)));
@@ -77,8 +79,8 @@ public class UserInfoOther extends AppCompatActivity {
         return true;
     }
 
-    public void getInfo(TextInputEditText username, TextInputEditText mail, TextInputEditText phone,
-                        TextInputEditText address){
+    public void getInfo(TextView username, TextInputEditText mail, TextInputEditText phone,
+                        TextInputEditText address, TextInputEditText name){
         Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getAuthURL())
                 .addConverterFactory(GsonConverterFactory.create()).build();
 
@@ -98,6 +100,7 @@ public class UserInfoOther extends AppCompatActivity {
                         mail.setText(jsonObject1.getString("Email"));
                         phone.setText(jsonObject1.getString("Phone"));
                         address.setText(jsonObject1.getString("Address"));
+                        name.setText(jsonObject1.getString("Name"));
                         if(!jsonObject1.getString("Avatar").equals("")){
                             Retrofit retro2 = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getDriverURL())
                                     .addConverterFactory(GsonConverterFactory.create()).build();
