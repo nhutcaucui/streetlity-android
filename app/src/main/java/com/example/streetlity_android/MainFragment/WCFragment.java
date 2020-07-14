@@ -75,6 +75,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+import static android.app.Activity.RESULT_OK;
 import static androidx.constraintlayout.widget.Constraints.TAG;
 
 /**
@@ -193,10 +194,11 @@ public class WCFragment extends Fragment implements LocationListener, OnMapReady
                 }
 
                 t.putExtra("item", item);
+                t.putExtra("index", position);
 
                 locationManager.removeUpdates(WCFragment.this);
 
-                startActivity(t);
+                startActivityForResult(t,2);
             }
         });
 
@@ -640,9 +642,10 @@ jsonObject1.getString("Address"), (float) jsonObject1.getDouble("Lat"),
                             t.putExtra("currLat", currLat);
                             t.putExtra("currLon", currLon);
                             t.putExtra("item", displayItems.get(pos));
+                            t.putExtra("index", pos);
                             Log.e("", "onItemClick: " + displayItems.get(pos).getId());
                             locationManager.removeUpdates(WCFragment.this);
-                            startActivity(t);
+                            startActivityForResult(t, 2);
                         }
                     });
 
@@ -949,6 +952,40 @@ jsonObject1.getString("Address"), (float) jsonObject1.getDouble("Lat"),
                     Log.e("", "onMapReady: " + currLat + " , " + currLon);
                 }
 
+            }
+        }
+        if(requestCode == 2 && resultCode == RESULT_OK&& null!= data) {
+            int action = data.getIntExtra("action", -1);
+            int index = data.getIntExtra("index", -1);
+            int confident = data.getIntExtra("confident", -1);
+            displayItems.get(index).setConfident(confident);
+            if (action == 1) {
+                displayItems.get(index).setUpvoted(true);
+                displayItems.get(index).setDownvoted(false);
+                for (MapObject m : items) {
+                    if (m.getId() == displayItems.get(index).getId()) {
+                        m.setUpvoted(true);
+                        m.setDownvoted(false);
+                    }
+                }
+            } else if (action == 2) {
+                displayItems.get(index).setUpvoted(false);
+                displayItems.get(index).setDownvoted(true);
+                for (MapObject m : items) {
+                    if (m.getId() == displayItems.get(index).getId()) {
+                        m.setUpvoted(false);
+                        m.setDownvoted(true);
+                    }
+                }
+            } else if (action == 3) {
+                displayItems.get(index).setUpvoted(false);
+                displayItems.get(index).setDownvoted(false);
+                for (MapObject m : items) {
+                    if (m.getId() == displayItems.get(index).getId()) {
+                        m.setUpvoted(false);
+                        m.setDownvoted(false);
+                    }
+                }
             }
         }
     }

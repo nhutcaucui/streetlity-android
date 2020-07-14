@@ -140,6 +140,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     String imageName = "";
 
+    boolean oriUpvoted;
+    boolean oriDownvoted;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -190,6 +193,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         sheetBehavior = BottomSheetBehavior.from(bottom_sheet);
 
         item = (MapObject) getIntent().getSerializableExtra("item");
+
+        oriDownvoted = item.isDownvoted();
+        oriUpvoted = item.isUpvoted();
 
         LinearLayout layoutNote = findViewById(R.id.layout_note);
 
@@ -303,7 +309,110 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             addPhoto.setVisibility(View.VISIBLE);
             editNote.setVisibility(View.VISIBLE);
             editAddress.setVisibility(View.VISIBLE);
-            //layoutVote.setVisibility(VISIBLE);
+            layoutVote.setVisibility(VISIBLE);
+
+            TextView tvPoints = findViewById(R.id.tv_points);
+            tvPoints.setText(Integer.toString(item.getConfident()));
+
+            ImageView imgUpvote = findViewById(R.id.img_upvote);
+
+            ImageView imgDownvote = findViewById(R.id.img_downvote);
+
+            if(item.isDownvoted()){
+                imgDownvote.setColorFilter(getColor(R.color.tintDownvote));
+            }else if (item.isUpvoted()){
+                imgUpvote.setColorFilter(getColor(R.color.tintUpvote));
+            }
+
+            imgUpvote.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(item.isUpvoted()){
+                        imgUpvote.setColorFilter(getColor(R.color.tint));
+                        item.setUpvoted(false);
+                        item.setConfident(item.getConfident()-1);
+
+                        Intent data2 = new Intent();
+                        data2.putExtra("index", getIntent().getIntExtra("index", -1));
+                        data2.putExtra("action", 3);
+                        data2.putExtra("confident",item.getConfident());
+                        setResult(RESULT_OK, data2);
+                    }
+                    else if(item.isDownvoted()){
+                        imgUpvote.setColorFilter(getColor(R.color.tintUpvote));
+                        imgDownvote.setColorFilter(getColor(R.color.tint));
+                        item.setDownvoted(false);
+                        item.setUpvoted(true);
+                        item.setConfident(item.getConfident()+2);
+
+                        Intent data2 = new Intent();
+                        data2.putExtra("index", getIntent().getIntExtra("index", -1));
+                        data2.putExtra("action", 1);
+                        data2.putExtra("confident",item.getConfident());
+                        setResult(RESULT_OK, data2);
+                    }else{
+                        imgUpvote.setColorFilter(getColor(R.color.tintUpvote));
+                        item.setUpvoted(true);
+                        item.setConfident(item.getConfident()+1);
+
+                        Intent data2 = new Intent();
+                        data2.putExtra("index", getIntent().getIntExtra("index", -1));
+                        data2.putExtra("action", 1);
+                        data2.putExtra("confident",item.getConfident());
+                        setResult(RESULT_OK, data2);
+                    }
+                    tvPoints.setText(Integer.toString(item.getConfident()));
+
+                    if(item.isDownvoted() == oriDownvoted && item.isUpvoted() == oriUpvoted){
+                        setResult(RESULT_CANCELED);
+                    }
+                }
+            });
+
+            imgDownvote.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(item.isUpvoted()){
+                        imgUpvote.setColorFilter(getColor(R.color.tint));
+                        imgDownvote.setColorFilter(getColor(R.color.tintDownvote));
+                        item.setDownvoted(true);
+                        item.setUpvoted(false);
+                        item.setConfident(item.getConfident()-2);
+
+                        Intent data2 = new Intent();
+                        data2.putExtra("index", getIntent().getIntExtra("index", -1));
+                        data2.putExtra("action", 2);
+                        data2.putExtra("confident",item.getConfident());
+                        setResult(RESULT_OK, data2);
+                    }
+                    else if(item.isDownvoted()){
+                        imgDownvote.setColorFilter(getColor(R.color.tint));
+                        item.setDownvoted(false);
+                        item.setConfident(item.getConfident()+1);
+
+                        Intent data2 = new Intent();
+                        data2.putExtra("index", getIntent().getIntExtra("index", -1));
+                        data2.putExtra("action", 3);
+                        data2.putExtra("confident",item.getConfident());
+                        setResult(RESULT_OK, data2);
+                    }else{
+                        imgDownvote.setColorFilter(getColor(R.color.tintDownvote));
+                        item.setDownvoted(true);
+                        item.setConfident(item.getConfident()-1);
+
+                        Intent data2 = new Intent();
+                        data2.putExtra("index", getIntent().getIntExtra("index", -1));
+                        data2.putExtra("action", 2);
+                        data2.putExtra("confident",item.getConfident());
+                        setResult(RESULT_OK, data2);
+                    }
+                    tvPoints.setText(Integer.toString(item.getConfident()));
+
+                    if(item.isDownvoted() == oriDownvoted && item.isUpvoted() == oriUpvoted){
+                        setResult(RESULT_CANCELED);
+                    }
+                }
+            });
 
             addPhoto.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -723,7 +832,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     final JSONObject jsonObject;
                     try {
                         jsonObject = new JSONObject(response.body().string());
-                        Log.e("", "onResponse: " + jsonObject.toString());
+                        Log.e("", "onResponse create review: " + jsonObject.toString());
                         if (jsonObject.getBoolean("Status")) {
                             Review review = new Review(((MyApplication) MapsActivity.this.getApplication()).getUsername(),
                                     comment,
@@ -788,13 +897,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                             tvNoReview.setVisibility(View.GONE);
 
-                            Log.e(TAG, "onResponse: " + MyApplication.getInstance().getReviewedMap());
+                            Log.e(TAG, "onResponse create review: " + MyApplication.getInstance().getReviewedMap());
                         }
                     }catch (Exception e){
                         e.printStackTrace();
                     }
                 }else{
-                    Log.e("", "onResponse: " +response.code() );
+                    Log.e("", "onResponse create rview failed: " +response.code() );
                 }
             }
 
@@ -836,7 +945,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     final JSONObject jsonObject;
                     try {
                         jsonObject = new JSONObject(response.body().string());
-                        Log.e("", "onResponse: " + jsonObject.toString());
+                        Log.e("", "onResponse update review: " + jsonObject.toString());
                         if (jsonObject.getBoolean("Status")) {
                             Review review = new Review(((MyApplication) MapsActivity.this.getApplication()).getUsername(),
                                     comment,
@@ -855,7 +964,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         e.printStackTrace();
                     }
                 }else{
-                    Log.e("", "onResponse: " +response.code() );
+                    Log.e("", "onResponse update review fail: " +response.code() );
                 }
             }
 
@@ -906,7 +1015,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     final JSONObject jsonObject;
                     try {
                         jsonObject = new JSONObject(response.body().string());
-                        Log.e("", "onResponse: " + jsonObject.toString());
+                        Log.e("", "onResponse del review: " + jsonObject.toString());
                         if (jsonObject.getBoolean("Status")) {
                             displayReviewItems.remove(pos);
                             reviewItems.remove(reviewItems.size()-1-pos);
@@ -940,10 +1049,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                                     try{
                                         if(response.code()==200){
-                                            Log.e(TAG, "onResponse: " + response.body().string());
+                                            Log.e(TAG, "onResponse del action review: " + response.body().string());
                                         }
                                         else{
-                                            Log.e(TAG, "onResponse: " + response.code());
+                                            Log.e(TAG, "onResponse del action review fail: " + response.code());
                                         }
 
                                     }catch (Exception e) {e.printStackTrace();}
@@ -961,7 +1070,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         e.printStackTrace();
                     }
                 }else{
-                    Log.e("", "onResponse: " +response.code() );
+                    Log.e("", "onResponse del review failed: " +response.code() );
                 }
             }
 
@@ -1008,7 +1117,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     final JSONObject jsonObject;
                     try {
                         jsonObject = new JSONObject(response.body().string());
-                        Log.e("", "onResponse: " + jsonObject.toString() + " reviewload" + item.getId());
+                        Log.e("", "onResponse load review: " + jsonObject.toString() + " reviewload" + item.getId());
                         if (jsonObject.getBoolean("Status")) {
 
                             JSONArray jsonArray = jsonObject.getJSONArray("Reviews");
@@ -1091,7 +1200,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         e.printStackTrace();
                     }
                 }else{
-                    Log.e("", "onResponse: " +response.code() );
+                    Log.e("", "onResponse load review failed: " +response.code() );
                 }
             }
 
@@ -1126,12 +1235,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onProviderDisabled(String provider) {
     }
 
-    public void onStop(){
-        super.onStop();
 
-        locationManager.removeUpdates(this);
-        e.unsubcribe(listener);
-    }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -1207,7 +1311,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                     final JSONObject jsonObject;
                                     try {
                                         jsonObject = new JSONObject(response.body().string());
-                                        Log.e("", "onResponse: " + jsonObject.toString());
+                                        Log.e("", "onResponse upload: " + jsonObject.toString());
 
                                         if (jsonObject.getBoolean("Status")) {
                                             findViewById(R.id.tv_no_img).setVisibility(View.GONE);
@@ -1216,7 +1320,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                         e.printStackTrace();
                                     }
                                 }else{
-                                    Log.e("", "onResponse: " + response.code());
+                                    Log.e("", "onResponse uploadfail: " + response.code());
                                 }
                             }
 
@@ -1297,7 +1401,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                         final JSONObject jsonObject;
                                         try {
                                             jsonObject = new JSONObject(response.body().string());
-                                            Log.e("", "onResponse: " + jsonObject.toString());
+                                            Log.e("", "onResponse upload: " + jsonObject.toString());
 
                                             if (jsonObject.getBoolean("Status")) {
                                                 findViewById(R.id.tv_no_img).setVisibility(View.GONE);
@@ -1306,7 +1410,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                             e.printStackTrace();
                                         }
                                     }else{
-                                        Log.e("", "onResponse: " + response.code());
+                                        Log.e("", "onResponse upload failed: " + response.code());
                                     }
                                 }
 
@@ -1324,5 +1428,295 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             e.printStackTrace();
         }
 
+    }
+
+    public void upvote(boolean isClear) {
+        Log.e(TAG, "onActivityResult: " + getIntent().getIntExtra("index", -1));
+        Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getServiceURL())
+                .addConverterFactory(GsonConverterFactory.create()).build();
+        final MapAPI tour = retro.create(MapAPI.class);
+        Call<ResponseBody> call = tour.upvoteATM(MyApplication.getInstance().getVersion(), item.getId(), MyApplication.getInstance().getUsername());
+        if (item.getType() == 1) {
+            call = tour.upvoteFuel(MyApplication.getInstance().getVersion(), item.getId(), MyApplication.getInstance().getUsername());
+        } else if (item.getType() == 2) {
+            call = tour.upvoteWC(MyApplication.getInstance().getVersion(), item.getId(), MyApplication.getInstance().getUsername());
+        } else if (item.getType() == 3) {
+            call = tour.upvoteMaintenance(MyApplication.getInstance().getVersion(), item.getId(), MyApplication.getInstance().getUsername());
+        } else if (item.getType() == 4) {
+            call = tour.upvoteATM(MyApplication.getInstance().getVersion(), item.getId(), MyApplication.getInstance().getUsername());
+        }
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.code() == 200) {
+                    final JSONObject jsonObject;
+                    try {
+                        Log.e("", "onResponse updoot: " + response);
+                        jsonObject = new JSONObject(response.body().string());
+                        Log.e("", "onResponse updoot: " + jsonObject.toString());
+
+                        Calendar calendar = Calendar.getInstance();
+                        long time = calendar.getTimeInMillis();
+                        String builder = "";
+                        builder = builder + time + ";" + item.getId() + ";";
+                        String type = "";
+
+                        if (item.getType() == 1) {
+                            builder += "Fuel";
+                            type = "Fuel";
+                        } else if (item.getType() == 2) {
+                            builder += "Toilet";
+                            type = "Toilet";
+                        } else if (item.getType() == 3) {
+                            builder += "Maintenance";
+                            type = "Maintenance";
+                        } else if (item.getType() == 4) {
+                            builder += "Atm";
+                            type = "Atm";
+                        }
+
+                        if (jsonObject.getBoolean("Status")) {
+
+                            if(!isClear) {
+                                //e.trigger(MyApplication.getInstance().getUsername(), builder);
+
+                                Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getAuthURL())
+                                        .addConverterFactory(GsonConverterFactory.create()).build();
+                                final MapAPI tour = retro.create(MapAPI.class);
+                                Call<ResponseBody> call2 = tour.addActionUpvote(MyApplication.getInstance().getUsername(), time,Integer.toString(item.getId()), type);
+                                call2.enqueue(new Callback<ResponseBody>() {
+                                    @Override
+                                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                        if (response.code() == 200) {
+                                            try {
+                                                JSONObject jsonObject1 = new JSONObject(response.body().string());
+                                                Log.e("TAG", "onResponse updoot: " + jsonObject1.toString());
+                                            } catch (Exception e) {
+                                                e.printStackTrace();
+                                            }
+                                        } else {
+                                            Log.e(TAG, "onResponse add updoot: " + response.code());
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                        t.printStackTrace();
+                                    }
+                                });
+
+                                ActionObject ao = new ActionObject("upvote " + item.getId(), time, "Upvote", Integer.toString(item.getId()));
+
+                                if (MyApplication.getInstance().getUpvoteMap().containsKey(type)) {
+                                    MyApplication.getInstance().getUpvoteMap().get(type).put("upvote " + item.getId(), ao);
+                                } else {
+                                    Map<String, ActionObject> map = new HashMap<>();
+                                    map.put("upvote " + item.getId(), ao);
+                                    MyApplication.getInstance().getUpvoteMap().put(type, map);
+                                }
+
+                            }else{
+                                MyApplication.getInstance().getDownvoteMap().get(type).remove("downvote " + item.getId());
+
+                                Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getAuthURL())
+                                        .addConverterFactory(GsonConverterFactory.create()).build();
+                                final MapAPI tour = retro.create(MapAPI.class);
+                                Call<ResponseBody> call2 = tour.deleteActionDownvote(Integer.toString(item.getId()), type, MyApplication.getInstance().getUsername());
+                                call2.enqueue(new Callback<ResponseBody>() {
+                                    @Override
+                                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                        try{
+                                            if(response.code()==200){
+                                                Log.e(TAG, "onResponse del downvote: " + new JSONObject(response.body().string()).toString());
+                                            }
+                                            else{
+                                                Log.e(TAG, "onResponse del downvote: " + response.code() );
+                                            }
+
+                                        }catch (Exception e) {e.printStackTrace();}
+                                    }
+
+                                    @Override
+                                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                        t.printStackTrace();
+                                    }
+                                });
+                            }
+
+                            Log.e(TAG, "onResponse: " + MyApplication.getInstance().getUpvoteMap());
+
+                            finish();
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                t.printStackTrace();
+            }
+        });
+    }
+
+    public void downvote(boolean isClear) {
+        Log.e(TAG, "onActivityResult: " + getIntent().getIntExtra("index", -1));
+        Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getServiceURL())
+                .addConverterFactory(GsonConverterFactory.create()).build();
+        final MapAPI tour = retro.create(MapAPI.class);
+        Call<ResponseBody> call = tour.downvoteFuel(MyApplication.getInstance().getVersion(), item.getId(), MyApplication.getInstance().getUsername());
+        if (item.getType() == 1) {
+            call = tour.downvoteFuel(MyApplication.getInstance().getVersion(), item.getId(), MyApplication.getInstance().getUsername());
+        } else if (item.getType() == 2) {
+            call = tour.downvoteWC(MyApplication.getInstance().getVersion(), item.getId(), MyApplication.getInstance().getUsername());
+        } else if (item.getType() == 3) {
+            call = tour.downvoteMaintenance(MyApplication.getInstance().getVersion(), item.getId(), MyApplication.getInstance().getUsername());
+        } else if (item.getType() == 4) {
+            call = tour.downvoteATM(MyApplication.getInstance().getVersion(), item.getId(), MyApplication.getInstance().getUsername());
+        }
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.code() == 200) {
+                    final JSONObject jsonObject;
+                    try {
+                        Log.e("", "onResponse downvote: " + response);
+                        jsonObject = new JSONObject(response.body().string());
+                        Log.e("", "onResponse downvote: " + jsonObject.toString());
+
+                        Calendar calendar = Calendar.getInstance();
+                        long time = calendar.getTimeInMillis();
+                        String builder = "";
+                        builder = builder + time + ";" + item.getId() + ";";
+                        String type = "";
+
+                        if (item.getType() == 1) {
+                            builder += "Fuel";
+                            type = "Fuel";
+                        } else if (item.getType() == 2) {
+                            builder += "Toilet";
+                            type = "Toilet";
+                        } else if (item.getType() == 3) {
+                            builder += "Maintenance";
+                            type = "Maintenance";
+                        } else if (item.getType() == 4) {
+                            builder += "Atm";
+                            type = "Atm";
+                        }
+
+                        if (jsonObject.getBoolean("Status")) {
+                            if(!isClear) {
+//                            e.trigger(MyApplication.getInstance().getUsername(), builder);
+
+                                Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getAuthURL())
+                                        .addConverterFactory(GsonConverterFactory.create()).build();
+                                final MapAPI tour = retro.create(MapAPI.class);
+                                Call<ResponseBody> call2 = tour.addActionDownvote(MyApplication.getInstance().getUsername(), time,Integer.toString(item.getId()), type);
+                                call2.enqueue(new Callback<ResponseBody>() {
+                                    @Override
+                                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                        if (response.code() == 200) {
+                                            try {
+                                                JSONObject jsonObject1 = new JSONObject(response.body().string());
+                                                Log.e("TAG", "onResponse add downvote: " + jsonObject1.toString());
+                                            } catch (Exception e) {
+                                                e.printStackTrace();
+                                            }
+                                        } else {
+                                            Log.e(TAG, "onResponse add downvote: " + response.code());
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                        t.printStackTrace();
+                                    }
+                                });
+
+                                ActionObject ao = new ActionObject("downvote " + item.getId(), time, "Downvote", Integer.toString(item.getId()));
+
+
+                                if (MyApplication.getInstance().getDownvoteMap().containsKey(type)) {
+                                    MyApplication.getInstance().getDownvoteMap().get(type).put("downvote " + item.getId(), ao);
+                                } else {
+                                    Map<String, ActionObject> map = new HashMap<>();
+                                    map.put("downvote " + item.getId(), ao);
+                                    MyApplication.getInstance().getDownvoteMap().put(type, map);
+                                }
+
+
+
+                            }else{
+
+                                MyApplication.getInstance().getUpvoteMap().get(type).remove("upvote " + item.getId());
+
+                                Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getAuthURL())
+                                        .addConverterFactory(GsonConverterFactory.create()).build();
+                                final MapAPI tour = retro.create(MapAPI.class);
+                                Call<ResponseBody> call2 = tour.deleteActionUpvote(Integer.toString(item.getId()), type, MyApplication.getInstance().getUsername());
+                                call2.enqueue(new Callback<ResponseBody>() {
+                                    @Override
+                                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                        try{
+                                            if(response.code()==200){
+                                                Log.e(TAG, "onResponse del updoot: " + new JSONObject(response.body().string()).toString());
+                                            }
+                                            else{
+                                                Log.e(TAG, "onResponse del updoot: " + response.code() );
+                                            }
+
+                                        }catch (Exception e) {e.printStackTrace();}
+                                    }
+
+                                    @Override
+                                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                        t.printStackTrace();
+                                    }
+                                });
+
+
+                            }
+
+                            Log.e(TAG, "onResponse: " + MyApplication.getInstance().getDownvoteMap());
+
+                            finish();
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                t.printStackTrace();
+            }
+        });
+    }
+
+    public void onStop(){
+        super.onStop();
+
+        locationManager.removeUpdates(this);
+        e.unsubcribe(listener);
+
+        if(oriUpvoted != item.isUpvoted() || oriDownvoted != item.isDownvoted()){
+            if(item.isUpvoted() && oriDownvoted){
+                upvote(true);
+                upvote(false);
+            }else if(item.isUpvoted() && !oriDownvoted){
+                upvote(false);
+            }else if(item.isDownvoted() && oriUpvoted){
+                downvote(true);
+                downvote(false);
+            }else if (item.isDownvoted() && !oriUpvoted){
+                downvote(false);
+            }else if(!item.isUpvoted() && oriUpvoted && !item.isDownvoted()){
+                downvote(true);
+            }else if(!item.isUpvoted() && oriDownvoted && !item.isDownvoted()){
+                upvote(true);
+            }
+        }
     }
 }

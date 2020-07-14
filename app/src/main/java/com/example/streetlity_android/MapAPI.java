@@ -338,7 +338,7 @@ public interface MapAPI {
 
 
     @FormUrlEncoded
-    @POST("user/action/downvote")
+    @POST("user/action/downvote/")
     Call<ResponseBody> addActionDownvote(@Field("id") String id, @Field("time") long time,
                                        @Field("affect") String affect, @Field("service") String service);
 

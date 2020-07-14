@@ -61,7 +61,7 @@ public class HomeFragment extends Fragment implements LocationListener{
     private static final String ARG_PARAM2 = "param2";
 
     private static final long MIN_TIME = 1;
-    private static final float MIN_DISTANCE=1000;
+    private static final float MIN_DISTANCE= 0.1f;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
