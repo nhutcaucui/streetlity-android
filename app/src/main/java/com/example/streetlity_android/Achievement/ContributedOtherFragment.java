@@ -477,9 +477,9 @@ jsonObject1.getString("Address"), (float) jsonObject1.getDouble("Lat"),
         super.onActivityResult(requestCode, resultCode, data);
         try {
             if (requestCode == 1 && resultCode == RESULT_OK && data != null) {
-                if(data.getIntExtra("action", -1 )== 1) {
+                if (data.getIntExtra("action", -1) == 1) {
                     if (data.getIntExtra("index", -1) != -1) {
-                        ((AchievementOther)getActivity()).getContributedItems().get((data.getIntExtra("index", -1))).setUpvoted(true);
+                        ((AchievementOther) getActivity()).getContributedItems().get((data.getIntExtra("index", -1))).setUpvoted(true);
                         adapterContribute.notifyDataSetChanged();
 
                         Toast toast = Toast.makeText(getActivity(), R.string.vote_success, Toast.LENGTH_LONG);
@@ -487,9 +487,9 @@ jsonObject1.getString("Address"), (float) jsonObject1.getDouble("Lat"),
                         toast.show();
                     }
                 }
-                if(data.getIntExtra("action", -1 )== 2) {
+                if (data.getIntExtra("action", -1) == 2) {
                     if (data.getIntExtra("index", -1) != -1) {
-                        ((AchievementOther)getActivity()).getContributedItems().get((data.getIntExtra("index", -1))).setDownvoted(true);
+                        ((AchievementOther) getActivity()).getContributedItems().get((data.getIntExtra("index", -1))).setDownvoted(true);
                         adapterContribute.notifyDataSetChanged();
 
                         Toast toast = Toast.makeText(getActivity(), R.string.vote_success, Toast.LENGTH_LONG);
@@ -498,10 +498,10 @@ jsonObject1.getString("Address"), (float) jsonObject1.getDouble("Lat"),
 
                     }
                 }
-                if(data.getIntExtra("action", -1 )== 3) {
+                if (data.getIntExtra("action", -1) == 3) {
                     if (data.getIntExtra("index", -1) != -1) {
-                        ((AchievementOther)getActivity()).getContributedItems().get((data.getIntExtra("index", -1))).setUpvoted(false);
-                        ((AchievementOther)getActivity()).getContributedItems().get((data.getIntExtra("index", -1))).setDownvoted(false);
+                        ((AchievementOther) getActivity()).getContributedItems().get((data.getIntExtra("index", -1))).setUpvoted(false);
+                        ((AchievementOther) getActivity()).getContributedItems().get((data.getIntExtra("index", -1))).setDownvoted(false);
                         adapterContribute.notifyDataSetChanged();
 
                         Toast toast = Toast.makeText(getActivity(), R.string.clear_vote, Toast.LENGTH_LONG);
@@ -510,20 +510,34 @@ jsonObject1.getString("Address"), (float) jsonObject1.getDouble("Lat"),
 
                     }
                 }
-                if(data.hasExtra("name")){
-                    ((AchievementOther)getActivity()).getContributedItems().
-                            get((data.getIntExtra("index", -1))).setName(data.getStringExtra("name"));
-                }
-                if(data.hasExtra("image")){
-                    ((AchievementOther)getActivity()).getContributedItems()
-                            .get((data.getIntExtra("index", -1))).setImages(data.getStringExtra("image"));
-                }
-                if(data.hasExtra("note")){
-                    ((AchievementOther)getActivity()).getContributedItems().
-                            get((data.getIntExtra("index", -1))).setNote(data.getStringExtra("note"));
-                }
-                adapterContribute.notifyDataSetChanged();
             }
+            if(requestCode == 2 && resultCode == RESULT_OK && null!=data){
+                int action = data.getIntExtra("action", -1);
+                int index = data.getIntExtra("index", -1);
+                int confident = data.getIntExtra("confident", -1);
+                if(action != -1) {
+                    ((AchievementOther)getActivity()).getContributedItems().get(index).setConfident(confident);
+                } else if (action == 2) {
+                    ((AchievementOther)getActivity()).getContributedItems().get(index).setUpvoted(false);
+                    ((AchievementOther)getActivity()).getContributedItems().get(index).setDownvoted(true);
+                } else if (action == 3) {
+                    ((AchievementOther)getActivity()).getContributedItems().get(index).setUpvoted(false);
+                    ((AchievementOther)getActivity()).getContributedItems().get(index).setDownvoted(false);
+                }
+            }
+            if(data.hasExtra("name")){
+                ((AchievementOther)getActivity()).getContributedItems().
+                        get((data.getIntExtra("index", -1))).setName(data.getStringExtra("name"));
+            }
+            if(data.hasExtra("image")){
+                ((AchievementOther)getActivity()).getContributedItems()
+                        .get((data.getIntExtra("index", -1))).setImages(data.getStringExtra("image"));
+            }
+            if(data.hasExtra("note")){
+                ((AchievementOther)getActivity()).getContributedItems().
+                        get((data.getIntExtra("index", -1))).setNote(data.getStringExtra("note"));
+            }
+            adapterContribute.notifyDataSetChanged();
         }catch (Exception e){
             e.printStackTrace();}
     }

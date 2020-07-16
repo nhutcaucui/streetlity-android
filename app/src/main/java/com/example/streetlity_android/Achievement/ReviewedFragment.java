@@ -507,20 +507,35 @@ jsonObject1.getString("Address"), (float) jsonObject1.getDouble("Lat"),
 
                     }
                 }
-                if(data.hasExtra("name")){
-                    ((Achievement)getActivity()).getReviewedItems().
-                            get((data.getIntExtra("index", -1))).setName(data.getStringExtra("name"));
-                }
-                if(data.hasExtra("image")){
-                    ((Achievement)getActivity()).getReviewedItems()
-                            .get((data.getIntExtra("index", -1))).setImages(data.getStringExtra("image"));
-                }
-                if(data.hasExtra("note")){
-                    ((Achievement)getActivity()).getReviewedItems().
-                            get((data.getIntExtra("index", -1))).setNote(data.getStringExtra("note"));
-                }
-                adapterReview.notifyDataSetChanged();
+
             }
+            if(requestCode == 2 && resultCode == RESULT_OK && null!=data){
+                int action = data.getIntExtra("action", -1);
+                int index = data.getIntExtra("index", -1);
+                int confident = data.getIntExtra("confident", -1);
+                if(action != -1) {
+                    ((Achievement)getActivity()).getReviewedItems().get(index).setConfident(confident);
+                } else if (action == 2) {
+                    ((Achievement)getActivity()).getReviewedItems().get(index).setUpvoted(false);
+                    ((Achievement)getActivity()).getReviewedItems().get(index).setDownvoted(true);
+                } else if (action == 3) {
+                    ((Achievement)getActivity()).getReviewedItems().get(index).setUpvoted(false);
+                    ((Achievement)getActivity()).getReviewedItems().get(index).setDownvoted(false);
+                }
+            }
+            if(data.hasExtra("name")){
+                ((Achievement)getActivity()).getReviewedItems().
+                        get((data.getIntExtra("index", -1))).setName(data.getStringExtra("name"));
+            }
+            if(data.hasExtra("image")){
+                ((Achievement)getActivity()).getReviewedItems()
+                        .get((data.getIntExtra("index", -1))).setImages(data.getStringExtra("image"));
+            }
+            if(data.hasExtra("note")){
+                ((Achievement)getActivity()).getReviewedItems().
+                        get((data.getIntExtra("index", -1))).setNote(data.getStringExtra("note"));
+            }
+            adapterReview.notifyDataSetChanged();
         }catch (Exception e){
             e.printStackTrace();}
     }
