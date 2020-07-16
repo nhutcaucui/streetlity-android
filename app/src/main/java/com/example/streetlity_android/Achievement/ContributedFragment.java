@@ -511,6 +511,19 @@ jsonObject1.getString("Address"), (float) jsonObject1.getDouble("Lat"),
 
                     }
                 }
+                if(data.hasExtra("name")){
+                    ((Achievement)getActivity()).getContributedItems().
+                            get((data.getIntExtra("index", -1))).setName(data.getStringExtra("name"));
+                }
+                if(data.hasExtra("image")){
+                    ((Achievement)getActivity()).getContributedItems()
+                            .get((data.getIntExtra("index", -1))).setImages(data.getStringExtra("image"));
+                }
+                if(data.hasExtra("note")){
+                    ((Achievement)getActivity()).getContributedItems().
+                            get((data.getIntExtra("index", -1))).setNote(data.getStringExtra("note"));
+                }
+                adapterContribute.notifyDataSetChanged();
             }
         }catch (Exception e){
             e.printStackTrace();}

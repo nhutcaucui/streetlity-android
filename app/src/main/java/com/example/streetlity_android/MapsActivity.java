@@ -143,6 +143,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     boolean oriUpvoted;
     boolean oriDownvoted;
 
+    Intent data = new Intent();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -153,6 +155,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("");
+
+        data.putExtra("index", getIntent().getIntExtra("index", -1));
 
         listener = new EListener<String, String>() {
             @Override
@@ -301,14 +305,16 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         ImageView addPhoto = findViewById(R.id.btn_add_photo);
         ImageView editNote = findViewById(R.id.btn_edit_note);
-        ImageView editAddress = findViewById(R.id.btn_edit_address);
+        ImageView editName = findViewById(R.id.btn_edit_name);
         LinearLayout layoutVote = findViewById(R.id.layout_vote);
 
         if(!MyApplication.getInstance().getToken().equals("")){
             leaveReview.setVisibility(View.VISIBLE);
-//            addPhoto.setVisibility(View.VISIBLE);
-//            editNote.setVisibility(View.VISIBLE);
-//            editAddress.setVisibility(View.VISIBLE);
+            addPhoto.setVisibility(View.VISIBLE);
+            editNote.setVisibility(View.VISIBLE);
+            if(item.getType() != 4) {
+                editName.setVisibility(View.VISIBLE);
+            }
             layoutVote.setVisibility(VISIBLE);
 
             TextView tvPoints = findViewById(R.id.tv_points);
@@ -332,11 +338,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         item.setUpvoted(false);
                         item.setConfident(item.getConfident()-1);
 
-                        Intent data2 = new Intent();
-                        data2.putExtra("index", getIntent().getIntExtra("index", -1));
-                        data2.putExtra("action", 3);
-                        data2.putExtra("confident",item.getConfident());
-                        setResult(RESULT_OK, data2);
+                        //data.putExtra("index", getIntent().getIntExtra("index", -1));
+                        data.putExtra("action", 3);
+                        data.putExtra("confident",item.getConfident());
+                        setResult(RESULT_OK, data);
                     }
                     else if(item.isDownvoted()){
                         imgUpvote.setColorFilter(getColor(R.color.tintUpvote));
@@ -345,26 +350,23 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         item.setUpvoted(true);
                         item.setConfident(item.getConfident()+2);
 
-                        Intent data2 = new Intent();
-                        data2.putExtra("index", getIntent().getIntExtra("index", -1));
-                        data2.putExtra("action", 1);
-                        data2.putExtra("confident",item.getConfident());
-                        setResult(RESULT_OK, data2);
+                        data.putExtra("action", 1);
+                        data.putExtra("confident",item.getConfident());
+                        setResult(RESULT_OK, data);
                     }else{
                         imgUpvote.setColorFilter(getColor(R.color.tintUpvote));
                         item.setUpvoted(true);
                         item.setConfident(item.getConfident()+1);
 
-                        Intent data2 = new Intent();
-                        data2.putExtra("index", getIntent().getIntExtra("index", -1));
-                        data2.putExtra("action", 1);
-                        data2.putExtra("confident",item.getConfident());
-                        setResult(RESULT_OK, data2);
+                        data.putExtra("action", 1);
+                        data.putExtra("confident",item.getConfident());
+                        setResult(RESULT_OK, data);
                     }
                     tvPoints.setText(Integer.toString(item.getConfident()));
 
                     if(item.isDownvoted() == oriDownvoted && item.isUpvoted() == oriUpvoted){
-                        setResult(RESULT_CANCELED);
+                        data.putExtra("action", -1);
+                        setResult(RESULT_OK, data);
                     }
                 }
             });
@@ -379,51 +381,46 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         item.setUpvoted(false);
                         item.setConfident(item.getConfident()-2);
 
-                        Intent data2 = new Intent();
-                        data2.putExtra("index", getIntent().getIntExtra("index", -1));
-                        data2.putExtra("action", 2);
-                        data2.putExtra("confident",item.getConfident());
-                        setResult(RESULT_OK, data2);
+                        data.putExtra("action", 2);
+                        data.putExtra("confident",item.getConfident());
+                        setResult(RESULT_OK, data);
                     }
                     else if(item.isDownvoted()){
                         imgDownvote.setColorFilter(getColor(R.color.tint));
                         item.setDownvoted(false);
                         item.setConfident(item.getConfident()+1);
 
-                        Intent data2 = new Intent();
-                        data2.putExtra("index", getIntent().getIntExtra("index", -1));
-                        data2.putExtra("action", 3);
-                        data2.putExtra("confident",item.getConfident());
-                        setResult(RESULT_OK, data2);
+                        data.putExtra("action", 3);
+                        data.putExtra("confident",item.getConfident());
+                        setResult(RESULT_OK, data);
                     }else{
                         imgDownvote.setColorFilter(getColor(R.color.tintDownvote));
                         item.setDownvoted(true);
                         item.setConfident(item.getConfident()-1);
 
-                        Intent data2 = new Intent();
-                        data2.putExtra("index", getIntent().getIntExtra("index", -1));
-                        data2.putExtra("action", 2);
-                        data2.putExtra("confident",item.getConfident());
-                        setResult(RESULT_OK, data2);
+                        data.putExtra("action", 2);
+                        data.putExtra("confident",item.getConfident());
+                        setResult(RESULT_OK, data);
                     }
                     tvPoints.setText(Integer.toString(item.getConfident()));
 
                     if(item.isDownvoted() == oriDownvoted && item.isUpvoted() == oriUpvoted){
-                        setResult(RESULT_CANCELED);
+                        data.putExtra("action", -1);
+                        setResult(RESULT_OK, data);
                     }
                 }
             });
 
-//            addPhoto.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    Intent intent = new Intent();
-//                    intent.setType("image/*");
-//                    intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-//                    intent.setAction(Intent.ACTION_GET_CONTENT);
-//                    startActivityForResult(Intent.createChooser(intent,"Select Picture"), 1);
-//                }
-//            });
+            addPhoto.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent();
+                    intent.setType("image/*");
+                    intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+                    intent.setAction(Intent.ACTION_GET_CONTENT);
+                    startActivityForResult(Intent.createChooser(intent,"Select Picture"), 1);
+                }
+            });
 
             leaveReview.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -467,81 +464,92 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 }
             });
 
-//            editAddress.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    Dialog dialog = new Dialog(MapsActivity.this);
-//
-//                    //final LayoutInflater inflater2 = LayoutInflater.from(MapsActivity.this.getApplicationContext());
-//
-//                    final View dialogView2 = View.inflate(MapsActivity.this,R.layout.dialog_edit_address ,null);
-//
-//                    com.google.android.material.textfield.TextInputEditText edtAddress = dialogView2.findViewById(R.id.edt_address);
-//
-//                    Button confirm = dialogView2.findViewById(R.id.btn_confirm);
-//
-//                    edtAddress.setText(tvAddress.getText().toString());
-//
-//                    confirm.setOnClickListener(new View.OnClickListener() {
-//                        @Override
-//                        public void onClick(View v) {
-//                            if(edtAddress.getText().toString().equals("")){
-//                                Toast toast = Toast.makeText(MapsActivity.this, R.string.empty_address, Toast.LENGTH_LONG);
-//                                TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
-//                                tv.setTextColor(Color.RED);
-//
-//                                toast.show();
-//                            }
-//                            else{
-//                                editAddress(edtAddress.getText().toString());
-//                                tvAddress.setText(edtAddress.getText().toString());
-//                                dialog.cancel();
-//                            }
-//                        }
-//                    });
-//
-//                    dialog.setContentView(dialogView2);
-//
-//                    dialog.show();
-//                }
-//            });
+            if(item.getType() != 4) {
+                editName.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Dialog dialog = new Dialog(MapsActivity.this);
 
-//            editNote.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    Dialog dialog = new Dialog(MapsActivity.this);
-//
-//                    //final LayoutInflater inflater2 = LayoutInflater.from(MapsActivity.this.getApplicationContext());
-//
-//                    final View dialogView2 = View.inflate(MapsActivity.this,R.layout.dialog_edit_note ,null);
-//
-//                    com.google.android.material.textfield.TextInputEditText edtNote = dialogView2.findViewById(R.id.edt_note);
-//
-//                    Button confirm = dialogView2.findViewById(R.id.btn_confirm);
-//
-//                    if(!tvNote.getText().toString().equals(getString(R.string.no_note))) {
-//                        edtNote.setText(tvNote.getText().toString());
-//                    }
-//
-//                    confirm.setOnClickListener(new View.OnClickListener() {
-//                        @Override
-//                        public void onClick(View v) {
-//                            if(edtNote.getText().toString().equals("")){
-//
-//                            }
-//                            else{
-//                                editNote(edtNote.getText().toString());
-//                                tvNote.setText(edtNote.getText().toString());
-//                                dialog.cancel();
-//                            }
-//                        }
-//                    });
-//
-//                    dialog.setContentView(dialogView2);
-//
-//                    dialog.show();
-//                }
-//            });
+                        //final LayoutInflater inflater2 = LayoutInflater.from(MapsActivity.this.getApplicationContext());
+
+                        final View dialogView2 = View.inflate(MapsActivity.this, R.layout.dialog_edit_name, null);
+
+                        com.google.android.material.textfield.TextInputEditText edtName = dialogView2.findViewById(R.id.edt_name);
+
+                        Button confirm = dialogView2.findViewById(R.id.btn_confirm);
+                        Log.e(TAG, "onClick: "+ tvName.getText().toString() + " " +getString(R.string.fuel));
+                        if (item.getType() == 1 && tvName.getText().toString().equals(getString(R.string.fuel))) {
+                            edtName.setText("");
+                        } else if (item.getType() == 2 && tvName.getText().toString().equals(getString(R.string.wc))) {
+                            edtName.setText("");
+                        } else {
+                            edtName.setText(tvName.getText().toString());
+                        }
+
+                        confirm.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                if (edtName.getText().toString().equals("")) {
+                                    Toast toast = Toast.makeText(MapsActivity.this, R.string.empty_name, Toast.LENGTH_LONG);
+                                    TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
+                                    tv.setTextColor(Color.RED);
+
+                                    toast.show();
+                                } else {
+                                    editName(edtName.getText().toString());
+                                    tvName.setText(edtName.getText().toString());
+                                    dialog.cancel();
+                                }
+                            }
+                        });
+
+                        dialog.setContentView(dialogView2);
+
+                        dialog.show();
+                    }
+                });
+            }
+
+            editNote.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Dialog dialog = new Dialog(MapsActivity.this);
+
+                    //final LayoutInflater inflater2 = LayoutInflater.from(MapsActivity.this.getApplicationContext());
+
+                    final View dialogView2 = View.inflate(MapsActivity.this,R.layout.dialog_edit_note ,null);
+
+                    com.google.android.material.textfield.TextInputEditText edtNote = dialogView2.findViewById(R.id.edt_note);
+
+                    Button confirm = dialogView2.findViewById(R.id.btn_confirm);
+
+                    if(!tvNote.getText().toString().equals(getString(R.string.no_note))) {
+                        edtNote.setText(tvNote.getText().toString());
+                    }
+
+                    confirm.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if(edtNote.getText().toString().equals("")){
+                                Toast toast = Toast.makeText(MapsActivity.this, R.string.empty_note, Toast.LENGTH_LONG);
+                                TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
+                                tv.setTextColor(Color.RED);
+
+                                toast.show();
+                            }
+                            else{
+                                editNote(edtNote.getText().toString());
+                                tvNote.setText(edtNote.getText().toString());
+                                dialog.cancel();
+                            }
+                        }
+                    });
+
+                    dialog.setContentView(dialogView2);
+
+                    dialog.show();
+                }
+            });
         }
 
 
@@ -604,12 +612,79 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mapFragment.getMapAsync(this);
     }
 
-    public void editAddress(String newAddress){
+    public void editName(String newName){
+        Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getServiceURL())
+                .addConverterFactory(GsonConverterFactory.create()).build();
+        final MapAPI tour = retro.create(MapAPI.class);
+        String type = "fuel";
+        if(item.getType() == 2){
+            type = "toilet";
+        }else if(item.getType() == 3){
+            type = "maintenance";
+        }
+        Call<ResponseBody> call = tour.updateServiceName(MyApplication.getInstance().getVersion(), item.getId(), newName, type);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if(response.code() == 200){
+                    final JSONObject jsonObject;
+                    try {
+                        jsonObject = new JSONObject(response.body().string());
+                        Log.e("", "onResponse create review: " + jsonObject.toString());
+                        item.setName(newName);
 
+                        data.putExtra("name", newName);
+                        setResult(RESULT_OK, data);
+
+
+                    }catch (Exception e){
+                        e.printStackTrace();}
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+            }
+        });
     }
 
     public void editNote(String newNote){
+        Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getServiceURL())
+                .addConverterFactory(GsonConverterFactory.create()).build();
+        final MapAPI tour = retro.create(MapAPI.class);
+        String type = "fuel";
+        if(item.getType() == 2){
+            type = "toilet";
+        }else if(item.getType() == 3){
+            type = "maintenance";
+        }else if(item.getType() == 4){
+            type = "atm";
+        }
+        Call<ResponseBody> call = tour.updateServiceNote(MyApplication.getInstance().getVersion(), item.getId(), newNote, type);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if(response.code() == 200){
+                    final JSONObject jsonObject;
+                    try {
+                        jsonObject = new JSONObject(response.body().string());
+                        Log.e("", "onResponse create review: " + jsonObject.toString());
+                        item.setNote(newNote);
 
+                        data.putExtra("note", newNote);
+                        setResult(RESULT_OK, data);
+
+                    }catch (Exception e){
+                    e.printStackTrace();}
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+            }
+        });
     }
 
 
@@ -1237,8 +1312,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
 
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+    protected void onActivityResult(int requestCode, int resultCode, Intent data2) {
+        super.onActivityResult(requestCode, resultCode, data2);
         try {
             if (requestCode == 1) {
 
@@ -1247,7 +1322,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 }
 
                 LinearLayout imgContainer= findViewById(R.id.img_holder);
-                if(null == data) {
+                if(null == data2) {
 //                    arrImg.clear();
 //                    paramMap.clear();
 //                    bodyMap.clear();
@@ -1255,7 +1330,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     //EditText edtSelectImg = findViewById(R.id.edt_select_img);
                     //edtSelectImg.setHint(R.string.select_img);
                 }else {
-                    if (data.getData() != null) {
+                    if (data2.getData() != null) {
 //                        arrImg.clear();
 //                        paramMap.clear();
 //                        bodyMap.clear();
@@ -1263,7 +1338,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 //                        //Uri mImageUri = data.getData();
 //                        fileName.clear();
 
-                        String path = ImageFilePath.getPath(MapsActivity.this, data.getData());
+                        String path = ImageFilePath.getPath(MapsActivity.this, data2.getData());
 
                         File file = new File(path);
 
@@ -1314,7 +1389,68 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                         Log.e("", "onResponse upload: " + jsonObject.toString());
 
                                         if (jsonObject.getBoolean("Status")) {
+                                            JSONObject jsonObject1 = jsonObject.getJSONObject("Paths");
+                                            String images = item.getImages();
+                                            for (int i = 0; i < jsonObject1.length(); i++) {
+                                                JSONObject jsonObject2 = jsonObject1.getJSONObject(f[i]);
+                                                if(!images.equals("")){
+                                                    images = images +";";
+                                                }
+                                                images = images + jsonObject2.getString("Message");
+                                            }
                                             findViewById(R.id.tv_no_img).setVisibility(View.GONE);
+
+                                            Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getDriverURL())
+                                                    .addConverterFactory(GsonConverterFactory.create()).build();
+                                            final MapAPI tour = retro.create(MapAPI.class);
+
+                                            String type = "fuel";
+                                            if(item.getType() == 2){
+                                                type = "toilet";
+                                            }else if(item.getType() == 3){
+                                                type = "maintenance";
+                                            }else if(item.getType() == 4){
+                                                type = "atm";
+                                            }
+
+                                            final String finalImage = images;
+
+                                            String[] split = images.split(";");
+
+                                            for(int i =0 ; i < split.length; i++) {
+                                                Log.e(TAG, "onResponse: " + split[i]);
+                                            }
+
+                                            Retrofit retro2 = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getServiceURL())
+                                                    .addConverterFactory(GsonConverterFactory.create()).build();
+                                            final MapAPI tour2 = retro2.create(MapAPI.class);
+                                            Call<ResponseBody> call3 = tour2.addServicePhotos(MyApplication.getInstance().getVersion(),item.getId(), split, type);
+                                            call3.enqueue(new Callback<ResponseBody>() {
+                                                @Override
+                                                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                                    if(response.code() == 200){
+                                                        final JSONObject jsonObject;
+                                                        try {
+                                                            jsonObject = new JSONObject(response.body().string());
+                                                            Log.e("", "onResponse create review: " + jsonObject.toString());
+
+                                                            data.putExtra("image", finalImage);
+                                                            setResult(RESULT_OK, data);
+
+                                                            item.setImages(finalImage);
+                                                        }catch (Exception e){
+                                                            e.printStackTrace();}
+                                                    }else{
+                                                        Log.e("", "onResponse create review: " + response.code());
+                                                    }
+                                                }
+
+                                                @Override
+                                                public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                                                }
+                                            });
+
                                         }
                                     }catch (Exception e){
                                         e.printStackTrace();
@@ -1332,13 +1468,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                         //bodyMap.put(generatedString+0, body);
                     } else {
-                        if (data.getClipData() != null) {
+                        if (data2.getClipData() != null) {
 //                            arrImg.clear();
 //                            paramMap.clear();
 //                            bodyMap.clear();
 //                            fileName.clear();
 
-                            ClipData mClipData = data.getClipData();
+                            ClipData mClipData = data2.getClipData();
 
                             //body.clear();
 
@@ -1402,10 +1538,62 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                         try {
                                             jsonObject = new JSONObject(response.body().string());
                                             Log.e("", "onResponse upload: " + jsonObject.toString());
-
-                                            if (jsonObject.getBoolean("Status")) {
-                                                findViewById(R.id.tv_no_img).setVisibility(View.GONE);
+                                            JSONObject jsonObject1 = jsonObject.getJSONObject("Paths");
+                                            String images = item.getImages();
+                                            for (int i = 0; i < jsonObject1.length(); i++) {
+                                                JSONObject jsonObject2 = jsonObject1.getJSONObject(f[i]);
+                                                if(!images.equals("")){
+                                                    images = images +";";
+                                                }
+                                                images = images + jsonObject2.getString("Message");
                                             }
+                                            findViewById(R.id.tv_no_img).setVisibility(View.GONE);
+
+                                            String type = "fuel";
+                                            if(item.getType() == 2){
+                                                type = "toilet";
+                                            }else if(item.getType() == 3){
+                                                type = "maintenance";
+                                            }else if(item.getType() == 4){
+                                                type = "atm";
+                                            }
+
+                                            final String finalImage = images;
+
+                                            String[] split = images.split(";");
+                                            Retrofit retro2 = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getServiceURL())
+                                                    .addConverterFactory(GsonConverterFactory.create()).build();
+                                            final MapAPI tour2 = retro2.create(MapAPI.class);
+
+                                            for(int i =0 ; i < split.length; i++) {
+                                                Log.e(TAG, "onResponse: " + split[i]);
+                                            }
+
+                                            Call<ResponseBody> call3 = tour2.addServicePhotos(MyApplication.getInstance().getVersion(),item.getId(), split, type);call3.enqueue(new Callback<ResponseBody>() {
+                                                @Override
+                                                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                                    if(response.code() == 200){
+                                                        final JSONObject jsonObject;
+                                                        try {
+                                                            jsonObject = new JSONObject(response.body().string());
+                                                            Log.e("", "onResponse create review: " + jsonObject.toString());
+
+                                                            data.putExtra("image", finalImage);
+                                                            setResult(RESULT_OK, data);
+
+                                                            item.setImages(finalImage);
+                                                        }catch (Exception e){
+                                                            e.printStackTrace();}
+                                                    }else{
+                                                        Log.e("", "onResponse create review: " + response.code());
+                                                    }
+                                                }
+
+                                                @Override
+                                                public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                                                }
+                                            });
                                         }catch (Exception e){
                                             e.printStackTrace();
                                         }
@@ -1490,7 +1678,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                         if (response.code() == 200) {
                                             try {
                                                 JSONObject jsonObject1 = new JSONObject(response.body().string());
-                                                Log.e("TAG", "onResponse updoot: " + jsonObject1.toString());
+                                                Log.e("TAG", "onResponse add updoot: " + jsonObject1.toString());
                                             } catch (Exception e) {
                                                 e.printStackTrace();
                                             }
@@ -1544,8 +1732,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                             }
 
                             Log.e(TAG, "onResponse: " + MyApplication.getInstance().getUpvoteMap());
-
-                            finish();
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -1648,7 +1834,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
                             }else{
-
                                 MyApplication.getInstance().getUpvoteMap().get(type).remove("upvote " + item.getId());
 
                                 Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getAuthURL())
@@ -1679,8 +1864,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                             }
 
                             Log.e(TAG, "onResponse: " + MyApplication.getInstance().getDownvoteMap());
-
-                            finish();
                         }
                     } catch (Exception e) {
                         e.printStackTrace();

@@ -46,7 +46,7 @@
     <string name="fix">Sửa xe</string>
     <string name="forgot_pass">Quên mật khẩu</string>
     <string name="forgotpass">Quên mật khẩu?</string>
-    <string name="fuel">Trạm xăng</string>
+    <string name="fuel">Trạm Xăng</string>
     <string name="go">Đi</string>
     <string name="history">Lịch sử</string>
     <string name="home">Trang chủ</string>
@@ -262,4 +262,6 @@
     <string name="contributed_locations">Đã đóng góp</string>
     <string name="reviewed_locations">Đã đánh giá</string>
     <string name="locations">địa điểm</string>
+    <string name="edt_name">Sửa tên</string>
+    <string name="empty_note">Ghi chú rỗng</string>
 </resources>

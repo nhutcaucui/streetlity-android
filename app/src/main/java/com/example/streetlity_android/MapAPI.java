@@ -22,6 +22,7 @@ import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.Part;
 import retrofit2.http.PartMap;
+import retrofit2.http.Path;
 import retrofit2.http.Query;
 import retrofit2.http.QueryMap;
 import retrofit2.http.Url;
@@ -387,4 +388,15 @@ public interface MapAPI {
     @GET("user/achievement/reputation")
     Call<ResponseBody> getReputation(@Query("id") String username);
 
+    @FormUrlEncoded
+    @POST("service/{service}/update")
+    Call<ResponseBody> updateServiceName(@Header("Version") String version, @Field("id") int id,@Field("name") String name, @Path("service") String service);
+
+    @FormUrlEncoded
+    @POST("service/{service}/update")
+    Call<ResponseBody> updateServiceNote(@Header("Version") String version, @Field("id") int id,@Field("note") String note, @Path("service") String service);
+
+    @FormUrlEncoded
+    @POST("service/{service}/update")
+    Call<ResponseBody> addServicePhotos(@Header("Version") String version, @Field("id") int id, @Field("images") String[] image, @Path("service") String service);
 }

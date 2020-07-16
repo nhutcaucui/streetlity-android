@@ -290,13 +290,13 @@ public class AllServiceMap extends AppCompatActivity implements GoogleMap.OnMark
 
                 adapter = new ReviewAdapter(this, R.layout.review_item, displayReviewItems);
 
-                getBank();
-
                 callMaintenance(latitude, longitude);
 
                 callFuel(latitude, longitude);
 
                 callWC(latitude, longitude);
+
+                getBank();
 
                 MarkerOptions curPositionMark = new MarkerOptions();
                 curPositionMark.position(new LatLng(latitude,longitude));

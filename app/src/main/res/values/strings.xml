@@ -281,4 +281,6 @@
     <string name="locations">locations</string>
     <string name="contributed_locations">Contributed</string>
     <string name="reviewed_locations">Reviewed</string>
+    <string name="edt_name">Edit name</string>
+    <string name="empty_note">Empty note</string>
 </resources>

@@ -15,12 +15,12 @@
             android:layout_height="wrap_content">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/edt_address"
+                android:id="@+id/edt_name"
                 android:layout_width="300dp"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="15dp"
                 android:layout_marginRight="15dp"
-                android:hint="@string/edit_address"
+                android:hint="@string/edt_name"
                 android:inputType="textMultiLine|textPersonName"
                 android:maxLines="5"
                 android:paddingLeft="5dp"

@@ -87,6 +87,7 @@
                         android:id="@+id/tv_name"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_weight="1"
                         android:paddingStart="5dp"
                         android:paddingTop="10dp"
                         android:paddingRight="20dp"
@@ -95,6 +96,18 @@
                         android:textColor="@color/black"
                         android:textSize="20sp"
                         android:textStyle="bold" />
+
+                    <ImageView
+                        android:id="@+id/btn_edit_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="32dp"
+                        android:layout_gravity="end|center_vertical"
+                        android:background="@drawable/button_background"
+                        android:clickable="true"
+                        android:foreground="?android:attr/selectableItemBackground"
+                        android:padding="5dp"
+                        android:src="@drawable/edit"
+                        android:visibility="visible" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -147,17 +160,6 @@
                         android:text="150 Đinh bộ lĩnh, something asd ad a kjahdjsdlsakjdlks ajd lak j"
                         android:textColor="@color/black" />
 
-                    <ImageView
-                        android:id="@+id/btn_edit_address"
-                        android:layout_width="wrap_content"
-                        android:layout_height="32dp"
-                        android:layout_gravity="end|center_vertical"
-                        android:background="@drawable/button_background"
-                        android:foreground="?android:attr/selectableItemBackground"
-                        android:padding="5dp"
-                        android:visibility="gone"
-                        android:src="@drawable/edit"
-                        android:clickable="true"/>
                 </LinearLayout>
 
             </LinearLayout>
@@ -431,9 +433,10 @@
                 android:layout_gravity="right"
                 android:layout_marginRight="15dp"
                 android:background="@drawable/button_background"
+                android:drawableStart="@drawable/add"
                 android:foreground="?android:attr/selectableItemBackground"
+                android:minWidth="0dp"
                 android:padding="5dp"
-                android:text="@string/leave_review"
                 android:textAllCaps="false"
                 android:textColor="#000"
                 android:visibility="invisible" />

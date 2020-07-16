@@ -958,35 +958,62 @@ jsonObject1.getString("Address"), (float) jsonObject1.getDouble("Lat"),
             int action = data.getIntExtra("action", -1);
             int index = data.getIntExtra("index", -1);
             int confident = data.getIntExtra("confident", -1);
-            displayItems.get(index).setConfident(confident);
-            if (action == 1) {
-                displayItems.get(index).setUpvoted(true);
-                displayItems.get(index).setDownvoted(false);
-                for (MapObject m : items) {
-                    if (m.getId() == displayItems.get(index).getId()) {
-                        m.setUpvoted(true);
-                        m.setDownvoted(false);
+            if(action != -1) {
+                displayItems.get(index).setConfident(confident);
+                if (action == 1) {
+                    displayItems.get(index).setUpvoted(true);
+                    displayItems.get(index).setDownvoted(false);
+                    for (MapObject m : items) {
+                        if (m.getId() == displayItems.get(index).getId()) {
+                            m.setUpvoted(true);
+                            m.setDownvoted(false);
+                        }
                     }
-                }
-            } else if (action == 2) {
-                displayItems.get(index).setUpvoted(false);
-                displayItems.get(index).setDownvoted(true);
-                for (MapObject m : items) {
-                    if (m.getId() == displayItems.get(index).getId()) {
-                        m.setUpvoted(false);
-                        m.setDownvoted(true);
+                } else if (action == 2) {
+                    displayItems.get(index).setUpvoted(false);
+                    displayItems.get(index).setDownvoted(true);
+                    for (MapObject m : items) {
+                        if (m.getId() == displayItems.get(index).getId()) {
+                            m.setUpvoted(false);
+                            m.setDownvoted(true);
+                        }
                     }
-                }
-            } else if (action == 3) {
-                displayItems.get(index).setUpvoted(false);
-                displayItems.get(index).setDownvoted(false);
-                for (MapObject m : items) {
-                    if (m.getId() == displayItems.get(index).getId()) {
-                        m.setUpvoted(false);
-                        m.setDownvoted(false);
+                } else if (action == 3) {
+                    displayItems.get(index).setUpvoted(false);
+                    displayItems.get(index).setDownvoted(false);
+                    for (MapObject m : items) {
+                        if (m.getId() == displayItems.get(index).getId()) {
+                            m.setUpvoted(false);
+                            m.setDownvoted(false);
+                        }
                     }
                 }
             }
+            if(data.hasExtra("name")){
+                displayItems.get(index).setName(data.getStringExtra("name"));
+                for (MapObject m : items) {
+                    if (m.getId() == displayItems.get(index).getId()) {
+                        m.setName(data.getStringExtra("name"));
+                    }
+                }
+            }
+            if(data.hasExtra("image")){
+                displayItems.get(index).setImages(data.getStringExtra("image"));
+                for (MapObject m : items) {
+                    if (m.getId() == displayItems.get(index).getId()) {
+                        m.setImages(data.getStringExtra("image"));
+                    }
+                }
+            }
+            if(data.hasExtra("note")){
+                displayItems.get(index).setNote(data.getStringExtra("note"));
+                for (MapObject m : items) {
+                    if (m.getId() == displayItems.get(index).getId()) {
+                        m.setNote(data.getStringExtra("note"));
+                    }
+                }
+            }
+            adapter.notifyDataSetChanged();
         }
     }
 
