@@ -103,8 +103,6 @@ public class BroadcastActivity extends AppCompatActivity {
 
             dialog = new Dialog(this);
 
-            final LayoutInflater inflater = LayoutInflater.from(this);
-
             final View dialogView = View.inflate(this ,R.layout.dialog_instruction_broadcast, null);
 
             Button btnUnderstand = dialogView.findViewById(R.id.btn_understand);

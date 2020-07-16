@@ -306,9 +306,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         if(!MyApplication.getInstance().getToken().equals("")){
             leaveReview.setVisibility(View.VISIBLE);
-            addPhoto.setVisibility(View.VISIBLE);
-            editNote.setVisibility(View.VISIBLE);
-            editAddress.setVisibility(View.VISIBLE);
+//            addPhoto.setVisibility(View.VISIBLE);
+//            editNote.setVisibility(View.VISIBLE);
+//            editAddress.setVisibility(View.VISIBLE);
             layoutVote.setVisibility(VISIBLE);
 
             TextView tvPoints = findViewById(R.id.tv_points);
@@ -414,16 +414,16 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 }
             });
 
-            addPhoto.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent();
-                    intent.setType("image/*");
-                    intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-                    intent.setAction(Intent.ACTION_GET_CONTENT);
-                    startActivityForResult(Intent.createChooser(intent,"Select Picture"), 1);
-                }
-            });
+//            addPhoto.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    Intent intent = new Intent();
+//                    intent.setType("image/*");
+//                    intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+//                    intent.setAction(Intent.ACTION_GET_CONTENT);
+//                    startActivityForResult(Intent.createChooser(intent,"Select Picture"), 1);
+//                }
+//            });
 
             leaveReview.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -467,81 +467,81 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 }
             });
 
-            editAddress.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Dialog dialog = new Dialog(MapsActivity.this);
+//            editAddress.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    Dialog dialog = new Dialog(MapsActivity.this);
+//
+//                    //final LayoutInflater inflater2 = LayoutInflater.from(MapsActivity.this.getApplicationContext());
+//
+//                    final View dialogView2 = View.inflate(MapsActivity.this,R.layout.dialog_edit_address ,null);
+//
+//                    com.google.android.material.textfield.TextInputEditText edtAddress = dialogView2.findViewById(R.id.edt_address);
+//
+//                    Button confirm = dialogView2.findViewById(R.id.btn_confirm);
+//
+//                    edtAddress.setText(tvAddress.getText().toString());
+//
+//                    confirm.setOnClickListener(new View.OnClickListener() {
+//                        @Override
+//                        public void onClick(View v) {
+//                            if(edtAddress.getText().toString().equals("")){
+//                                Toast toast = Toast.makeText(MapsActivity.this, R.string.empty_address, Toast.LENGTH_LONG);
+//                                TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
+//                                tv.setTextColor(Color.RED);
+//
+//                                toast.show();
+//                            }
+//                            else{
+//                                editAddress(edtAddress.getText().toString());
+//                                tvAddress.setText(edtAddress.getText().toString());
+//                                dialog.cancel();
+//                            }
+//                        }
+//                    });
+//
+//                    dialog.setContentView(dialogView2);
+//
+//                    dialog.show();
+//                }
+//            });
 
-                    //final LayoutInflater inflater2 = LayoutInflater.from(MapsActivity.this.getApplicationContext());
-
-                    final View dialogView2 = View.inflate(MapsActivity.this,R.layout.dialog_edit_address ,null);
-
-                    com.google.android.material.textfield.TextInputEditText edtAddress = dialogView2.findViewById(R.id.edt_address);
-
-                    Button confirm = dialogView2.findViewById(R.id.btn_confirm);
-
-                    edtAddress.setText(tvAddress.getText().toString());
-
-                    confirm.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            if(edtAddress.getText().toString().equals("")){
-                                Toast toast = Toast.makeText(MapsActivity.this, R.string.empty_address, Toast.LENGTH_LONG);
-                                TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
-                                tv.setTextColor(Color.RED);
-
-                                toast.show();
-                            }
-                            else{
-                                editAddress(edtAddress.getText().toString());
-                                tvAddress.setText(edtAddress.getText().toString());
-                                dialog.cancel();
-                            }
-                        }
-                    });
-
-                    dialog.setContentView(dialogView2);
-
-                    dialog.show();
-                }
-            });
-
-            editNote.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Dialog dialog = new Dialog(MapsActivity.this);
-
-                    //final LayoutInflater inflater2 = LayoutInflater.from(MapsActivity.this.getApplicationContext());
-
-                    final View dialogView2 = View.inflate(MapsActivity.this,R.layout.dialog_edit_note ,null);
-
-                    com.google.android.material.textfield.TextInputEditText edtNote = dialogView2.findViewById(R.id.edt_note);
-
-                    Button confirm = dialogView2.findViewById(R.id.btn_confirm);
-
-                    if(!tvNote.getText().toString().equals(getString(R.string.no_note))) {
-                        edtNote.setText(tvNote.getText().toString());
-                    }
-
-                    confirm.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            if(edtNote.getText().toString().equals("")){
-
-                            }
-                            else{
-                                editNote(edtNote.getText().toString());
-                                tvNote.setText(edtNote.getText().toString());
-                                dialog.cancel();
-                            }
-                        }
-                    });
-
-                    dialog.setContentView(dialogView2);
-
-                    dialog.show();
-                }
-            });
+//            editNote.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    Dialog dialog = new Dialog(MapsActivity.this);
+//
+//                    //final LayoutInflater inflater2 = LayoutInflater.from(MapsActivity.this.getApplicationContext());
+//
+//                    final View dialogView2 = View.inflate(MapsActivity.this,R.layout.dialog_edit_note ,null);
+//
+//                    com.google.android.material.textfield.TextInputEditText edtNote = dialogView2.findViewById(R.id.edt_note);
+//
+//                    Button confirm = dialogView2.findViewById(R.id.btn_confirm);
+//
+//                    if(!tvNote.getText().toString().equals(getString(R.string.no_note))) {
+//                        edtNote.setText(tvNote.getText().toString());
+//                    }
+//
+//                    confirm.setOnClickListener(new View.OnClickListener() {
+//                        @Override
+//                        public void onClick(View v) {
+//                            if(edtNote.getText().toString().equals("")){
+//
+//                            }
+//                            else{
+//                                editNote(edtNote.getText().toString());
+//                                tvNote.setText(edtNote.getText().toString());
+//                                dialog.cancel();
+//                            }
+//                        }
+//                    });
+//
+//                    dialog.setContentView(dialogView2);
+//
+//                    dialog.show();
+//                }
+//            });
         }
 
 
