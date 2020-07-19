@@ -10,7 +10,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:588301906057:android:22cef6744d490d7fbd5658",
         "android_client_info": {
-          "package_name": "com.example.streetlity_android"
+          "package_name": "com.streetlity.client"
         }
       },
       "oauth_client": [

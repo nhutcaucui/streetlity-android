@@ -1,0 +1,49 @@
+package com.streetlity.client.User;
+
+import android.content.Context;
+import android.os.Bundle;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+
+import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
+
+import com.streetlity.client.R;
+import com.google.android.material.textfield.TextInputEditText;
+
+public class ChangePassword extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_change_password);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle("");
+
+        Button btnChange = findViewById(R.id.btn_change_pass);
+        TextInputEditText edtOld = findViewById(R.id.edt_old_pass);
+        TextInputEditText edtNew = findViewById(R.id.edt_new_pass);
+        TextInputEditText edtCF = findViewById(R.id.edt_cf_new_pass);
+    }
+
+    public boolean onOptionsItemSelected(MenuItem item){
+        this.finish();
+
+        return true;
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        if (getCurrentFocus() != null) {
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+        }
+        return super.dispatchTouchEvent(ev);
+    }
+}

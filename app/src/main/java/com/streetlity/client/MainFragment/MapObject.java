@@ -1,0 +1,151 @@
+package com.streetlity.client.MainFragment;
+
+import java.io.Serializable;
+
+public class MapObject implements Serializable {
+
+    int id;
+    String name;
+    float rating;
+    String address;
+    float lat;
+    float lon;
+    String note;
+    float distance;
+    int type; //1=fuel; 2=wc; 3=mainte; 4=atm
+    int bankId;
+    String images;
+    String contributor;
+    boolean upvoted;
+    boolean downvoted;
+    int confident;
+
+    public MapObject(int id, String name, float rating, String address, float lat, float lon, String note, int type) {
+        this.id = id;
+        this.name = name;
+        this.rating = rating;
+        this.address = address;
+        this.lat = lat;
+        this.lon = lon;
+        this.note = note;
+        this.type = type;
+    }
+
+    public MapObject(){}
+
+    public int getId() {
+        return id;
+    }
+
+    public float getLat() {
+        return lat;
+    }
+
+    public float getLon() {
+        return lon;
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setLat(float lat) {
+        this.lat = lat;
+    }
+
+    public void setLon(float lon) {
+        this.lon = lon;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
+    }
+
+    public void setDistance(float distance) {
+        this.distance = distance;
+    }
+
+    public float getDistance() {
+        return distance;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setRating(float rating) {
+        this.rating = rating;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public float getRating() {
+        return rating;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public void setBankId(int bankId) {
+        this.bankId = bankId;
+    }
+
+    public int getBankId() {
+        return bankId;
+    }
+
+    public void setImages(String images) {
+        this.images = images;
+    }
+
+    public String getImages() {
+        return images;
+    }
+
+    public void setContributor(String contributor) {
+        this.contributor = contributor;
+    }
+
+    public String getContributor() {
+        return contributor;
+    }
+
+    public void setUpvoted(boolean upvoted) {
+        this.upvoted = upvoted;
+    }
+
+    public boolean isUpvoted() {
+        return upvoted;
+    }
+
+    public void setDownvoted(boolean downvoted) {
+        this.downvoted = downvoted;
+    }
+
+    public boolean isDownvoted() {
+        return downvoted;
+    }
+
+    public int getConfident() {
+        return confident;
+    }
+
+    public void setConfident(int confident) {
+        this.confident = confident;
+    }
+}

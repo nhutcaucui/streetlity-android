@@ -288,7 +288,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
-                <com.example.streetlity_android.Util.BottomSheetListView
+                <com.streetlity.client.Util.BottomSheetListView
                     android:id="@+id/lv_review"
                     android:layout_width="match_parent"
                     android:layout_height="150dp"

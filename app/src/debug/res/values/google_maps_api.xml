@@ -4,7 +4,7 @@
 
     To get one, follow this link, follow the directions and press "Create" at the end:
 
-    https://console.developers.google.com/flows/enableapi?apiid=maps_android_backend&keyType=CLIENT_SIDE_ANDROID&r=2C:63:64:C4:26:7E:7B:15:2B:EE:FE:1A:94:F3:8C:13:57:65:DD:EA%3Bcom.example.streetlity_android
+    https://console.developers.google.com/flows/enableapi?apiid=maps_android_backend&keyType=CLIENT_SIDE_ANDROID&r=2C:63:64:C4:26:7E:7B:15:2B:EE:FE:1A:94:F3:8C:13:57:65:DD:EA%3Bcom.streetlity.client
 
     You can also add your credentials to an existing key, using these values:
 

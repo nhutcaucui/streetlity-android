@@ -54,7 +54,7 @@
                 android:textSize="18sp"
                 android:visibility="gone" />
 
-            <com.example.streetlity_android.Util.BottomSheetListView
+            <com.streetlity.client.Util.BottomSheetListView
                 android:id="@+id/lv_search"
                 android:layout_width="match_parent"
                 android:layout_height="300dp" />

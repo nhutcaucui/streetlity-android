@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.streetlity_android">
+    package="com.streetlity.client">
 
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
@@ -15,7 +15,7 @@
     <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
-        android:name=".MyApplication"
+        android:name="com.streetlity.client.MyApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -24,45 +24,45 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <service
-            android:name=".UpdateLocationService"
+            android:name="com.streetlity.client.UpdateLocationService"
             android:exported="false"/>
 
         <activity
-            android:name=".Achievement.AchievementOther"
+            android:name="com.streetlity.client.Achievement.AchievementOther"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".MaintainerDirection"
+            android:name="com.streetlity.client.MaintainerDirection"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".BroadcastEmergencyActivity"
+            android:name="com.streetlity.client.BroadcastEmergencyActivity"
             android:label="@string/find_maintainer"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".Option.Options"
+            android:name="com.streetlity.client.Option.Options"
             android:label="@string/title_activity_options"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".Achievement.Achievement"
+            android:name="com.streetlity.client.Achievement.Achievement"
             android:label="@string/achievement"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".MapsActivityConfirmation"
+            android:name="com.streetlity.client.MapsActivityConfirmation"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".AllServiceMap"
+            android:name="com.streetlity.client.AllServiceMap"
             android:label="@string/title_activity_all_service_map"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".Chat.Chat"
+            android:name="com.streetlity.client.Chat.Chat"
             android:label="@string/title_activity_chat"
-            android:parentActivityName=".MaintainerLocation"
+            android:parentActivityName="com.streetlity.client.MaintainerLocation"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="adjustResize">
@@ -73,40 +73,40 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".User.Common.MyOrders"
+            android:name="com.streetlity.client.User.Common.MyOrders"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".User.UserInfoOther"
+            android:name="com.streetlity.client.User.UserInfoOther"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".MaintainerLocation"
+            android:name="com.streetlity.client.MaintainerLocation"
             android:label="@string/title_activity_maintainer_location"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".AboutUs"
+            android:name="com.streetlity.client.AboutUs"
             android:label="@string/title_activity_about_us"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".Notification.Notification"
+            android:name="com.streetlity.client.Notification.Notification"
             android:label="@string/notifications"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".Contribution.AddSuccess"
+            android:name="com.streetlity.client.Contribution.AddSuccess"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".BroadcastActivity"
+            android:name="com.streetlity.client.BroadcastActivity"
             android:label="@string/title_activity_broadcast"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".MainNavigationHolder"
+            android:name="com.streetlity.client.MainNavigationHolder"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
@@ -118,7 +118,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".User.Maintainer.OrderInfo"
+            android:name="com.streetlity.client.User.Maintainer.OrderInfo"
             android:label="@string/title_activity_order_info"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
@@ -130,43 +130,43 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".MapsActivity"
+            android:name="com.streetlity.client.MapsActivity"
             android:label="@string/find_direction"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".User.Maintainer.Works"
+            android:name="com.streetlity.client.User.Maintainer.Works"
             android:label="@string/title_activity_works"
-            android:parentActivityName=".MainNavigationHolder"
+            android:parentActivityName="com.streetlity.client.MainNavigationHolder"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".User.EditProfile"
+            android:name="com.streetlity.client.User.EditProfile"
             android:label="@string/title_activity_edit_profile"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".User.SignupAsMaintainer"
+            android:name="com.streetlity.client.User.SignupAsMaintainer"
             android:label="@string/signup_as_maintain"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".User.ForgotPassword"
+            android:name="com.streetlity.client.User.ForgotPassword"
             android:label="@string/title_activity_forgot_password"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".User.ChangePassword"
+            android:name="com.streetlity.client.User.ChangePassword"
             android:label="@string/change_password"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".User.UserInfo"
+            android:name="com.streetlity.client.User.UserInfo"
             android:label="@string/user_info"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
@@ -184,18 +184,18 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".Contribution.ConfirmLocationsHolder"
+            android:name="com.streetlity.client.Contribution.ConfirmLocationsHolder"
             android:label="@string/location_confirm_activity_label"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".User.SignUp"
+            android:name="com.streetlity.client.User.SignUp"
             android:label="@string/signup"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".User.Login"
+            android:name="com.streetlity.client.User.Login"
             android:label="@string/login"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
@@ -207,12 +207,12 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".BankSelection"
+            android:name="com.streetlity.client.BankSelection"
             android:label="@string/title_activity_bank_selection"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".MapNavigationHolder"
+            android:name="com.streetlity.client.MapNavigationHolder"
             android:label="@string/title_activity_service_selection"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
@@ -223,45 +223,45 @@
             android:screenOrientation="portrait" />
 
         <activity
-            android:name=".Contribution.ContributeToService"
+            android:name="com.streetlity.client.Contribution.ContributeToService"
             android:label="@string/title_activity_contribute"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".Contribution.SelectFromMap"
+            android:name="com.streetlity.client.Contribution.SelectFromMap"
             android:label="@string/title_activity_select_from_map"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".Contribution.AddAMaintenance"
+            android:name="com.streetlity.client.Contribution.AddAMaintenance"
             android:label="@string/title_activity_add_maintenance"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="adjustResize|stateHidden" />
         <activity
-            android:name=".Contribution.AddAnATM"
+            android:name="com.streetlity.client.Contribution.AddAnATM"
             android:label="@string/title_activity_add_atm"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".MainActivity"
+            android:name="com.streetlity.client.MainActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="adjustResize" />
 
         <service
-            android:name=".Firebase.StreetlityFirebaseMessagingService"
+            android:name="com.streetlity.client.Firebase.StreetlityFirebaseMessagingService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
         <service
-            android:name=".ServiceChecking"
+            android:name="com.streetlity.client.ServiceChecking"
             android:enabled="true"
             android:exported="false"
             android:stopWithTask="false" />
