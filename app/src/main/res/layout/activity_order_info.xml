@@ -89,7 +89,7 @@
                 android:layout_height="wrap_content"
                 android:paddingLeft="15dp"
                 android:paddingRight="15dp"
-                android:text="sadddddddddddddddddddddddddddddddddddddd ajkdsaa hkajhakjahkjahskjdhakjdhakjdhkjd ahjk sahk jah dkj hakjdddddddddd"
+                android:text="nhutcaucui"
                 android:textColor="#000" />
 
             <TextView
@@ -109,7 +109,7 @@
                 android:layout_height="wrap_content"
                 android:paddingLeft="15dp"
                 android:paddingRight="15dp"
-                android:text="sadddddddddddddddddddddddddddddddddddddd ajkdsaa hkajhakjahkjahskjdhakjdhakjdhkjd ahjk sahk jah dkj hakjdddddddddd"
+                android:text="Xe hư"
                 android:textColor="#000" />
 
             <TextView
@@ -129,7 +129,7 @@
                 android:layout_height="wrap_content"
                 android:paddingLeft="15dp"
                 android:paddingRight="15dp"
-                android:text="sadddddddddddddddddddddddddddddddddddddd ajkdsaa hkajhakjahkjahskjdhakjdhakjdhkjd ahjk sahk jah dkj hakjdddddddddd"
+                android:text="0123456789"
                 android:textColor="#000" />
 
             <TextView
@@ -149,7 +149,7 @@
                 android:layout_height="wrap_content"
                 android:paddingLeft="15dp"
                 android:paddingRight="15dp"
-                android:text="sadddddddddddddddddddddddddddddddddddddd ajkdsaa hkajhakjahkjahskjdhakjdhakjdhkjd ahjk sahk jah dkj hakjdddddddddd"
+                android:text="Có vẻ như là xe chết máy"
                 android:textColor="#000" />
         </LinearLayout>
     </ScrollView>
