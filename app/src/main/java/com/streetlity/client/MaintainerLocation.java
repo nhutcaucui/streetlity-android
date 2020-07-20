@@ -250,7 +250,20 @@ public class MaintainerLocation extends AppCompatActivity implements OnMapReadyC
 
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+
+        if (ContextCompat.checkSelfPermission(MaintainerLocation.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
+                ContextCompat.checkSelfPermission(MaintainerLocation.this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            locationManager = (LocationManager)
+                    MaintainerLocation.this.getSystemService(Context.LOCATION_SERVICE);
+
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 1000, this);
+        }
+
         socket = MaintenanceOrder.getInstance();
+
+        if(socket == null){
+            return;
+        }
 
         socket.LocationListener = new com.streetlity.client.RealtimeService.LocationListener<MaintenanceOrder>() {
             @Override
@@ -267,13 +280,6 @@ public class MaintainerLocation extends AppCompatActivity implements OnMapReadyC
             }
         };
 
-        if (ContextCompat.checkSelfPermission(MaintainerLocation.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
-                ContextCompat.checkSelfPermission(MaintainerLocation.this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            locationManager = (LocationManager)
-                    MaintainerLocation.this.getSystemService(Context.LOCATION_SERVICE);
-
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 1000, this);
-        }
 
         String phone2 = "";
         if (getSharedPreferences("broadcastPhone", MODE_PRIVATE).contains("phone")) {
@@ -358,7 +364,11 @@ public class MaintainerLocation extends AppCompatActivity implements OnMapReadyC
     public void onResume(){
         super.onResume();
 
+
         socket = MaintenanceOrder.getInstance();
+        if(socket == null){
+            return;
+        }
         //socket.join();
         final TextView tvPhone = findViewById(R.id.tv_phone);
         final TextView tvName = findViewById(R.id.tv_name);

@@ -306,10 +306,16 @@ common user find repairman's location on the map
     public void onResume(){
         super.onResume();
 
+
         /*
         connect to socket and override the listeners
          */
         socket = MaintenanceOrder.getInstance();
+
+        if(socket == null){
+            return;
+        }
+
         final TextView tvPhone = findViewById(R.id.tv_phone);
         final TextView tvName = findViewById(R.id.tv_name);
 

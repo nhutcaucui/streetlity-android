@@ -61,25 +61,26 @@ public class StreetlityFirebaseMessagingService extends FirebaseMessagingService
 
         if(intentName.equals("MaintenanceAcceptNotification")){
             LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+            return;
         }
 
-        String channelId = "Default";
-        NotificationCompat.Builder builder = new  NotificationCompat.Builder(this, channelId)
-                .setSmallIcon(R.mipmap.ic_launcher)
-                .setContentTitle(remoteMessage.getNotification().getTitle())
-                .setContentText(remoteMessage.getNotification().getBody()).setAutoCancel(true).setContentIntent(pendingIntent)
-                .setPriority(NotificationManager.IMPORTANCE_HIGH)
-                .setDefaults(NotificationCompat.DEFAULT_ALL)
-                //.setDefaults(NotificationCompat.DEFAULT_VIBRATE)
-                .setVibrate(new long[] {1000,1000,1000,1000,1000})
-                .setPriority(NotificationCompat.PRIORITY_MAX)
-                .setSound(alarmSound);
-        NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel channel = new NotificationChannel(channelId, "Default channel", NotificationManager.IMPORTANCE_HIGH);
-            manager.createNotificationChannel(channel);
-        }
-        manager.notify(0, builder.build());
+            String channelId = "Default";
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(this, channelId)
+                    .setSmallIcon(R.mipmap.ic_launcher)
+                    .setContentTitle(remoteMessage.getNotification().getTitle())
+                    .setContentText(remoteMessage.getNotification().getBody()).setAutoCancel(true).setContentIntent(pendingIntent)
+                    .setPriority(NotificationManager.IMPORTANCE_HIGH)
+                    .setDefaults(NotificationCompat.DEFAULT_ALL)
+                    //.setDefaults(NotificationCompat.DEFAULT_VIBRATE)
+                    .setVibrate(new long[]{1000, 1000, 1000, 1000, 1000})
+                    .setPriority(NotificationCompat.PRIORITY_MAX)
+                    .setSound(alarmSound);
+            NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                NotificationChannel channel = new NotificationChannel(channelId, "Default channel", NotificationManager.IMPORTANCE_HIGH);
+                manager.createNotificationChannel(channel);
+            }
+            manager.notify(0, builder.build());
 //        try {
 //            Map<String, String> data = remoteMessage.getData();
 //            //Log.e(TAG, "onMessageReceived: " + data);

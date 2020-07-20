@@ -2,14 +2,6 @@ apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
 
 android {
-    signingConfigs {
-        debug {
-            storeFile file('D:\\keystoreshit\\streetlity_keystore.jks')
-            storePassword '0985399536'
-            keyAlias 'streetlity_key'
-            keyPassword 'streetlity'
-        }
-    }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8

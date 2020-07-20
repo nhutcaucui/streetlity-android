@@ -319,12 +319,12 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
                     MyApplication.getInstance().getOption().setAcceptEmergency(false);
                 }
 
-                LinearLayout btnBroadcast = findViewById(R.id.btn_broadcast);
+                ConstraintLayout btnBroadcast = findViewById(R.id.layoutbroadcast);
                 if (btnBroadcast != null) {
                     btnBroadcast.setVisibility(View.GONE);
                 }
 
-                LinearLayout btnBroadcastE = findViewById(R.id.btn_emergency);
+                ConstraintLayout btnBroadcastE = findViewById(R.id.layoutemergency);
                 if (btnBroadcastE != null) {
                     btnBroadcastE.setVisibility(View.GONE);
                 }
@@ -641,12 +641,12 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
                 if user is repairman, hide the find repairman options
                  */
                 if(MyApplication.getInstance().getUserType() == 7) {
-                    LinearLayout btnBroadcast = findViewById(R.id.btn_broadcast);
+                    ConstraintLayout btnBroadcast = findViewById(R.id.layoutbroadcast);
                     if (btnBroadcast != null) {
                         btnBroadcast.setVisibility(View.GONE);
                     }
 
-                    LinearLayout btnBroadcastE = findViewById(R.id.btn_emergency);
+                    ConstraintLayout btnBroadcastE = findViewById(R.id.layoutemergency);
                     if (btnBroadcastE != null) {
                         btnBroadcastE.setVisibility(View.GONE);
                     }
@@ -988,20 +988,20 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
 
                             setDrawerForNonUser(navView);
 
-//                            LinearLayout btnBroadcast = findViewById(R.id.btn_broadcast);
-//                            if(btnBroadcast != null){
-//                                btnBroadcast.setVisibility(View.GONE);
-//                            }
-//
-//                            LinearLayout btnBroadcastE = findViewById(R.id.btn_emergency);
-//                            if(btnBroadcastE != null){
-//                                btnBroadcastE.setVisibility(View.GONE);
-//                            }
+                            ConstraintLayout btnBroadcast = findViewById(R.id.layoutbroadcast);
+                            if (btnBroadcast != null) {
+                                btnBroadcast.setVisibility(VISIBLE);
+                            }
 
-//                            FloatingActionButton fab = findViewById(R.id.fab_broadcast);
-//                            if(fab != null){
-//                                fab.hide();
-//                            }
+                            ConstraintLayout btnBroadcastE = findViewById(R.id.layoutemergency);
+                            if (btnBroadcastE != null) {
+                                btnBroadcastE.setVisibility(VISIBLE);
+                            }
+
+                            FloatingActionButton floatingActionButton = findViewById(R.id.fab_broadcast);
+                            if(floatingActionButton!= null){
+                                floatingActionButton.show();
+                            }
 
                             layoutTop.setVisibility(View.GONE);
                             Toast toast = Toast.makeText(MainNavigationHolder.this, R.string.logged_out, Toast.LENGTH_LONG);

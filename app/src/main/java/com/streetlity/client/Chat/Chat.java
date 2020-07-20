@@ -29,6 +29,7 @@ import androidx.core.content.ContextCompat;
 import android.os.CountDownTimer;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -97,7 +98,7 @@ public class Chat extends AppCompatActivity implements android.location.Location
         } else {
             room = s.getString("room", "noroom");
         }
-        s.edit().clear().apply();
+
         String phone = "";
         if (getSharedPreferences("broadcastPhone", MODE_PRIVATE).contains("phone")) {
             phone = getSharedPreferences("broadcastPhone", MODE_PRIVATE).getString("phone", "no");
@@ -106,11 +107,33 @@ public class Chat extends AppCompatActivity implements android.location.Location
             phone = MyApplication.getInstance().getPhone();
         }
 
+        final String fPhone = phone;
+
         //Log.e("", "onCreate: " + room);
 
         MaintenanceOrder.Create(room);
 
         socket = MaintenanceOrder.getInstance();
+
+        TextInputEditText edtMessage = findViewById(R.id.edt_body);
+
+        ImageButton imgBtnSend = findViewById(R.id.btn_send);
+        imgBtnSend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!edtMessage.getText().toString().equals("")) {
+
+                    //Log.e("", "onClick: " + edtMessage.getText().toString());
+                    ChatObject object = new ChatObject(MyApplication.getInstance().getUsername(), edtMessage.getText().toString(), new Date());
+                    socket.sendMessage(object);
+                    items.add(object);
+                    adapter.notifyDataSetChanged();
+                    lv.setSelection(adapter.getCount() - 1);
+                    edtMessage.setText("");
+
+                }
+            }
+        });
 
         socket.InformationListener = new InformationListener<MaintenanceOrder>() {
             @Override
@@ -125,10 +148,6 @@ public class Chat extends AppCompatActivity implements android.location.Location
 
             }
         };
-        Information myInfo = new Information(MyApplication.getInstance().getUsername(), phone);
-
-        socket.sendInformation(myInfo);
-        socket.pullInformation();
 
         socket.CompleteListener = new Listener<MaintenanceOrder>() {
             @Override
@@ -210,6 +229,13 @@ public class Chat extends AppCompatActivity implements android.location.Location
                         layoutLoading.setVisibility(GONE);
                         sender.pullChat();
 
+                        Log.e("", "run: joined");
+
+                        Information myInfo = new Information(MyApplication.getInstance().getUsername(), fPhone);
+
+                        sender.sendInformation(myInfo);
+                        sender.pullInformation();
+
                         new CountDownTimer(5000,1000){
                             public void onTick(long millisUntilFinished) {
                                 //here you can have your logic to set text to edittext
@@ -226,26 +252,6 @@ public class Chat extends AppCompatActivity implements android.location.Location
         };
 
         socket.join();
-
-        TextInputEditText edtMessage = findViewById(R.id.edt_body);
-
-        ImageButton imgBtnSend = findViewById(R.id.btn_send);
-        imgBtnSend.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!edtMessage.getText().toString().equals("")) {
-
-                    //Log.e("", "onClick: " + edtMessage.getText().toString());
-                    ChatObject object = new ChatObject(MyApplication.getInstance().getUsername(), edtMessage.getText().toString(), new Date());
-                    socket.sendMessage(object);
-                    items.add(object);
-                    adapter.notifyDataSetChanged();
-                    lv.setSelection(adapter.getCount() - 1);
-                    edtMessage.setText("");
-
-                }
-            }
-        });
 
         edtMessage.addTextChangedListener(new TextWatcher() {
             @Override
