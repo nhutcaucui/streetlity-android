@@ -118,7 +118,7 @@ public interface MapAPI {
     @FormUrlEncoded
     @POST("service/maintenance/create")
     Call<ResponseBody> addMaintenance(@Header("Version") String version, @Header("Auth") String token,@Field("location") float lat, @Field("location" )float lon,
-                                      @Field("address") String address, @Field("name") String name, @Field("note") String note);
+                                      @Field("address") String address, @Field("name") String name, @Field("images") String[] images, @Field("note") String note);
 
     @GET("json")
     Call<ResponseBody> geocode(@Query("address") String address, @Query("key") String key);

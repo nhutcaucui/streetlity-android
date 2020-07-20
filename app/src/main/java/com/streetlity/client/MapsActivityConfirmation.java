@@ -286,7 +286,8 @@ public class MapsActivityConfirmation extends AppCompatActivity implements OnMap
         stars.getDrawable(0).setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP);
         stars.getDrawable(1).setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP);
 
-        LinearLayout imgContainer = findViewById(R.id.layout_container);
+        LinearLayout imgContainer;
+        imgContainer = findViewById(R.id.img_holder);
         addImages(imgContainer);
 
         LinearLayout peekLayout = findViewById(R.id.layout_peek);
@@ -403,6 +404,7 @@ public class MapsActivityConfirmation extends AppCompatActivity implements OnMap
      * @param imgContainer
      */
     public void addImages(LinearLayout imgContainer) {
+
         ProgressBar loading = findViewById(R.id.loading_img);
         loading.setVisibility(View.VISIBLE);
         if (!item.getImages().equals("")) {

@@ -41,6 +41,7 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.streetlity.client.Achievement.ActionObject;
 import com.streetlity.client.MainFragment.MapObject;
 import com.streetlity.client.MainFragment.MapObjectAdapter;
@@ -303,6 +304,9 @@ public class MaintenanceFragment extends Fragment implements LocationListener, O
                 nothingFound.setVisibility(View.GONE);
             }
         });
+
+        FloatingActionButton fab = rootView.findViewById(R.id.fab_broadcast);
+        fab.hide();
 
         return rootView;
     }

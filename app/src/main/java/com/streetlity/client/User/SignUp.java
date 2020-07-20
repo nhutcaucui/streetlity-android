@@ -1033,7 +1033,7 @@ public class SignUp extends AppCompatActivity implements OnMapReadyCallback, Goo
                                     mImages[i] = jsonObject2.getString("Message");
                                 }
 
-                                Call<ResponseBody> call1 = tour.addMaintenance(MyApplication.getInstance().getVersion(),token,(float) mLat,(float) mLon, mAddress, mName, mNote);
+                                Call<ResponseBody> call1 = tour.addMaintenance(MyApplication.getInstance().getVersion(),token,(float) mLat,(float) mLon, mAddress, mName, mImages,mNote);
 
                                 call1.enqueue(new Callback<ResponseBody>() {
                                     @Override
@@ -1134,7 +1134,7 @@ public class SignUp extends AppCompatActivity implements OnMapReadyCallback, Goo
         }
         else{
             mImages=new String[0];
-            Call<ResponseBody> call = tour.addMaintenance(MyApplication.getInstance().getVersion(),token,(float) mLat,(float) mLon, mAddress, mName, mNote);
+            Call<ResponseBody> call = tour.addMaintenance(MyApplication.getInstance().getVersion(),token,(float) mLat,(float) mLon, mAddress, mName,mImages,mNote);
 
             call.enqueue(new Callback<ResponseBody>() {
                 @Override

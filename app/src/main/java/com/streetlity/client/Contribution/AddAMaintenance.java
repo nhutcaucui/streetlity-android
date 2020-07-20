@@ -16,6 +16,7 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -135,13 +136,13 @@ public class AddAMaintenance extends AppCompatActivity implements OnMapReadyCall
                         if(response.code() == 200){
                             try{
                                 JSONObject jsonObject1 = new JSONObject(response.body().string());
-                                //Log.e("TAG", "onResponse: " + jsonObject1.toString() );
+                                Log.e("TAG", "onResponse: " + jsonObject1.toString() );
 
                             }catch (Exception e){
                                 e.printStackTrace();
                             }
                         }else{
-                            //Log.e(TAG, "onResponse: "+response.code() );
+                            Log.e("", "onResponse: "+response.code() );
                         }
                     }
 
@@ -268,13 +269,13 @@ public class AddAMaintenance extends AppCompatActivity implements OnMapReadyCall
             Location location = locationManager.getLastKnownLocation(locationManager
                     .GPS_PROVIDER);
             if(location == null){
-                //Log.e("", "onMapReady: MULL");
+                Log.e("", "onMapReady: MULL");
             }else {
                 latitude = location.getLatitude();
                 longitude = location.getLongitude();
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude, longitude), 15f));
             }
-            //Log.e("", "onMapReady: " + latitude+" , " + longitude );
+            Log.e("", "onMapReady: " + latitude+" , " + longitude );
         }
 
 
@@ -318,7 +319,7 @@ public class AddAMaintenance extends AppCompatActivity implements OnMapReadyCall
                     JSONArray jsonArray;
                     try {
                         jsonObject = new JSONObject(response.body().string());
-                        //Log.e("", "onResponse: " + jsonObject.toString());
+                        Log.e("", "onResponse: " + jsonObject.toString());
 
                         if(jsonObject.getString("status").equals("ZERO_RESULTS")){
                             Toast toast = Toast.makeText(AddAMaintenance.this, R.string.address_not_found, Toast.LENGTH_LONG);
@@ -356,8 +357,8 @@ public class AddAMaintenance extends AppCompatActivity implements OnMapReadyCall
                 }
                 else{
                     try {
-                        //Log.e(", ",response.errorBody().toString() + response.code());
-                        //Log.e("", "onResponse: " + response.errorBody());
+                        Log.e(", ",response.errorBody().toString() + response.code());
+                        Log.e("", "onResponse: " + response.errorBody());
 
                     }catch (Exception e){
                         e.printStackTrace();
@@ -384,7 +385,7 @@ public class AddAMaintenance extends AppCompatActivity implements OnMapReadyCall
 
         String token = MyApplication.getInstance().getToken();
 
-        //Log.e("", "addATM: "+ mNote+"-"+mLat+"-"+mLon+"-"+mName+"-"+mAddress);
+        Log.e("", "addATM: "+ mNote+"-"+mLat+"-"+mLon+"-"+mName+"-"+mAddress);
 
         if(hasImg){
             String[] f = new String[paramMap.size()];
@@ -400,7 +401,7 @@ public class AddAMaintenance extends AppCompatActivity implements OnMapReadyCall
                         final JSONObject jsonObject;
                         try {
                             jsonObject = new JSONObject(response.body().string());
-                            //Log.e("", "onResponse: " + jsonObject.toString());
+                            Log.e("", "onResponse: " + jsonObject.toString());
 
                             if (jsonObject.getBoolean("Status")) {
                                 JSONObject jsonObject1 = jsonObject.getJSONObject("Paths");
@@ -410,7 +411,7 @@ public class AddAMaintenance extends AppCompatActivity implements OnMapReadyCall
                                     mImages[i] = jsonObject2.getString("Message");
                                 }
 
-                                Call<ResponseBody> call1 = tour.addMaintenance(MyApplication.getInstance().getVersion(),token,(float) mLat,(float) mLon, mAddress, mName, mNote);
+                                Call<ResponseBody> call1 = tour.addMaintenance(MyApplication.getInstance().getVersion(),token,(float) mLat,(float) mLon, mAddress, mName, mImages, mNote);
 
                                 call1.enqueue(new Callback<ResponseBody>() {
                                     @Override
@@ -420,7 +421,7 @@ public class AddAMaintenance extends AppCompatActivity implements OnMapReadyCall
                                             JSONArray jsonArray;
                                             try {
                                                 jsonObject = new JSONObject(response.body().string());
-                                                //Log.e("", "onResponse: " + jsonObject.toString());
+                                                Log.e("", "onResponse: " + jsonObject.toString());
                                                 if(jsonObject.getBoolean("Status")) {
                                                     btnNext.setText(R.string.finish);
 
@@ -449,7 +450,7 @@ public class AddAMaintenance extends AppCompatActivity implements OnMapReadyCall
                                                         MyApplication.getInstance().getContributeMap().put("Maintenance", map);
                                                     }
 
-                                                    //Log.e(TAG, "onResponse: " + MyApplication.getInstance().getContributeMap());
+                                                    Log.e("", "onResponse: " + MyApplication.getInstance().getContributeMap());
                                                 }
                                                 //finish();
                                             } catch (Exception e){
@@ -464,7 +465,7 @@ public class AddAMaintenance extends AppCompatActivity implements OnMapReadyCall
                                         }
                                         else{
                                             try {
-                                                //Log.e(", ",response.errorBody().toString());
+                                                Log.e(", ",response.errorBody().toString());
                                                 csLayout.setVisibility(View.GONE);
                                                 Toast toast = Toast.makeText(AddAMaintenance.this, "!", Toast.LENGTH_LONG);
                                                 TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
@@ -485,7 +486,7 @@ public class AddAMaintenance extends AppCompatActivity implements OnMapReadyCall
 
                                     @Override
                                     public void onFailure(Call<ResponseBody> call, Throwable t) {
-                                        //Log.e("", "onFailure: " + t.toString());
+                                        Log.e("", "onFailure: " + t.toString());
                                         csLayout.setVisibility(View.GONE);
                                         Toast toast = Toast.makeText(AddAMaintenance.this, "!", Toast.LENGTH_LONG);
                                         TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
@@ -518,7 +519,7 @@ public class AddAMaintenance extends AppCompatActivity implements OnMapReadyCall
 
                 @Override
                 public void onFailure(Call<ResponseBody> call, Throwable t) {
-                    //Log.e("", "onFailure: " + t.toString());
+                    Log.e("", "onFailure: " + t.toString());
                     csLayout.setVisibility(View.GONE);
                     Toast toast = Toast.makeText(AddAMaintenance.this, "!", Toast.LENGTH_LONG);
                     TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
@@ -530,7 +531,7 @@ public class AddAMaintenance extends AppCompatActivity implements OnMapReadyCall
         }
         else{
             mImages=new String[0];
-            Call<ResponseBody> call = tour.addMaintenance(MyApplication.getInstance().getVersion(),token,(float) mLat,(float) mLon, mAddress, mName, mNote);
+            Call<ResponseBody> call = tour.addMaintenance(MyApplication.getInstance().getVersion(),token,(float) mLat,(float) mLon, mAddress, mName, mImages,mNote);
 
             call.enqueue(new Callback<ResponseBody>() {
                 @Override
@@ -540,7 +541,7 @@ public class AddAMaintenance extends AppCompatActivity implements OnMapReadyCall
                         JSONArray jsonArray;
                         try {
                             jsonObject = new JSONObject(response.body().string());
-                            //Log.e("", "onResponse: " + jsonObject.toString());
+                            Log.e("", "onResponse: " + jsonObject.toString());
                             if(jsonObject.getBoolean("Status")) {
 
                                 Calendar calendar = Calendar.getInstance();
@@ -561,7 +562,7 @@ public class AddAMaintenance extends AppCompatActivity implements OnMapReadyCall
                                     MyApplication.getInstance().getContributeMap().put("Maintenance", map);
                                 }
 
-                                //Log.e(TAG, "onResponse: " + MyApplication.getInstance().getContributeMap());
+                                Log.e("", "onResponse: " + MyApplication.getInstance().getContributeMap());
 
                                 btnNext.setText(R.string.finish);
 
@@ -586,7 +587,7 @@ public class AddAMaintenance extends AppCompatActivity implements OnMapReadyCall
                     }
                     else{
                         try {
-                            //Log.e(", ",response.errorBody().toString());
+                            Log.e(", ",response.errorBody().toString());
                             csLayout.setVisibility(View.GONE);
                             Toast toast = Toast.makeText(AddAMaintenance.this, "!", Toast.LENGTH_LONG);
                             TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
@@ -608,7 +609,7 @@ public class AddAMaintenance extends AppCompatActivity implements OnMapReadyCall
 
                 @Override
                 public void onFailure(Call<ResponseBody> call, Throwable t) {
-                    //Log.e("", "onFailure: " + t.toString());
+                    Log.e("", "onFailure: " + t.toString());
                 }
             });
         }
@@ -737,7 +738,7 @@ public class AddAMaintenance extends AppCompatActivity implements OnMapReadyCall
 
                         String extension = path.substring(path.lastIndexOf("."));
 
-                        //Log.e("", "onActivityResult: " + arrImg.size()+extension);
+                        Log.e("", "onActivityResult: " + arrImg.size()+extension);
 
                         EditText edtSelectImg = findViewById(R.id.edt_select_img);
 
@@ -924,7 +925,7 @@ public class AddAMaintenance extends AppCompatActivity implements OnMapReadyCall
                                 size++;
                             }
 
-                            //Log.e("", "onActivityResult: " + arrImg.size());
+                            Log.e("", "onActivityResult: " + arrImg.size());
 
                             String temp = getString(R.string.selected);
                             temp = temp + " " + arrImg.size() + " " + getString(R.string.images);

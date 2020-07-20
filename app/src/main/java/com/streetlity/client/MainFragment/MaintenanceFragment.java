@@ -424,7 +424,7 @@ public class MaintenanceFragment extends Fragment implements LocationListener, O
                             EditText edtFind = getActivity().findViewById(R.id.edt_find);
                             edtFind.setText(jsonObject1.getString("formatted_address"));
 
-                            Call<ResponseBody> call2 = tour2.getMaintenanceInRange(MyApplication.getInstance().getVersion(), (float)mLat, (float)mLon,(float)0.1);
+                            Call<ResponseBody> call2 = tour2.getMaintenanceInRange(MyApplication.getInstance().getVersion(), (float)mLat, (float)mLon,(float)0.3);
                             call2.enqueue(new Callback<ResponseBody>() {
                                 @Override
                                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -820,7 +820,7 @@ jsonObject1.getString("Address"), (float) jsonObject1.getDouble("Lat"),
             Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getServiceURL())
                     .addConverterFactory(GsonConverterFactory.create()).build();
             final MapAPI tour = retro.create(MapAPI.class);
-            Call<ResponseBody> call = tour.getMaintenanceInRange(MyApplication.getInstance().getVersion(), (float) lat, (float) lon, (float)0.1);
+            Call<ResponseBody> call = tour.getMaintenanceInRange(MyApplication.getInstance().getVersion(), (float) lat, (float) lon, (float)0.3);
             //Call<ResponseBody> call = tour.getAllFuel();
             call.enqueue(new Callback<ResponseBody>() {
                 @Override
