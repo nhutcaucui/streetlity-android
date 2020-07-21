@@ -16,6 +16,7 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -142,7 +143,7 @@ public class AddAnATM extends AppCompatActivity implements OnMapReadyCallback {
                         if(response.code() == 200){
                             try{
                                 JSONObject jsonObject1 = new JSONObject(response.body().string());
-                                //Log.e("TAG", "onResponse: " + jsonObject1.toString() );
+                                Log.e("tag", "onResponse: " + jsonObject1.toString() );
                             }catch (Exception e){
                                 e.printStackTrace();
                             }
@@ -286,12 +287,12 @@ public class AddAnATM extends AppCompatActivity implements OnMapReadyCallback {
             Location location = locationManager.getLastKnownLocation(locationManager
                     .GPS_PROVIDER);
             if(location == null){
-                //Log.e("", "onMapReady: MULL");
+                Log.e("", "onMapReady: MULL");
             }else {
                 latitude = location.getLatitude();
                 longitude = location.getLongitude();
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude, longitude),15f));
-                //Log.e("", "onMapReady: " + latitude + " , " + longitude);
+                Log.e("", "onMapReady: " + latitude + " , " + longitude);
             }
         }
 
@@ -328,7 +329,7 @@ public class AddAnATM extends AppCompatActivity implements OnMapReadyCallback {
                     JSONArray jsonArray;
                     try {
                         jsonObject = new JSONObject(response.body().string());
-                        //Log.e("", "onResponse: " + jsonObject.toString());
+                        Log.e("", "onResponse: " + jsonObject.toString());
 
                         if(jsonObject.getString("status").equals("ZERO_RESULTS")){
                             Toast toast = Toast.makeText(AddAnATM.this, R.string.address_not_found, Toast.LENGTH_LONG);
@@ -366,8 +367,8 @@ public class AddAnATM extends AppCompatActivity implements OnMapReadyCallback {
                 }
                 else{
                     try {
-                        //Log.e(", ",response.errorBody().toString() + response.code());
-                        //Log.e("", "onResponse: " + response.errorBody());
+                        Log.e(", ",response.errorBody().toString() + response.code());
+                        Log.e("", "onResponse: " + response.errorBody());
 
                     }catch (Exception e){
                         e.printStackTrace();
@@ -402,7 +403,7 @@ public class AddAnATM extends AppCompatActivity implements OnMapReadyCallback {
         final MapAPI tour2 = retro2.create(MapAPI.class);
 
         String token = MyApplication.getInstance().getToken();
-        //Log.e("", "addATM: "+ mNote+"-"+mLat+"-"+mLon+"-"+mBankId+"-"+mAddress);
+        Log.e("", "addATM: "+ mNote+"-"+mLat+"-"+mLon+"-"+mBankId+"-"+mAddress);
         if(hasImg){
             String[] f = new String[paramMap.size()];
             for(int i=0;i<paramMap.size();i++){
@@ -416,7 +417,7 @@ public class AddAnATM extends AppCompatActivity implements OnMapReadyCallback {
                         final JSONObject jsonObject;
                         try {
                             jsonObject = new JSONObject(response.body().string());
-                            //Log.e("", "onResponse: " + jsonObject.toString());
+                            Log.e("", "onResponse: " + jsonObject.toString());
 
                             if (jsonObject.getBoolean("Status")) {
                                 JSONObject jsonObject1 = jsonObject.getJSONObject("Paths");
@@ -426,7 +427,8 @@ public class AddAnATM extends AppCompatActivity implements OnMapReadyCallback {
                                     mImages[i] = jsonObject2.getString("Message");
                                 }
 
-                                Call<ResponseBody> call1 = tour.addATM(MyApplication.getInstance().getVersion(),token,(float) mLat,(float) mLon, mBankId, mAddress, mNote,mImages);
+                                Call<ResponseBody> call1 = tour.addATM(MyApplication.getInstance().getVersion(),token,
+                                        (float) mLat,(float) mLon, mBankId, mAddress, mNote,mImages, MyApplication.getInstance().getUsername());
 
                                 call1.enqueue(new Callback<ResponseBody>() {
                                     @Override
@@ -436,7 +438,7 @@ public class AddAnATM extends AppCompatActivity implements OnMapReadyCallback {
                                             JSONArray jsonArray;
                                             try {
                                                 jsonObject = new JSONObject(response.body().string());
-                                                //Log.e("", "onResponse: " + jsonObject.toString());
+                                                Log.e("", "onResponse: " + jsonObject.toString());
                                                 if(jsonObject.getBoolean("Status")) {
                                                     btnNext.setText(R.string.finish);
 
@@ -461,7 +463,7 @@ public class AddAnATM extends AppCompatActivity implements OnMapReadyCallback {
                                         }
                                         else{
                                             try {
-                                                //Log.e(", ",response.errorBody().toString());
+                                                Log.e(", ",response.errorBody().toString());
                                                 csLayout.setVisibility(View.GONE);
                                                 Toast toast = Toast.makeText(AddAnATM.this, "!", Toast.LENGTH_LONG);
                                                 TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
@@ -482,7 +484,7 @@ public class AddAnATM extends AppCompatActivity implements OnMapReadyCallback {
 
                                     @Override
                                     public void onFailure(Call<ResponseBody> call, Throwable t) {
-                                        //Log.e("", "onFailure: " + t.toString());
+                                        Log.e("", "onFailure: " + t.toString());
                                         csLayout.setVisibility(View.GONE);
                                         Toast toast = Toast.makeText(AddAnATM.this, "!", Toast.LENGTH_LONG);
                                         TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
@@ -515,7 +517,7 @@ public class AddAnATM extends AppCompatActivity implements OnMapReadyCallback {
 
                 @Override
                 public void onFailure(Call<ResponseBody> call, Throwable t) {
-                    //Log.e("", "onFailure: " + t.toString());
+                    Log.e("", "onFailure: " + t.toString());
                     csLayout.setVisibility(View.GONE);
                     Toast toast = Toast.makeText(AddAnATM.this, "!", Toast.LENGTH_LONG);
                     TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
@@ -527,7 +529,8 @@ public class AddAnATM extends AppCompatActivity implements OnMapReadyCallback {
         }
         else{
          mImages=new String[0];
-        Call<ResponseBody> call = tour.addATM(MyApplication.getInstance().getVersion(),token,(float) mLat,(float) mLon, mBankId, mAddress, mNote,mImages);
+        Call<ResponseBody> call = tour.addATM(MyApplication.getInstance().getVersion(),token,
+                (float) mLat,(float) mLon, mBankId, mAddress, mNote,mImages, MyApplication.getInstance().getUsername());
 
         call.enqueue(new Callback<ResponseBody>() {
             @Override
@@ -537,7 +540,7 @@ public class AddAnATM extends AppCompatActivity implements OnMapReadyCallback {
                     JSONArray jsonArray;
                     try {
                         jsonObject = new JSONObject(response.body().string());
-                        //Log.e("", "onResponse: " + jsonObject.toString());
+                        Log.e("", "onResponse: " + jsonObject.toString());
                         if(jsonObject.getBoolean("Status")) {
                             btnNext.setText(R.string.finish);
 
@@ -558,6 +561,10 @@ public class AddAnATM extends AppCompatActivity implements OnMapReadyCallback {
 
                             ActionObject ao = new ActionObject("", time,"Contribute", Integer.toString(jsonObject.getJSONObject("Service").getInt("Id")));
 
+                            if(MyApplication.getInstance().getContributeMap() == null){
+                                MyApplication.getInstance().setContributeMap(new HashMap<>());
+                            }
+
                             if(MyApplication.getInstance().getContributeMap().containsKey("Atm")){
                                 MyApplication.getInstance().getContributeMap().get("Atm").put("contributed " + jsonObject.getJSONObject("Service").getInt("Id"), ao);
                             }
@@ -567,7 +574,7 @@ public class AddAnATM extends AppCompatActivity implements OnMapReadyCallback {
                                 MyApplication.getInstance().getContributeMap().put("Atm", map);
                             }
 
-                            //Log.e(TAG, "onResponse: " + MyApplication.getInstance().getContributeMap());
+                            Log.e("tag", "onResponse: " + MyApplication.getInstance().getContributeMap());
                         }
                         //finish();
                     } catch (Exception e){
@@ -582,7 +589,7 @@ public class AddAnATM extends AppCompatActivity implements OnMapReadyCallback {
                 }
                 else{
                     try {
-                        //Log.e(", ",response.errorBody().toString());
+                        Log.e(", ",response.errorBody().toString());
                         csLayout.setVisibility(View.GONE);
                         Toast toast = Toast.makeText(AddAnATM.this, "!", Toast.LENGTH_LONG);
                         TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
@@ -604,7 +611,7 @@ public class AddAnATM extends AppCompatActivity implements OnMapReadyCallback {
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                //Log.e("", "onFailure: " + t.toString());
+                Log.e("", "onFailure: " + t.toString());
             }
         });
         }
@@ -726,7 +733,7 @@ public class AddAnATM extends AppCompatActivity implements OnMapReadyCallback {
                     final JSONObject jsonObject;
                     try {
                         jsonObject = new JSONObject(response.body().string());
-                        //Log.e("", "onResponse: " + jsonObject.toString());
+                        Log.e("", "onResponse: " + jsonObject.toString());
 
                         if(jsonObject.getBoolean("Status")) {
                             Spinner spinner = view.findViewById(R.id.spinner_type);
@@ -779,7 +786,7 @@ public class AddAnATM extends AppCompatActivity implements OnMapReadyCallback {
                 }
                 else{
                     try {
-                        //Log.e(", ",response.errorBody().toString() + response.code());
+                        Log.e(", ",response.errorBody().toString() + response.code());
                     }catch (Exception e){
                         e.printStackTrace();
                     }
@@ -788,7 +795,7 @@ public class AddAnATM extends AppCompatActivity implements OnMapReadyCallback {
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                //Log.e("", "onFailure: " + t.toString());
+                Log.e("", "onFailure: " + t.toString());
             }
         });
     }
@@ -808,7 +815,7 @@ public class AddAnATM extends AppCompatActivity implements OnMapReadyCallback {
                     final JSONObject jsonObject;
                     try {
                         jsonObject = new JSONObject(response.body().string());
-                        //Log.e("", "onResponse: " + jsonObject.toString());
+                        Log.e("", "onResponse: " + jsonObject.toString());
 
                         if(jsonObject.getBoolean("Status")) {
                             JSONObject jsonObject1=jsonObject.getJSONObject("Bank");
@@ -850,7 +857,7 @@ public class AddAnATM extends AppCompatActivity implements OnMapReadyCallback {
                 }
                 else{
                     try {
-                        //Log.e(", ",response.errorBody().toString() + response.code());
+                        Log.e(", ",response.errorBody().toString() + response.code());
                     }catch (Exception e){
                         e.printStackTrace();
                     }
@@ -859,7 +866,7 @@ public class AddAnATM extends AppCompatActivity implements OnMapReadyCallback {
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                //Log.e("", "onFailure: " + t.toString());
+                Log.e("", "onFailure: " + t.toString());
             }
         });
     }
@@ -891,7 +898,7 @@ public class AddAnATM extends AppCompatActivity implements OnMapReadyCallback {
 
                         String extension = path.substring(path.lastIndexOf("."));
 
-                        //Log.e("", "onActivityResult: " + arrImg.size());
+                        Log.e("", "onActivityResult: " + arrImg.size());
 
                         EditText edtSelectImg = findViewById(R.id.edt_select_img);
 
@@ -1078,7 +1085,7 @@ public class AddAnATM extends AppCompatActivity implements OnMapReadyCallback {
                                 size++;
                             }
 
-                            //Log.e("", "onActivityResult: " + arrImg.size());
+                            Log.e("", "onActivityResult: " + arrImg.size());
 
                             String temp = getString(R.string.selected);
                             temp = temp + " " + arrImg.size() + " " + getString(R.string.images);

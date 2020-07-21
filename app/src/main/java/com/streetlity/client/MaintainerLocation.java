@@ -13,6 +13,14 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 
+import com.akexorcist.googledirection.DirectionCallback;
+import com.akexorcist.googledirection.GoogleDirection;
+import com.akexorcist.googledirection.constant.RequestResult;
+import com.akexorcist.googledirection.model.Direction;
+import com.akexorcist.googledirection.model.Leg;
+import com.akexorcist.googledirection.model.Route;
+import com.akexorcist.googledirection.util.DirectionConverter;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.streetlity.client.Chat.Chat;
 import com.streetlity.client.Chat.ChatObject;
 import com.streetlity.client.RealtimeService.Information;
@@ -33,6 +41,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -43,6 +52,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -73,6 +84,11 @@ public class MaintainerLocation extends AppCompatActivity implements OnMapReadyC
 
     LocationManager locationManager;
 
+    boolean firstLauch = true;
+
+    boolean init= true;
+
+    boolean inited = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -96,14 +112,18 @@ public class MaintainerLocation extends AppCompatActivity implements OnMapReadyC
             @Override
             public void onClick(View v) {
                 startActivityForResult(new Intent(MaintainerLocation.this, Chat.class), 1);
+                findViewById(R.id.img_chat_new).setVisibility(View.GONE);
             }
         });
 
         btnCall.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(phone == null){
+                    return;
+                }
                 Intent intent = new Intent(Intent.ACTION_DIAL);
-                intent.setData(Uri.parse("tel:0123456789"));
+                intent.setData(Uri.parse("tel:"+phone));
                 startActivity(intent);
             }
         });
@@ -128,7 +148,7 @@ public class MaintainerLocation extends AppCompatActivity implements OnMapReadyC
                 btnCancel.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        dialogDecline.cancel();
+                        dialogDecline.dismiss();
                     }
                 });
 
@@ -148,9 +168,11 @@ public class MaintainerLocation extends AppCompatActivity implements OnMapReadyC
                                     final JSONObject jsonObject;
                                     try {
                                         jsonObject = new JSONObject(response.body().string());
-                                        //Log.e("", "onResponse: " + jsonObject.toString());
+                                        Log.e("", "onResponse: " + jsonObject.toString());
                                         if(jsonObject.getBoolean("Status")){
-
+                                            dialogDecline.dismiss();
+                                            getSharedPreferences("activeOrder",MODE_PRIVATE).edit().clear().apply();
+                                            finish();
                                         }
                                     }catch (Exception e){
                                         e.printStackTrace();
@@ -203,11 +225,11 @@ public class MaintainerLocation extends AppCompatActivity implements OnMapReadyC
                                             final JSONObject jsonObject;
                                             try {
                                                 jsonObject = new JSONObject(response.body().string());
-                                                //Log.e("", "onResponse: " + jsonObject.toString());
+                                                Log.e("", "onResponse: " + jsonObject.toString());
                                                 if(jsonObject.getBoolean("Status")){
                                                     getSharedPreferences("activeOrder",MODE_PRIVATE).edit().clear().apply();
-                                                    finish();
                                                     dialog.dismiss();
+                                                    finish();
                                                 }
                                             }catch (Exception e){
                                                 e.printStackTrace();
@@ -251,73 +273,7 @@ public class MaintainerLocation extends AppCompatActivity implements OnMapReadyC
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        if (ContextCompat.checkSelfPermission(MaintainerLocation.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
-                ContextCompat.checkSelfPermission(MaintainerLocation.this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            locationManager = (LocationManager)
-                    MaintainerLocation.this.getSystemService(Context.LOCATION_SERVICE);
-
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 1000, this);
-        }
-
-        socket = MaintenanceOrder.getInstance();
-
-        if(socket == null){
-            return;
-        }
-
-        socket.LocationListener = new com.streetlity.client.RealtimeService.LocationListener<MaintenanceOrder>() {
-            @Override
-            public void onReceived(MaintenanceOrder sender, float lat, float lon) {
-                if(currMarker != null){
-                    currMarker.remove();
-                }
-
-                MarkerOptions options = new MarkerOptions();
-                options.icon(BitmapDescriptorFactory.fromResource(R.drawable.cursor));
-                options.position(new LatLng(lat,lon));
-
-                currMarker = mMap.addMarker(options);
-            }
-        };
-
-
-        String phone2 = "";
-        if (getSharedPreferences("broadcastPhone", MODE_PRIVATE).contains("phone")) {
-            phone2 = getSharedPreferences("broadcastPhone", MODE_PRIVATE).getString("phone", "no");
-        }
-        if (phone2.equals("")) {
-            phone2 = MyApplication.getInstance().getPhone();
-        }
-
-        final TextView tvPhone = findViewById(R.id.tv_phone);
-        final TextView tvName = findViewById(R.id.tv_name);
-
-        socket.InformationListener = new InformationListener<MaintenanceOrder>() {
-            @Override
-            public void onReceived(MaintenanceOrder sender, Information info) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        infomation = info;
-                        //Log.e("", "onReceived: " + info.toString());
-                        phone = info.Phone;
-
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                tvPhone.setText(info.Phone);
-                                tvName.setText(info.Username);
-                            }
-                        });
-                    }
-                });
-
-            }
-        };
-
-        Information myInfo = new Information(MyApplication.getInstance().getUsername(), phone2);
-        socket.sendInformation(myInfo);
-        socket.pullInformation();
+        Log.e("TAG", "onMapReady: ,ap ready" );
     }
 
     public void onLocationChanged(Location location) {
@@ -332,12 +288,14 @@ public class MaintainerLocation extends AppCompatActivity implements OnMapReadyC
         currMarker = mMap.addMarker(currOption);
 
         if(!firstMove){
-            firstMove = false;
-            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 15f));
+            firstMove = true;
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 15f));
         }
 
         if(socket != null){
+            Log.e("TAG", "onResume: socket update location" );
             socket.updateLocation(location.getLatitude(),location.getLongitude(),location.getBearing());
+            socket.pullLocation(location);
         }
     }
     @Override
@@ -353,10 +311,13 @@ public class MaintainerLocation extends AppCompatActivity implements OnMapReadyC
     }
 
 
-    public void onStop(){
-        super.onStop();
+    public void onDestroy(){
+        super.onDestroy();
 
         locationManager.removeUpdates(this);
+        if(socket == null){
+            return;
+        }
         socket.close();
     }
 
@@ -366,9 +327,16 @@ public class MaintainerLocation extends AppCompatActivity implements OnMapReadyC
 
 
         socket = MaintenanceOrder.getInstance();
-        if(socket == null){
+//        if(socket == null){
+//            return;
+//        }
+
+        if(firstLauch){
+            Log.e("TAG", "onResume: firstTimeOpenMap");
+            firstLauch = false;
             return;
         }
+
         //socket.join();
         final TextView tvPhone = findViewById(R.id.tv_phone);
         final TextView tvName = findViewById(R.id.tv_name);
@@ -379,7 +347,7 @@ public class MaintainerLocation extends AppCompatActivity implements OnMapReadyC
                     @Override
                     public void run() {
                         infomation = info;
-                        //Log.e("", "onReceived: " + info.toString());
+                        Log.e("", "onReceived: " + info.toString());
                         phone = info.Phone;
 
                         runOnUiThread(new Runnable() {
@@ -406,31 +374,103 @@ public class MaintainerLocation extends AppCompatActivity implements OnMapReadyC
         socket.sendInformation(myInfo);
         socket.pullInformation();
 
-        socket.MessageListener = new MessageListener<MaintenanceOrder>() {
-            @Override
-            public void onReceived(MaintenanceOrder sender, ChatObject message) {
-                //Log.e("", "onReceived:  this is america");
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        findViewById(R.id.img_chat_new).setVisibility(View.VISIBLE);
-                    }
-                });
-            }
-        };
+//        socket.MessageListener = new MessageListener<MaintenanceOrder>() {
+//            @Override
+//            public void onReceived(MaintenanceOrder sender, ChatObject message) {
+//                Log.e("", "onReceived:  this is america");
+//                runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        findViewById(R.id.img_chat_new).setVisibility(View.VISIBLE);
+//                    }
+//                });
+//            }
+//        };
 
         socket.LocationListener = new com.streetlity.client.RealtimeService.LocationListener<MaintenanceOrder>() {
             @Override
             public void onReceived(MaintenanceOrder sender, float lat, float lon) {
-                if(currMarker != null){
-                    currMarker.remove();
+                Log.e("TAG", "onReceived: receive direction" );
+                if (init) {
+                    init = false;
+                    MarkerOptions option = new MarkerOptions();
+                    option.icon(BitmapDescriptorFactory.fromResource(R.drawable.cursor));
+                    option.position(new LatLng(lat, lon));
+
+                    String serverKey = "AIzaSyB56CeF7ccQ9ZeMn0O4QkwlAQVX7K97-Ss";
+                    LatLng origin = new LatLng(currLat, currLon);
+                    LatLng destination = new LatLng(lat, lon);
+                    GoogleDirection.withServerKey(serverKey)
+                            .from(origin)
+                            .to(destination)
+                            .execute(new DirectionCallback() {
+                                @Override
+                                public void onDirectionSuccess(Direction direction) {
+
+                                    String status = direction.getStatus();
+                                    Log.e("", "onDirectionSuccess: " + status);
+                                    if (status.equals(RequestResult.OK)) {
+                                        Route route = direction.getRouteList().get(0);
+                                        Leg leg = route.getLegList().get(0);
+                                        ArrayList<LatLng> directionPositionList = leg.getDirectionPoint();
+                                        PolylineOptions polylineOptions = DirectionConverter.createPolyline(MaintainerLocation.this, directionPositionList, 5, Color.GREEN);
+                                        runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                mMap.addPolyline(polylineOptions);
+                                            }
+                                        });
+
+                                    } else if (status.equals(RequestResult.NOT_FOUND)) {
+                                        runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                Toast toast = Toast.makeText(MaintainerLocation.this, R.string.cant_go, Toast.LENGTH_LONG);
+                                                TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
+                                                tv.setTextColor(Color.RED);
+
+                                                toast.show();
+                                            }
+                                        });
+                                    }
+                                }
+
+                                @Override
+                                public void onDirectionFailure(Throwable t) {
+                                    Log.e("", "onDirectionFailure: ");
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            Toast toast = Toast.makeText(MaintainerLocation.this, R.string.something_wrong_direction, Toast.LENGTH_LONG);
+                                            TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
+                                            tv.setTextColor(Color.RED);
+
+                                            toast.show();
+                                        }
+                                    });
+                                }
+                            });
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mMap.addMarker(option);
+                        }
+                    });
+                } else {
+                    if (currMarker != null) {
+                        currMarker.remove();
+                    }
+                    MarkerOptions option = new MarkerOptions();
+                    option.icon(BitmapDescriptorFactory.fromResource(R.drawable.cursor));
+                    option.position(new LatLng(lat, lon));
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            currMarker = mMap.addMarker(option);
+                        }
+                    });
                 }
 
-                MarkerOptions options = new MarkerOptions();
-                options.icon(BitmapDescriptorFactory.fromResource(R.drawable.cursor));
-                options.position(new LatLng(lat,lon));
-
-                currMarker = mMap.addMarker(options);
             }
         };
 
@@ -473,6 +513,52 @@ public class MaintainerLocation extends AppCompatActivity implements OnMapReadyC
                 });
             }
         };
+
+        if(mMap == null){
+            Log.e("TAG", "onResume: map is null" );
+            return;
+        }
+
+
+        if (ContextCompat.checkSelfPermission(MaintainerLocation.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
+                ContextCompat.checkSelfPermission(MaintainerLocation.this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            locationManager = (LocationManager)
+                    MaintainerLocation.this.getSystemService(Context.LOCATION_SERVICE);
+
+            Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            if(location != null){
+                if(currMarker!= null) {
+                    currMarker.remove();
+                }
+
+                MarkerOptions currOption = new MarkerOptions();
+                currOption.position(new LatLng(location.getLatitude(),location.getLongitude()));
+                currOption.title(getString(R.string.you_r_here));
+                currOption.icon(BitmapDescriptorFactory.fromResource(R.drawable.user));
+                currMarker = mMap.addMarker(currOption);
+
+                if(!firstMove){
+                    firstMove = true;
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 15f));
+                }
+
+                if(socket != null){
+                    Log.e("TAG", "onResume: socket update location" );
+                    socket.updateLocation(location.getLatitude(),location.getLongitude(),location.getBearing());
+                    socket.pullLocation(location);
+                }
+
+            }
+
+            Log.e("TAG", "onResume: location request" );
+            if(inited){
+                return;
+            }
+            inited = true;
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 1000, this);
+        }
+
+        Log.e("TAG", "onResume: " + init );
     }
 
     @Override

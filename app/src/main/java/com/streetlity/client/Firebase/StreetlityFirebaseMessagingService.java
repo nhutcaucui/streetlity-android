@@ -23,27 +23,27 @@ import com.google.firebase.messaging.RemoteMessage;
 import java.util.Map;
 
 public class StreetlityFirebaseMessagingService extends FirebaseMessagingService {
-    private static final String TAG = "[Firebase]";
+    private static final String tag = "[Firebase]";
     @Override
     public void onNewToken(@NonNull String token) {
         super.onNewToken(token);
 
         ((MyApplication) getApplication()).setDeviceToken(token);
         getSharedPreferences("firebase", MODE_PRIVATE).edit().putString("fb", token).apply();
-        Log.println(Log.INFO,TAG,"Token: " + token );
+        Log.println(Log.INFO,"tag","Token: " + token );
     }
 
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
         Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        Log.d("msg", "onMessageReceived: " + remoteMessage.getData().get("message"));
+        Log.d(tag, "onMessageReceived: " + remoteMessage.getData().get("message"));
         RemoteMessage.Notification notification = remoteMessage.getNotification();
         String intentName = notification.getClickAction();
-        //Log.e(TAG, "onMessageReceived: " + notification.getClickAction());
+        Log.e(tag, "onMessageReceived: " + notification.getClickAction());
         Intent intent = new Intent(intentName);
         Map<String, String> data = remoteMessage.getData();
-        //Log.e(TAG, "onMessageReceived: " + data);
+        Log.e(tag, "onMessageReceived: " + data);
         intent.putExtra("id", data.get("id"));
         intent.putExtra("common_user", data.get("common_user"));
         intent.putExtra("reason", data.get("reason"));
@@ -59,6 +59,10 @@ public class StreetlityFirebaseMessagingService extends FirebaseMessagingService
             System.out.println(keys + ":"+ data.get(keys));
         }
 
+        if(getSharedPreferences("activeOrder", MODE_PRIVATE).contains("activeOrder")){
+            return;
+        }
+
         if(intentName.equals("MaintenanceAcceptNotification")){
             LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
             return;
@@ -68,7 +72,9 @@ public class StreetlityFirebaseMessagingService extends FirebaseMessagingService
             NotificationCompat.Builder builder = new NotificationCompat.Builder(this, channelId)
                     .setSmallIcon(R.mipmap.ic_launcher)
                     .setContentTitle(remoteMessage.getNotification().getTitle())
-                    .setContentText(remoteMessage.getNotification().getBody()).setAutoCancel(true).setContentIntent(pendingIntent)
+                    .setContentText(remoteMessage.getNotification().getBody())
+                    .setAutoCancel(true)
+                    .setContentIntent(pendingIntent)
                     .setPriority(NotificationManager.IMPORTANCE_HIGH)
                     .setDefaults(NotificationCompat.DEFAULT_ALL)
                     //.setDefaults(NotificationCompat.DEFAULT_VIBRATE)
@@ -83,7 +89,7 @@ public class StreetlityFirebaseMessagingService extends FirebaseMessagingService
             manager.notify(0, builder.build());
 //        try {
 //            Map<String, String> data = remoteMessage.getData();
-//            //Log.e(TAG, "onMessageReceived: " + data);
+//            Log.e("tag", "onMessageReceived: " + data);
 //            NormalOrderObject object = new NormalOrderObject(Integer.parseInt(remoteMessage.getData().get("id")), remoteMessage.getData().get("user"),
 //                    remoteMessage.getData().get("reason"));
 //            object.setNote(remoteMessage.getData().get("note"));

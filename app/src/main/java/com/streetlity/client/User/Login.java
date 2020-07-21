@@ -17,6 +17,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.text.Html;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -150,14 +151,14 @@ public class Login extends AppCompatActivity {
                 .addConverterFactory(GsonConverterFactory.create()).build();
         final MapAPI tour = retro.create(MapAPI.class);
         Call<ResponseBody> call = tour.login(username, password, ((MyApplication) getApplication()).getDeviceToken());
-        //Log.e("", "login: " + ((MyApplication) getApplication()).getDeviceToken());
+        Log.e("", "login: " + ((MyApplication) getApplication()).getDeviceToken());
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 if (response.code() == 200) {
                     try {
                         JSONObject jsonObject = new JSONObject(response.body().string());
-                        //Log.e("", "onResponse: " + jsonObject);
+                        Log.e("", "onResponse: " + jsonObject);
                         if(jsonObject.getBoolean("Status")) {
 
                             ((MyApplication) Login.this.getApplication()).setToken(jsonObject.getString("AccessToken"));
@@ -206,7 +207,7 @@ public class Login extends AppCompatActivity {
                                 if(!jsonObject1.getString("Avatar").equals("")){
                                     getAvatar(jsonObject1.getString("Avatar"));
                                 }else{
-                                    //Log.e("TAG", "onResponse: no avatar" );
+                                    Log.e("tag", "onResponse: no avatar" );
                                 }
 
                                 e.commit();
@@ -220,15 +221,15 @@ public class Login extends AppCompatActivity {
 //                                            try {
 //                                                JSONObject jsonObject1 = new JSONObject(response.body().string());
 //                                                if (jsonObject1.getBoolean("Status")) {
-//                                                    //Log.e("", "onResponse: " + jsonObject1.toString());
+//                                                    Log.e("", "onResponse: " + jsonObject1.toString());
 //                                                } else {
-//                                                    //Log.e("", "onResponse: " + jsonObject1.toString());
+//                                                    Log.e("", "onResponse: " + jsonObject1.toString());
 //                                                }
 //                                            } catch (Exception e) {
 //                                                e.printStackTrace();
 //                                            }
 //                                        } else {
-//                                            //Log.e("", "onResponse: " + response.code());
+//                                            Log.e("", "onResponse: " + response.code());
 //                                        }
 //                                    }
 //
@@ -249,7 +250,7 @@ public class Login extends AppCompatActivity {
                                         if(response.code() == 200){
                                             try{
                                                 JSONObject jsonObject2 = new JSONObject(response.body().string());
-                                                //Log.e("TAG", "onResponse: " +jsonObject2.toString() );
+                                                Log.e("tag", "onResponse: " +jsonObject2.toString() );
                                                 if(jsonObject2.getBoolean("Status")){
                                                     Map<String, Map<String, ActionObject>> upvoteMap = new HashMap<>();
                                                     Map<String, Map<String, ActionObject>> downvoteMap = new HashMap<>();
@@ -510,10 +511,10 @@ public class Login extends AppCompatActivity {
                                                     MyApplication.getInstance().setUpvoteMap(upvoteMap);
                                                     MyApplication.getInstance().setDownvoteMap(downvoteMap);
 
-                                                    //Log.e("TAG", "onResponse: "+contributeMap );
-                                                    //Log.e("TAG", "onResponse: "+reviewMap );
-                                                    //Log.e("TAG", "onResponse: "+upvoteMap );
-                                                    //Log.e("TAG", "onResponse: "+downvoteMap );
+                                                    Log.e("tag", "onResponse: "+contributeMap );
+                                                    Log.e("tag", "onResponse: "+reviewMap );
+                                                    Log.e("tag", "onResponse: "+upvoteMap );
+                                                    Log.e("tag", "onResponse: "+downvoteMap );
 
                                                     Gson gs = new Gson();
 
@@ -566,7 +567,7 @@ public class Login extends AppCompatActivity {
 
                 } else {
                     try {
-                        //Log.e("", "onResponse: " + response.code());
+                        Log.e("", "onResponse: " + response.code());
                         Toast toast = Toast.makeText(Login.this, R.string.user_not_exist, Toast.LENGTH_LONG);
                         TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
                         tv.setTextColor(Color.RED);
@@ -581,7 +582,7 @@ public class Login extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                //Log.e("", "onFailure: " + t.toString());
+                Log.e("", "onFailure: " + t.toString());
             }
         });
     }
@@ -607,7 +608,7 @@ public class Login extends AppCompatActivity {
                     try {
                         Bitmap bmp = BitmapFactory.decodeStream(response.body().byteStream());
                         MyApplication.getInstance().setImage(bmp);
-                        //Log.e("TAG", "onResponse: getAvatar" );
+                        Log.e("tag", "onResponse: getAvatar" );
                     }catch (Exception e){
                         e.printStackTrace();
                     }

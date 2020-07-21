@@ -13,6 +13,7 @@ import com.streetlity.client.MyApplication;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -85,7 +86,7 @@ public class OrderInfo extends AppCompatActivity {
                 tvPhone.setText("");
                 tvNote.setText(item.getNote());
                 tvReason.setText(item.getReason());
-                //Log.e("", "onCreate: " + item.getName() +item.getReason()+item.getId() );
+                Log.e("", "onCreate: " + item.getName() +item.getReason()+item.getId() );
             }else if(from == 1){
                 item  = (NormalOrderObject) getIntent().getSerializableExtra("item");
             }
@@ -108,7 +109,7 @@ public class OrderInfo extends AppCompatActivity {
         else if (from == 1 || from == 0){
             //item  = (NormalOrderObject) getIntent().getSerializableExtra("item");
 
-            final NormalOrderObject item1 = item;
+            //final NormalOrderObject item1 = item;
 
             btnAccept.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -116,24 +117,26 @@ public class OrderInfo extends AppCompatActivity {
                     Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getMaintenanceURL())
                             .addConverterFactory(GsonConverterFactory.create()).build();
                     final MapAPI tour = retro.create(MapAPI.class);
-                    Call<ResponseBody> call = tour.acceptOrder(MyApplication.getInstance().getUsername(), item1.getId());
+                    Call<ResponseBody> call = tour.acceptOrder(MyApplication.getInstance().getUsername(),  Integer.parseInt(getIntent().getStringExtra("id")));
                     call.enqueue(new Callback<ResponseBody>() {
                         @Override
                         public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                            //Log.e("", "onResponse: "+ response.code());
+                            Log.e("", "onResponse: "+ response.code());
                             final JSONObject jsonObject;
                             if(response.code()==200) {
                                 try {
                                     jsonObject = new JSONObject(response.body().string());
-                                    //Log.e("", "onResponse: " + jsonObject.toString());
+                                    Log.e("", "onResponse: " + jsonObject.toString());
                                     if (jsonObject.getBoolean("Status")) {
-                                        finish();
+
+                                        Log.e("Order info room", "onResponse: " +  getIntent().getStringExtra("id"));
+                                        SharedPreferences s = getSharedPreferences("Room", MODE_PRIVATE);
+                                        s.edit().putString("room",getIntent().getStringExtra("id")).apply();
+
+                                        getSharedPreferences("activeOrder",MODE_PRIVATE).edit().putString("activeOrder", getIntent().getStringExtra("id")).apply();
                                         startActivity(new Intent(OrderInfo.this, MaintainerDirection.class));
                                         //startActivity(new Intent( OrderInfo.this, Chat.class));
-                                        SharedPreferences s = getSharedPreferences("Room", MODE_PRIVATE);
-                                        s.edit().putString("room",Integer.toString(item1.getId())).apply();
-
-                                        getSharedPreferences("activeOrder",MODE_PRIVATE).edit().putString("activeOrder", Integer.toString(item1.getId())).apply();
+                                        finish();
                                     }
                                 } catch (Exception e) {
                                     e.printStackTrace();
@@ -149,7 +152,7 @@ public class OrderInfo extends AppCompatActivity {
 
                         @Override
                         public void onFailure(Call<ResponseBody> call, Throwable t) {
-                            //Log.e("", "onFailure: " +t );
+                            Log.e("", "onFailure: " +t );
                         }
                     });
                 }
@@ -180,10 +183,11 @@ public class OrderInfo extends AppCompatActivity {
                     btnConfirm.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
+                            finish();
                             Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getMaintenanceURL())
                                     .addConverterFactory(GsonConverterFactory.create()).build();
                             final MapAPI tour = retro.create(MapAPI.class);
-                            Call<ResponseBody> call = tour.denyOrder(item1.getId(), 2, edtReason.getText().toString());
+                            Call<ResponseBody> call = tour.denyOrder(Integer.parseInt(getIntent().getStringExtra("id")), 2, edtReason.getText().toString());
                             call.enqueue(new Callback<ResponseBody>() {
                                 @Override
                                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -191,7 +195,7 @@ public class OrderInfo extends AppCompatActivity {
                                         final JSONObject jsonObject;
                                         try {
                                             jsonObject = new JSONObject(response.body().string());
-                                            //Log.e("", "onResponse: " + jsonObject.toString());
+                                            Log.e("", "onResponse: " + jsonObject.toString());
                                             if(jsonObject.getBoolean("Status")){
 
                                             }

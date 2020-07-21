@@ -136,7 +136,7 @@ public class AddAMaintenance extends AppCompatActivity implements OnMapReadyCall
                         if(response.code() == 200){
                             try{
                                 JSONObject jsonObject1 = new JSONObject(response.body().string());
-                                Log.e("TAG", "onResponse: " + jsonObject1.toString() );
+                                Log.e("tag", "onResponse: " + jsonObject1.toString() );
 
                             }catch (Exception e){
                                 e.printStackTrace();
@@ -411,7 +411,8 @@ public class AddAMaintenance extends AppCompatActivity implements OnMapReadyCall
                                     mImages[i] = jsonObject2.getString("Message");
                                 }
 
-                                Call<ResponseBody> call1 = tour.addMaintenance(MyApplication.getInstance().getVersion(),token,(float) mLat,(float) mLon, mAddress, mName, mImages, mNote);
+                                Call<ResponseBody> call1 = tour.addMaintenance(MyApplication.getInstance().getVersion(),token,
+                                        (float) mLat,(float) mLon, mAddress, mName, mImages, mNote, MyApplication.getInstance().getUsername());
 
                                 call1.enqueue(new Callback<ResponseBody>() {
                                     @Override
@@ -440,6 +441,10 @@ public class AddAMaintenance extends AppCompatActivity implements OnMapReadyCall
                                                     e.trigger(MyApplication.getInstance().getUsername(), builder);
 
                                                     ActionObject ao = new ActionObject("", time,"Contribute", Integer.toString(jsonObject.getJSONObject("Service").getInt("Id")));
+
+                                                    if(MyApplication.getInstance().getContributeMap() == null){
+                                                        MyApplication.getInstance().setContributeMap(new HashMap<>());
+                                                    }
 
                                                     if(MyApplication.getInstance().getContributeMap().containsKey("Maintenance")){
                                                         MyApplication.getInstance().getContributeMap().get("Maintenance").put("contributed " + jsonObject.getJSONObject("Service").getInt("Id"), ao);
@@ -531,7 +536,8 @@ public class AddAMaintenance extends AppCompatActivity implements OnMapReadyCall
         }
         else{
             mImages=new String[0];
-            Call<ResponseBody> call = tour.addMaintenance(MyApplication.getInstance().getVersion(),token,(float) mLat,(float) mLon, mAddress, mName, mImages,mNote);
+            Call<ResponseBody> call = tour.addMaintenance(MyApplication.getInstance().getVersion(),token,(float) mLat,
+                    (float) mLon, mAddress, mName, mImages,mNote, MyApplication.getInstance().getUsername());
 
             call.enqueue(new Callback<ResponseBody>() {
                 @Override
@@ -552,6 +558,10 @@ public class AddAMaintenance extends AppCompatActivity implements OnMapReadyCall
                                 e.trigger(MyApplication.getInstance().getUsername(), builder);
 
                                 ActionObject ao = new ActionObject("", time,"Contribute", Integer.toString(jsonObject.getJSONObject("Service").getInt("Id")));
+
+                                if(MyApplication.getInstance().getContributeMap() == null){
+                                    MyApplication.getInstance().setContributeMap(new HashMap<>());
+                                }
 
                                 if(MyApplication.getInstance().getContributeMap().containsKey("Maintenance")){
                                     MyApplication.getInstance().getContributeMap().get("Maintenance").put("contributed " + jsonObject.getJSONObject("Service").getInt("Id"), ao);

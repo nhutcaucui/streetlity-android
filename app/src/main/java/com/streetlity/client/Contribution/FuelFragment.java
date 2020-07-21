@@ -16,6 +16,7 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -194,7 +195,7 @@ public class FuelFragment extends Fragment implements LocationListener, OnMapRea
 
                 t.putExtra("item", item);
                 t.putExtra("index",position);
-                //Log.e("", "onItemClick: " + displayItems.get(position).getId());
+                Log.e("", "onItemClick: " + displayItems.get(position).getId());
                 locationManager.removeUpdates(FuelFragment.this);
                 startActivityForResult(t, 1);
             }
@@ -277,7 +278,7 @@ public class FuelFragment extends Fragment implements LocationListener, OnMapRea
                     JSONArray jsonArray;
                     try {
                         jsonObject = new JSONObject(response.body().string());
-                        //Log.e("", "onResponse: " + jsonObject.toString());
+                        Log.e("", "onResponse: " + jsonObject.toString());
 
                         if(jsonObject.getString("status").equals("ZERO_RESULTS")){
                             Toast toast = Toast.makeText(getActivity(), R.string.address_not_found, Toast.LENGTH_LONG);
@@ -310,14 +311,14 @@ public class FuelFragment extends Fragment implements LocationListener, OnMapRea
                                         JSONArray jsonArray;
                                         try {
                                             jsonObject = new JSONObject(response.body().string());
-                                            //Log.e("", "onResponse: " + jsonObject.toString());
+                                            Log.e("", "onResponse: " + jsonObject.toString());
                                             if (!jsonObject.getJSONArray("Services").toString().equals("")) {
                                                 jsonArray = jsonObject.getJSONArray("Services");
 
                                                 for (int i = 0; i < jsonArray.length(); i++) {
                                                     JSONObject jsonObject1 = jsonArray.getJSONObject(i);
-                                                    //Log.e("", "onResponse: " + jsonObject1.toString());
-                                                    //Log.e("", "onResponse: " + jsonObject1.getInt("Id"));
+                                                    Log.e("", "onResponse: " + jsonObject1.toString());
+                                                    Log.e("", "onResponse: " + jsonObject1.getInt("Id"));
 
                                                     String name = getString(R.string.fuel);
 
@@ -342,20 +343,23 @@ public class FuelFragment extends Fragment implements LocationListener, OnMapRea
                                                     item.setDownvoted(false);
                                                     item.setUpvoted(false);
 
-                                                    //Log.e(TAG, "upvoteMap: " + "upvote " +MyApplication.getInstance().getUpvoteMap()+
-                                      //                      MyApplication.getInstance().getUpvoteMap().containsKey("Fuel") );
-                                                    if(MyApplication.getInstance().getUpvoteMap().containsKey("Fuel")) {
-                                                        Map<String, ActionObject> map = MyApplication.getInstance().getUpvoteMap().get("Fuel");
-                                                        //Log.e(TAG, "onResponse: " + "upvote "+ item.getId() );
-                                                        if(map.containsKey("upvote "+ item.getId())) {
-                                                            item.setUpvoted(true);
-                                                        }
+                                                    if(MyApplication.getInstance().getUpvoteMap() != null) {
+                                                        if (MyApplication.getInstance().getUpvoteMap().containsKey("Fuel")) {
+                                                            Map<String, ActionObject> map = MyApplication.getInstance().getUpvoteMap().get("Fuel");
+                                                            Log.e("tag", "onResponse: " + "upvote " + item.getId());
+                                                            if (map.containsKey("upvote " + item.getId())) {
+                                                                item.setUpvoted(true);
+                                                            }
 
-                                                    }if (MyApplication.getInstance().getDownvoteMap().containsKey("Fuel")){
-                                                        Map<String, ActionObject> map = MyApplication.getInstance().getDownvoteMap().get("Fuel");
-                                                        //Log.e(TAG, "onResponse: " + "downvote "+ item.getId() );
-                                                        if(map.containsKey("downvote "+ item.getId())){
-                                                            item.setDownvoted(true);
+                                                        }
+                                                    }
+                                                    if(MyApplication.getInstance().getDownvoteMap() != null) {
+                                                        if (MyApplication.getInstance().getDownvoteMap().containsKey("Fuel")) {
+                                                            Map<String, ActionObject> map = MyApplication.getInstance().getDownvoteMap().get("Fuel");
+                                                            Log.e("tag", "onResponse: " + "downvote " + item.getId());
+                                                            if (map.containsKey("downvote " + item.getId())) {
+                                                                item.setDownvoted(true);
+                                                            }
                                                         }
                                                     }
                                                     searchItems.add(item);
@@ -407,7 +411,7 @@ public class FuelFragment extends Fragment implements LocationListener, OnMapRea
 //                                                    t.putExtra("currLat", currLat);
 //                                                    t.putExtra("currLon", currLon);
 //                                                    t.putExtra("item", searchItems.get(0));
-//                                                    //Log.e("", "onItemClick: " + searchItems.get(0).getId());
+//                                                    Log.e("", "onItemClick: " + searchItems.get(0).getId());
 //                                                    startActivity(t);
                                                 }
                                                 else{
@@ -429,7 +433,7 @@ public class FuelFragment extends Fragment implements LocationListener, OnMapRea
                                             e.printStackTrace();
                                         }
                                     }else{
-                                        //Log.e(TAG, "onResponse: " + response.code());
+                                        Log.e("tag", "onResponse: " + response.code());
                                         Toast toast = Toast.makeText(getActivity(), R.string.something_wrong, Toast.LENGTH_LONG);
                                         TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
                                         tv.setTextColor(Color.RED);
@@ -450,8 +454,8 @@ public class FuelFragment extends Fragment implements LocationListener, OnMapRea
                 }
                 else{
                     try {
-                        //Log.e(", ",response.errorBody().toString() + response.code());
-                        //Log.e("", "onResponse: " + response.errorBody());
+                        Log.e(", ",response.errorBody().toString() + response.code());
+                        Log.e("", "onResponse: " + response.errorBody());
 
                     }catch (Exception e){
                         e.printStackTrace();
@@ -534,7 +538,7 @@ public class FuelFragment extends Fragment implements LocationListener, OnMapRea
                     locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, MIN_TIME, MIN_DISTANCE, this);
                     loading.setVisibility(View.GONE);
                     //((MainNavigationHolder) getActivity()).getCantFind().setVisibility(View.VISIBLE);
-                    //Log.e("", "onMapReady: MULL");
+                    Log.e("", "onMapReady: MULL");
                 } else {
                     currLat = (float) location.getLatitude();
                     currLon = (float) location.getLongitude();
@@ -547,7 +551,7 @@ public class FuelFragment extends Fragment implements LocationListener, OnMapRea
 
                     mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(currLat, currLon), 13f));
                 }
-                //Log.e("", "onMapReady: " + currLat + " , " + currLon);
+                Log.e("", "onMapReady: " + currLat + " , " + currLon);
             }
 
         }
@@ -601,7 +605,7 @@ public class FuelFragment extends Fragment implements LocationListener, OnMapRea
                             t.putExtra("currLon", currLon);
                             t.putExtra("item", displayItems.get(pos));
                             t.putExtra("index", pos);
-                            //Log.e("", "onItemClick: " + displayItems.get(pos).getId());
+                            Log.e("", "onItemClick: " + displayItems.get(pos).getId());
                             locationManager.removeUpdates(FuelFragment.this);
                             startActivityForResult(t, 1);
                         }
@@ -709,7 +713,7 @@ public class FuelFragment extends Fragment implements LocationListener, OnMapRea
             loading.setIndeterminate(true);
             loading.setVisibility(View.VISIBLE);
             tvNoInternet.setVisibility(View.GONE);
-            //Log.e("", "callFuel: " + range);
+            Log.e("", "callFuel: " + range);
             Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getServiceURL())
                     .addConverterFactory(GsonConverterFactory.create()).build();
             final MapAPI tour = retro.create(MapAPI.class);
@@ -723,14 +727,14 @@ public class FuelFragment extends Fragment implements LocationListener, OnMapRea
                         JSONArray jsonArray;
                         try {
                             jsonObject = new JSONObject(response.body().string());
-                            //Log.e("", "onResponse: " + jsonObject.toString());
+                            Log.e("", "onResponse: " + jsonObject.toString());
                             if (!jsonObject.getJSONArray("Services").toString().equals("")) {
                                 jsonArray = jsonObject.getJSONArray("Services");
 
                                 for (int i = 0; i < jsonArray.length(); i++) {
                                     JSONObject jsonObject1 = jsonArray.getJSONObject(i);
-                                    //Log.e("", "onResponse: " + jsonObject1.toString());
-                                    //Log.e("", "onResponse: " + jsonObject1.getInt("Id"));
+                                    Log.e("", "onResponse: " + jsonObject1.toString());
+                                    Log.e("", "onResponse: " + jsonObject1.getInt("Id"));
 
                                     String name = getString(R.string.fuel);
 
@@ -755,24 +759,26 @@ public class FuelFragment extends Fragment implements LocationListener, OnMapRea
                                     item.setDownvoted(false);
                                     item.setUpvoted(false);
 
-                                    //Log.e(TAG, "upvoteMap: " + "upvote " +MyApplication.getInstance().getUpvoteMap()+
-                               //             MyApplication.getInstance().getUpvoteMap().containsKey("Fuel") );
-                                    if(MyApplication.getInstance().getUpvoteMap().containsKey("Fuel")) {
-                                        Map<String, ActionObject> map = MyApplication.getInstance().getUpvoteMap().get("Fuel");
-                                        //Log.e(TAG, "onResponse: " + "upvote "+ item.getId() );
-                                        if(map.containsKey("upvote "+ item.getId())) {
-                                            item.setUpvoted(true);
-                                        }
+                                    if(MyApplication.getInstance().getUpvoteMap() != null) {
+                                        if (MyApplication.getInstance().getUpvoteMap().containsKey("Fuel")) {
+                                            Map<String, ActionObject> map = MyApplication.getInstance().getUpvoteMap().get("Fuel");
+                                            Log.e("tag", "onResponse: " + "upvote " + item.getId());
+                                            if (map.containsKey("upvote " + item.getId())) {
+                                                item.setUpvoted(true);
+                                            }
 
-                                    }if (MyApplication.getInstance().getDownvoteMap().containsKey("Fuel")){
-                                        Map<String, ActionObject> map = MyApplication.getInstance().getDownvoteMap().get("Fuel");
-                                        //Log.e(TAG, "onResponse: " + "downvote "+ item.getId() );
-                                        if(map.containsKey("downvote "+ item.getId())){
-                                            item.setDownvoted(true);
                                         }
                                     }
-
-                                    //Log.e(TAG, "onResponse: " + item.isUpvoted() + item.isDownvoted() );
+                                    if(MyApplication.getInstance().getDownvoteMap() != null) {
+                                        if (MyApplication.getInstance().getDownvoteMap().containsKey("Fuel")) {
+                                            Map<String, ActionObject> map = MyApplication.getInstance().getDownvoteMap().get("Fuel");
+                                            Log.e("tag", "onResponse: " + "downvote " + item.getId());
+                                            if (map.containsKey("downvote " + item.getId())) {
+                                                item.setDownvoted(true);
+                                            }
+                                        }
+                                    }
+                                    Log.e("tag", "onResponse: " + item.isUpvoted() + item.isDownvoted() );
 
                                     items.add(item);
                                 }
@@ -822,7 +828,7 @@ public class FuelFragment extends Fragment implements LocationListener, OnMapRea
 
                 @Override
                 public void onFailure(Call<ResponseBody> call, Throwable t) {
-                    //Log.e("", "onFailure: " + t.toString());
+                    Log.e("", "onFailure: " + t.toString());
                 }
             });
         } else {

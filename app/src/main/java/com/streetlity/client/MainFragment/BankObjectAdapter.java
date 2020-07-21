@@ -2,6 +2,7 @@ package com.streetlity.client.MainFragment;
 
 import android.app.Activity;
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -110,7 +111,7 @@ public class BankObjectAdapter extends ArrayAdapter implements Filterable {
             protected FilterResults performFiltering(CharSequence constraint) {
                 FilterResults results = new FilterResults();        // Holds the results of a filtering operation in values
                 ArrayList<BankObject> FilteredArrList = new ArrayList<BankObject>();
-                //Log.e("", "performFiltering: " + constraint );
+                Log.e("", "performFiltering: " + constraint );
                 if (mOriginalValues == null) {
                     mOriginalValues = new ArrayList<BankObject>(mDisplayedValues); // saves the original data in mOriginalValues
                 }

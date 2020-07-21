@@ -8,6 +8,7 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -42,8 +43,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 import static android.view.View.VISIBLE;
 
-public class AchievementOther extends AppCompatActivity implements View.OnClickListener, ContributedFragment.OnFragmentInteractionListener,
-        ReviewedFragment.OnFragmentInteractionListener {
+public class AchievementOther extends AppCompatActivity implements View.OnClickListener, ContributedOtherFragment.OnFragmentInteractionListener,
+        ReviewedOtherFragment.OnFragmentInteractionListener {
 
     ArrayList<AchievementObject> items = new ArrayList<>();
     ArrayList<MapObject> reviewedItems = new ArrayList<>();
@@ -96,12 +97,12 @@ public class AchievementOther extends AppCompatActivity implements View.OnClickL
                     .GPS_PROVIDER);
 
             if (location == null) {
-                //Log.e("", "onMapReady: MULL");
+                Log.e("", "onMapReady: MULL");
             } else {
                 currLat = (float) location.getLatitude();
                 currLon = (float) location.getLongitude();
             }
-            //Log.e("", "onMapReady: " + currLat + " , " + currLon);
+            Log.e("", "onMapReady: " + currLat + " , " + currLon);
         }
 
 //        ListView lv = findViewById(R.id.lv);
@@ -133,7 +134,7 @@ public class AchievementOther extends AppCompatActivity implements View.OnClickL
                 if (response.code() == 200) {
                     try {
                         JSONObject jsonObject2 = new JSONObject(response.body().string());
-                        //Log.e("TAG", "onResponse: " + jsonObject2.toString());
+                        Log.e("tag", "onResponse: " + jsonObject2.toString());
                         if (jsonObject2.getBoolean("Status")) {
                             Map<String, Map<String, ActionObject>> reviewMap = new HashMap<>();
                             Map<String, Map<String, ActionObject>> contributeMap = new HashMap<>();
@@ -269,7 +270,7 @@ public class AchievementOther extends AppCompatActivity implements View.OnClickL
                             reviewedMap = reviewMap;
                             contributedMap = contributeMap;
 
-                            fragment = new ContributedFragment();
+                            fragment = new ContributedOtherFragment();
                             loadFragment(fragment);
                             current= R.id.btn_contributed;
 
@@ -297,13 +298,13 @@ public class AchievementOther extends AppCompatActivity implements View.OnClickL
     public void onClick(View v) {
         boolean notTheSame = false;
         if(v.getId() == R.id.btn_contributed && current != R.id.btn_contributed){
-            fragment = new ContributedFragment();
+            fragment = new ContributedOtherFragment();
             setToUnselect(current);
             current= R.id.btn_contributed;
             setToSelect(current);
             notTheSame = true;
         }else if(v.getId() == R.id.btn_reviewed && current != R.id.btn_reviewed){
-            fragment = new ReviewedFragment();
+            fragment = new ReviewedOtherFragment();
             setToUnselect(current);
             current= R.id.btn_reviewed;
             setToSelect(current);
@@ -374,20 +375,20 @@ public class AchievementOther extends AppCompatActivity implements View.OnClickL
 
         final MapAPI tour = retro.create(MapAPI.class);
 
-        Call<ResponseBody> call = tour.getReputation(MyApplication.getInstance().getUsername());
+        Call<ResponseBody> call = tour.getReputation(getIntent().getStringExtra("user"));
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 try{
                     if(response.code() == 200){
                         JSONObject jsonObject = new JSONObject(response.body().string());
-                        //Log.e(TAG, "onResponse: " + jsonObject.toString() );
+                        Log.e("tag", "onResponse: " + jsonObject.toString() );
                         if(jsonObject.getBoolean("Status")){
                             TextView tvPoint = findViewById(R.id.tv_point);
                             tvPoint.setText(Integer.toString(jsonObject.getInt("Reputation")));
                         }
                     }else{
-                        //Log.e(TAG, "onResponse: "+response.code() );
+                        Log.e("tag", "onResponse: "+response.code() );
                     }
                 }catch (Exception e){
                     e.printStackTrace();
@@ -464,7 +465,7 @@ public class AchievementOther extends AppCompatActivity implements View.OnClickL
                     final JSONObject jsonObject;
                     try {
                         jsonObject = new JSONObject(response.body().string());
-                        //Log.e("", "onResponse: " + jsonObject.toString());
+                        Log.e("", "onResponse: " + jsonObject.toString());
 
                         if (jsonObject.getBoolean("Status")) {
                             JSONArray jsonArray = jsonObject.getJSONArray("Banks");
@@ -472,7 +473,7 @@ public class AchievementOther extends AppCompatActivity implements View.OnClickL
                             for (int i = 0; i < jsonArray.length(); i++) {
                                 JSONObject jsonObject1 = jsonArray.getJSONObject(i);
                                 arrBank.add(new BankObject(jsonObject1.getInt("Id"), jsonObject1.getString("Name")));
-                                //Log.e("", "onResponse: " + jsonObject1.getString("Name") + getString(R.string.all));
+                                Log.e("", "onResponse: " + jsonObject1.getString("Name") + getString(R.string.all));
                             }
                         }
                     } catch (Exception e) {
@@ -480,7 +481,7 @@ public class AchievementOther extends AppCompatActivity implements View.OnClickL
                     }
                 } else {
                     try {
-                        //Log.e(", ", response.errorBody().toString() + response.code());
+                        Log.e(", ", response.errorBody().toString() + response.code());
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -489,7 +490,7 @@ public class AchievementOther extends AppCompatActivity implements View.OnClickL
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                //Log.e("", "onFailure: " + t.toString());
+                Log.e("", "onFailure: " + t.toString());
             }
         });
     }

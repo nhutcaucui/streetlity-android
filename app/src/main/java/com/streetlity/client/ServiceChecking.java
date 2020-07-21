@@ -26,10 +26,19 @@ public class ServiceChecking extends Service {
         SharedPreferences s = getSharedPreferences("map", MODE_PRIVATE);
         SharedPreferences.Editor e = s.edit();
 
-        e.putString("review", gs.toJson(MyApplication.getInstance().getReviewedMap()));
-        e.putString("contribute", gs.toJson(MyApplication.getInstance().getContributeMap()));
-        e.putString("upvote", gs.toJson(MyApplication.getInstance().getUpvoteMap()));
-        e.putString("downvote", gs.toJson(MyApplication.getInstance().getDownvoteMap()));
+        if(MyApplication.getInstance().getUpvoteMap() != null){
+            e.putString("upvote", gs.toJson(MyApplication.getInstance().getUpvoteMap()));
+        }
+        if(MyApplication.getInstance().getDownvoteMap()!= null){
+            e.putString("downvote", gs.toJson(MyApplication.getInstance().getDownvoteMap()));
+        }
+        if(MyApplication.getInstance().getReviewedMap() != null) {
+            e.putString("review", gs.toJson(MyApplication.getInstance().getReviewedMap()));
+        }
+        if(MyApplication.getInstance().getContributeMap()!= null){
+            e.putString("contribute", gs.toJson(MyApplication.getInstance().getContributeMap()));
+        }
+
 
         e.apply();
 

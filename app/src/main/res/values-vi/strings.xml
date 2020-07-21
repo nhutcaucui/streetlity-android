@@ -194,7 +194,7 @@
     <string name="maintainer_accept">MỘT THỢ SỬA CHẤP NHẬN YÊU CẦU CỦA BẠN</string>
     <string name="mark_spam">Đánh dấu spam</string>
     <string name="seconds">giây</string>
-    <string name="cant_broadcast_while_active">Không thể broadcast khi có yêu cầu chưa hoàn thành</string>
+    <string name="cant_broadcast_while_active">Không thể tìm thợ sửa xe khi có yêu cầu chưa hoàn thành</string>
     <string name="cancel_order">Hủy yêu cầu?</string>
     <string name="find_maintainer">Tìm thợ sửa xe</string>
     <string name="all_service">Tất cả dịch vụ quanh đây</string>
@@ -249,7 +249,7 @@
     <string name="search_location">Địa điểm tìm kiếm</string>
     <string name="change_range_to">Đổi phạm vi thành</string>
     <string name="next_to_chat">Tiếp theo</string>
-    <string name="found_maintainer">MỘT THỢ SỬA ĐÃ CHẤP NHẬN YÊU CẦU CỦA BẠN</string>
+    <string name="found_maintainer">MỘT THỢ SỬA XE ĐÃ CHẤP NHẬN YÊU CẦU CỦA BẠN</string>
     <string name="order_completed">YÊU CẦU ĐÃ HOÀN THÀNH</string>
     <string name="order_cancel">YÊU CẦU BỊ HỦY BỎ</string>
     <string name="name_of_place">Tên địa điểm</string>
@@ -264,4 +264,5 @@
     <string name="locations">địa điểm</string>
     <string name="edt_name">Sửa tên</string>
     <string name="empty_note">Ghi chú rỗng</string>
+    <string name="waiting_for_user">Chờ người dùng còn lại kết nối...</string>
 </resources>

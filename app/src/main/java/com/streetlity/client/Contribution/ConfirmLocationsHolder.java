@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.HorizontalScrollView;
@@ -124,7 +125,7 @@ public class ConfirmLocationsHolder extends AppCompatActivity implements FuelFra
         LinearLayout btnCurrent = findViewById(id);
         if(btnCurrent != null) {
             btnCurrent.getChildAt(1).setVisibility(View.GONE);
-            //Log.e( "setToUnselect: ", btnCurrent.getClass().getName() + btnCurrent.getChildCount());
+            Log.e( "setToUnselect: ", btnCurrent.getClass().getName() + btnCurrent.getChildCount());
             ImageView img = (ImageView)  btnCurrent.getChildAt(0);
             img.setColorFilter(Color.argb(255, 255, 255, 255));
         }
@@ -133,7 +134,7 @@ public class ConfirmLocationsHolder extends AppCompatActivity implements FuelFra
     public void setToSelect(int id){
         LinearLayout btnCurrent = findViewById(id);
         btnCurrent.getChildAt(1).setVisibility(View.VISIBLE);
-        //Log.e( "setToUnselect: ", btnCurrent.getClass().getName() + btnCurrent.getChildCount());
+        Log.e( "setToUnselect: ", btnCurrent.getClass().getName() + btnCurrent.getChildCount());
         ImageView img = (ImageView) ((LinearLayout) btnCurrent).getChildAt(0);
         img.setColorFilter(Color.argb(255, 0, 0, 0));
 

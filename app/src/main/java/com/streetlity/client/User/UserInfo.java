@@ -20,6 +20,7 @@ import androidx.appcompat.widget.Toolbar;
 
 import android.text.Html;
 import android.text.InputType;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -361,7 +362,7 @@ public class UserInfo extends AppCompatActivity {
                         final JSONObject jsonObject;
                         try {
                             jsonObject = new JSONObject(response.body().string());
-                            //Log.e("", "onResponse: " + jsonObject.toString());
+                            Log.e("", "onResponse: " + jsonObject.toString());
 
                             if (jsonObject.getBoolean("Status")) {
                                 JSONObject jsonObject1 = jsonObject.getJSONObject("Paths");
@@ -380,7 +381,7 @@ public class UserInfo extends AppCompatActivity {
                                             JSONArray jsonArray;
                                             try {
                                                 jsonObject = new JSONObject(response.body().string());
-                                                //Log.e("", "onResponse: " + jsonObject.toString());
+                                                Log.e("", "onResponse: " + jsonObject.toString());
 
                                                 Toast toast = Toast.makeText(UserInfo.this, R.string.update_successfully, Toast.LENGTH_LONG);
 
@@ -413,7 +414,7 @@ public class UserInfo extends AppCompatActivity {
                                         }
                                         else{
                                             try {
-                                                //Log.e(", ",""+response.code());
+                                                Log.e(", ",""+response.code());
                                                 Toast toast = Toast.makeText(UserInfo.this, "!", Toast.LENGTH_LONG);
                                                 TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
                                                 tv.setTextColor(Color.RED);
@@ -432,7 +433,7 @@ public class UserInfo extends AppCompatActivity {
 
                                     @Override
                                     public void onFailure(Call<ResponseBody> call, Throwable t) {
-                                        //Log.e("", "onFailure: " + t.toString());
+                                        Log.e("", "onFailure: " + t.toString());
                                         Toast toast = Toast.makeText(UserInfo.this, "!", Toast.LENGTH_LONG);
                                         TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
                                         tv.setTextColor(Color.RED);
@@ -462,7 +463,7 @@ public class UserInfo extends AppCompatActivity {
 
                 @Override
                 public void onFailure(Call<ResponseBody> call, Throwable t) {
-                    //Log.e("", "onFailure: " + t.toString());
+                    Log.e("", "onFailure: " + t.toString());
                     Toast toast = Toast.makeText(UserInfo.this, "!", Toast.LENGTH_LONG);
                     TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
                     tv.setTextColor(Color.RED);
@@ -482,7 +483,7 @@ public class UserInfo extends AppCompatActivity {
                         JSONArray jsonArray;
                         try {
                             jsonObject = new JSONObject(response.body().string());
-                            //Log.e("", "onResponse: " + jsonObject.toString());
+                            Log.e("", "onResponse: " + jsonObject.toString());
 
                             Toast toast = Toast.makeText(UserInfo.this, R.string.update_successfully, Toast.LENGTH_LONG);
 
@@ -511,7 +512,7 @@ public class UserInfo extends AppCompatActivity {
                     }
                     else{
                         try {
-                            //Log.e(", ",response.errorBody().toString());
+                            Log.e(", ",response.errorBody().toString());
                             Toast toast = Toast.makeText(UserInfo.this, "!", Toast.LENGTH_LONG);
                             TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
                             tv.setTextColor(Color.RED);
@@ -530,7 +531,7 @@ public class UserInfo extends AppCompatActivity {
 
                 @Override
                 public void onFailure(Call<ResponseBody> call, Throwable t) {
-                    //Log.e("", "onFailure: " + t.toString());
+                    Log.e("", "onFailure: " + t.toString());
                 }
             });
         }

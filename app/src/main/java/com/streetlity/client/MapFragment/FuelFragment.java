@@ -135,18 +135,18 @@
 //                    JSONArray jsonArray;
 //                    try {
 //                        jsonObject = new JSONObject(response.body().string());
-//                        //Log.e("", "onResponse: " + jsonObject.toString());
+//                        Log.e("", "onResponse: " + jsonObject.toString());
 //                        jsonArray = jsonObject.getJSONArray("Fuels");
 //
 //                        for (int i = 0; i< jsonArray.length();i++){
 //                            JSONObject jsonObject1 = jsonArray.getJSONObject(i);
-//                            //Log.e("", "onResponse: " + jsonObject1.toString());
+//                            Log.e("", "onResponse: " + jsonObject1.toString());
 //                            addATMMarkerToList((float)jsonObject1.getDouble("Lat"),
 //                                    (float)jsonObject1.getDouble("Lon"),"atm type here");
 //                        }
 //
 //                        for (int i = 0; i < mMarkers.size(); i++){
-//                            //Log.e("", mMarkers.get(i).getTitle());
+//                            Log.e("", mMarkers.get(i).getTitle());
 //                            mMap.addMarker(mMarkers.get(i));
 //                        }
 //                    } catch (Exception e){
@@ -157,7 +157,7 @@
 //
 //            @Override
 //            public void onFailure(Call<ResponseBody> call, Throwable t) {
-//                //Log.e("", "onFailure: " + t.toString());
+//                Log.e("", "onFailure: " + t.toString());
 //            }
 //        });
 //    }
@@ -180,18 +180,18 @@
 //                    JSONArray jsonArray;
 //                    try {
 //                        jsonObject = new JSONObject(response.body().string());
-//                        //Log.e("", "onResponse: " + jsonObject.toString());
+//                        Log.e("", "onResponse: " + jsonObject.toString());
 //                        jsonArray = jsonObject.getJSONArray("Fuels");
 //
 //                        for (int i = 0; i< jsonArray.length();i++){
 //                            JSONObject jsonObject1 = jsonArray.getJSONObject(i);
-//                            //Log.e("", "onResponse: " + jsonObject1.toString());
+//                            Log.e("", "onResponse: " + jsonObject1.toString());
 //                            addWCMarkerToList((float)jsonObject1.getDouble("Lat"),
 //                                    (float)jsonObject1.getDouble("Lon"));
 //                        }
 //
 //                        for (int i = 0; i < mMarkers.size(); i++){
-//                            //Log.e("", mMarkers.get(i).getTitle());
+//                            Log.e("", mMarkers.get(i).getTitle());
 //                            mMap.addMarker(mMarkers.get(i));
 //                        }
 //                    } catch (Exception e){
@@ -202,7 +202,7 @@
 //
 //            @Override
 //            public void onFailure(Call<ResponseBody> call, Throwable t) {
-//                //Log.e("", "onFailure: " + t.toString());
+//                Log.e("", "onFailure: " + t.toString());
 //            }
 //        });
 //    }
@@ -232,6 +232,7 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -350,7 +351,7 @@ public class FuelFragment extends Fragment implements OnMapReadyCallback, Google
             @Override
             public void onClick(View v) {
                 callFuel(latitude,longitude,(float)sbRange.getProgress());
-                //Log.e("", "onClick: " +  sbRange.getProgress());
+                Log.e("", "onClick: " +  sbRange.getProgress());
             }
         });
 
@@ -414,11 +415,11 @@ public class FuelFragment extends Fragment implements OnMapReadyCallback, Google
             Location location = locationManager.getLastKnownLocation(locationManager
                     .GPS_PROVIDER);
             if(location == null){
-                //Log.e("", "onMapReady: MULL");
+                Log.e("", "onMapReady: MULL");
             }
             latitude = location.getLatitude();
             longitude = location.getLongitude();
-            //Log.e("", "onMapReady: " + latitude+" , " + longitude );
+            Log.e("", "onMapReady: " + latitude+" , " + longitude );
         }
 
         callFuel(latitude,longitude,1);
@@ -492,19 +493,19 @@ public class FuelFragment extends Fragment implements OnMapReadyCallback, Google
                     JSONArray jsonArray;
                     try {
                         jsonObject = new JSONObject(response.body().string());
-                        //Log.e("", "onResponse: " + jsonObject.toString());
+                        Log.e("", "onResponse: " + jsonObject.toString());
                         if(jsonObject.getJSONArray("Fuels").toString().equals("")) {
                             jsonArray = jsonObject.getJSONArray("Fuels");
 
                             for (int i = 0; i < jsonArray.length(); i++) {
                                 JSONObject jsonObject1 = jsonArray.getJSONObject(i);
-                                //Log.e("", "onResponse: " + jsonObject1.toString());
+                                Log.e("", "onResponse: " + jsonObject1.toString());
                                 addFuelMarkerToList((float) jsonObject1.getDouble("Lat"),
                                         (float) jsonObject1.getDouble("Lon"));
                             }
 
                             for (int i = 0; i < mMarkers.size(); i++) {
-                                //Log.e("", mMarkers.get(i).getTitle());
+                                Log.e("", mMarkers.get(i).getTitle());
                                 mMap.addMarker(mMarkers.get(i));
                             }
 
@@ -522,7 +523,7 @@ public class FuelFragment extends Fragment implements OnMapReadyCallback, Google
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                //Log.e("", "onFailure: " + t.toString());
+                Log.e("", "onFailure: " + t.toString());
             }
         });
     }

@@ -3,6 +3,7 @@ package com.streetlity.client.Chat;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -80,7 +81,7 @@ public class ChatObjectAdapter extends ArrayAdapter implements Filterable {
         int color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256));
 
         if(this.mDisplayedValues.get(position).getName().equals(MyApplication.getInstance().getUsername())){
-            //Log.e("", position+"getView: " + this.mDisplayedValues.get(position).getName() +  MyApplication.getInstance().getUsername());
+            Log.e("", position+"getView: " + this.mDisplayedValues.get(position).getName() +  MyApplication.getInstance().getUsername());
             holder.tvName.setTextColor(context.getResources().getColor(R.color.blue));
         }else{
             holder.tvName.setTextColor(context.getResources().getColor(R.color.black));

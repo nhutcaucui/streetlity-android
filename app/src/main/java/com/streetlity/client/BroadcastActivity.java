@@ -23,6 +23,7 @@ import androidx.core.content.ContextCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import android.os.CountDownTimer;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -143,7 +144,8 @@ public class BroadcastActivity extends AppCompatActivity {
                 currLon = (float) location.getLongitude();
             }
         }
-        //Log.e("", "onMapReady: " + currLat + " , " + currLon);
+
+        Log.e("", "onMapReady: " + currLat + " , " + currLon);
 
         /*
         Find views and assign values to them if needed
@@ -326,7 +328,9 @@ public class BroadcastActivity extends AppCompatActivity {
                     finish();
                 }
 
-                countdown.cancel();
+                if(countdown !=null) {
+                    countdown.cancel();
+                }
 
                 stopThread = true;
                 //denyOrder();
@@ -360,7 +364,7 @@ Send a request to deny the order to the server
                     final JSONObject jsonObject;
                     try {
                         jsonObject = new JSONObject(response.body().string());
-                        //Log.e("", "onResponse: " + jsonObject.toString());
+                        Log.e("", "onResponse: " + jsonObject.toString());
                         if(jsonObject.getBoolean("Status")){
                             RelativeLayout broadcasting = findViewById(R.id.layout_broadcasting);
                             broadcasting.setVisibility(View.GONE);
@@ -447,7 +451,7 @@ Send a request to deny the order to the server
         Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getServiceURL())
                 .addConverterFactory(GsonConverterFactory.create()).build();
         final MapAPI tour = retro.create(MapAPI.class);
-        Call<ResponseBody> call = tour.getMaintenanceInRange(MyApplication.getInstance().getVersion(), (float) lat, (float) lon, (float) 0.3);
+        Call<ResponseBody> call = tour.getMaintenanceInRange(MyApplication.getInstance().getVersion(), (float) lat, (float) lon, MyApplication.getInstance().getRange());
         //Call<ResponseBody> call = tour.getAllATM();
         call.enqueue(new Callback<ResponseBody>() {
             @Override
@@ -457,7 +461,8 @@ Send a request to deny the order to the server
                     final JSONArray jsonArray;
                     try {
                         jsonObject = new JSONObject(response.body().string());
-                        //Log.e("", "onResponse: " + jsonObject.toString());
+                        Log.e("", "onResponse: " + jsonObject.toString());
+                        if(!jsonObject.getString("Services").equals("null")){
                         jsonArray = jsonObject.getJSONArray("Services");
 
                         final ArrayList<Integer> idList = new ArrayList<>();
@@ -516,10 +521,10 @@ Send a request to deny the order to the server
                                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                                     JSONObject jsonObject;
                                     if (response.code() == 200) {
-                                        //Log.e("", "onResponse: " + response.raw().request());
+                                        Log.e("", "onResponse: " + response.raw().request());
                                         try {
                                             jsonObject = new JSONObject(response.body().string());
-                                            //Log.e("", "onResponse: " + jsonObject.toString());
+                                            Log.e("", "onResponse: " + jsonObject.toString());
                                             if (jsonObject.getBoolean("Status")) {
 //                                                Intent data = new Intent();
 //                                                data.putExtra("numStore", idList.size());
@@ -533,11 +538,11 @@ Send a request to deny the order to the server
 
                                                 String temp = getString(R.string.contacted);
                                                 temp += " " + idList.size();
-                                                temp += " " + getString(R.string.nearby_repairmen);
+                                                temp += " " + getString(R.string.maintenance_store);
 
-                                                if(fRange>=1000) {
+                                                if (fRange >= 1000) {
                                                     temp += " " + getString(R.string.in_range) + " " + (fRange / 1000) + "km";
-                                                }else{
+                                                } else {
                                                     temp += " " + getString(R.string.in_range) + " " + (fRange) + "m";
                                                 }
 
@@ -559,7 +564,7 @@ Send a request to deny the order to the server
                                                     }
 
                                                     public void onFinish() {
-                                                        if(notFound) {
+                                                        if (notFound) {
                                                             runOnUiThread(new Runnable() {
                                                                 @Override
                                                                 public void run() {
@@ -611,7 +616,7 @@ Send a request to deny the order to the server
                                     } else {
                                         try {
                                             ;
-                                            //Log.e("", "onResponse: " + response.code());
+                                            Log.e("", "onResponse: " + response.code());
                                         } catch (Exception e) {
                                             e.printStackTrace();
                                         }
@@ -620,9 +625,10 @@ Send a request to deny the order to the server
 
                                 @Override
                                 public void onFailure(Call<ResponseBody> call, Throwable t) {
-                                    //Log.e("", "onFailure: " + t.toString());
+                                    Log.e("", "onFailure: " + t.toString());
                                 }
                             });
+                        }
                         } else {
                             broadcasting.setVisibility(View.GONE);
                             Toast toast = Toast.makeText(BroadcastActivity.this, R.string.no_available, Toast.LENGTH_LONG);
@@ -637,7 +643,7 @@ Send a request to deny the order to the server
                     }
                 } else {
                     try {
-                        //Log.e(", ", response.errorBody().toString() + response.code());
+                        Log.e(", ", response.errorBody().toString() + response.code());
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -646,7 +652,7 @@ Send a request to deny the order to the server
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                //Log.e("", "onFailure: " + t.toString());
+                Log.e("", "onFailure: " + t.toString());
             }
         });
     }

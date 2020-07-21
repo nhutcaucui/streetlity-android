@@ -103,22 +103,26 @@ public interface MapAPI {
     @FormUrlEncoded
     @POST("service/fuel/create")
     Call<ResponseBody> addFuel(@Header("Version") String version, @Header("Auth") String token, @Field("location") float lat, @Field("location" )float lon,
-                               @Field("address") String address, @Field("note") String note, @Field("images") String[] images, @Field("name") String name);
+                               @Field("address") String address, @Field("note") String note, @Field("images") String[] images, @Field("name") String name,
+                               @Field("contributor") String contributor);
 
     @FormUrlEncoded
     @POST("service/atm/create")
     Call<ResponseBody> addATM(@Header("Version") String version, @Header("Auth") String token,@Field("location") float lat, @Field("location" )float lon,
-                              @Field("bank_id") int bankId, @Field("address") String address, @Field("note") String note, @Field("images") String[] images);
+                              @Field("bank_id") int bankId, @Field("address") String address, @Field("note") String note, @Field("images") String[] images,
+                              @Field("contributor") String contributor);
 
     @FormUrlEncoded
     @POST("service/toilet/create")
     Call<ResponseBody> addWC(@Header("Version") String version, @Header("Auth") String token,@Field("location") float lat, @Field("location" )float lon,
-                             @Field("address") String address, @Field("note") String note, @Field("images") String[] images, @Field("name") String name);
+                             @Field("address") String address, @Field("note") String note, @Field("images") String[] images, @Field("name") String name,
+                             @Field("contributor") String contributor);
 
     @FormUrlEncoded
     @POST("service/maintenance/create")
     Call<ResponseBody> addMaintenance(@Header("Version") String version, @Header("Auth") String token,@Field("location") float lat, @Field("location" )float lon,
-                                      @Field("address") String address, @Field("name") String name, @Field("images") String[] images, @Field("note") String note);
+                                      @Field("address") String address, @Field("name") String name, @Field("images") String[] images, @Field("note") String note,
+                                      @Field("contributor") String contributor);
 
     @GET("json")
     Call<ResponseBody> geocode(@Query("address") String address, @Query("key") String key);
@@ -272,7 +276,7 @@ public interface MapAPI {
     @POST("order/accept")
     Call<ResponseBody> acceptOrder(@Field("maintenance_user") String maintenance_name, @Field("order_id") int id);
 
-    @GET("user/info")
+    @GET("user/info/")
     Call<ResponseBody> userInfo(@Query("id") String username);
 
    //@FormUrlEncoded

@@ -14,6 +14,7 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -128,7 +129,7 @@ public class ATMFragment extends Fragment implements OnMapReadyCallback, GoogleM
             @Override
             public void onClick(View v) {
                 callATM(latitude,longitude,(float)sbRange.getProgress());
-                //Log.e("", "onClick: " +  sbRange.getProgress());
+                Log.e("", "onClick: " +  sbRange.getProgress());
             }
         });
 
@@ -192,11 +193,11 @@ public class ATMFragment extends Fragment implements OnMapReadyCallback, GoogleM
             Location location = locationManager.getLastKnownLocation(locationManager
                     .GPS_PROVIDER);
             if(location == null){
-                //Log.e("", "onMapReady: MULL");
+                Log.e("", "onMapReady: MULL");
             }
             latitude = location.getLatitude();
             longitude = location.getLongitude();
-            //Log.e("", "onMapReady: " + latitude+" , " + longitude );
+            Log.e("", "onMapReady: " + latitude+" , " + longitude );
         }
 
         callATM(latitude,longitude, 1);
@@ -265,18 +266,18 @@ public class ATMFragment extends Fragment implements OnMapReadyCallback, GoogleM
                     JSONArray jsonArray;
                     try {
                         jsonObject = new JSONObject(response.body().string());
-                        //Log.e("", "onResponse: " + jsonObject.toString());
+                        Log.e("", "onResponse: " + jsonObject.toString());
                         jsonArray = jsonObject.getJSONArray("Atms");
 
                         for (int i = 0; i< jsonArray.length();i++){
                             JSONObject jsonObject1 = jsonArray.getJSONObject(i);
-                            //Log.e("", "onResponse: " + jsonObject1.toString());
+                            Log.e("", "onResponse: " + jsonObject1.toString());
                             addATMMarkerToList((float)jsonObject1.getDouble("Lat"),
                                     (float)jsonObject1.getDouble("Lon"),"atm type here");
                         }
 
                         for (int i = 0; i < mMarkers.size(); i++){
-                            //Log.e("", mMarkers.get(i).getTitle());
+                            Log.e("", mMarkers.get(i).getTitle());
                             mMap.addMarker(mMarkers.get(i));
                         }
 
@@ -295,7 +296,7 @@ public class ATMFragment extends Fragment implements OnMapReadyCallback, GoogleM
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                //Log.e("", "onFailure: " + t.toString());
+                Log.e("", "onFailure: " + t.toString());
             }
         });
     }

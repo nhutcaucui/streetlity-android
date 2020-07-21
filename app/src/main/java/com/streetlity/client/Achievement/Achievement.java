@@ -20,6 +20,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -95,12 +96,12 @@ public class Achievement extends AppCompatActivity implements View.OnClickListen
                     .GPS_PROVIDER);
 
             if (location == null) {
-                //Log.e("", "onMapReady: MULL");
+                Log.e("", "onMapReady: MULL");
             } else {
                 currLat = (float) location.getLatitude();
                 currLon = (float) location.getLongitude();
             }
-            //Log.e("", "onMapReady: " + currLat + " , " + currLon);
+            Log.e("", "onMapReady: " + currLat + " , " + currLon);
         }
 
 
@@ -199,13 +200,13 @@ public class Achievement extends AppCompatActivity implements View.OnClickListen
                 try{
                     if(response.code() == 200){
                         JSONObject jsonObject = new JSONObject(response.body().string());
-                        //Log.e(TAG, "onResponse: " + jsonObject.toString() );
+                        Log.e("tag", "onResponse: " + jsonObject.toString() );
                         if(jsonObject.getBoolean("Status")){
                             TextView tvPoint = findViewById(R.id.tv_point);
                             tvPoint.setText(Integer.toString(jsonObject.getInt("Reputation")));
                         }
                     }else{
-                        //Log.e(TAG, "onResponse: "+response.code() );
+                        Log.e("tag", "onResponse: "+response.code() );
                     }
                 }catch (Exception e){
                     e.printStackTrace();
@@ -282,7 +283,7 @@ public class Achievement extends AppCompatActivity implements View.OnClickListen
                     final JSONObject jsonObject;
                     try {
                         jsonObject = new JSONObject(response.body().string());
-                        //Log.e("", "onResponse: " + jsonObject.toString());
+                        Log.e("", "onResponse: " + jsonObject.toString());
 
                         if (jsonObject.getBoolean("Status")) {
                             JSONArray jsonArray = jsonObject.getJSONArray("Banks");
@@ -290,7 +291,7 @@ public class Achievement extends AppCompatActivity implements View.OnClickListen
                             for (int i = 0; i < jsonArray.length(); i++) {
                                 JSONObject jsonObject1 = jsonArray.getJSONObject(i);
                                 arrBank.add(new BankObject(jsonObject1.getInt("Id"), jsonObject1.getString("Name")));
-                                //Log.e("", "onResponse: " + jsonObject1.getString("Name") + getString(R.string.all));
+                                Log.e("", "onResponse: " + jsonObject1.getString("Name") + getString(R.string.all));
                             }
 
                             fragment = new ContributedFragment();
@@ -302,7 +303,7 @@ public class Achievement extends AppCompatActivity implements View.OnClickListen
                     }
                 } else {
                     try {
-                        //Log.e(", ", response.errorBody().toString() + response.code());
+                        Log.e(", ", response.errorBody().toString() + response.code());
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -311,7 +312,7 @@ public class Achievement extends AppCompatActivity implements View.OnClickListen
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                //Log.e("", "onFailure: " + t.toString());
+                Log.e("", "onFailure: " + t.toString());
             }
         });
     }

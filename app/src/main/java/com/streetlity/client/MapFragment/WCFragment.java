@@ -14,6 +14,7 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -131,7 +132,7 @@ public class WCFragment extends Fragment implements OnMapReadyCallback, GoogleMa
             @Override
             public void onClick(View v) {
                 callWC(latitude,longitude,(float)sbRange.getProgress());
-                //Log.e("", "onClick: " +  sbRange.getProgress());
+                Log.e("", "onClick: " +  sbRange.getProgress());
             }
         });
 
@@ -196,11 +197,11 @@ public class WCFragment extends Fragment implements OnMapReadyCallback, GoogleMa
             Location location = locationManager.getLastKnownLocation(locationManager
                     .GPS_PROVIDER);
             if(location == null){
-                //Log.e("", "onMapReady: MULL");
+                Log.e("", "onMapReady: MULL");
             }
             latitude = location.getLatitude();
             longitude = location.getLongitude();
-            //Log.e("", "onMapReady: " + latitude+" , " + longitude );
+            Log.e("", "onMapReady: " + latitude+" , " + longitude );
         }
 
         callWC(latitude,longitude,1);
@@ -275,18 +276,18 @@ public class WCFragment extends Fragment implements OnMapReadyCallback, GoogleMa
                     JSONArray jsonArray;
                     try {
                         jsonObject = new JSONObject(response.body().string());
-                        //Log.e("", "onResponse: " + jsonObject.toString());
+                        Log.e("", "onResponse: " + jsonObject.toString());
                         jsonArray = jsonObject.getJSONArray("Toilets");
 
                         for (int i = 0; i< jsonArray.length();i++){
                             JSONObject jsonObject1 = jsonArray.getJSONObject(i);
-                            //Log.e("", "onResponse: " + jsonObject1.toString());
+                            Log.e("", "onResponse: " + jsonObject1.toString());
                             addWCMarkerToList((float)jsonObject1.getDouble("Lat"),
                                     (float)jsonObject1.getDouble("Lon"));
                         }
 
                         for (int i = 0; i < mMarkers.size(); i++){
-                            //Log.e("", mMarkers.get(i).getTitle());
+                            Log.e("", mMarkers.get(i).getTitle());
                             mMap.addMarker(mMarkers.get(i));
                         }
 
@@ -304,7 +305,7 @@ public class WCFragment extends Fragment implements OnMapReadyCallback, GoogleMa
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                //Log.e("", "onFailure: " + t.toString());
+                Log.e("", "onFailure: " + t.toString());
             }
         });
     }

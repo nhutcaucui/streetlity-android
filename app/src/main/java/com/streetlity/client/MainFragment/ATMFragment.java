@@ -19,6 +19,7 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -246,13 +247,13 @@ public class ATMFragment extends Fragment implements LocationListener, OnMapRead
 //                    loading.setVisibility(View.GONE);
 //                    ((MainNavigationHolder) getActivity()).getCantFind().setVisibility(View.VISIBLE);
 //                    locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME, MIN_DISTANCE, this);
-//                    //Log.e("", "onMapReady: MULL");
+//                    Log.e("", "onMapReady: MULL");
 //                } else {
 //                    currLat = (float) location.getLatitude();
 //                    currLon = (float) location.getLongitude();
 //                    callATM(currLat, currLon, (float) 0);
 //                }
-//                //Log.e("", "onMapReady: " + currLat + " , " + currLon);
+//                Log.e("", "onMapReady: " + currLat + " , " + currLon);
 //            }
 //        }
 
@@ -394,7 +395,7 @@ public class ATMFragment extends Fragment implements LocationListener, OnMapRead
         mMap.clear();
         mMarkers.clear();
         addCurrMarker();
-        //Log.e(TAG, "filterMarkerByBank: "+ displayItems.size());
+        Log.e("tag", "filterMarkerByBank: "+ displayItems.size());
         for (int i = 0 ;i < displayItems.size();i++){
             if(mMarkerOptions.get(i).getTitle().equals(name) && displayItems.get(i).getDistance()<= (range*1000)){
                 mMarkers.add(mMap.addMarker((mMarkerOptions.get(i))));
@@ -444,7 +445,7 @@ public class ATMFragment extends Fragment implements LocationListener, OnMapRead
                     locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, MIN_TIME, MIN_DISTANCE, this);
                     loading.setVisibility(View.GONE);
                     ((MainNavigationHolder) getActivity()).getCantFind().setVisibility(View.VISIBLE);
-                    //Log.e("", "onMapReady: MULL");
+                    Log.e("", "onMapReady: MULL");
                 } else {
                     currLat = (float) location.getLatitude();
                     currLon = (float) location.getLongitude();
@@ -457,7 +458,7 @@ public class ATMFragment extends Fragment implements LocationListener, OnMapRead
 
                     mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(currLat, currLon), 13f));
                 }
-                //Log.e("", "onMapReady: " + currLat + " , " + currLon);
+                Log.e("", "onMapReady: " + currLat + " , " + currLon);
             }
 
         }
@@ -512,7 +513,7 @@ public class ATMFragment extends Fragment implements LocationListener, OnMapRead
                             t.putExtra("currLon", currLon);
                             t.putExtra("item", displayItems.get(pos));
                             t.putExtra("index", pos);
-                            //Log.e("", "onItemClick: " + displayItems.get(pos).getId());
+                            Log.e("", "onItemClick: " + displayItems.get(pos).getId());
                             locationManager.removeUpdates(ATMFragment.this);
                             startActivityForResult(t, 2);
                         }
@@ -564,7 +565,7 @@ public class ATMFragment extends Fragment implements LocationListener, OnMapRead
                     JSONArray jsonArray;
                     try {
                         jsonObject = new JSONObject(response.body().string());
-                        //Log.e("", "onResponse: " + jsonObject.toString());
+                        Log.e("", "onResponse: " + jsonObject.toString());
 
                         if(jsonObject.getString("status").equals("ZERO_RESULTS")){
                             Toast toast = Toast.makeText(getActivity(), R.string.address_not_found, Toast.LENGTH_LONG);
@@ -598,7 +599,7 @@ public class ATMFragment extends Fragment implements LocationListener, OnMapRead
                                         JSONArray jsonArray;
                                         try {
                                             jsonObject = new JSONObject(response.body().string());
-                                            //Log.e("", "onResponse: " + jsonObject.toString());
+                                            Log.e("", "onResponse: " + jsonObject.toString());
                                             if (!jsonObject.getJSONArray("Services").toString().equals("")) {
                                                 jsonArray = jsonObject.getJSONArray("Services");
                                                 for (int i = 0; i < jsonArray.length(); i++) {
@@ -613,8 +614,8 @@ public class ATMFragment extends Fragment implements LocationListener, OnMapRead
                                                         }
                                                     }
 
-                                                    //Log.e("", "onResponse: " + jsonObject1.toString());
-                                                    //Log.e("", "onResponse: " + jsonObject1.getInt("Id"));
+                                                    Log.e("", "onResponse: " + jsonObject1.toString());
+                                                    Log.e("", "onResponse: " + jsonObject1.getInt("Id"));
                                                     MapObject item = new MapObject(jsonObject1.getInt("Id"), bankName, 0,
 jsonObject1.getString("Address"), (float) jsonObject1.getDouble("Lat"),
                                                             (float) jsonObject1.getDouble("Lon"), jsonObject1.getString("Note"), 4);
@@ -632,16 +633,21 @@ jsonObject1.getString("Address"), (float) jsonObject1.getDouble("Lat"),
                                                     item.setDownvoted(false);
                                                     item.setUpvoted(false);
 
-                                                    if(MyApplication.getInstance().getUpvoteMap().containsKey("Atm")) {
-                                                        Map<String, ActionObject> map = MyApplication.getInstance().getUpvoteMap().get("Atm");
-                                                        if(map.containsKey("upvote "+ item.getId())) {
-                                                            item.setUpvoted(true);
-                                                        }
+                                                    if(MyApplication.getInstance().getUpvoteMap() != null) {
+                                                        if (MyApplication.getInstance().getUpvoteMap().containsKey("Atm")) {
+                                                            Map<String, ActionObject> map = MyApplication.getInstance().getUpvoteMap().get("Atm");
+                                                            if (map.containsKey("upvote " + item.getId())) {
+                                                                item.setUpvoted(true);
+                                                            }
 
-                                                    }if (MyApplication.getInstance().getDownvoteMap().containsKey("Atm")){
-                                                        Map<String, ActionObject> map = MyApplication.getInstance().getDownvoteMap().get("Atm");
-                                                        if(map.containsKey("downvote "+ item.getId())){
-                                                            item.setDownvoted(true);
+                                                        }
+                                                    }
+                                                    if(MyApplication.getInstance().getDownvoteMap() != null) {
+                                                        if (MyApplication.getInstance().getDownvoteMap().containsKey("Atm")) {
+                                                            Map<String, ActionObject> map = MyApplication.getInstance().getDownvoteMap().get("Atm");
+                                                            if (map.containsKey("downvote " + item.getId())) {
+                                                                item.setDownvoted(true);
+                                                            }
                                                         }
                                                     }
                                                     searchItems.add(item);
@@ -686,7 +692,7 @@ jsonObject1.getString("Address"), (float) jsonObject1.getDouble("Lat"),
 //                                                    t.putExtra("currLat", currLat);
 //                                                    t.putExtra("currLon", currLon);
 //                                                    t.putExtra("item", searchItems.get(0));
-//                                                    //Log.e("", "onItemClick: " + searchItems.get(0).getId());
+//                                                    Log.e("", "onItemClick: " + searchItems.get(0).getId());
 //                                                    startActivity(t);
 
                                                     dialogSearch.hide();
@@ -716,7 +722,7 @@ jsonObject1.getString("Address"), (float) jsonObject1.getDouble("Lat"),
                                             e.printStackTrace();
                                         }
                                     }else{
-                                        //Log.e(TAG, "onResponse: " + response.code());
+                                        Log.e("tag", "onResponse: " + response.code());
                                         Toast toast = Toast.makeText(getActivity(), R.string.something_wrong, Toast.LENGTH_LONG);
                                         TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
                                         tv.setTextColor(Color.RED);
@@ -737,8 +743,8 @@ jsonObject1.getString("Address"), (float) jsonObject1.getDouble("Lat"),
                 }
                 else{
                     try {
-                        //Log.e(", ",response.errorBody().toString() + response.code());
-                        //Log.e("", "onResponse: " + response.errorBody());
+                        Log.e(", ",response.errorBody().toString() + response.code());
+                        Log.e("", "onResponse: " + response.errorBody());
 
                     }catch (Exception e){
                         e.printStackTrace();
@@ -867,7 +873,7 @@ jsonObject1.getString("Address"), (float) jsonObject1.getDouble("Lat"),
             loading.setIndeterminate(true);
             loading.setVisibility(View.VISIBLE);
             tvNoInternet.setVisibility(View.GONE);
-            //Log.e("", "callATM: " + range);
+            Log.e("", "callATM: " + range);
             Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getServiceURL())
                     .addConverterFactory(GsonConverterFactory.create()).build();
             final MapAPI tour = retro.create(MapAPI.class);
@@ -881,14 +887,14 @@ jsonObject1.getString("Address"), (float) jsonObject1.getDouble("Lat"),
                         JSONArray jsonArray;
                         try {
                             jsonObject = new JSONObject(response.body().string());
-                            //Log.e("", "1onResponse: " + jsonObject.toString());
+                            Log.e("", "1onResponse: " + jsonObject.toString());
 
                             if (!jsonObject.getJSONArray("Services").toString().equals("")) {
                                 jsonArray = jsonObject.getJSONArray("Services");
 
                                 for (int i = 0; i < jsonArray.length(); i++) {
                                     JSONObject jsonObject1 = jsonArray.getJSONObject(i);
-                                    //Log.e("", "2onResponse: " + jsonObject1.toString());
+                                    Log.e("", "2onResponse: " + jsonObject1.toString());
                                     String bankName="";
                                     for (int j=0;j<arrBank.size();j++){
                                         if (jsonObject1.getInt("BankId") == arrBank.get(j).getId()) {
@@ -914,16 +920,20 @@ jsonObject1.getString("Address"), (float) jsonObject1.getDouble("Lat"),
                                     item.setDownvoted(false);
                                     item.setUpvoted(false);
 
-                                    if(MyApplication.getInstance().getUpvoteMap().containsKey("Atm")) {
-                                        Map<String, ActionObject> map = MyApplication.getInstance().getUpvoteMap().get("Atm");
-                                        if(map.containsKey("upvote "+ item.getId())) {
-                                            item.setUpvoted(true);
+                                    if(MyApplication.getInstance().getUpvoteMap() != null) {
+                                        if (MyApplication.getInstance().getUpvoteMap().containsKey("Atm")) {
+                                            Map<String, ActionObject> map = MyApplication.getInstance().getUpvoteMap().get("Atm");
+                                            if (map.containsKey("upvote " + item.getId())) {
+                                                item.setUpvoted(true);
+                                            }
                                         }
-
-                                    }if (MyApplication.getInstance().getDownvoteMap().containsKey("Atm")){
-                                        Map<String, ActionObject> map = MyApplication.getInstance().getDownvoteMap().get("Atm");
-                                        if(map.containsKey("downvote "+ item.getId())){
-                                            item.setDownvoted(true);
+                                    }
+                                    if(MyApplication.getInstance().getDownvoteMap() != null) {
+                                        if (MyApplication.getInstance().getDownvoteMap().containsKey("Atm")) {
+                                            Map<String, ActionObject> map = MyApplication.getInstance().getDownvoteMap().get("Atm");
+                                            if (map.containsKey("downvote " + item.getId())) {
+                                                item.setDownvoted(true);
+                                            }
                                         }
                                     }
                                     items.add(item);
@@ -968,7 +978,7 @@ jsonObject1.getString("Address"), (float) jsonObject1.getDouble("Lat"),
 
                 @Override
                 public void onFailure(Call<ResponseBody> call, Throwable t) {
-                    //Log.e("", "onFailure: " + t.toString());
+                    Log.e("", "onFailure: " + t.toString());
                 }
             });
         }else{
@@ -1005,7 +1015,7 @@ loading.setVisibility(View.GONE);
                     final JSONObject jsonObject;
                     try {
                         jsonObject = new JSONObject(response.body().string());
-                        //Log.e("", "onResponse: " + jsonObject.toString());
+                        Log.e("", "onResponse: " + jsonObject.toString());
 
                         if(jsonObject.getBoolean("Status")) {
                             JSONArray jsonArray = jsonObject.getJSONArray("Banks");
@@ -1013,7 +1023,7 @@ loading.setVisibility(View.GONE);
                             for (int i = 0; i < jsonArray.length(); i++) {
                                 JSONObject jsonObject1 = jsonArray.getJSONObject(i);
                                 arrBank.add(new BankObject(jsonObject1.getInt("Id"),jsonObject1.getString("Name")));
-                                //Log.e("", "onResponse: "+ jsonObject1.getString("Name") + getString(R.string.all) );
+                                Log.e("", "onResponse: "+ jsonObject1.getString("Name") + getString(R.string.all) );
                             }
 
 //                            atcpBank = view.findViewById(R.id.actv_bank);
@@ -1031,7 +1041,7 @@ loading.setVisibility(View.GONE);
 //                                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 //
 //                                        adapter.getFilter().filter(Integer.toString(arrBank.get(position).getId()));
-//                                        //Log.e("", "onItemSelected: " + arrBank.get(position).getId());
+//                                        Log.e("", "onItemSelected: " + arrBank.get(position).getId());
 //
 //                                }
 //
@@ -1061,7 +1071,7 @@ loading.setVisibility(View.GONE);
                 }
                 else{
                     try {
-                        //Log.e(", ",response.errorBody().toString() + response.code());
+                        Log.e(", ",response.errorBody().toString() + response.code());
                     }catch (Exception e){
                         e.printStackTrace();
                     }
@@ -1070,7 +1080,7 @@ loading.setVisibility(View.GONE);
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                //Log.e("", "onFailure: " + t.toString());
+                Log.e("", "onFailure: " + t.toString());
             }
         });
     }
@@ -1165,13 +1175,13 @@ loading.setVisibility(View.GONE);
                         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, MIN_TIME, MIN_DISTANCE, this);
                         loading.setVisibility(View.GONE);
                         ((MainNavigationHolder) getActivity()).getCantFind().setVisibility(View.VISIBLE);
-                        //Log.e("", "onMapReady: MULL");
+                        Log.e("", "onMapReady: MULL");
                     } else {
                         currLat = (float) location.getLatitude();
                         currLon = (float) location.getLongitude();
                         callATM(currLat, currLon, (float) 0);
                     }
-                    //Log.e("", "onMapReady: " + currLat + " , " + currLon);
+                    Log.e("", "onMapReady: " + currLat + " , " + currLon);
                 }
 
             }

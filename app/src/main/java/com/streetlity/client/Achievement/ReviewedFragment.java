@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +24,7 @@ import com.streetlity.client.R;
 
 import org.json.JSONObject;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import okhttp3.ResponseBody;
@@ -111,7 +113,11 @@ public class ReviewedFragment extends Fragment {
         adapterReview = new AchievementObjectAdapter(getActivity(), R.layout.lv_item_achievement, ((Achievement) getActivity()).getReviewedItems());
         lvReview = rootView.findViewById(R.id.list_view);
 
-        Map<String, Map<String, ActionObject>> reviewedMap = MyApplication.getInstance().getReviewedMap();
+        Map<String, Map<String, ActionObject>> reviewedMap = new HashMap<>();
+
+        if(MyApplication.getInstance().getReviewedMap() != null) {
+          reviewedMap = MyApplication.getInstance().getReviewedMap();
+        }
 
         Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getServiceURL())
                 .addConverterFactory(GsonConverterFactory.create()).build();
@@ -128,15 +134,15 @@ public class ReviewedFragment extends Fragment {
                 Map<String, ActionObject> map = reviewedMap.get("Fuel");
                 for (String key : map.keySet()) {
                     Call<ResponseBody> call = tour.getFuel(MyApplication.getInstance().getVersion(), Integer.parseInt(map.get(key).getAffected()));
-                    //Log.e("", "onResponse: " + map.get(key).getAffected());
+                    Log.e("", "onResponse: " + map.get(key).getAffected());
                     call.enqueue(new Callback<ResponseBody>() {
                         @Override
                         public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                             try {
                                 if (response.code() == 200) {
                                     JSONObject jsonObject = new JSONObject(response.body().string());
-                                    //Log.e("", "onResponse: " + jsonObject.toString());
-                                    //Log.e(TAG, "onResponse: 00" + jsonObject.toString());
+                                    Log.e("", "onResponse: " + jsonObject.toString());
+                                    Log.e("tag", "onResponse: 00" + jsonObject.toString());
 
                                     if (jsonObject.getBoolean("Status")) {
                                         String name = getString(R.string.fuel);
@@ -160,17 +166,21 @@ public class ReviewedFragment extends Fragment {
                                         item.setDownvoted(false);
                                         item.setUpvoted(false);
 
-                                        if (MyApplication.getInstance().getUpvoteMap().containsKey("Fuel")) {
-                                            Map<String, ActionObject> map = MyApplication.getInstance().getUpvoteMap().get("Fuel");
-                                            if (map.containsKey("upvote " + item.getId())) {
-                                                item.setUpvoted(true);
-                                            }
+                                        if(MyApplication.getInstance().getUpvoteMap() != null) {
+                                            if (MyApplication.getInstance().getUpvoteMap().containsKey("Fuel")) {
+                                                Map<String, ActionObject> map = MyApplication.getInstance().getUpvoteMap().get("Fuel");
+                                                if (map.containsKey("upvote " + item.getId())) {
+                                                    item.setUpvoted(true);
+                                                }
 
+                                            }
                                         }
-                                        if (MyApplication.getInstance().getDownvoteMap().containsKey("Fuel")) {
-                                            Map<String, ActionObject> map = MyApplication.getInstance().getDownvoteMap().get("Fuel");
-                                            if (map.containsKey("downvote " + item.getId())) {
-                                                item.setDownvoted(true);
+                                        if(MyApplication.getInstance().getDownvoteMap() != null) {
+                                            if (MyApplication.getInstance().getDownvoteMap().containsKey("Fuel")) {
+                                                Map<String, ActionObject> map = MyApplication.getInstance().getDownvoteMap().get("Fuel");
+                                                if (map.containsKey("downvote " + item.getId())) {
+                                                    item.setDownvoted(true);
+                                                }
                                             }
                                         }
                                         ((Achievement) getActivity()).getReviewedItems().add(item);
@@ -179,7 +189,7 @@ public class ReviewedFragment extends Fragment {
 
 
                                 } else {
-                                    //Log.e(TAG, "onResponse: " + response.code());
+                                    Log.e("tag", "onResponse: " + response.code());
                                 }
                             } catch (Exception e) {
                                 e.printStackTrace();
@@ -205,7 +215,7 @@ public class ReviewedFragment extends Fragment {
                             try {
                                 if (response.code() == 200) {
                                     JSONObject jsonObject = new JSONObject(response.body().string());
-                                    //Log.e("", "onResponse: " + jsonObject.toString());
+                                    Log.e("", "onResponse: " + jsonObject.toString());
 
                                     if (jsonObject.getBoolean("Status")) {
                                         JSONObject jsonObject1 = jsonObject.getJSONObject("Service");
@@ -229,24 +239,28 @@ public class ReviewedFragment extends Fragment {
                                         item.setDownvoted(false);
                                         item.setUpvoted(false);
 
-                                        if (MyApplication.getInstance().getUpvoteMap().containsKey("Toilet")) {
-                                            Map<String, ActionObject> map = MyApplication.getInstance().getUpvoteMap().get("Toilet");
-                                            if (map.containsKey("upvote " + item.getId())) {
-                                                item.setUpvoted(true);
-                                            }
+                                        if(MyApplication.getInstance().getUpvoteMap() != null) {
+                                            if (MyApplication.getInstance().getUpvoteMap().containsKey("Toilet")) {
+                                                Map<String, ActionObject> map = MyApplication.getInstance().getUpvoteMap().get("Toilet");
+                                                if (map.containsKey("upvote " + item.getId())) {
+                                                    item.setUpvoted(true);
+                                                }
 
+                                            }
                                         }
-                                        if (MyApplication.getInstance().getDownvoteMap().containsKey("Toilet")) {
-                                            Map<String, ActionObject> map = MyApplication.getInstance().getDownvoteMap().get("Toilet");
-                                            if (map.containsKey("downvote " + item.getId())) {
-                                                item.setDownvoted(true);
+                                        if(MyApplication.getInstance().getDownvoteMap() != null) {
+                                            if (MyApplication.getInstance().getDownvoteMap().containsKey("Toilet")) {
+                                                Map<String, ActionObject> map = MyApplication.getInstance().getDownvoteMap().get("Toilet");
+                                                if (map.containsKey("downvote " + item.getId())) {
+                                                    item.setDownvoted(true);
+                                                }
                                             }
                                         }
                                         ((Achievement) getActivity()).getReviewedItems().add(item);
                                         adapterReview.notifyDataSetChanged();
                                     }
                                 } else {
-                                    //Log.e(TAG, "onResponse: " + response.code());
+                                    Log.e("tag", "onResponse: " + response.code());
                                 }
                             } catch (Exception e) {
                                 e.printStackTrace();
@@ -272,7 +286,7 @@ public class ReviewedFragment extends Fragment {
                             try {
                                 if (response.code() == 200) {
                                     JSONObject jsonObject = new JSONObject(response.body().string());
-                                    //Log.e("", "onResponse: " + jsonObject.toString());
+                                    Log.e("", "onResponse: " + jsonObject.toString());
 
                                     if (jsonObject.getBoolean("Status")) {
                                         JSONObject jsonObject1 = jsonObject.getJSONObject("Service");
@@ -293,24 +307,28 @@ public class ReviewedFragment extends Fragment {
                                         item.setDownvoted(false);
                                         item.setUpvoted(false);
 
-                                        if (MyApplication.getInstance().getUpvoteMap().containsKey("Maintenance")) {
-                                            Map<String, ActionObject> map = MyApplication.getInstance().getUpvoteMap().get("Maintenance");
-                                            if (map.containsKey("upvote " + item.getId())) {
-                                                item.setUpvoted(true);
-                                            }
+                                        if(MyApplication.getInstance().getUpvoteMap() != null) {
+                                            if (MyApplication.getInstance().getUpvoteMap().containsKey("Maintenance")) {
+                                                Map<String, ActionObject> map = MyApplication.getInstance().getUpvoteMap().get("Maintenance");
+                                                if (map.containsKey("upvote " + item.getId())) {
+                                                    item.setUpvoted(true);
+                                                }
 
+                                            }
                                         }
-                                        if (MyApplication.getInstance().getDownvoteMap().containsKey("Maintenance")) {
-                                            Map<String, ActionObject> map = MyApplication.getInstance().getDownvoteMap().get("Maintenance");
-                                            if (map.containsKey("downvote " + item.getId())) {
-                                                item.setDownvoted(true);
+                                        if(MyApplication.getInstance().getDownvoteMap() != null) {
+                                            if (MyApplication.getInstance().getDownvoteMap().containsKey("Maintenance")) {
+                                                Map<String, ActionObject> map = MyApplication.getInstance().getDownvoteMap().get("Maintenance");
+                                                if (map.containsKey("downvote " + item.getId())) {
+                                                    item.setDownvoted(true);
+                                                }
                                             }
                                         }
                                         ((Achievement) getActivity()).getReviewedItems().add(item);
                                         adapterReview.notifyDataSetChanged();
                                     }
                                 } else {
-                                    //Log.e(TAG, "onResponse: " + response.code());
+                                    Log.e("tag", "onResponse: " + response.code());
                                 }
                             } catch (Exception e) {
                                 e.printStackTrace();
@@ -338,7 +356,7 @@ public class ReviewedFragment extends Fragment {
                             try {
                                 if (response.code() == 200) {
                                     JSONObject jsonObject = new JSONObject(response.body().string());
-                                    //Log.e("", "onResponse: " + jsonObject.toString());
+                                    Log.e("", "onResponse: " + jsonObject.toString());
 
                                     if (jsonObject.getBoolean("Status")) {
                                         JSONObject jsonObject1 = jsonObject.getJSONObject("Service");
@@ -365,17 +383,21 @@ jsonObject1.getString("Address"), (float) jsonObject1.getDouble("Lat"),
                                         item.setDownvoted(false);
                                         item.setUpvoted(false);
 
-                                        if (MyApplication.getInstance().getUpvoteMap().containsKey("Atm")) {
-                                            Map<String, ActionObject> map = MyApplication.getInstance().getUpvoteMap().get("Atm");
-                                            if (map.containsKey("upvote " + item.getId())) {
-                                                item.setUpvoted(true);
-                                            }
+                                        if(MyApplication.getInstance().getUpvoteMap() != null) {
+                                            if (MyApplication.getInstance().getUpvoteMap().containsKey("Atm")) {
+                                                Map<String, ActionObject> map = MyApplication.getInstance().getUpvoteMap().get("Atm");
+                                                if (map.containsKey("upvote " + item.getId())) {
+                                                    item.setUpvoted(true);
+                                                }
 
+                                            }
                                         }
-                                        if (MyApplication.getInstance().getDownvoteMap().containsKey("Atm")) {
-                                            Map<String, ActionObject> map = MyApplication.getInstance().getDownvoteMap().get("Atm");
-                                            if (map.containsKey("downvote " + item.getId())) {
-                                                item.setDownvoted(true);
+                                        if(MyApplication.getInstance().getDownvoteMap() != null) {
+                                            if (MyApplication.getInstance().getDownvoteMap().containsKey("Atm")) {
+                                                Map<String, ActionObject> map = MyApplication.getInstance().getDownvoteMap().get("Atm");
+                                                if (map.containsKey("downvote " + item.getId())) {
+                                                    item.setDownvoted(true);
+                                                }
                                             }
                                         }
                                         ((Achievement) getActivity()).getReviewedItems().add(item);
@@ -383,7 +405,7 @@ jsonObject1.getString("Address"), (float) jsonObject1.getDouble("Lat"),
                                         adapterReview.notifyDataSetChanged();
                                     }
                                 } else {
-                                    //Log.e(TAG, "onResponse: " + response.code());
+                                    Log.e("tag", "onResponse: " + response.code());
                                 }
                             } catch (Exception e) {
                                 e.printStackTrace();

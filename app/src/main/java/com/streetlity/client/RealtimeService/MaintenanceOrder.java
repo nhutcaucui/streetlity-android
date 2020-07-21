@@ -86,7 +86,7 @@ public class MaintenanceOrder {
                     MessageListener.onReceived(self, message);
                 }
             } catch (Exception e) {
-                //Log.e(Tag, "onChat: " + e.getMessage());
+                Log.e(Tag, "onChat: " + e.getMessage());
             }
 
         }
@@ -98,6 +98,8 @@ public class MaintenanceOrder {
             String slat = (String)args[0];
             String slon = (String)args[1];
             Log.println(Log.INFO, Tag, "OnUpdateLocation: " + slat + ":" + slon);
+
+
 
             float lat = Float.parseFloat(slat);
             float lon = Float.parseFloat(slon);
@@ -261,7 +263,7 @@ public class MaintenanceOrder {
             json.put("body", message.getBody());
             json.put("date", new  SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(message.getTime()));
         } catch (JSONException e) {
-            //Log.e(Tag,"Cannot put new message " + e.getMessage());
+            Log.e(Tag,"Cannot put new message " + e.getMessage());
         }
         mSocket.emit("chat", json.toString());
     }
@@ -289,10 +291,10 @@ public class MaintenanceOrder {
         this.information = information;
         JSONObject json = new JSONObject();
         try {
-            json.put("username", information.Username);
+            json.put("username", this.information.Username);
             json.put("phone", this.information.Phone);
         } catch (JSONException e) {
-            //Log.e("[MaintenanceOrder]","Cannot put new information " + e.getMessage());
+            Log.e("[MaintenanceOrder]","Cannot put new information " + e.getMessage());
         }
 
         mSocket.emit("update-information", json.toString());
@@ -302,7 +304,7 @@ public class MaintenanceOrder {
      * Pull information from others
      */
     public void pullInformation() {
-//        mSocket.emit("pull-information");
+         mSocket.emit("pull-information");
     }
 
     /**
@@ -321,7 +323,7 @@ public class MaintenanceOrder {
         try {
             json.put("Location", location);
         } catch (JSONException e) {
-            //Log.e(Tag, "updateLocation: " + e.getMessage());
+            Log.e(Tag, "updateLocation: " + e.getMessage());
         }
         mSocket.emit("update-location", json.toString());
     }
@@ -332,7 +334,8 @@ public class MaintenanceOrder {
      * @param lon
      */
     public void updateLocation(double lat, double lon, float bearing) {
-        Location location = new Location("");
+        Log.e(Tag, "updateLocation: update location" );
+        location = new Location("");
         location.setLatitude(lat);
         location.setLongitude(lon);
         location.setBearing(bearing);
@@ -359,6 +362,7 @@ public class MaintenanceOrder {
      * @param reason the reason of the
      */
     public void decline(String reason) {
+        Log.e(Tag, "decline: " );
         mSocket.emit("decline", reason);
     }
 

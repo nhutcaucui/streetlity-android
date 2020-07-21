@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.text.Html;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -90,7 +91,7 @@ public class UserInfoOther extends AppCompatActivity {
                 if(response.code() == 200) {
                     try {
                         jsonObject = new JSONObject(response.body().string());
-                        //Log.e("", "onResponse: " + jsonObject.toString());
+                        Log.e("", "onResponse: " + jsonObject.toString());
                         JSONObject jsonObject1 = jsonObject.getJSONObject("Info");
                         username.setText(jsonObject1.getString("Id"));
                         mail.setText(jsonObject1.getString("Email"));
@@ -126,7 +127,7 @@ public class UserInfoOther extends AppCompatActivity {
                     e.printStackTrace();
                     }
                 }else{
-                    //Log.e("", "onResponse: "+ response.code() );
+                    Log.e("", "onResponse: "+ response.code() );
                 }
             }
 

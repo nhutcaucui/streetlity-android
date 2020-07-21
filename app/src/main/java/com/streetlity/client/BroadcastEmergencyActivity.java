@@ -23,6 +23,7 @@ import androidx.core.content.ContextCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import android.os.CountDownTimer;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -129,7 +130,7 @@ public class BroadcastEmergencyActivity extends AppCompatActivity {
                 currLon = (float) location.getLongitude();
             }
         }
-        //Log.e("", "onMapReady: " + currLat + " , " + currLon);
+        Log.e("", "onMapReady: " + currLat + " , " + currLon);
 
 
         final com.google.android.material.textfield.TextInputEditText edtPhone = findViewById(R.id.edt_phone);
@@ -288,8 +289,9 @@ public class BroadcastEmergencyActivity extends AppCompatActivity {
                     finish();
                 }
 
-                countdown.cancel();
-
+                if(countdown !=null) {
+                    countdown.cancel();
+                }
                 stopThread = true;
                 //denyOrder();
             }
@@ -316,7 +318,7 @@ public class BroadcastEmergencyActivity extends AppCompatActivity {
                     final JSONObject jsonObject;
                     try {
                         jsonObject = new JSONObject(response.body().string());
-                        //Log.e("", "onResponse: " + jsonObject.toString());
+                        Log.e("", "onResponse: " + jsonObject.toString());
                         if(jsonObject.getBoolean("Status")){
                             RelativeLayout broadcasting = findViewById(R.id.layout_broadcasting);
                             broadcasting.setVisibility(View.GONE);
@@ -396,7 +398,7 @@ public class BroadcastEmergencyActivity extends AppCompatActivity {
         Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getMaintenanceURL())
                 .addConverterFactory(GsonConverterFactory.create()).build();
         final MapAPI tour = retro.create(MapAPI.class);
-        Call<ResponseBody> call = tour.getEmergency((float) 0.1, (float) lat, (float) lon);
+        Call<ResponseBody> call = tour.getEmergency(MyApplication.getInstance().getRange(), (float) lat, (float) lon);
         //Call<ResponseBody> call = tour.getAllATM();
         call.enqueue(new Callback<ResponseBody>() {
             @Override
@@ -406,8 +408,10 @@ public class BroadcastEmergencyActivity extends AppCompatActivity {
                     final JSONArray jsonArray;
                     try {
                         jsonObject = new JSONObject(response.body().string());
-                        //Log.e("", "onResponse: " + jsonObject.toString());
-                        jsonArray = jsonObject.getJSONArray("Emergencies");
+                        Log.e("", "onResponse: " + jsonObject.toString());
+                        if(!jsonObject.getString("Emergencies").equals("null")) {
+                            jsonArray = jsonObject.getJSONArray("Emergencies");
+
 
                         final ArrayList<String> idList = new ArrayList<>();
                         final ArrayList<String> maintenanceList = new ArrayList<>();
@@ -452,7 +456,7 @@ public class BroadcastEmergencyActivity extends AppCompatActivity {
                             for (int i = 0; i < idList.size(); i++) {
                                 id[i] = idList.get(i);
                                 maintenance[i] = idList.get(i);
-                                //Log.e("TAG", "onResponse: " + idList.get(i) );
+                                Log.e("tag", "onResponse: " + idList.get(i));
                             }
 
 
@@ -467,10 +471,10 @@ public class BroadcastEmergencyActivity extends AppCompatActivity {
                                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                                     JSONObject jsonObject;
                                     if (response.code() == 200) {
-                                        //Log.e("", "onResponse: " + response.raw().request());
+                                        Log.e("", "onResponse: " + response.raw().request());
                                         try {
                                             jsonObject = new JSONObject(response.body().string());
-                                            //Log.e("", "onResponse: " + jsonObject.toString());
+                                            Log.e("", "onResponse: " + jsonObject.toString());
                                             if (jsonObject.getBoolean("Status")) {
 //                                                Intent data = new Intent();
 //                                                data.putExtra("numStore", idList.size());
@@ -487,9 +491,9 @@ public class BroadcastEmergencyActivity extends AppCompatActivity {
                                                 temp += " " + getString(R.string.nearby_repairmen);
 
 
-                                                if(fRange>=1000) {
+                                                if (fRange >= 1000) {
                                                     temp += " " + getString(R.string.in_range) + " " + (fRange / 1000) + "km";
-                                                }else{
+                                                } else {
                                                     temp += " " + getString(R.string.in_range) + " " + (fRange) + "m";
                                                 }
 
@@ -508,7 +512,7 @@ public class BroadcastEmergencyActivity extends AppCompatActivity {
                                                     }
 
                                                     public void onFinish() {
-                                                        if(notFound) {
+                                                        if (notFound) {
                                                             runOnUiThread(new Runnable() {
                                                                 @Override
                                                                 public void run() {
@@ -553,7 +557,7 @@ public class BroadcastEmergencyActivity extends AppCompatActivity {
 //                                                    }
 //                                                });
 //                                                //thread.start();
-                                            }else{
+                                            } else {
                                                 broadcasting.setVisibility(View.GONE);
                                                 Toast toast = Toast.makeText(BroadcastEmergencyActivity.this, R.string.no_available, Toast.LENGTH_LONG);
                                                 TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
@@ -567,7 +571,7 @@ public class BroadcastEmergencyActivity extends AppCompatActivity {
                                     } else {
                                         try {
                                             ;
-                                            //Log.e("", "onResponse: " + response.code());
+                                            Log.e("", "onResponse: " + response.code());
                                         } catch (Exception e) {
                                             e.printStackTrace();
                                         }
@@ -576,9 +580,10 @@ public class BroadcastEmergencyActivity extends AppCompatActivity {
 
                                 @Override
                                 public void onFailure(Call<ResponseBody> call, Throwable t) {
-                                    //Log.e("", "onFailure: " + t.toString());
+                                    Log.e("", "onFailure: " + t.toString());
                                 }
                             });
+                        }
                         } else {
                             broadcasting.setVisibility(View.GONE);
                             Toast toast = Toast.makeText(BroadcastEmergencyActivity.this, R.string.no_available, Toast.LENGTH_LONG);
@@ -593,7 +598,7 @@ public class BroadcastEmergencyActivity extends AppCompatActivity {
                     }
                 } else {
                     try {
-                        //Log.e(", ", response.errorBody().toString() + response.code());
+                        Log.e(", ", response.errorBody().toString() + response.code());
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -602,7 +607,7 @@ public class BroadcastEmergencyActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                //Log.e("", "onFailure: " + t.toString());
+                Log.e("", "onFailure: " + t.toString());
             }
         });
     }
@@ -630,7 +635,7 @@ public class BroadcastEmergencyActivity extends AppCompatActivity {
     public void foundAMaintainer(Intent intent){
         notFound = false;
 
-        getSharedPreferences("activeOrder",MODE_PRIVATE).edit().putInt("activeOrder", 1).apply();
+        getSharedPreferences("activeOrder",MODE_PRIVATE).edit().putString("activeOrder", intent.getStringExtra("id")).apply();
 
         RelativeLayout broadcasting = findViewById(R.id.layout_broadcasting);
 

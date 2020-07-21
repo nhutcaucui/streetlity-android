@@ -237,4 +237,10 @@ public class MyApplication extends Application { //35.240.232.218 auth server
     public void setName(String name) {
         this.name = name;
     }
+
+    float range = 0.3f;
+
+    public float getRange(){
+        return range;
+    }
 }

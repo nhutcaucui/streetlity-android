@@ -15,6 +15,7 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -155,7 +156,7 @@ public class MaintenanceFragment extends Fragment implements OnMapReadyCallback,
             @Override
             public void onClick(View v) {
                 callMaintenance(latitude,longitude,(float)sbRange.getProgress());
-                //Log.e("", "onClick: " +  sbRange.getProgress());
+                Log.e("", "onClick: " +  sbRange.getProgress());
             }
         });
 
@@ -321,11 +322,11 @@ public class MaintenanceFragment extends Fragment implements OnMapReadyCallback,
             Location location = locationManager.getLastKnownLocation(locationManager
                     .NETWORK_PROVIDER);
             if (location == null) {
-                //Log.e("", "onMapReady: MULL");
+                Log.e("", "onMapReady: MULL");
             }
             latitude = location.getLatitude();
             longitude = location.getLongitude();
-            //Log.e("", "onMapReady: " + latitude + " , " + longitude);
+            Log.e("", "onMapReady: " + latitude + " , " + longitude);
         }
 
         callMaintenance(latitude, longitude, 1);
@@ -469,7 +470,7 @@ public class MaintenanceFragment extends Fragment implements OnMapReadyCallback,
             //end order
 
 
-            //Log.e("", "onMarkerClick: mapclick");
+            Log.e("", "onMarkerClick: mapclick");
             marker.showInfoWindow();
 
             final BottomSheetDialog dialog = new BottomSheetDialog(getActivity(), android.R.style.Theme_Black_NoTitleBar);
@@ -496,7 +497,7 @@ public class MaintenanceFragment extends Fragment implements OnMapReadyCallback,
                                 public void onDirectionSuccess(Direction direction) {
 
                                     String status = direction.getStatus();
-                                    //Log.e("", "onDirectionSuccess: " + status);
+                                    Log.e("", "onDirectionSuccess: " + status);
                                     if(status.equals(RequestResult.OK)) {
                                         if(polyline != null){
                                             polyline.remove();
@@ -519,7 +520,7 @@ public class MaintenanceFragment extends Fragment implements OnMapReadyCallback,
 
                                 @Override
                                 public void onDirectionFailure(Throwable t) {
-                                    //Log.e("", "onDirectionFailure: ");
+                                    Log.e("", "onDirectionFailure: ");
                                     Toast toast = Toast.makeText(getActivity(), "Something went wrong when trying to find direction", Toast.LENGTH_LONG);
                                     TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
                                     tv.setTextColor(Color.RED);
@@ -571,12 +572,12 @@ public class MaintenanceFragment extends Fragment implements OnMapReadyCallback,
                     JSONArray jsonArray;
                     try {
                         jsonObject = new JSONObject(response.body().string());
-                        //Log.e("", "onResponse: " + jsonObject.toString());
+                        Log.e("", "onResponse: " + jsonObject.toString());
                         jsonArray = jsonObject.getJSONArray("Maintenances");
 
                         for (int i = 0; i< jsonArray.length();i++){
                             JSONObject jsonObject1 = jsonArray.getJSONObject(i);
-                            //Log.e("", "onResponse: " + jsonObject1.toString());
+                            Log.e("", "onResponse: " + jsonObject1.toString());
                             addMaintenanceMarkerToList((float)jsonObject1.getDouble("Lat"),
                                     (float)jsonObject1.getDouble("Lon"),jsonObject1.getString("Name"));
 
@@ -600,7 +601,7 @@ public class MaintenanceFragment extends Fragment implements OnMapReadyCallback,
                 }
                 else{
                     try {
-                        //Log.e(", ",response.errorBody().toString() + response.code());
+                        Log.e(", ",response.errorBody().toString() + response.code());
                     }catch (Exception e){
                         e.printStackTrace();
                     }
@@ -609,7 +610,7 @@ public class MaintenanceFragment extends Fragment implements OnMapReadyCallback,
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                //Log.e("", "onFailure: " + t.toString());
+                Log.e("", "onFailure: " + t.toString());
             }
         });
     }
@@ -628,7 +629,7 @@ public class MaintenanceFragment extends Fragment implements OnMapReadyCallback,
                     final JSONArray jsonArray;
                     try {
                         jsonObject = new JSONObject(response.body().string());
-                        //Log.e("", "onResponse: " + jsonObject.toString());
+                        Log.e("", "onResponse: " + jsonObject.toString());
                         jsonArray = jsonObject.getJSONArray("Maintenances");
 
                         final ArrayList<Integer> idList = new ArrayList<>();
@@ -650,10 +651,10 @@ public class MaintenanceFragment extends Fragment implements OnMapReadyCallback,
 //                            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
 //                                JSONObject jsonObject;
 //                                if(response.code() == 200) {
-//                                    //Log.e("", "onResponse: " + response.raw().request());
+//                                    Log.e("", "onResponse: " + response.raw().request());
 //                                    try{
 //                                        jsonObject = new JSONObject(response.body().string());
-//                                        //Log.e("", "onResponse: " + jsonObject.toString());
+//                                        Log.e("", "onResponse: " + jsonObject.toString());
 //                                        if (jsonObject.getBoolean("Status")){
 //                                            dialog.cancel();
 //
@@ -666,7 +667,7 @@ public class MaintenanceFragment extends Fragment implements OnMapReadyCallback,
 //                                }
 //                                else{
 //                                    try{ ;
-//                                        //Log.e("", "onResponse: " + response.code());
+//                                        Log.e("", "onResponse: " + response.code());
 //                                    }catch (Exception e){
 //                                        e.printStackTrace();
 //                                    }
@@ -675,7 +676,7 @@ public class MaintenanceFragment extends Fragment implements OnMapReadyCallback,
 //
 //                            @Override
 //                            public void onFailure(Call<ResponseBody> call, Throwable t) {
-//                                //Log.e("", "onFailure: " + t.toString());
+//                                Log.e("", "onFailure: " + t.toString());
 //                            }
 //                        });
 
@@ -686,7 +687,7 @@ public class MaintenanceFragment extends Fragment implements OnMapReadyCallback,
                 }
                 else{
                     try {
-                        //Log.e(", ",response.errorBody().toString() + response.code());
+                        Log.e(", ",response.errorBody().toString() + response.code());
                     }catch (Exception e){
                         e.printStackTrace();
                     }
@@ -695,7 +696,7 @@ public class MaintenanceFragment extends Fragment implements OnMapReadyCallback,
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                //Log.e("", "onFailure: " + t.toString());
+                Log.e("", "onFailure: " + t.toString());
             }
         });
 
@@ -711,10 +712,10 @@ public class MaintenanceFragment extends Fragment implements OnMapReadyCallback,
 //            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
 //                JSONObject jsonObject;
 //                if(response.code() == 200) {
-//                    //Log.e("", "onResponse: " + response.raw().request());
+//                    Log.e("", "onResponse: " + response.raw().request());
 //                    try{
 //                        jsonObject = new JSONObject(response.body().string());
-//                        //Log.e("", "onResponse: " + jsonObject.toString());
+//                        Log.e("", "onResponse: " + jsonObject.toString());
 //                        if (jsonObject.getBoolean("Status")){
 //                            dialog.cancel();
 //
@@ -727,7 +728,7 @@ public class MaintenanceFragment extends Fragment implements OnMapReadyCallback,
 //                }
 //                else{
 //                    try{
-//                        //Log.e("", "onResponse: " + response.code());
+//                        Log.e("", "onResponse: " + response.code());
 //                    }catch (Exception e){
 //                        e.printStackTrace();
 //                    }
@@ -736,7 +737,7 @@ public class MaintenanceFragment extends Fragment implements OnMapReadyCallback,
 //
 //            @Override
 //            public void onFailure(Call<ResponseBody> call, Throwable t) {
-//                //Log.e("", "onFailure: " + t.toString());
+//                Log.e("", "onFailure: " + t.toString());
 //            }
 //        });
     }

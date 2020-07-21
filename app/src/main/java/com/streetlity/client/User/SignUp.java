@@ -26,6 +26,7 @@ import androidx.core.content.ContextCompat;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -312,7 +313,7 @@ public class SignUp extends AppCompatActivity implements OnMapReadyCallback, Goo
                         address = edtAddress.getText().toString();
                         phone = edtPhone.getText().toString();
 
-                        //Log.e("", "onClick: "+phone);
+                        Log.e("", "onClick: "+phone);
 
                         isPass = true;
                     }
@@ -320,7 +321,7 @@ public class SignUp extends AppCompatActivity implements OnMapReadyCallback, Goo
 
                 if(step == 2 && type == 0){
                     isPass=false;
-                    //Log.e("", "onClick: "+phone);
+                    Log.e("", "onClick: "+phone);
                     Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getAuthURL())
                             .addConverterFactory(GsonConverterFactory.create()).build();
                     final MapAPI tour = retro.create(MapAPI.class);
@@ -333,7 +334,7 @@ public class SignUp extends AppCompatActivity implements OnMapReadyCallback, Goo
                             if (response.code() == 200) {
                                 try {
                                     JSONObject jsonObject = new JSONObject(response.body().string());
-                                    //Log.e("", "onResponse: " + jsonObject.toString());
+                                    Log.e("", "onResponse: " + jsonObject.toString());
                                     if (jsonObject.getBoolean("Status")) {
 
                                         btnNext.setText(R.string.finish);
@@ -356,7 +357,7 @@ public class SignUp extends AppCompatActivity implements OnMapReadyCallback, Goo
                                 }
                             } else {
                                 try {
-                                    //Log.e("", "onResponse: " + response.code());
+                                    Log.e("", "onResponse: " + response.code());
                                     Toast toast = Toast.makeText(SignUp.this, R.string.something_wrong, Toast.LENGTH_LONG);
                                     TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
                                     tv.setTextColor(Color.RED);
@@ -371,7 +372,7 @@ public class SignUp extends AppCompatActivity implements OnMapReadyCallback, Goo
 
                         @Override
                         public void onFailure(Call<ResponseBody> call, Throwable t) {
-                            //Log.e("", "onFailure: " + t.toString());
+                            Log.e("", "onFailure: " + t.toString());
                         }
                     });
                 }
@@ -461,7 +462,7 @@ public class SignUp extends AppCompatActivity implements OnMapReadyCallback, Goo
                         }
                         else{
                             mAddress = edtStoreAddress.getText().toString();
-                            //Log.e("", "onClick: " + mAddress );
+                            Log.e("", "onClick: " + mAddress );
                             signUpMaintainNonService();
                         }
                     }
@@ -707,11 +708,11 @@ public class SignUp extends AppCompatActivity implements OnMapReadyCallback, Goo
             Location location = locationManager.getLastKnownLocation(locationManager
                     .GPS_PROVIDER);
             if(location == null){
-                //Log.e("", "onMapReady: MULL");
+                Log.e("", "onMapReady: MULL");
             }else {
                 latitude = location.getLatitude();
                 longitude = location.getLongitude();
-                //Log.e("", "onMapReady: " + latitude + " , " + longitude);
+                Log.e("", "onMapReady: " + latitude + " , " + longitude);
             }
         }
 
@@ -741,7 +742,7 @@ public class SignUp extends AppCompatActivity implements OnMapReadyCallback, Goo
         Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getServiceURL())
                 .addConverterFactory(GsonConverterFactory.create()).build();
         final MapAPI tour = retro.create(MapAPI.class);
-        Call<ResponseBody> call = tour.getMaintenanceInRange(MyApplication.getInstance().getVersion(),(float)lat,(float)lon,(float)0.3);
+        Call<ResponseBody> call = tour.getMaintenanceInRange(MyApplication.getInstance().getVersion(),(float)lat,(float)lon,MyApplication.getInstance().getRange());
         //Call<ResponseBody> call = tour.getAllATM();
         call.enqueue(new Callback<ResponseBody>() {
             @Override
@@ -751,13 +752,13 @@ public class SignUp extends AppCompatActivity implements OnMapReadyCallback, Goo
                     JSONArray jsonArray;
                     try {
                         jsonObject = new JSONObject(response.body().string());
-                        //Log.e("", "onResponse: " + jsonObject.toString());
+                        Log.e("", "onResponse: " + jsonObject.toString());
                         if(jsonObject.getBoolean("Status")) {
                             jsonArray = jsonObject.getJSONArray("Services");
 
                             for (int i = 0; i < jsonArray.length(); i++) {
                                 JSONObject jsonObject1 = jsonArray.getJSONObject(i);
-                                //Log.e("", "onResponse: " + jsonObject1.toString());
+                                Log.e("", "onResponse: " + jsonObject1.toString());
                                 addMaintenanceMarkerToList((float) jsonObject1.getDouble("Lat"),
                                         (float) jsonObject1.getDouble("Lon"), jsonObject1.getString("Name"));
 
@@ -775,7 +776,7 @@ public class SignUp extends AppCompatActivity implements OnMapReadyCallback, Goo
                 }
                 else{
                     try {
-                        //Log.e(", ",response.errorBody().toString() + response.code());
+                        Log.e(", ",response.errorBody().toString() + response.code());
                     }catch (Exception e){
                         e.printStackTrace();
                     }
@@ -784,7 +785,7 @@ public class SignUp extends AppCompatActivity implements OnMapReadyCallback, Goo
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                //Log.e("", "onFailure: " + t.toString());
+                Log.e("", "onFailure: " + t.toString());
             }
         });
     }
@@ -829,7 +830,7 @@ public class SignUp extends AppCompatActivity implements OnMapReadyCallback, Goo
                     JSONArray jsonArray;
                     try {
                         jsonObject = new JSONObject(response.body().string());
-                        //Log.e("", "onResponse: " + jsonObject.toString());
+                        Log.e("", "onResponse: " + jsonObject.toString());
 
                         if(jsonObject.getString("status").equals("ZERO_RESULTS")){
                             Toast toast = Toast.makeText(SignUp.this, "Address not found", Toast.LENGTH_LONG);
@@ -869,8 +870,8 @@ public class SignUp extends AppCompatActivity implements OnMapReadyCallback, Goo
                 }
                 else{
                     try {
-                        //Log.e(", ",response.errorBody().toString() + response.code());
-                        //Log.e("", "onResponse: " + response.errorBody());
+                        Log.e(", ",response.errorBody().toString() + response.code());
+                        Log.e("", "onResponse: " + response.errorBody());
 
                     }catch (Exception e){
                         e.printStackTrace();
@@ -891,7 +892,7 @@ public class SignUp extends AppCompatActivity implements OnMapReadyCallback, Goo
         final MapAPI tour = retro.create(MapAPI.class);
 
         Call<ResponseBody> call = tour.signUpMaintainer(username, pass, mail,phone,address, id);
-        //Log.e("", "signUpMaintain: "+"-"+username+ "-"+pass +"-"+mail+"-"+id);
+        Log.e("", "signUpMaintain: "+"-"+username+ "-"+pass +"-"+mail+"-"+id);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -899,7 +900,7 @@ public class SignUp extends AppCompatActivity implements OnMapReadyCallback, Goo
                 if (response.code() == 200) {
                     try {
                         jsonObject = new JSONObject(response.body().string());
-                        //Log.e("", "onResponse: "+ jsonObject.toString() + response.code());
+                        Log.e("", "onResponse: "+ jsonObject.toString() + response.code());
                         if(jsonObject.getBoolean("Status")) {
                             btnNext.setText(R.string.finish);
 
@@ -921,7 +922,7 @@ public class SignUp extends AppCompatActivity implements OnMapReadyCallback, Goo
                     }
                 } else {
                     try {
-                        //Log.e("", "onResponse: "+  response.code());
+                        Log.e("", "onResponse: "+  response.code());
                         Toast toast = Toast.makeText(SignUp.this, R.string.something_wrong, Toast.LENGTH_LONG);
                         TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
                         tv.setTextColor(Color.RED);
@@ -936,7 +937,7 @@ public class SignUp extends AppCompatActivity implements OnMapReadyCallback, Goo
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                //Log.e("", "onFailure: " + t.toString());
+                Log.e("", "onFailure: " + t.toString());
             }
         });
     }
@@ -948,7 +949,7 @@ public class SignUp extends AppCompatActivity implements OnMapReadyCallback, Goo
 
         Call<ResponseBody> call = tour.signUpMaintainerNonService(username, pass, mail,phone,address, mName
                 ,mLat,mLon,mAddress,mNote,mImages, -1);
-        //Log.e("", "signUpMaintainNon: "+"-"+username+ "-"+pass +"-"+mail+"-"+id+"-"+mLat+"-"+mLon);
+        Log.e("", "signUpMaintainNon: "+"-"+username+ "-"+pass +"-"+mail+"-"+id+"-"+mLat+"-"+mLon);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -956,7 +957,7 @@ public class SignUp extends AppCompatActivity implements OnMapReadyCallback, Goo
                 if (response.code() == 200) {
                     try {
                         jsonObject = new JSONObject(response.body().string());
-                        //Log.e("", "onResponse: "+ jsonObject.toString() + response.code());
+                        Log.e("", "onResponse: "+ jsonObject.toString() + response.code());
                         if(jsonObject.getBoolean("Status")) {
                             btnNext.setText(R.string.finish);
 
@@ -978,7 +979,7 @@ public class SignUp extends AppCompatActivity implements OnMapReadyCallback, Goo
                     }
                 } else {
                     try {
-                        //Log.e("", "onResponse: "+  response.code());
+                        Log.e("", "onResponse: "+  response.code());
                         Toast toast = Toast.makeText(SignUp.this, R.string.something_wrong, Toast.LENGTH_LONG);
                         TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
                         tv.setTextColor(Color.RED);
@@ -993,7 +994,7 @@ public class SignUp extends AppCompatActivity implements OnMapReadyCallback, Goo
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                //Log.e("", "onFailure: " + t.toString());
+                Log.e("", "onFailure: " + t.toString());
             }
         });
     }
@@ -1023,7 +1024,7 @@ public class SignUp extends AppCompatActivity implements OnMapReadyCallback, Goo
                         final JSONObject jsonObject;
                         try {
                             jsonObject = new JSONObject(response.body().string());
-                            //Log.e("", "onResponse: " + jsonObject.toString());
+                            Log.e("", "onResponse: " + jsonObject.toString());
 
                             if (jsonObject.getBoolean("Status")) {
                                 JSONObject jsonObject1 = jsonObject.getJSONObject("Paths");
@@ -1033,7 +1034,8 @@ public class SignUp extends AppCompatActivity implements OnMapReadyCallback, Goo
                                     mImages[i] = jsonObject2.getString("Message");
                                 }
 
-                                Call<ResponseBody> call1 = tour.addMaintenance(MyApplication.getInstance().getVersion(),token,(float) mLat,(float) mLon, mAddress, mName, mImages,mNote);
+                                Call<ResponseBody> call1 = tour.addMaintenance(MyApplication.getInstance().getVersion(),token,
+                                        (float) mLat,(float) mLon, mAddress, mName, mImages,mNote, MyApplication.getInstance().getUsername());
 
                                 call1.enqueue(new Callback<ResponseBody>() {
                                     @Override
@@ -1043,7 +1045,7 @@ public class SignUp extends AppCompatActivity implements OnMapReadyCallback, Goo
                                             JSONArray jsonArray;
                                             try {
                                                 jsonObject = new JSONObject(response.body().string());
-                                                //Log.e("", "onResponse: " + jsonObject.toString());
+                                                Log.e("", "onResponse: " + jsonObject.toString());
                                                 if(jsonObject.getBoolean("Status")) {
                                                     btnNext.setText(R.string.finish);
 
@@ -1068,7 +1070,7 @@ public class SignUp extends AppCompatActivity implements OnMapReadyCallback, Goo
                                         }
                                         else{
                                             try {
-                                                //Log.e(", ",response.errorBody().toString());
+                                                Log.e(", ",response.errorBody().toString());
                                                 csLayout.setVisibility(View.GONE);
                                                 Toast toast = Toast.makeText(SignUp.this, "!", Toast.LENGTH_LONG);
                                                 TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
@@ -1089,7 +1091,7 @@ public class SignUp extends AppCompatActivity implements OnMapReadyCallback, Goo
 
                                     @Override
                                     public void onFailure(Call<ResponseBody> call, Throwable t) {
-                                        //Log.e("", "onFailure: " + t.toString());
+                                        Log.e("", "onFailure: " + t.toString());
                                         csLayout.setVisibility(View.GONE);
                                         Toast toast = Toast.makeText(SignUp.this, "!", Toast.LENGTH_LONG);
                                         TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
@@ -1122,7 +1124,7 @@ public class SignUp extends AppCompatActivity implements OnMapReadyCallback, Goo
 
                 @Override
                 public void onFailure(Call<ResponseBody> call, Throwable t) {
-                    //Log.e("", "onFailure: " + t.toString());
+                    Log.e("", "onFailure: " + t.toString());
                     csLayout.setVisibility(View.GONE);
                     Toast toast = Toast.makeText(SignUp.this, "!", Toast.LENGTH_LONG);
                     TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
@@ -1134,7 +1136,8 @@ public class SignUp extends AppCompatActivity implements OnMapReadyCallback, Goo
         }
         else{
             mImages=new String[0];
-            Call<ResponseBody> call = tour.addMaintenance(MyApplication.getInstance().getVersion(),token,(float) mLat,(float) mLon, mAddress, mName,mImages,mNote);
+            Call<ResponseBody> call = tour.addMaintenance(MyApplication.getInstance().getVersion(),token,
+                    (float) mLat,(float) mLon, mAddress, mName,mImages,mNote, MyApplication.getInstance().getUsername());
 
             call.enqueue(new Callback<ResponseBody>() {
                 @Override
@@ -1144,7 +1147,7 @@ public class SignUp extends AppCompatActivity implements OnMapReadyCallback, Goo
                         JSONArray jsonArray;
                         try {
                             jsonObject = new JSONObject(response.body().string());
-                            //Log.e("", "onResponse: " + jsonObject.toString());
+                            Log.e("", "onResponse: " + jsonObject.toString());
                             if(jsonObject.getBoolean("Status")) {
                                 btnNext.setText(R.string.finish);
 
@@ -1169,7 +1172,7 @@ public class SignUp extends AppCompatActivity implements OnMapReadyCallback, Goo
                     }
                     else{
                         try {
-                            //Log.e(", ",response.errorBody().toString());
+                            Log.e(", ",response.errorBody().toString());
                             csLayout.setVisibility(View.GONE);
                             Toast toast = Toast.makeText(SignUp.this, "!", Toast.LENGTH_LONG);
                             TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
@@ -1191,7 +1194,7 @@ public class SignUp extends AppCompatActivity implements OnMapReadyCallback, Goo
 
                 @Override
                 public void onFailure(Call<ResponseBody> call, Throwable t) {
-                    //Log.e("", "onFailure: " + t.toString());
+                    Log.e("", "onFailure: " + t.toString());
                 }
             });
         }
@@ -1226,7 +1229,7 @@ public class SignUp extends AppCompatActivity implements OnMapReadyCallback, Goo
 
                         String extension = path.substring(path.lastIndexOf("."));
 
-                        //Log.e("", "onActivityResult: " + arrImg.size());
+                        Log.e("", "onActivityResult: " + arrImg.size());
 
                         EditText edtSelectImg = findViewById(R.id.edt_select_img);
 
@@ -1413,7 +1416,7 @@ public class SignUp extends AppCompatActivity implements OnMapReadyCallback, Goo
                                 size++;
                             }
 
-                            //Log.e("", "onActivityResult: " + arrImg.size());
+                            Log.e("", "onActivityResult: " + arrImg.size());
 
                             String temp = getString(R.string.selected);
                             temp = temp + " " + arrImg.size() + " " + getString(R.string.images);
@@ -1440,7 +1443,7 @@ public class SignUp extends AppCompatActivity implements OnMapReadyCallback, Goo
                 if (response.code() == 200) {
                     try {
                         JSONObject jsonObject = new JSONObject(response.body().string());
-                        //Log.e("", "onResponse: " + jsonObject.toString());
+                        Log.e("", "onResponse: " + jsonObject.toString());
                         if (jsonObject.getBoolean("Status")) {
                             int current = getItem(+1);
                             if (current < layouts.size()) {
@@ -1460,7 +1463,7 @@ public class SignUp extends AppCompatActivity implements OnMapReadyCallback, Goo
                     }
                 } else {
                     try {
-                        //Log.e("", "onResponse: " + response.code());
+                        Log.e("", "onResponse: " + response.code());
                         Toast toast = Toast.makeText(SignUp.this, R.string.something_wrong, Toast.LENGTH_LONG);
                         TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
                         tv.setTextColor(Color.RED);
@@ -1475,7 +1478,7 @@ public class SignUp extends AppCompatActivity implements OnMapReadyCallback, Goo
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                //Log.e("", "onFailure: " + t.toString());
+                Log.e("", "onFailure: " + t.toString());
             }
         });
     }
@@ -1495,7 +1498,7 @@ public class SignUp extends AppCompatActivity implements OnMapReadyCallback, Goo
                         boolean validUsername = true;
                         boolean validEmail = true;
                         JSONObject jsonObject = new JSONObject(response.body().string());
-                        //Log.e("", "onResponse: " + jsonObject.toString());
+                        Log.e("", "onResponse: " + jsonObject.toString());
                         if (jsonObject.getBoolean("Status")) {
                             JSONObject jsonObject1 = jsonObject.getJSONObject("Username");
                             if(!jsonObject1.getBoolean("Status")){
@@ -1543,7 +1546,7 @@ public class SignUp extends AppCompatActivity implements OnMapReadyCallback, Goo
                     }
                 } else {
                     try {
-                        //Log.e("", "onResponse: " + response.code());
+                        Log.e("", "onResponse: " + response.code());
                         Toast toast = Toast.makeText(SignUp.this, R.string.something_wrong, Toast.LENGTH_LONG);
                         TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
                         tv.setTextColor(Color.RED);
@@ -1558,7 +1561,7 @@ public class SignUp extends AppCompatActivity implements OnMapReadyCallback, Goo
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                //Log.e("", "onFailure: " + t.toString());
+                Log.e("", "onFailure: " + t.toString());
             }
         });
     }

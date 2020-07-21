@@ -18,10 +18,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.Switch;
+
+import org.json.JSONObject;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -77,7 +80,7 @@ public class Options extends AppCompatActivity {
                                             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                                                 if (response.code() == 200) {
                                                     try {
-                                                        //Log.e("TAG", "onResponse: " + new JSONObject(response.body().string()));
+                                                        Log.e("tag", "onResponse: " + new JSONObject(response.body().string()));
                                                         findViewById(R.id.layout_loading).setVisibility(View.GONE);
                                                         if (isChecked) {
 //                                                            MyApplication.getInstance().setThread();
@@ -102,11 +105,11 @@ public class Options extends AppCompatActivity {
 //                                                                                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
 //                                                                                        if (response.code() == 200) {
 //                                                                                            try {
-//                                                                                                //Log.e("TAG", "onResponse: " + new JSONObject(response.body().string()));
+//                                                                                                Log.e("tag", "onResponse: " + new JSONObject(response.body().string()));
 //                                                                                            }catch (Exception e){
 //                                                                                                e.printStackTrace();}
 //                                                                                        }else{
-//                                                                                            //Log.e("TAG", "onResponse: " + response.code());
+//                                                                                            Log.e("tag", "onResponse: " + response.code());
 //                                                                                        }
 //                                                                                    }
 //
@@ -156,11 +159,11 @@ public class Options extends AppCompatActivity {
 ////                                                                                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
 ////                                                                                    if (response.code() == 200) {
 ////                                                                                        try {
-////                                                                                            //Log.e("TAG", "onResponse: " + new JSONObject(response.body().string()));
+////                                                                                            Log.e("tag", "onResponse: " + new JSONObject(response.body().string()));
 ////                                                                                        }catch (Exception e){
 ////                                                                                            e.printStackTrace();}
 ////                                                                                    }else{
-////                                                                                        //Log.e("TAG", "onResponse: " + response.code());
+////                                                                                        Log.e("tag", "onResponse: " + response.code());
 ////                                                                                    }
 ////                                                                                }
 ////
@@ -187,7 +190,7 @@ public class Options extends AppCompatActivity {
                                                         e.printStackTrace();
                                                     }
                                                 } else {
-                                                    //Log.e("TAG", "onResponse: " + response.code());
+                                                    Log.e("tag", "onResponse: " + response.code());
                                                 }
                                             }
 
@@ -230,7 +233,7 @@ public class Options extends AppCompatActivity {
                             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                                 if (response.code() == 200) {
                                     try {
-                                        //Log.e("TAG", "onResponse: " + new JSONObject(response.body().string()));
+                                        Log.e("tag", "onResponse: " + new JSONObject(response.body().string()));
                                         findViewById(R.id.layout_loading).setVisibility(View.GONE);
                                         if (isChecked) {
 //                                            MyApplication.getInstance().setThread();
@@ -252,11 +255,11 @@ public class Options extends AppCompatActivity {
 //                                                                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
 //                                                                    if (response.code() == 200) {
 //                                                                        try {
-//                                                                            //Log.e("TAG", "onResponse: " + new JSONObject(response.body().string()));
+//                                                                            Log.e("tag", "onResponse: " + new JSONObject(response.body().string()));
 //                                                                        }catch (Exception e){
 //                                                                        e.printStackTrace();}
 //                                                                    }else{
-//                                                                        //Log.e("TAG", "onResponse: " + response.code());
+//                                                                        Log.e("tag", "onResponse: " + response.code());
 //                                                                    }
 //                                                                }
 //
@@ -282,7 +285,7 @@ public class Options extends AppCompatActivity {
                                         e.printStackTrace();
                                     }
                                 } else {
-                                    //Log.e("TAG", "onResponse: " + response.code());
+                                    Log.e("tag", "onResponse: " + response.code());
                                 }
                             }
 

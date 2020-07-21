@@ -31,6 +31,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -203,7 +204,7 @@ public class AllServiceMap extends AppCompatActivity implements GoogleMap.OnMark
                     }
 
 //                    for(int i = 0 ; i< searchItems.size(); i  ++){
-//                        //Log.e("TAG", "onClick: " + searchItems.get(i).getName() );
+//                        Log.e("tag", "onClick: " + searchItems.get(i).getName() );
 //                    }
 
                     adapter2.notifyDataSetChanged();
@@ -282,12 +283,12 @@ public class AllServiceMap extends AppCompatActivity implements GoogleMap.OnMark
             Location location = locationManager.getLastKnownLocation(locationManager
                     .GPS_PROVIDER);
             if (location == null) {
-                //Log.e("", "onMapReady: MULL");
+                Log.e("", "onMapReady: MULL");
                 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1, 1, this);
             } else {
                 latitude = location.getLatitude();
                 longitude = location.getLongitude();
-                //Log.e("", "onMapReady: " + latitude + " , " + longitude);
+                Log.e("", "onMapReady: " + latitude + " , " + longitude);
 
                 adapter = new ReviewAdapter(this, R.layout.review_item, displayReviewItems);
 
@@ -350,7 +351,7 @@ public class AllServiceMap extends AppCompatActivity implements GoogleMap.OnMark
 
             for (String key : mMarkers.keySet()) {
                 if (mMarkers.get(key).equals(marker)) {
-                    //Log.e("", "onMarkerClick: found it");
+                    Log.e("", "onMarkerClick: found it");
                     String[] split = key.split(";");
                     MapObject item = new MapObject();
                     if (split[0].equals("4")) {
@@ -494,7 +495,7 @@ public class AllServiceMap extends AppCompatActivity implements GoogleMap.OnMark
         Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getServiceURL())
                 .addConverterFactory(GsonConverterFactory.create()).build();
         final MapAPI tour = retro.create(MapAPI.class);
-        Call<ResponseBody> call = tour.getATMInRange(MyApplication.getInstance().getVersion(), (float) lat, (float) lon, (float) 0.1);
+        Call<ResponseBody> call = tour.getATMInRange(MyApplication.getInstance().getVersion(), (float) lat, (float) lon, MyApplication.getInstance().getRange());
         //Call<ResponseBody> call = tour.getAllATM();
         call.enqueue(new Callback<ResponseBody>() {
             @Override
@@ -504,7 +505,7 @@ public class AllServiceMap extends AppCompatActivity implements GoogleMap.OnMark
                     JSONArray jsonArray;
                     try {
                         jsonObject = new JSONObject(response.body().string());
-                        //Log.e("", "onResponse: " + jsonObject.toString());
+                        Log.e("", "onResponse: " + jsonObject.toString());
                         jsonArray = jsonObject.getJSONArray("Services");
 
                         for (int i = 0; i < jsonArray.length(); i++) {
@@ -522,7 +523,7 @@ public class AllServiceMap extends AppCompatActivity implements GoogleMap.OnMark
                                 }
                             }
 
-                            //Log.e("", "onResponse: " + jsonObject1.toString());
+                            Log.e("", "onResponse: " + jsonObject1.toString());
                             addATMMarkerToList((float) jsonObject1.getDouble("Lat"),
                                     (float) jsonObject1.getDouble("Lon"), bankName, jsonObject1.getInt("Id"));
 
@@ -548,19 +549,23 @@ public class AllServiceMap extends AppCompatActivity implements GoogleMap.OnMark
                             /*
                             Check if user voted on the service
                              */
-                            if(MyApplication.getInstance().getUpvoteMap().containsKey("Atm")) {
-                                Map<String, ActionObject> map = MyApplication.getInstance().getUpvoteMap().get("Atm");
-                                if(map.containsKey("upvote "+ item.getId())) {
-                                    item.setUpvoted(true);
-                                }
+                            if(MyApplication.getInstance().getUpvoteMap() != null) {
+                                if (MyApplication.getInstance().getUpvoteMap().containsKey("Atm")) {
+                                    Map<String, ActionObject> map = MyApplication.getInstance().getUpvoteMap().get("Atm");
+                                    if (map.containsKey("upvote " + item.getId())) {
+                                        item.setUpvoted(true);
+                                    }
 
-                            }if (MyApplication.getInstance().getDownvoteMap().containsKey("Atm")){
-                                Map<String, ActionObject> map = MyApplication.getInstance().getDownvoteMap().get("Atm");
-                                if(map.containsKey("downvote "+ item.getId())){
-                                    item.setDownvoted(true);
                                 }
                             }
-
+                            if(MyApplication.getInstance().getDownvoteMap() != null) {
+                                if (MyApplication.getInstance().getDownvoteMap().containsKey("Atm")) {
+                                    Map<String, ActionObject> map = MyApplication.getInstance().getDownvoteMap().get("Atm");
+                                    if (map.containsKey("downvote " + item.getId())) {
+                                        item.setDownvoted(true);
+                                    }
+                                }
+                            }
                             atmArray.add(item);
                         }
 
@@ -577,7 +582,7 @@ public class AllServiceMap extends AppCompatActivity implements GoogleMap.OnMark
                         }
 
 //                        for (int i = 0; i < mMarkers.size(); i++){
-//                            //Log.e("", mMarkers.get(i).getTitle());
+//                            Log.e("", mMarkers.get(i).getTitle());
 //                            mMap.addMarker(mMarkers.get(i));
 //                        }
                     } catch (Exception e) {
@@ -588,7 +593,7 @@ public class AllServiceMap extends AppCompatActivity implements GoogleMap.OnMark
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                //Log.e("", "onFailure: " + t.toString());
+                Log.e("", "onFailure: " + t.toString());
             }
         });
     }
@@ -600,7 +605,7 @@ public class AllServiceMap extends AppCompatActivity implements GoogleMap.OnMark
         Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getServiceURL())
                 .addConverterFactory(GsonConverterFactory.create()).build();
         final MapAPI tour = retro.create(MapAPI.class);
-        Call<ResponseBody> call = tour.getMaintenanceInRange(MyApplication.getInstance().getVersion(), (float) lat, (float) lon, (float) 0.3);
+        Call<ResponseBody> call = tour.getMaintenanceInRange(MyApplication.getInstance().getVersion(), (float) lat, (float) lon, MyApplication.getInstance().getRange());
         //Call<ResponseBody> call = tour.getAllATM();
         call.enqueue(new Callback<ResponseBody>() {
             @Override
@@ -610,13 +615,13 @@ public class AllServiceMap extends AppCompatActivity implements GoogleMap.OnMark
                     JSONArray jsonArray;
                     try {
                         jsonObject = new JSONObject(response.body().string());
-                        //Log.e("", "onResponse: " + jsonObject.toString());
+                        Log.e("", "onResponse: " + jsonObject.toString());
                         if (!jsonObject.getJSONArray("Services").toString().equals("")) {
                             jsonArray = jsonObject.getJSONArray("Services");
 
                             for (int i = 0; i < jsonArray.length(); i++) {
                                 JSONObject jsonObject1 = jsonArray.getJSONObject(i);
-                                //Log.e("", "onResponse: " + jsonObject1.toString());
+                                Log.e("", "onResponse: " + jsonObject1.toString());
                                 MapObject item = new MapObject(jsonObject1.getInt("Id"), jsonObject1.getString("Name"), 0,
                                         jsonObject1.getString("Address"), (float) jsonObject1.getDouble("Lat"),
                                         (float) jsonObject1.getDouble("Lon"), jsonObject1.getString("Note"), 3);
@@ -634,18 +639,25 @@ public class AllServiceMap extends AppCompatActivity implements GoogleMap.OnMark
                                 item.setDownvoted(false);
                                 item.setUpvoted(false);
 
-                                if(MyApplication.getInstance().getUpvoteMap().containsKey("Maintenance")) {
-                                    Map<String, ActionObject> map = MyApplication.getInstance().getUpvoteMap().get("Maintenance");
-                                    if(map.containsKey("upvote "+ item.getId())) {
-                                        item.setUpvoted(true);
-                                    }
+                                if(MyApplication.getInstance().getUpvoteMap() != null) {
+                                    if (MyApplication.getInstance().getUpvoteMap().containsKey("Maintenance")) {
+                                        Map<String, ActionObject> map = MyApplication.getInstance().getUpvoteMap().get("Maintenance");
+                                        if (map.containsKey("upvote " + item.getId())) {
+                                            item.setUpvoted(true);
+                                        }
 
-                                }if (MyApplication.getInstance().getDownvoteMap().containsKey("Maintenance")){
-                                    Map<String, ActionObject> map = MyApplication.getInstance().getDownvoteMap().get("Maintenance");
-                                    if(map.containsKey("downvote "+ item.getId())){
-                                        item.setDownvoted(true);
                                     }
                                 }
+                                if(MyApplication.getInstance().getDownvoteMap() != null) {
+                                    if (MyApplication.getInstance().getDownvoteMap().containsKey("Maintenance")){
+                                        Map<String, ActionObject> map = MyApplication.getInstance().getDownvoteMap().get("Maintenance");
+                                        if(map.containsKey("downvote "+ item.getId())){
+                                            item.setDownvoted(true);
+                                        }
+                                    }
+
+                                }
+
 
                                 maintenanceArray.add(item);
 
@@ -654,7 +666,7 @@ public class AllServiceMap extends AppCompatActivity implements GoogleMap.OnMark
                             }
                         }
 //                        for (int i = 0; i < mMarkers.size(); i++){
-//                            //Log.e("", mMarkers.get(i).getTitle());
+//                            Log.e("", mMarkers.get(i).getTitle());
 //                            mMap.addMarker(mMarkers.get(i));
 //                        }
                     } catch (Exception e) {
@@ -665,7 +677,7 @@ public class AllServiceMap extends AppCompatActivity implements GoogleMap.OnMark
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                //Log.e("", "onFailure: " + t.toString());
+                Log.e("", "onFailure: " + t.toString());
             }
         });
     }
@@ -677,7 +689,7 @@ public class AllServiceMap extends AppCompatActivity implements GoogleMap.OnMark
         Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getServiceURL())
                 .addConverterFactory(GsonConverterFactory.create()).build();
         final MapAPI tour = retro.create(MapAPI.class);
-        Call<ResponseBody> call = tour.getFuelInRange(MyApplication.getInstance().getVersion(), (float) lat, (float) lon, (float) 0.1);
+        Call<ResponseBody> call = tour.getFuelInRange(MyApplication.getInstance().getVersion(), (float) lat, (float) lon, MyApplication.getInstance().getRange());
         //Call<ResponseBody> call = tour.getAllATM();
         call.enqueue(new Callback<ResponseBody>() {
             @Override
@@ -687,14 +699,14 @@ public class AllServiceMap extends AppCompatActivity implements GoogleMap.OnMark
                     JSONArray jsonArray;
                     try {
                         jsonObject = new JSONObject(response.body().string());
-                        //Log.e("", "onResponse: " + jsonObject.toString());
+                        Log.e("", "onResponse: " + jsonObject.toString());
                         if (!jsonObject.getJSONArray("Services").toString().equals("")) {
                             jsonArray = jsonObject.getJSONArray("Services");
 
                             for (int i = 0; i < jsonArray.length(); i++) {
                                 JSONObject jsonObject1 = jsonArray.getJSONObject(i);
-                                //Log.e("", "onResponse: " + jsonObject1.toString());
-                                //Log.e("", "onResponse: " + jsonObject1.getInt("Id"));
+                                Log.e("", "onResponse: " + jsonObject1.toString());
+                                Log.e("", "onResponse: " + jsonObject1.getInt("Id"));
 
                                 String name = getString(R.string.fuel);
 
@@ -719,16 +731,20 @@ public class AllServiceMap extends AppCompatActivity implements GoogleMap.OnMark
                                 item.setDownvoted(false);
                                 item.setUpvoted(false);
 
-                                if(MyApplication.getInstance().getUpvoteMap().containsKey("Fuel")) {
-                                    Map<String, ActionObject> map = MyApplication.getInstance().getUpvoteMap().get("Fuel");
-                                    if(map.containsKey("upvote "+ item.getId())) {
-                                        item.setUpvoted(true);
+                                if(MyApplication.getInstance().getUpvoteMap() != null) {
+                                    if (MyApplication.getInstance().getUpvoteMap().containsKey("Fuel")) {
+                                        Map<String, ActionObject> map = MyApplication.getInstance().getUpvoteMap().get("Fuel");
+                                        if (map.containsKey("upvote " + item.getId())) {
+                                            item.setUpvoted(true);
+                                        }
                                     }
-
-                                }if (MyApplication.getInstance().getDownvoteMap().containsKey("Fuel")){
-                                    Map<String, ActionObject> map = MyApplication.getInstance().getDownvoteMap().get("Fuel");
-                                    if(map.containsKey("downvote "+ item.getId())){
-                                        item.setDownvoted(true);
+                                }
+                                if(MyApplication.getInstance().getDownvoteMap() != null) {
+                                    if (MyApplication.getInstance().getDownvoteMap().containsKey("Fuel")) {
+                                        Map<String, ActionObject> map = MyApplication.getInstance().getDownvoteMap().get("Fuel");
+                                        if (map.containsKey("downvote " + item.getId())) {
+                                            item.setDownvoted(true);
+                                        }
                                     }
                                 }
 
@@ -739,7 +755,7 @@ public class AllServiceMap extends AppCompatActivity implements GoogleMap.OnMark
                             }
                         }
 //                        for (int i = 0; i < mMarkers.size(); i++){
-//                            //Log.e("", mMarkers.get(i).getTitle());
+//                            Log.e("", mMarkers.get(i).getTitle());
 //                            mMap.addMarker(mMarkers.get(i));
 //                        }
                     } catch (Exception e) {
@@ -750,7 +766,7 @@ public class AllServiceMap extends AppCompatActivity implements GoogleMap.OnMark
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                //Log.e("", "onFailure: " + t.toString());
+                Log.e("", "onFailure: " + t.toString());
             }
         });
     }
@@ -762,7 +778,7 @@ public class AllServiceMap extends AppCompatActivity implements GoogleMap.OnMark
         Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getServiceURL())
                 .addConverterFactory(GsonConverterFactory.create()).build();
         final MapAPI tour = retro.create(MapAPI.class);
-        Call<ResponseBody> call = tour.getWCInRange(MyApplication.getInstance().getVersion(), (float) lat, (float) lon, (float) 0.1);
+        Call<ResponseBody> call = tour.getWCInRange(MyApplication.getInstance().getVersion(), (float) lat, (float) lon, MyApplication.getInstance().getRange());
         //Call<ResponseBody> call = tour.getAllATM();
         call.enqueue(new Callback<ResponseBody>() {
             @Override
@@ -772,14 +788,14 @@ public class AllServiceMap extends AppCompatActivity implements GoogleMap.OnMark
                     JSONArray jsonArray;
                     try {
                         jsonObject = new JSONObject(response.body().string());
-                        //Log.e("", "onResponse: " + jsonObject.toString());
+                        Log.e("", "onResponse: " + jsonObject.toString());
                         if (!jsonObject.getJSONArray("Services").toString().equals("")) {
                             jsonArray = jsonObject.getJSONArray("Services");
 
                             for (int i = 0; i < jsonArray.length(); i++) {
                                 JSONObject jsonObject1 = jsonArray.getJSONObject(i);
-                                //Log.e("", "onResponse: " + jsonObject1.toString());
-                                //Log.e("", "onResponse: " + jsonObject1.getInt("Id"));
+                                Log.e("", "onResponse: " + jsonObject1.toString());
+                                Log.e("", "onResponse: " + jsonObject1.getInt("Id"));
                                 MapObject item = new MapObject(jsonObject1.getInt("Id"), getString(R.string.wc), 0,
                                         jsonObject1.getString("Address"), (float) jsonObject1.getDouble("Lat"),
                                         (float) jsonObject1.getDouble("Lon"), jsonObject1.getString("Note"), 2);
@@ -797,19 +813,22 @@ public class AllServiceMap extends AppCompatActivity implements GoogleMap.OnMark
                                 item.setDownvoted(false);
                                 item.setUpvoted(false);
 
-                                if(MyApplication.getInstance().getUpvoteMap().containsKey("Toilet")) {
-                                    Map<String, ActionObject> map = MyApplication.getInstance().getUpvoteMap().get("Toilet");
-                                    if(map.containsKey("upvote "+ item.getId())) {
-                                        item.setUpvoted(true);
-                                    }
-
-                                }if (MyApplication.getInstance().getDownvoteMap().containsKey("Toilet")){
-                                    Map<String, ActionObject> map = MyApplication.getInstance().getDownvoteMap().get("Toilet");
-                                    if(map.containsKey("downvote "+ item.getId())){
-                                        item.setDownvoted(true);
+                                if(MyApplication.getInstance().getUpvoteMap() != null) {
+                                    if (MyApplication.getInstance().getUpvoteMap().containsKey("Toilet")) {
+                                        Map<String, ActionObject> map = MyApplication.getInstance().getUpvoteMap().get("Toilet");
+                                        if (map.containsKey("upvote " + item.getId())) {
+                                            item.setUpvoted(true);
+                                        }
                                     }
                                 }
-
+                                if(MyApplication.getInstance().getDownvoteMap() != null) {
+                                    if (MyApplication.getInstance().getDownvoteMap().containsKey("Toilet")) {
+                                        Map<String, ActionObject> map = MyApplication.getInstance().getDownvoteMap().get("Toilet");
+                                        if (map.containsKey("downvote " + item.getId())) {
+                                            item.setDownvoted(true);
+                                        }
+                                    }
+                                }
                                 wcArray.add(item);
 
                                 addWCMarkerTo((float) jsonObject1.getDouble("Lat"),
@@ -817,7 +836,7 @@ public class AllServiceMap extends AppCompatActivity implements GoogleMap.OnMark
                             }
                         }
 //                        for (int i = 0; i < mMarkers.size(); i++){
-//                            //Log.e("", mMarkers.get(i).getTitle());
+//                            Log.e("", mMarkers.get(i).getTitle());
 //                            mMap.addMarker(mMarkers.get(i));
 //                        }
                     } catch (Exception e) {
@@ -828,7 +847,7 @@ public class AllServiceMap extends AppCompatActivity implements GoogleMap.OnMark
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                //Log.e("", "onFailure: " + t.toString());
+                Log.e("", "onFailure: " + t.toString());
             }
         });
     }
@@ -867,7 +886,7 @@ public class AllServiceMap extends AppCompatActivity implements GoogleMap.OnMark
                     final JSONObject jsonObject;
                     try {
                         jsonObject = new JSONObject(response.body().string());
-                        //Log.e("", "onResponse: " + jsonObject.toString());
+                        Log.e("", "onResponse: " + jsonObject.toString());
 
                         if (jsonObject.getBoolean("Status")) {
                             JSONArray jsonArray = jsonObject.getJSONArray("Banks");
@@ -875,7 +894,7 @@ public class AllServiceMap extends AppCompatActivity implements GoogleMap.OnMark
                             for (int i = 0; i < jsonArray.length(); i++) {
                                 JSONObject jsonObject1 = jsonArray.getJSONObject(i);
                                 arrBank.add(new BankObject(jsonObject1.getInt("Id"), jsonObject1.getString("Name")));
-                                //Log.e("", "onResponse: " + jsonObject1.getString("Name") + getString(R.string.all));
+                                Log.e("", "onResponse: " + jsonObject1.getString("Name") + getString(R.string.all));
                             }
 
                             callATM(latitude, longitude);
@@ -885,7 +904,7 @@ public class AllServiceMap extends AppCompatActivity implements GoogleMap.OnMark
                     }
                 } else {
                     try {
-                        //Log.e(", ", response.errorBody().toString() + response.code());
+                        Log.e(", ", response.errorBody().toString() + response.code());
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -894,7 +913,7 @@ public class AllServiceMap extends AppCompatActivity implements GoogleMap.OnMark
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                //Log.e("", "onFailure: " + t.toString());
+                Log.e("", "onFailure: " + t.toString());
             }
         });
     }
@@ -938,7 +957,7 @@ public class AllServiceMap extends AppCompatActivity implements GoogleMap.OnMark
 //                    final JSONObject jsonObject;
 //                    try {
 //                        jsonObject = new JSONObject(response.body().string());
-//                        //Log.e("", "onResponse: " + jsonObject.toString() + " reviewload" + item.getId());
+//                        Log.e("", "onResponse: " + jsonObject.toString() + " reviewload" + item.getId());
 //                        if (jsonObject.getBoolean("Status")) {
 //
 //                            JSONArray jsonArray = jsonObject.getJSONArray("Reviews");
@@ -1013,7 +1032,7 @@ public class AllServiceMap extends AppCompatActivity implements GoogleMap.OnMark
 //                        e.printStackTrace();
 //                    }
 //                }else{
-//                    //Log.e("", "onResponse: " +response.code() );
+//                    Log.e("", "onResponse: " +response.code() );
 //                }
 //            }
 //
@@ -1045,7 +1064,7 @@ public class AllServiceMap extends AppCompatActivity implements GoogleMap.OnMark
 //                    .addConverterFactory(GsonConverterFactory.create()).build();
 //            final MapAPI tour = retro.create(MapAPI.class);
 //            for (int i = 0; i < split.length; i++) {
-//                //Log.e("", "addImages: " + split[i]);
+//                Log.e("", "addImages: " + split[i]);
 //                Call<ResponseBody> call = tour.download(split[i]);
 //                call.enqueue(new Callback<ResponseBody>() {
 //                    @Override

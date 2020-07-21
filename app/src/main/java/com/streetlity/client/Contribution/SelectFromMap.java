@@ -15,6 +15,7 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -125,7 +126,7 @@ public class SelectFromMap extends AppCompatActivity implements OnMapReadyCallba
                         if(response.code() == 200){
                             try{
                                 JSONObject jsonObject1 = new JSONObject(response.body().string());
-                                //Log.e("TAG", "onResponse: " + jsonObject1.toString() );
+                                Log.e("tag", "onResponse: " + jsonObject1.toString() );
                             }catch (Exception e){
                                 e.printStackTrace();
                             }
@@ -267,13 +268,13 @@ public class SelectFromMap extends AppCompatActivity implements OnMapReadyCallba
             Location location = locationManager.getLastKnownLocation(locationManager
                     .GPS_PROVIDER);
             if(location == null){
-                //Log.e("", "onMapReady: MULL");
+                Log.e("", "onMapReady: MULL");
             }else {
                 latitude = location.getLatitude();
                 longitude = location.getLongitude();
 
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude, longitude), 15f));
-                //Log.e("", "onMapReady: " + latitude + " , " + longitude);
+                Log.e("", "onMapReady: " + latitude + " , " + longitude);
             }
         }
 
@@ -311,7 +312,7 @@ public class SelectFromMap extends AppCompatActivity implements OnMapReadyCallba
 
         String token = MyApplication.getInstance().getToken();
 
-        //Log.e("", "addATM: "+ mNote+"-"+latToAdd+"-"+latToAdd+"-"+mAddress);
+        Log.e("", "addATM: "+ mNote+"-"+latToAdd+"-"+latToAdd+"-"+mAddress);
 
         if(hasImg) {
 
@@ -328,7 +329,7 @@ public class SelectFromMap extends AppCompatActivity implements OnMapReadyCallba
                         final JSONObject jsonObject;
                         try {
                             jsonObject = new JSONObject(response.body().string());
-                            //Log.e("", "onResponse: " + jsonObject.toString());
+                            Log.e("", "onResponse: " + jsonObject.toString());
 
                             if (jsonObject.getBoolean("Status")) {
                                 JSONObject jsonObject1 = jsonObject.getJSONObject("Paths");
@@ -338,11 +339,10 @@ public class SelectFromMap extends AppCompatActivity implements OnMapReadyCallba
                                     mImages[i] = jsonObject2.getString("Message");
                                 }
 
-                               // for(int i = 0;i<mImages.length;i++)
-                                    //Log.e("", "addFuel: "+mImages[i] );
+
 
                                 Call<ResponseBody> call1 = tour.addFuel(MyApplication.getInstance().getVersion(), ((MyApplication) SelectFromMap.this.getApplication()).getToken(),
-                                        (float) latToAdd, (float) lonToAdd, mAddress, mNote, mImages, mName);
+                                        (float) latToAdd, (float) lonToAdd, mAddress, mNote, mImages, mName, MyApplication.getInstance().getUsername());
                                 call1.enqueue(new Callback<ResponseBody>() {
                                     @Override
                                     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -351,7 +351,7 @@ public class SelectFromMap extends AppCompatActivity implements OnMapReadyCallba
                                             JSONArray jsonArray;
                                             try {
                                                 jsonObject = new JSONObject(response.body().string());
-                                                //Log.e("", "onResponse: " + jsonObject.toString());
+                                                Log.e("", "onResponse: " + jsonObject.toString());
 
                                                 if (jsonObject.getBoolean("Status")) {
                                                     Intent t = new Intent(SelectFromMap.this, AddSuccess.class);
@@ -367,6 +367,10 @@ public class SelectFromMap extends AppCompatActivity implements OnMapReadyCallba
 
                                                     ActionObject ao = new ActionObject("", time,"Contribute", Integer.toString(jsonObject.getJSONObject("Service").getInt("Id")));
 
+                                                    if(MyApplication.getInstance().getContributeMap() == null){
+                                                        MyApplication.getInstance().setContributeMap(new HashMap<>());
+                                                    }
+
                                                     if(MyApplication.getInstance().getContributeMap().containsKey("Fuel")){
                                                         MyApplication.getInstance().getContributeMap().get("Fuel").put("contributed " + jsonObject.getJSONObject("Service").getInt("Id"), ao);
                                                     }
@@ -376,7 +380,7 @@ public class SelectFromMap extends AppCompatActivity implements OnMapReadyCallba
                                                         MyApplication.getInstance().getContributeMap().put("Fuel", map);
                                                     }
 
-                                                    //Log.e(TAG, "onResponse: " + MyApplication.getInstance().getContributeMap());
+                                                    Log.e("tag", "onResponse: " + MyApplication.getInstance().getContributeMap());
 
                                                     finish();
                                                 }
@@ -392,7 +396,7 @@ public class SelectFromMap extends AppCompatActivity implements OnMapReadyCallba
                                         } else {
                                             try {
 
-                                                //Log.e("", "onResponse: " + response.errorBody().toString());
+                                                Log.e("", "onResponse: " + response.errorBody().toString());
                                             } catch (Exception e) {
                                                 csLayout.setVisibility(View.GONE);
                                                 Toast toast = Toast.makeText(SelectFromMap.this, "!", Toast.LENGTH_LONG);
@@ -407,7 +411,7 @@ public class SelectFromMap extends AppCompatActivity implements OnMapReadyCallba
 
                                     @Override
                                     public void onFailure(Call<ResponseBody> call, Throwable t) {
-                                        //Log.e("", "onFailure: " + t.toString());
+                                        Log.e("", "onFailure: " + t.toString());
                                         csLayout.setVisibility(View.GONE);
                                         Toast toast = Toast.makeText(SelectFromMap.this, "!", Toast.LENGTH_LONG);
                                         TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
@@ -439,7 +443,7 @@ public class SelectFromMap extends AppCompatActivity implements OnMapReadyCallba
 
                 @Override
                 public void onFailure(Call<ResponseBody> call, Throwable t) {
-                    //Log.e("", "onFailure: " + t.toString());
+                    Log.e("", "onFailure: " + t.toString());
                     csLayout.setVisibility(View.GONE);
                     Toast toast = Toast.makeText(SelectFromMap.this, "!", Toast.LENGTH_LONG);
                     TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
@@ -450,7 +454,8 @@ public class SelectFromMap extends AppCompatActivity implements OnMapReadyCallba
             });
         }else{
             mImages = new String[0];
-            Call<ResponseBody> call1 = tour.addFuel(MyApplication.getInstance().getVersion(),token,(float)latToAdd,(float)lonToAdd, mAddress, mNote,mImages, mName);
+            Call<ResponseBody> call1 = tour.addFuel(MyApplication.getInstance().getVersion(),token,
+                    (float)latToAdd,(float)lonToAdd, mAddress, mNote,mImages, mName, MyApplication.getInstance().getUsername());
             call1.enqueue(new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -459,7 +464,7 @@ public class SelectFromMap extends AppCompatActivity implements OnMapReadyCallba
                         JSONArray jsonArray;
                         try {
                             jsonObject = new JSONObject(response.body().string());
-                            //Log.e("", "onResponse: " + jsonObject.toString());
+                            Log.e("", "onResponse: " + jsonObject.toString());
 
                             if (jsonObject.getBoolean("Status")) {
                                 Intent t = new Intent(SelectFromMap.this, AddSuccess.class);
@@ -475,6 +480,10 @@ public class SelectFromMap extends AppCompatActivity implements OnMapReadyCallba
 
                                 ActionObject ao = new ActionObject("", time,"Contribute", Integer.toString(jsonObject.getJSONObject("Service").getInt("Id")));
 
+                                if(MyApplication.getInstance().getContributeMap() == null){
+                                    MyApplication.getInstance().setContributeMap(new HashMap<>());
+                                }
+
                                 if(MyApplication.getInstance().getContributeMap().containsKey("Fuel")){
                                     MyApplication.getInstance().getContributeMap().get("Fuel").put("contributed " + jsonObject.getJSONObject("Service").getInt("Id"), ao);
                                 }
@@ -484,7 +493,7 @@ public class SelectFromMap extends AppCompatActivity implements OnMapReadyCallba
                                     MyApplication.getInstance().getContributeMap().put("Fuel", map);
                                 }
 
-                                //Log.e(TAG, "onResponse: " + MyApplication.getInstance().getContributeMap());
+                                Log.e("tag", "onResponse: " + MyApplication.getInstance().getContributeMap());
 
                                 finish();
                             }
@@ -493,7 +502,7 @@ public class SelectFromMap extends AppCompatActivity implements OnMapReadyCallba
                         }
                     } else {
                         try {
-                            //Log.e(", ", response.errorBody().toString());
+                            Log.e(", ", response.errorBody().toString());
 
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -503,7 +512,7 @@ public class SelectFromMap extends AppCompatActivity implements OnMapReadyCallba
 
                 @Override
                 public void onFailure(Call<ResponseBody> call, Throwable t) {
-                    //Log.e("", "onFailure: " + t.toString());
+                    Log.e("", "onFailure: " + t.toString());
                 }
             });
         }
@@ -526,7 +535,7 @@ public class SelectFromMap extends AppCompatActivity implements OnMapReadyCallba
         final MapAPI tour = retro.create(MapAPI.class);
         final MapAPI tour2 = retro2.create(MapAPI.class);
 
-        //Log.e("", "addATM: "+ mNote+"-"+latToAdd+"-"+latToAdd+"-"+mAddress);
+        Log.e("", "addATM: "+ mNote+"-"+latToAdd+"-"+latToAdd+"-"+mAddress);
 
         String token = MyApplication.getInstance().getToken();
         if(hasImg) {
@@ -546,7 +555,7 @@ public class SelectFromMap extends AppCompatActivity implements OnMapReadyCallba
                         final JSONObject jsonObject;
                         try {
                             jsonObject = new JSONObject(response.body().string());
-                            //Log.e("", "onResponse: " + jsonObject.toString());
+                            Log.e("", "onResponse: " + jsonObject.toString());
                             if(jsonObject.getBoolean("Status")){
 
                                 JSONObject jsonObject1 = jsonObject.getJSONObject("Paths");
@@ -557,7 +566,7 @@ public class SelectFromMap extends AppCompatActivity implements OnMapReadyCallba
                                 }
 
                                 Call<ResponseBody> call1 = tour.addWC(MyApplication.getInstance().getVersion(),token,(float)latToAdd,(float)lonToAdd,
-                                        mAddress, mNote,mImages, mName);
+                                        mAddress, mNote,mImages, mName, MyApplication.getInstance().getUsername());
                                 call1.enqueue(new Callback<ResponseBody>() {
                                     @Override
                                     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -566,7 +575,7 @@ public class SelectFromMap extends AppCompatActivity implements OnMapReadyCallba
                                             JSONArray jsonArray;
                                             try {
                                                 jsonObject = new JSONObject(response.body().string());
-                                                //Log.e("", "onResponse: " + jsonObject.toString());
+                                                Log.e("", "onResponse: " + jsonObject.toString());
 
                                                 if (jsonObject.getBoolean("Status")) {
                                                     Intent t = new Intent(SelectFromMap.this, AddSuccess.class);
@@ -582,6 +591,10 @@ public class SelectFromMap extends AppCompatActivity implements OnMapReadyCallba
 
                                                     ActionObject ao = new ActionObject("", time,"Contribute", Integer.toString(jsonObject.getJSONObject("Service").getInt("Id")));
 
+                                                    if(MyApplication.getInstance().getContributeMap() == null){
+                                                        MyApplication.getInstance().setContributeMap(new HashMap<>());
+                                                    }
+
                                                     if(MyApplication.getInstance().getContributeMap().containsKey("Toilet")){
                                                         MyApplication.getInstance().getContributeMap().get("Toilet").put("contributed " + jsonObject.getJSONObject("Service").getInt("Id"), ao);
                                                     }
@@ -591,7 +604,7 @@ public class SelectFromMap extends AppCompatActivity implements OnMapReadyCallba
                                                         MyApplication.getInstance().getContributeMap().put("Toilet", map);
                                                     }
 
-                                                    //Log.e(TAG, "onResponse: " + MyApplication.getInstance().getContributeMap());
+                                                    Log.e("tag", "onResponse: " + MyApplication.getInstance().getContributeMap());
 
                                                     finish();
                                                 }
@@ -600,7 +613,7 @@ public class SelectFromMap extends AppCompatActivity implements OnMapReadyCallba
                                             }
                                         } else {
                                             try {
-                                                //Log.e(", ", response.errorBody().toString());
+                                                Log.e(", ", response.errorBody().toString());
 
                                             } catch (Exception e) {
                                                 csLayout.setVisibility(View.GONE);
@@ -611,7 +624,7 @@ public class SelectFromMap extends AppCompatActivity implements OnMapReadyCallba
 
                                     @Override
                                     public void onFailure(Call<ResponseBody> call, Throwable t) {
-                                        //Log.e("", "onFailure: " + t.toString());
+                                        Log.e("", "onFailure: " + t.toString());
                                     }
                                 });
                             }else{
@@ -631,14 +644,15 @@ public class SelectFromMap extends AppCompatActivity implements OnMapReadyCallba
 
                 @Override
                 public void onFailure(Call<ResponseBody> call, Throwable t) {
-                    //Log.e("new tag", "onFailure: " + t.toString());
+                    Log.e("new tag", "onFailure: " + t.toString());
                 }
             });
 
 
         }else{
             mImages = new String[0];
-            Call<ResponseBody> call1 = tour.addWC(MyApplication.getInstance().getVersion(),token,(float)latToAdd,(float)lonToAdd, mAddress, mNote,mImages,mName);
+            Call<ResponseBody> call1 = tour.addWC(MyApplication.getInstance().getVersion(),token,
+                    (float)latToAdd,(float)lonToAdd, mAddress, mNote,mImages,mName, MyApplication.getInstance().getUsername());
             call1.enqueue(new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -647,7 +661,7 @@ public class SelectFromMap extends AppCompatActivity implements OnMapReadyCallba
                         JSONArray jsonArray;
                         try {
                             jsonObject = new JSONObject(response.body().string());
-                            //Log.e("", "onResponse: " + jsonObject.toString());
+                            Log.e("", "onResponse: " + jsonObject.toString());
 
                             if (jsonObject.getBoolean("Status")) {
                                 Intent t = new Intent(SelectFromMap.this, AddSuccess.class);
@@ -663,6 +677,10 @@ public class SelectFromMap extends AppCompatActivity implements OnMapReadyCallba
 
                                 ActionObject ao = new ActionObject("", time,"Contribute", Integer.toString(jsonObject.getJSONObject("Service").getInt("Id")));
 
+                                if(MyApplication.getInstance().getContributeMap() == null){
+                                    MyApplication.getInstance().setContributeMap(new HashMap<>());
+                                }
+
                                 if(MyApplication.getInstance().getContributeMap().containsKey("Toilet")){
                                     MyApplication.getInstance().getContributeMap().get("Toilet").put("contributed " + jsonObject.getJSONObject("Service").getInt("Id"), ao);
                                 }
@@ -672,7 +690,7 @@ public class SelectFromMap extends AppCompatActivity implements OnMapReadyCallba
                                     MyApplication.getInstance().getContributeMap().put("Toilet", map);
                                 }
 
-                                //Log.e(TAG, "onResponse: " + MyApplication.getInstance().getContributeMap());
+                                Log.e("tag", "onResponse: " + MyApplication.getInstance().getContributeMap());
 
                                 finish();
                             }
@@ -682,7 +700,7 @@ public class SelectFromMap extends AppCompatActivity implements OnMapReadyCallba
                         }
                     } else {
                         try {
-                            //Log.e(", ", response.errorBody().toString());
+                            Log.e(", ", response.errorBody().toString());
 
                         } catch (Exception e) {
                             csLayout.setVisibility(View.GONE);
@@ -693,7 +711,7 @@ public class SelectFromMap extends AppCompatActivity implements OnMapReadyCallba
 
                 @Override
                 public void onFailure(Call<ResponseBody> call, Throwable t) {
-                    //Log.e("", "onFailure: " + t.toString());
+                    Log.e("", "onFailure: " + t.toString());
                 }
             });
         }
@@ -713,7 +731,7 @@ public class SelectFromMap extends AppCompatActivity implements OnMapReadyCallba
                     JSONArray jsonArray;
                     try {
                         jsonObject = new JSONObject(response.body().string());
-                        //Log.e("", "onResponse: " + jsonObject.toString());
+                        Log.e("", "onResponse: " + jsonObject.toString());
 
                         if(jsonObject.getString("status").equals("ZERO_RESULTS")){
                             Toast toast = Toast.makeText(SelectFromMap.this, R.string.address_not_found, Toast.LENGTH_LONG);
@@ -757,8 +775,8 @@ public class SelectFromMap extends AppCompatActivity implements OnMapReadyCallba
                 }
                 else{
                     try {
-                        //Log.e(", ",response.errorBody().toString() + response.code());
-                        //Log.e("", "onResponse: " + response.errorBody());
+                        Log.e(", ",response.errorBody().toString() + response.code());
+                        Log.e("", "onResponse: " + response.errorBody());
 
                     }catch (Exception e){
                         e.printStackTrace();
@@ -800,9 +818,9 @@ public class SelectFromMap extends AppCompatActivity implements OnMapReadyCallba
 
                         String extension = path.substring(path.lastIndexOf("."));
 
-                        //Log.e("", "onActivityResult: " + path + extension );
+                        Log.e("", "onActivityResult: " + path + extension );
 
-                        //Log.e("", "onActivityResult: " + arrImg.size());
+                        Log.e("", "onActivityResult: " + arrImg.size());
 
                         EditText edtSelectImg = findViewById(R.id.edt_select_img);
 
@@ -989,7 +1007,7 @@ public class SelectFromMap extends AppCompatActivity implements OnMapReadyCallba
                                 size++;
                             }
 
-                            //Log.e("", "onActivityResult: " + arrImg.size());
+                            Log.e("", "onActivityResult: " + arrImg.size());
 
                             String temp = getString(R.string.selected);
                             temp = temp + " " + arrImg.size() + " " + getString(R.string.images);

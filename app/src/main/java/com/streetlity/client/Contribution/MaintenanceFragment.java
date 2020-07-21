@@ -16,6 +16,7 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -235,7 +236,7 @@ public class MaintenanceFragment extends Fragment implements LocationListener, O
 //                    loading.setVisibility(View.GONE);
 //                    locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME, MIN_DISTANCE, this);
 //                    ((ConfirmLocationsHolder) getActivity()).getCantFind().setVisibility(View.VISIBLE);
-//                    //Log.e("", "onMapReady: MULL");
+//                    Log.e("", "onMapReady: MULL");
 //                } else {
 //                    currLat = (float) location.getLatitude();
 //                    currLon = (float) location.getLongitude();
@@ -243,7 +244,7 @@ public class MaintenanceFragment extends Fragment implements LocationListener, O
 //
 //
 //                }
-//                //Log.e("", "onMapReady: " + currLat + " , " + currLon);
+//                Log.e("", "onMapReady: " + currLat + " , " + currLon);
 //            }
 //        }
 
@@ -329,7 +330,7 @@ public class MaintenanceFragment extends Fragment implements LocationListener, O
                     JSONArray jsonArray;
                     try {
                         jsonObject = new JSONObject(response.body().string());
-                        //Log.e("", "onResponse: " + jsonObject.toString());
+                        Log.e("", "onResponse: " + jsonObject.toString());
 
                         if(jsonObject.getString("status").equals("ZERO_RESULTS")){
                             Toast toast = Toast.makeText(getActivity(), R.string.address_not_found, Toast.LENGTH_LONG);
@@ -362,14 +363,14 @@ public class MaintenanceFragment extends Fragment implements LocationListener, O
                                         JSONArray jsonArray;
                                         try {
                                             jsonObject = new JSONObject(response.body().string());
-                                            //Log.e("", "onResponse: " + jsonObject.toString());
+                                            Log.e("", "onResponse: " + jsonObject.toString());
                                             if (!jsonObject.getJSONArray("Services").toString().equals("")) {
                                                 jsonArray = jsonObject.getJSONArray("Services");
 
                                                 for (int i = 0; i < jsonArray.length(); i++) {
                                                     JSONObject jsonObject1 = jsonArray.getJSONObject(i);
-                                                    //Log.e("", "onResponse: " + jsonObject1.toString());
-                                                    //Log.e("", "onResponse: " + jsonObject1.getInt("Id"));
+                                                    Log.e("", "onResponse: " + jsonObject1.toString());
+                                                    Log.e("", "onResponse: " + jsonObject1.getInt("Id"));
                                                     MapObject item = new MapObject(jsonObject1.getInt("Id"), jsonObject1.getString("Name"), 0,
                                                             jsonObject1.getString("Address"), (float) jsonObject1.getDouble("Lat"),
                                                             (float) jsonObject1.getDouble("Lon"), jsonObject1.getString("Note"), 3);
@@ -386,17 +387,21 @@ public class MaintenanceFragment extends Fragment implements LocationListener, O
 
                                                     item.setDownvoted(false);
                                                     item.setUpvoted(false);
+                                                    if(MyApplication.getInstance().getUpvoteMap() != null) {
+                                                        if (MyApplication.getInstance().getUpvoteMap().containsKey("Maintenance")) {
+                                                            Map<String, ActionObject> map = MyApplication.getInstance().getUpvoteMap().get("Maintenance");
+                                                            if (map.containsKey("upvote " + item.getId())) {
+                                                                item.setUpvoted(true);
+                                                            }
 
-                                                    if(MyApplication.getInstance().getUpvoteMap().containsKey("Maintenance")) {
-                                                        Map<String, ActionObject> map = MyApplication.getInstance().getUpvoteMap().get("Maintenance");
-                                                        if(map.containsKey("upvote "+ item.getId())) {
-                                                            item.setUpvoted(true);
                                                         }
-
-                                                    }if (MyApplication.getInstance().getDownvoteMap().containsKey("Maintenance")){
-                                                        Map<String, ActionObject> map = MyApplication.getInstance().getDownvoteMap().get("Maintenance");
-                                                        if(map.containsKey("downvote "+ item.getId())){
-                                                            item.setDownvoted(true);
+                                                    }
+                                                    if(MyApplication.getInstance().getDownvoteMap() != null) {
+                                                        if (MyApplication.getInstance().getDownvoteMap().containsKey("Maintenance")) {
+                                                            Map<String, ActionObject> map = MyApplication.getInstance().getDownvoteMap().get("Maintenance");
+                                                            if (map.containsKey("downvote " + item.getId())) {
+                                                                item.setDownvoted(true);
+                                                            }
                                                         }
                                                     }
                                                     searchItems.add(item);
@@ -442,14 +447,14 @@ public class MaintenanceFragment extends Fragment implements LocationListener, O
                                                     getActivity().findViewById(R.id.layout_range).setVisibility(View.GONE);
 
                                                     getActivity().findViewById(R.id.layout_revert).setVisibility(View.VISIBLE);
-                                                    //Log.e(TAG, "onResponse: hi im in find" );
+                                                    Log.e("tag", "onResponse: hi im in find" );
                                                     adapter.notifyDataSetChanged();
 //                                                    ((ConfirmLocationsHolder) getActivity()).getLoading().setVisibility(View.VISIBLE);
 //                                                    Intent t = new Intent(getActivity(), MapsActivity.class);
 //                                                    t.putExtra("currLat", currLat);
 //                                                    t.putExtra("currLon", currLon);
 //                                                    t.putExtra("item", searchItems.get(0));
-//                                                    //Log.e("", "onItemClick: " + searchItems.get(0).getId());
+//                                                    Log.e("", "onItemClick: " + searchItems.get(0).getId());
 //                                                    startActivity(t);
                                                 }
                                                 else{
@@ -471,7 +476,7 @@ public class MaintenanceFragment extends Fragment implements LocationListener, O
                                             e.printStackTrace();
                                         }
                                     }else{
-                                        //Log.e(TAG, "onResponse: " + response.code());
+                                        Log.e("tag", "onResponse: " + response.code());
                                         Toast toast = Toast.makeText(getActivity(), R.string.something_wrong, Toast.LENGTH_LONG);
                                         TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
                                         tv.setTextColor(Color.RED);
@@ -492,8 +497,8 @@ public class MaintenanceFragment extends Fragment implements LocationListener, O
                 }
                 else{
                     try {
-                        //Log.e(", ",response.errorBody().toString() + response.code());
-                        //Log.e("", "onResponse: " + response.errorBody());
+                        Log.e(", ",response.errorBody().toString() + response.code());
+                        Log.e("", "onResponse: " + response.errorBody());
 
                     }catch (Exception e){
                         e.printStackTrace();
@@ -576,7 +581,7 @@ public class MaintenanceFragment extends Fragment implements LocationListener, O
                     locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, MIN_TIME, MIN_DISTANCE, this);
                     loading.setVisibility(View.GONE);
                     //((ConfirmLocationsHolder) getActivity()).getCantFind().setVisibility(View.VISIBLE);
-                    //Log.e("", "onMapReady: MULL");
+                    Log.e("", "onMapReady: MULL");
                 } else {
                     currLat = (float) location.getLatitude();
                     currLon = (float) location.getLongitude();
@@ -589,7 +594,7 @@ public class MaintenanceFragment extends Fragment implements LocationListener, O
 
                     mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(currLat, currLon), 13f));
                 }
-                //Log.e("", "onMapReady: " + currLat + " , " + currLon);
+                Log.e("", "onMapReady: " + currLat + " , " + currLon);
             }
 
         }
@@ -643,7 +648,7 @@ public class MaintenanceFragment extends Fragment implements LocationListener, O
                             t.putExtra("currLon", currLon);
                             t.putExtra("item", displayItems.get(pos));
                             t.putExtra("index", pos);
-                            //Log.e("", "onItemClick: " + displayItems.get(pos).getId());
+                            Log.e("", "onItemClick: " + displayItems.get(pos).getId());
                             locationManager.removeUpdates(MaintenanceFragment.this);
                             startActivityForResult(t, 1);
                         }
@@ -751,7 +756,7 @@ public class MaintenanceFragment extends Fragment implements LocationListener, O
             loading.setIndeterminate(true);
             loading.setVisibility(View.VISIBLE);
             tvNoInternet.setVisibility(View.GONE);
-            //Log.e("", "callMaintenance: " + range);
+            Log.e("", "callMaintenance: " + range);
             Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getServiceURL())
                     .addConverterFactory(GsonConverterFactory.create()).build();
             final MapAPI tour = retro.create(MapAPI.class);
@@ -765,13 +770,13 @@ public class MaintenanceFragment extends Fragment implements LocationListener, O
                         JSONArray jsonArray;
                         try {
                             jsonObject = new JSONObject(response.body().string());
-                            //Log.e("", "onResponse: " + jsonObject.toString());
+                            Log.e("", "onResponse: " + jsonObject.toString());
                             if (!jsonObject.getJSONArray("Services").toString().equals("")) {
                                 jsonArray = jsonObject.getJSONArray("Services");
 
                                 for (int i = 0; i < jsonArray.length(); i++) {
                                     JSONObject jsonObject1 = jsonArray.getJSONObject(i);
-                                    //Log.e("", "onResponse: " + jsonObject1.toString());
+                                    Log.e("", "onResponse: " + jsonObject1.toString());
                                     MapObject item = new MapObject(jsonObject1.getInt("Id"), jsonObject1.getString("Name"), 0,
                                             jsonObject1.getString("Address"), (float) jsonObject1.getDouble("Lat"),
                                             (float) jsonObject1.getDouble("Lon"), jsonObject1.getString("Note"), 3);
@@ -789,16 +794,21 @@ public class MaintenanceFragment extends Fragment implements LocationListener, O
                                     item.setDownvoted(false);
                                     item.setUpvoted(false);
 
-                                    if(MyApplication.getInstance().getUpvoteMap().containsKey("Maintenance")) {
-                                        Map<String, ActionObject> map = MyApplication.getInstance().getUpvoteMap().get("Maintenance");
-                                        if(map.containsKey("upvote "+ item.getId())) {
-                                            item.setUpvoted(true);
-                                        }
+                                    if(MyApplication.getInstance().getUpvoteMap() != null) {
+                                        if (MyApplication.getInstance().getUpvoteMap().containsKey("Maintenance")) {
+                                            Map<String, ActionObject> map = MyApplication.getInstance().getUpvoteMap().get("Maintenance");
+                                            if (map.containsKey("upvote " + item.getId())) {
+                                                item.setUpvoted(true);
+                                            }
 
-                                    }if (MyApplication.getInstance().getDownvoteMap().containsKey("Maintenance")){
-                                        Map<String, ActionObject> map = MyApplication.getInstance().getDownvoteMap().get("Maintenance");
-                                        if(map.containsKey("downvote "+ item.getId())){
-                                            item.setDownvoted(true);
+                                        }
+                                    }
+                                    if(MyApplication.getInstance().getDownvoteMap() != null) {
+                                        if (MyApplication.getInstance().getDownvoteMap().containsKey("Maintenance")) {
+                                            Map<String, ActionObject> map = MyApplication.getInstance().getDownvoteMap().get("Maintenance");
+                                            if (map.containsKey("downvote " + item.getId())) {
+                                                item.setDownvoted(true);
+                                            }
                                         }
                                     }
                                     items.add(item);
@@ -849,7 +859,7 @@ public class MaintenanceFragment extends Fragment implements LocationListener, O
 
                 @Override
                 public void onFailure(Call<ResponseBody> call, Throwable t) {
-                    //Log.e("", "onFailure: " + t.toString());
+                    Log.e("", "onFailure: " + t.toString());
                 }
             });
         }else {

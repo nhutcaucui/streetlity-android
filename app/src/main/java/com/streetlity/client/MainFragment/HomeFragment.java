@@ -15,6 +15,7 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +24,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
@@ -91,10 +93,10 @@ public class HomeFragment extends Fragment implements LocationListener{
         View rootView = inflater.inflate(R.layout.fragment_home, container, false);
 
         if(MyApplication.getInstance().getUserType()==7){
-            LinearLayout btnBroadcast = rootView.findViewById(R.id.btn_broadcast);
+            ConstraintLayout btnBroadcast = rootView.findViewById(R.id.layoutbroadcast);
             btnBroadcast.setVisibility(GONE);
-            LinearLayout btnBroadcastE = rootView.findViewById(R.id.btn_emergency);
-            btnBroadcastE.setVisibility(GONE);
+            ConstraintLayout btnEmergency = rootView.findViewById(R.id.layoutemergency);
+            btnEmergency.setVisibility(GONE);
         }
 
         if(!getActivity().getSharedPreferences("first",MODE_PRIVATE).getBoolean("firstHome", false)){
@@ -324,7 +326,7 @@ public class HomeFragment extends Fragment implements LocationListener{
                 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, MIN_TIME, MIN_DISTANCE, this);
                 if (location == null) {
                     ((MainNavigationHolder) getActivity()).getCantFind().setVisibility(View.VISIBLE);
-                    //Log.e("", "onMapReady: MULL");
+                    Log.e("", "onMapReady: MULL");
                 }
             }
 
@@ -378,7 +380,7 @@ public class HomeFragment extends Fragment implements LocationListener{
         if(getActivity()!= null) {
             ((MainNavigationHolder) getActivity()).getCantFind().setVisibility(View.GONE);
         }
-        //Log.e("", "onLocationChanged: home" );
+        Log.e("", "onLocationChanged: home" );
         locationManager.removeUpdates(this);
     }
     @Override
@@ -432,7 +434,7 @@ public class HomeFragment extends Fragment implements LocationListener{
 
                         ((MainNavigationHolder) getActivity()).getCantFind().setVisibility(View.VISIBLE);
                         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, MIN_TIME, MIN_DISTANCE, this);
-                        //Log.e("", "onMapReady: MULL");
+                        Log.e("", "onMapReady: MULL");
                     }
                 }
 

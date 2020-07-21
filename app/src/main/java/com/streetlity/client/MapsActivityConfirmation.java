@@ -8,6 +8,7 @@ import android.graphics.PorterDuff;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -95,12 +96,12 @@ public class MapsActivityConfirmation extends AppCompatActivity implements OnMap
                         if (response.code() == 200) {
                             try {
                                 JSONObject jsonObject1 = new JSONObject(response.body().string());
-                                //Log.e("TAG", "onResponse: " + jsonObject1.toString());
+                                Log.e("tag", "onResponse: " + jsonObject1.toString());
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
                         } else {
-                            //Log.e(TAG, "onResponse: " + response.code());
+                            Log.e("tag", "onResponse: " + response.code());
                         }
                     }
 
@@ -159,11 +160,11 @@ public class MapsActivityConfirmation extends AppCompatActivity implements OnMap
                             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                                 try{
                                     if(response.code()==200){
-                                        //Log.e(TAG, "onResponse: " + new JSONObject(response.body().string()).toString());
+                                        Log.e("tag", "onResponse: " + new JSONObject(response.body().string()).toString());
                                         downvote(true);
                                     }
                                     else{
-                                        //Log.e(TAG, "onResponse: " + response.code() );
+                                        Log.e("tag", "onResponse: " + response.code() );
                                     }
 
                                 }catch (Exception e) {e.printStackTrace();}
@@ -186,12 +187,12 @@ public class MapsActivityConfirmation extends AppCompatActivity implements OnMap
                             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                                 try{
                                     if(response.code()==200){
-                                        //Log.e(TAG, "onResponse: " + response.body().string());
+                                        Log.e("tag", "onResponse: " + response.body().string());
                                         upvote(true);
                                         finish();
                                     }
                                     else{
-                                        //Log.e(TAG, "onResponse: " + response.code() );
+                                        Log.e("tag", "onResponse: " + response.code() );
                                     }
 
                                 }catch (Exception e) {e.printStackTrace();}
@@ -413,7 +414,7 @@ public class MapsActivityConfirmation extends AppCompatActivity implements OnMap
                     .addConverterFactory(GsonConverterFactory.create()).build();
             final MapAPI tour = retro.create(MapAPI.class);
             for (int i = 0; i < split.length; i++) {
-                //Log.e("", "addImages: " + split[i]);
+                Log.e("", "addImages: " + split[i]);
                 Call<ResponseBody> call = tour.download(split[i]);
                 call.enqueue(new Callback<ResponseBody>() {
                     @Override
@@ -462,7 +463,7 @@ public class MapsActivityConfirmation extends AppCompatActivity implements OnMap
     }
 
     public void upvote(boolean isClear) {
-        //Log.e(TAG, "onActivityResult: " + getIntent().getIntExtra("index", -1));
+        Log.e("tag", "onActivityResult: " + getIntent().getIntExtra("index", -1));
         Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getServiceURL())
                 .addConverterFactory(GsonConverterFactory.create()).build();
         final MapAPI tour = retro.create(MapAPI.class);
@@ -482,9 +483,9 @@ public class MapsActivityConfirmation extends AppCompatActivity implements OnMap
                 if (response.code() == 200) {
                     final JSONObject jsonObject;
                     try {
-                        //Log.e("", "onResponse: " + response);
+                        Log.e("", "onResponse: " + response);
                         jsonObject = new JSONObject(response.body().string());
-                        //Log.e("", "onResponse: " + jsonObject.toString());
+                        Log.e("", "onResponse: " + jsonObject.toString());
 
                         Calendar calendar = Calendar.getInstance();
                         long time = calendar.getTimeInMillis();
@@ -516,6 +517,10 @@ public class MapsActivityConfirmation extends AppCompatActivity implements OnMap
                                 e.trigger(MyApplication.getInstance().getUsername(), builder);
                                 ActionObject ao = new ActionObject("upvote " + item.getId(), time, "Upvote", Integer.toString(item.getId()));
 
+                                if(MyApplication.getInstance().getUpvoteMap() == null){
+                                    MyApplication.getInstance().setUpvoteMap(new HashMap<>());
+                                }
+
                                 if (MyApplication.getInstance().getUpvoteMap().containsKey(type)) {
                                     MyApplication.getInstance().getUpvoteMap().get(type).put("upvote " + item.getId(), ao);
                                 } else {
@@ -531,7 +536,7 @@ public class MapsActivityConfirmation extends AppCompatActivity implements OnMap
                                 finish();
                             }
 
-                            //Log.e(TAG, "onResponse: " + MyApplication.getInstance().getUpvoteMap());
+                            Log.e("tag", "onResponse: " + MyApplication.getInstance().getUpvoteMap());
 
                             finish();
                         }
@@ -549,7 +554,7 @@ public class MapsActivityConfirmation extends AppCompatActivity implements OnMap
     }
 
     public void downvote(boolean isClear) {
-        //Log.e(TAG, "onActivityResult: " + getIntent().getIntExtra("index", -1));
+        Log.e("tag", "onActivityResult: " + getIntent().getIntExtra("index", -1));
         Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getServiceURL())
                 .addConverterFactory(GsonConverterFactory.create()).build();
         final MapAPI tour = retro.create(MapAPI.class);
@@ -569,9 +574,9 @@ public class MapsActivityConfirmation extends AppCompatActivity implements OnMap
                 if (response.code() == 200) {
                     final JSONObject jsonObject;
                     try {
-                        //Log.e("", "onResponse: " + response);
+                        Log.e("", "onResponse: " + response);
                         jsonObject = new JSONObject(response.body().string());
-                        //Log.e("", "onResponse: " + jsonObject.toString());
+                        Log.e("", "onResponse: " + jsonObject.toString());
 
                         Calendar calendar = Calendar.getInstance();
                         long time = calendar.getTimeInMillis();
@@ -611,12 +616,12 @@ public class MapsActivityConfirmation extends AppCompatActivity implements OnMap
                                         if (response.code() == 200) {
                                             try {
                                                 JSONObject jsonObject1 = new JSONObject(response.body().string());
-                                                //Log.e("TAG", "onResponse: " + jsonObject1.toString());
+                                                Log.e("tag", "onResponse: " + jsonObject1.toString());
                                             } catch (Exception e) {
                                                 e.printStackTrace();
                                             }
                                         } else {
-                                            //Log.e(TAG, "onResponse: " + response.code());
+                                            Log.e("tag", "onResponse: " + response.code());
                                         }
                                     }
 
@@ -628,6 +633,9 @@ public class MapsActivityConfirmation extends AppCompatActivity implements OnMap
 
                             ActionObject ao = new ActionObject("downvote " + item.getId(), time, "Downvote", Integer.toString(item.getId()));
 
+                            if(MyApplication.getInstance().getUpvoteMap() == null){
+                                MyApplication.getInstance().setDownvoteMap(new HashMap<>());
+                            }
 
                                 if (MyApplication.getInstance().getDownvoteMap().containsKey(type)) {
                                     MyApplication.getInstance().getDownvoteMap().get(type).put("downvote " + item.getId(), ao);
@@ -644,7 +652,7 @@ public class MapsActivityConfirmation extends AppCompatActivity implements OnMap
                                 finish();
                             }
 
-                            //Log.e(TAG, "onResponse: " + MyApplication.getInstance().getDownvoteMap());
+                            Log.e("tag", "onResponse: " + MyApplication.getInstance().getDownvoteMap());
 
                             finish();
                         }

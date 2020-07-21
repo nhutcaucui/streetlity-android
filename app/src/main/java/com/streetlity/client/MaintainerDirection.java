@@ -11,6 +11,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -81,6 +82,10 @@ common user find repairman's location on the map
     String room;
 
     LocationManager locationManager;
+    
+    boolean firstLauch = true;
+
+    boolean inited = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -159,7 +164,7 @@ common user find repairman's location on the map
                 btnCancel.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        dialogDecline.cancel();
+                        dialogDecline.dismiss();
                     }
                 });
 
@@ -179,9 +184,11 @@ common user find repairman's location on the map
                                     final JSONObject jsonObject;
                                     try {
                                         jsonObject = new JSONObject(response.body().string());
-                                        //Log.e("", "onResponse: " + jsonObject.toString());
+                                        Log.e("", "onResponse: " + jsonObject.toString());
                                         if(jsonObject.getBoolean("Status")){
                                             getSharedPreferences("activeOrder",MODE_PRIVATE).edit().clear().apply();
+                                            dialogDecline.dismiss();
+                                            finish();
                                         }
                                     }catch (Exception e){
                                         e.printStackTrace();
@@ -226,29 +233,7 @@ common user find repairman's location on the map
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        /*
-        request location update
-         */
-        if (ContextCompat.checkSelfPermission(MaintainerDirection.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
-                ContextCompat.checkSelfPermission(MaintainerDirection.this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            locationManager = (LocationManager)
-                    MaintainerDirection.this.getSystemService(Context.LOCATION_SERVICE);
-//            Location location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-//            currLat = location.getLatitude();
-//            currLon = location.getLongitude();
-//
-//            MarkerOptions option = new MarkerOptions();
-//            option.icon(BitmapDescriptorFactory.fromResource(R.drawable.cursor));
-//            option.position(new LatLng(location.getLatitude(),location.getLongitude()));
-//            option.rotation(location.getBearing() - 45);
-//            currMarker = mMap.addMarker(option);
-//
-//            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 15f));
-
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 1000, this);
-        }
-
-        socket = MaintenanceOrder.getInstance();
+        Log.e("TAG", "onMapReady: ,ap ready" );
     }
 
     /*
@@ -267,10 +252,12 @@ common user find repairman's location on the map
         currMarker = mMap.addMarker(currOption);
 
         if(socket != null){
+            Log.e("TAG", "onResume: socket update location" );
             socket.updateLocation(location.getLatitude(),location.getLongitude(),location.getBearing());
         }
 
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()),15f));
+        Log.e("TAG", "onLocationChanged: update location for repairman" );
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()),15f));
     }
 
     /*
@@ -292,10 +279,16 @@ common user find repairman's location on the map
     close socket and remove location update when close this screen
      */
     @Override
-    public void onStop(){
-        super.onStop();
+    public void onDestroy(){
+        super.onDestroy();
 
         locationManager.removeUpdates(this);
+
+        if(socket==null)
+        {
+            return;
+        }
+
         socket.close();
     }
 
@@ -312,7 +305,14 @@ common user find repairman's location on the map
          */
         socket = MaintenanceOrder.getInstance();
 
-        if(socket == null){
+//        if(socket == null){
+//            Log.e("TAG", "onResume: null socket" );
+//            return;
+//        }
+        
+        if(firstLauch){
+            Log.e("TAG", "onResume: firstTimeOpenMap");
+            firstLauch = false;
             return;
         }
 
@@ -329,7 +329,7 @@ common user find repairman's location on the map
                     @Override
                     public void run() {
                         infomation = info;
-                        //Log.e("", "onReceived: " + info.toString());
+                        Log.e("", "onReceived: " + info.toString());
                         phone = info.Phone;
 
                         runOnUiThread(new Runnable() {
@@ -363,18 +363,18 @@ common user find repairman's location on the map
         socket.sendInformation(myInfo);
         socket.pullInformation();
 
-        socket.MessageListener = new MessageListener<MaintenanceOrder>() {
-            @Override
-            public void onReceived(MaintenanceOrder sender, ChatObject message) {
-                //Log.e("", "onReceived:  this is america");
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        findViewById(R.id.img_chat_new).setVisibility(View.VISIBLE);
-                    }
-                });
-            }
-        };
+//        socket.MessageListener = new MessageListener<MaintenanceOrder>() {
+//            @Override
+//            public void onReceived(MaintenanceOrder sender, ChatObject message) {
+//                Log.e("", "onReceived:  this is america");
+//                runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        findViewById(R.id.img_chat_new).setVisibility(View.VISIBLE);
+//                    }
+//                });
+//            }
+//        };
 
         /*
         when receive a location update from the user, if it's the first time, find the direction to the user
@@ -383,6 +383,7 @@ common user find repairman's location on the map
         socket.LocationListener = new com.streetlity.client.RealtimeService.LocationListener<MaintenanceOrder>() {
             @Override
             public void onReceived(MaintenanceOrder sender, float lat, float lon) {
+                Log.e("TAG", "onReceived: receive direction" );
                 if(initUserDestination){
                     initUserDestination = false;
                     MarkerOptions option = new MarkerOptions();
@@ -400,7 +401,7 @@ common user find repairman's location on the map
                                 public void onDirectionSuccess(Direction direction) {
 
                                     String status = direction.getStatus();
-                                    //Log.e("", "onDirectionSuccess: " + status);
+                                    Log.e("", "onDirectionSuccess: " + status);
                                     if(status.equals(RequestResult.OK)) {
                                         Route route = direction.getRouteList().get(0);
                                         Leg leg = route.getLegList().get(0);
@@ -429,7 +430,7 @@ common user find repairman's location on the map
 
                                 @Override
                                 public void onDirectionFailure(Throwable t) {
-                                    //Log.e("", "onDirectionFailure: ");
+                                    Log.e("", "onDirectionFailure: ");
                                     runOnUiThread(new Runnable() {
                                         @Override
                                         public void run() {
@@ -449,6 +450,7 @@ common user find repairman's location on the map
                         }
                     });
                 }else{
+                    Log.e("TAG", "onReceived: receive location" );
                     if(userMaker!=null) {
                         userMaker.remove();
                     }
@@ -471,6 +473,7 @@ common user find repairman's location on the map
         socket.CompleteListener = new Listener<MaintenanceOrder>() {
             @Override
             public void trigger(MaintenanceOrder sender) {
+                Log.e("TAG", "trigger: order complete" );
                 findViewById(R.id.btn_finish).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -494,6 +497,7 @@ common user find repairman's location on the map
         socket.DeclineListener = new Listener<MaintenanceOrder>() {
             @Override
             public void trigger(MaintenanceOrder sender) {
+                Log.e("TAG", "trigger: order canceled" );
                 getSharedPreferences("activeOrder",MODE_PRIVATE).edit().clear().apply();
                 findViewById(R.id.btn_finish_denu).setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -510,6 +514,48 @@ common user find repairman's location on the map
                 });
             }
         };
+
+        if(mMap == null){
+            Log.e("TAG", "onResume: map is null" );
+            return;
+        }
+
+        if (ContextCompat.checkSelfPermission(MaintainerDirection.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
+                ContextCompat.checkSelfPermission(MaintainerDirection.this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            locationManager = (LocationManager)
+                    MaintainerDirection.this.getSystemService(Context.LOCATION_SERVICE);
+
+            Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            if(location != null){
+                if(currMarker!= null) {
+                    currMarker.remove();
+                }
+                MarkerOptions currOption = new MarkerOptions();
+                currOption.position(new LatLng(location.getLatitude(),location.getLongitude()));
+                currOption.title(getString(R.string.you_r_here));
+                currOption.icon(BitmapDescriptorFactory.fromResource(R.drawable.cursor));
+                currOption.rotation(location.getBearing() - 45);
+                currMarker = mMap.addMarker(currOption);
+
+                if(socket != null){
+                    Log.e("TAG", "onResume: socket update location" );
+                    socket.updateLocation(location.getLatitude(),location.getLongitude(),location.getBearing());
+                    socket.pullLocation(location);
+                }
+
+            }
+
+            if(inited){
+                return;
+            }
+            inited = true;
+            Log.e("TAG", "onResume: location request" );
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 1000, this);
+        }
+
+
+
+        Log.e("TAG", "onResume: " + initUserDestination);
     }
 
     /*

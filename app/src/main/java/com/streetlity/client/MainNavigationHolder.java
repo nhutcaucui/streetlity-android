@@ -45,6 +45,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.os.CountDownTimer;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -109,7 +110,11 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        startService(new Intent(getBaseContext(), ServiceChecking.class));
+        try {
+            startService(new Intent(getBaseContext(), ServiceChecking.class));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
 
         //getSharedPreferences("activeOrder",MODE_PRIVATE).edit().clear().apply();
 
@@ -301,9 +306,9 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
              */
             if(!s.getString("avatar","").equals("")){
                 getAvatar(s.getString("avatar",""));
-                //Log.e("TAG", "onCreate: get avatar" );
+                Log.e("tag", "onCreate: get avatar" );
             }else{
-                //Log.e("TAG", "run: no avaatar 1" );
+                Log.e("tag", "run: no avaatar 1" );
             }
 
             /*
@@ -317,21 +322,6 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
                 else if(MyApplication.getInstance().getOption() == null){
                     MyApplication.getInstance().setOption(new MaintainerOption());
                     MyApplication.getInstance().getOption().setAcceptEmergency(false);
-                }
-
-                ConstraintLayout btnBroadcast = findViewById(R.id.layoutbroadcast);
-                if (btnBroadcast != null) {
-                    btnBroadcast.setVisibility(View.GONE);
-                }
-
-                ConstraintLayout btnBroadcastE = findViewById(R.id.layoutemergency);
-                if (btnBroadcastE != null) {
-                    btnBroadcastE.setVisibility(View.GONE);
-                }
-
-                FloatingActionButton floatingActionButton = findViewById(R.id.fab_broadcast);
-                if(floatingActionButton!= null){
-                    floatingActionButton.hide();
                 }
 
                 if(MyApplication.getInstance().getOption().isAcceptEmergency()) {
@@ -357,11 +347,11 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
 //                                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
 //                                            if (response.code() == 200) {
 //                                                try {
-//                                                    //Log.e("TAG", "onResponse: " + new JSONObject(response.body().string()));
+//                                                    Log.e("tag", "onResponse: " + new JSONObject(response.body().string()));
 //                                                }catch (Exception e){
 //                                                    e.printStackTrace();}
 //                                            }else{
-//                                                //Log.e("TAG", "onResponse: " + response.code());
+//                                                Log.e("tag", "onResponse: " + response.code());
 //                                            }
 //                                        }
 //
@@ -382,7 +372,7 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
             }
 
             refreshToken();
-            //Log.e("TAG", "onCreate: " );
+            Log.e("tag", "onCreate: " );
             setDrawerForUser(navView); //set drawer menu item onclick listener
 
             /*
@@ -408,26 +398,26 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
                     gson.fromJson(s.getString("review", ""),
                             new TypeToken<Map<String, Map<String, ActionObject>>>() {
                             }.getType()));
-            //Log.e("TAG", "onCreate: " + MyApplication.getInstance().getReviewedMap());
+            Log.e("tag", "onCreate: " + MyApplication.getInstance().getReviewedMap());
         }if(s.contains("upvote")) {
             MyApplication.getInstance().setUpvoteMap(
                     gson.fromJson(s.getString("upvote", ""),
                             new TypeToken<Map<String, Map<String, ActionObject>>>() {
                             }.getType()));
-            //Log.e("TAG", "onCreate: " + MyApplication.getInstance().getUpvoteMap());
+            Log.e("tag", "onCreate: " + MyApplication.getInstance().getUpvoteMap());
         }
         if(s.contains("contribute")) {
             MyApplication.getInstance().setContributeMap(
                     gson.fromJson(s.getString("contribute", ""),
                             new TypeToken<Map<String, Map<String, ActionObject>>>() {
                             }.getType()));
-            //Log.e("TAG", "onCreate: " + MyApplication.getInstance().getContributeMap());
+            Log.e("tag", "onCreate: " + MyApplication.getInstance().getContributeMap());
         }if(s.contains("downvote")) {
             MyApplication.getInstance().setDownvoteMap(
                     gson.fromJson(s.getString("downvote", ""),
                             new TypeToken<Map<String, Map<String, ActionObject>>>() {
                             }.getType()));
-            //Log.e("TAG", "onCreate: " + MyApplication.getInstance().getDownvoteMap());
+            Log.e("tag", "onCreate: " + MyApplication.getInstance().getDownvoteMap());
         }
 
         /*
@@ -533,7 +523,7 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
         LinearLayout btnCurrent = findViewById(id);
         if(btnCurrent != null) {
             btnCurrent.getChildAt(1).setVisibility(View.GONE);
-            //Log.e( "setToUnselect: ", btnCurrent.getClass().getName() + btnCurrent.getChildCount());
+            Log.e( "setToUnselect: ", btnCurrent.getClass().getName() + btnCurrent.getChildCount());
             ImageView img = (ImageView)  btnCurrent.getChildAt(0);
             img.setColorFilter(Color.argb(255, 255, 255, 255));
         }
@@ -545,7 +535,7 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
     public void setToSelect(int id){
         LinearLayout btnCurrent = findViewById(id);
         btnCurrent.getChildAt(1).setVisibility(View.VISIBLE);
-        //Log.e( "setToUnselect: ", btnCurrent.getClass().getName() + btnCurrent.getChildCount());
+        Log.e( "setToUnselect: ", btnCurrent.getClass().getName() + btnCurrent.getChildCount());
         ImageView img = (ImageView) ((LinearLayout) btnCurrent).getChildAt(0);
         img.setColorFilter(Color.argb(255, 0, 0, 0));
 
@@ -905,7 +895,7 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
                 if (response.code() == 200) {
                     try {
                         JSONObject jsonObject = new JSONObject(response.body().string());
-                        //Log.e("", "onResponse: " + jsonObject );
+                        Log.e("", "onResponse: " + jsonObject );
                         if (jsonObject.getBoolean("Status")) {
 
                             if(MyApplication.getInstance().getUserType() == 7 && MyApplication.getInstance().getOption().isAcceptEmergency()){
@@ -920,7 +910,7 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
                                 call2.enqueue(new Callback<ResponseBody>() {
                                     @Override
                                     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                        //Log.e("TAG", "onResponse: response when remove maintenance" );
+                                        Log.e("tag", "onResponse: response when remove maintenance" );
                                     }
 
                                     @Override
@@ -946,7 +936,7 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
                                             if (response.code() == 200) {
                                                 try {
                                                     JSONObject jsonObject1 = new JSONObject(response.body().string());
-                                                    //Log.e("TAG", "onResponse: " + jsonObject1);
+                                                    Log.e("tag", "onResponse: " + jsonObject1);
                                                 } catch (Exception e) {
                                                     e.printStackTrace();
                                                 }
@@ -1044,7 +1034,7 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
                         //JSONObject jsonObject = new JSONObject(response.body().string());
                         //JSONObject jsonObject1 = new JSONObject(response.errorBody().toString());
 
-                        //Log.e("", "onResponse: "  + response.code());
+                        Log.e("", "onResponse: "  + response.code());
                     }catch (Exception e){
                         e.printStackTrace();
                     }
@@ -1053,7 +1043,7 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                //Log.e("", "onFailure: " + t.toString());
+                Log.e("", "onFailure: " + t.toString());
             }
         });
     }
@@ -1149,7 +1139,7 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
                     final JSONObject jsonObject;
                     try{
                         jsonObject = new JSONObject(response.body().string());
-                        //Log.e("", "onResponse: "+jsonObject.toString() );
+                        Log.e("", "onResponse: "+jsonObject.toString() );
 
                         ((MyApplication) MainNavigationHolder.this.getApplication()).setToken(jsonObject.getString("AccessToken"));
                         getSharedPreferences("userPref", Context.MODE_PRIVATE).edit()
@@ -1159,7 +1149,7 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
                         e.printStackTrace();
                     }
                 }else {
-                    //Log.e("TAG", "onResponse: "+response.code() );
+                    Log.e("tag", "onResponse: "+response.code() );
                 }
             }
 
@@ -1178,7 +1168,7 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
                 .addConverterFactory(GsonConverterFactory.create()).build();
         final MapAPI tour = retro.create(MapAPI.class);
         Call<ResponseBody> call = tour.download(avatar);
-        //Log.e("TAG", "getAvatar: "+ avatar );
+        Log.e("tag", "getAvatar: "+ avatar );
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -1187,7 +1177,7 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
                         Bitmap bmp = BitmapFactory.decodeStream(response.body().byteStream());
                         MyApplication.getInstance().setImage(bmp);
 
-                        //Log.e("TAG", "onResponse: hey" + avatar);
+                        Log.e("tag", "onResponse: hey" + avatar);
 
                         /*
                         in some case, this run before the view is fully loaded, so the avatar on header can't be set
@@ -1196,7 +1186,7 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
                         NavigationView navView = findViewById(R.id.nav_view);
                         if(navView!= null) {
                             if (navView.findViewById(R.id.avatar) != null) {
-                                //Log.e("TAG", "run: no timer 1" );
+                                Log.e("tag", "run: no timer 1" );
                                 ((ImageView) navView.findViewById(R.id.avatar)).setImageBitmap(MyApplication.getInstance().getImage());
                             }else{
                                 new CountDownTimer(3000,1000){
@@ -1211,7 +1201,7 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
                                         runOnUiThread(new Runnable() {
                                             @Override
                                             public void run() {
-                                                //Log.e("TAG", "run: timer 1" );
+                                                Log.e("tag", "run: timer 1" );
                                                 ((ImageView) navView.findViewById(R.id.avatar)).setImageBitmap(MyApplication.getInstance().getImage());
                                             }
                                         });
@@ -1231,7 +1221,7 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
                                     runOnUiThread(new Runnable() {
                                         @Override
                                         public void run() {
-                                            //Log.e("TAG", "run: timer 2" );
+                                            Log.e("tag", "run: timer 2" );
                                             NavigationView navView = findViewById(R.id.nav_view);
                                             ((ImageView) navView.findViewById(R.id.avatar)).setImageBitmap(MyApplication.getInstance().getImage());
                                         }
@@ -1244,7 +1234,7 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
                         e.printStackTrace();
                     }
                 }else{
-                    //Log.e("TAG", "onResponse: "+ response.code() );
+                    Log.e("tag", "onResponse: "+ response.code() );
                 }
             }
 
@@ -1267,10 +1257,18 @@ public class MainNavigationHolder extends AppCompatActivity implements FuelFragm
             SharedPreferences s = getSharedPreferences("map", MODE_PRIVATE);
             SharedPreferences.Editor e = s.edit();
 
-            e.putString("review", gs.toJson(MyApplication.getInstance().getReviewedMap()));
-            e.putString("contribute", gs.toJson(MyApplication.getInstance().getContributeMap()));
-            e.putString("upvote", gs.toJson(MyApplication.getInstance().getUpvoteMap()));
-            e.putString("downvote", gs.toJson(MyApplication.getInstance().getDownvoteMap()));
+            if(MyApplication.getInstance().getUpvoteMap() != null){
+                e.putString("upvote", gs.toJson(MyApplication.getInstance().getUpvoteMap()));
+            }
+            if(MyApplication.getInstance().getDownvoteMap()!= null){
+                e.putString("downvote", gs.toJson(MyApplication.getInstance().getDownvoteMap()));
+            }
+            if(MyApplication.getInstance().getReviewedMap() != null) {
+                e.putString("review", gs.toJson(MyApplication.getInstance().getReviewedMap()));
+            }
+            if(MyApplication.getInstance().getContributeMap()!= null){
+                e.putString("contribute", gs.toJson(MyApplication.getInstance().getContributeMap()));
+            }
 
             e.apply();
         }

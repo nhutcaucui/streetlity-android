@@ -92,7 +92,7 @@ public class Chat extends AppCompatActivity implements android.location.Location
             }
         }
         if (getIntent().getStringExtra("id") != null) {
-            //Log.e("", "onCreate: " + getIntent().getStringExtra("id"));
+            Log.e("", "onCreate: " + getIntent().getStringExtra("id"));
             room = getIntent().getStringExtra("id");
             s.edit().putString("room", getIntent().getStringExtra("id")).apply();
         } else {
@@ -109,7 +109,7 @@ public class Chat extends AppCompatActivity implements android.location.Location
 
         final String fPhone = phone;
 
-        //Log.e("", "onCreate: " + room);
+        Log.e("", "onCreate: " + room);
 
         MaintenanceOrder.Create(room);
 
@@ -123,7 +123,7 @@ public class Chat extends AppCompatActivity implements android.location.Location
             public void onClick(View v) {
                 if (!edtMessage.getText().toString().equals("")) {
 
-                    //Log.e("", "onClick: " + edtMessage.getText().toString());
+                    Log.e("", "onClick: " + edtMessage.getText().toString());
                     ChatObject object = new ChatObject(MyApplication.getInstance().getUsername(), edtMessage.getText().toString(), new Date());
                     socket.sendMessage(object);
                     items.add(object);
@@ -142,7 +142,7 @@ public class Chat extends AppCompatActivity implements android.location.Location
                     @Override
                     public void run() {
                         infomation = info;
-                        //Log.e("", "onReceived: " + info.toString());
+                        Log.e("", "onReceived: " + info.toString());
                     }
                 });
 
@@ -152,6 +152,7 @@ public class Chat extends AppCompatActivity implements android.location.Location
         socket.CompleteListener = new Listener<MaintenanceOrder>() {
             @Override
             public void trigger(MaintenanceOrder sender) {
+                Log.e("TAG", "trigger: order is com le te");
                 findViewById(R.id.btn_finish).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -173,6 +174,7 @@ public class Chat extends AppCompatActivity implements android.location.Location
         socket.DeclineListener = new Listener<MaintenanceOrder>() {
             @Override
             public void trigger(MaintenanceOrder sender) {
+                Log.e("TAG", "trigger: order is cancelededed");
                 getSharedPreferences("activeOrder",MODE_PRIVATE).edit().clear().apply();
                 findViewById(R.id.btn_finish_denu).setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -194,28 +196,8 @@ public class Chat extends AppCompatActivity implements android.location.Location
         socket.MessageListener = new MessageListener<MaintenanceOrder>() {
             @Override
             public void onReceived(MaintenanceOrder sender, ChatObject message) {
-                //Log.e("", "onReceived:  this is america");
+                Log.e("", "onReceived:  this is america");
                 new Task().execute(message);
-            }
-        };
-        socket.LocationListener = new LocationListener<MaintenanceOrder>() {
-            @Override
-            public void onReceived(MaintenanceOrder sender, float lat, float lon) {
-                lat = lat;
-                lon = lon;
-            }
-        };
-
-        socket.DeclineListener = new Listener<MaintenanceOrder>() {
-            @Override
-            public void trigger(MaintenanceOrder sender) {
-
-            }
-        };
-        socket.CompleteListener = new Listener<MaintenanceOrder>() {
-            @Override
-            public void trigger(MaintenanceOrder sender) {
-                //Log.e("", "call: completed");
             }
         };
 
@@ -251,7 +233,14 @@ public class Chat extends AppCompatActivity implements android.location.Location
             }
         };
 
-        socket.join();
+        socket.LocationListener = new LocationListener<MaintenanceOrder>() {
+            @Override
+            public void onReceived(MaintenanceOrder sender, float lat, float lon) {
+                Log.e("TAG", "onReceived: received location" + lat + " " +lon);
+            }
+        };
+
+
 
         edtMessage.addTextChangedListener(new TextWatcher() {
             @Override
@@ -302,11 +291,18 @@ public class Chat extends AppCompatActivity implements android.location.Location
 //            }
 //        };
 
+        socket.close();
+        socket.join();
+
         if (ContextCompat.checkSelfPermission(Chat.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
                 ContextCompat.checkSelfPermission(Chat.this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             locationManager = (LocationManager)
                     Chat.this.getSystemService(Context.LOCATION_SERVICE);
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 1000, this);
+            Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            if(location != null){
+                socket.updateLocation(location.getLatitude(),location.getLongitude(),location.getBearing());
+            }
         }
     }
 
@@ -339,6 +335,7 @@ public class Chat extends AppCompatActivity implements android.location.Location
     @Override
     public void onLocationChanged(Location location) {
         if(socket != null){
+            Log.e("TAG", "trigger: update location in chat");
             socket.updateLocation(location.getLatitude(),location.getLongitude(),location.getBearing());
         }
     }
@@ -388,7 +385,7 @@ public class Chat extends AppCompatActivity implements android.location.Location
         Collections.sort(items, new Comparator<ChatObject>() {
             @Override
             public int compare(ChatObject o1, ChatObject o2) {
-                //Log.e("", "compare: "+o1.getTime() +"-"+ o2.getTime());
+                Log.e("", "compare: "+o1.getTime() +"-"+ o2.getTime());
                 return Long.compare(o1.getTime().getTime(), o2.getTime().getTime());
             }
         });
@@ -396,8 +393,8 @@ public class Chat extends AppCompatActivity implements android.location.Location
         lv.setSelection(adapter.getCount()-1);
     }
 
-    public void onStop(){
-        super.onStop();
+    public void onDestroy(){
+        super.onDestroy();
 
         locationManager.removeUpdates(this);
     }

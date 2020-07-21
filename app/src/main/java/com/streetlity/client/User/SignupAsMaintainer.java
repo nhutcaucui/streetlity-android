@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -105,7 +106,7 @@ public class SignupAsMaintainer extends AppCompatActivity implements OnMapReadyC
                             if (response.code() == 200) {
                                 try {
                                     jsonObject = new JSONObject(response.body().string());
-                                    //Log.e("", "onResponse: "+ jsonObject.toString() + response.code());
+                                    Log.e("", "onResponse: "+ jsonObject.toString() + response.code());
                                     if(jsonObject.getBoolean("Status")) {
                                         setResult(RESULT_OK);
                                         finish();
@@ -121,7 +122,7 @@ public class SignupAsMaintainer extends AppCompatActivity implements OnMapReadyC
                                 }
                             } else {
                                 try {
-                                    //Log.e("", "onResponse: "+  response.code());
+                                    Log.e("", "onResponse: "+  response.code());
                                     Toast toast = Toast.makeText(SignupAsMaintainer.this, R.string.something_wrong, Toast.LENGTH_LONG);
                                     TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
                                     tv.setTextColor(Color.RED);
@@ -136,7 +137,7 @@ public class SignupAsMaintainer extends AppCompatActivity implements OnMapReadyC
 
                         @Override
                         public void onFailure(Call<ResponseBody> call, Throwable t) {
-                            //Log.e("", "onFailure: " + t.toString());
+                            Log.e("", "onFailure: " + t.toString());
                         }
                     });
                 }
@@ -248,11 +249,11 @@ public class SignupAsMaintainer extends AppCompatActivity implements OnMapReadyC
             Location location = locationManager.getLastKnownLocation(locationManager
                     .GPS_PROVIDER);
             if(location == null){
-                //Log.e("", "onMapReady: MULL");
+                Log.e("", "onMapReady: MULL");
             }
             latitude = location.getLatitude();
             longitude = location.getLongitude();
-            //Log.e("", "onMapReady: " + latitude+" , " + longitude );
+            Log.e("", "onMapReady: " + latitude+" , " + longitude );
         }
 
         getLocations((float)latitude,(float)longitude);
@@ -305,13 +306,13 @@ public class SignupAsMaintainer extends AppCompatActivity implements OnMapReadyC
                     JSONArray jsonArray;
                     try {
                         jsonObject = new JSONObject(response.body().string());
-                        //Log.e("", "onResponse: " + jsonObject.toString());
+                        Log.e("", "onResponse: " + jsonObject.toString());
                         if(jsonObject.getBoolean("Status")) {
                             jsonArray = jsonObject.getJSONArray("Maintenances");
 
                             for (int i = 0; i < jsonArray.length(); i++) {
                                 JSONObject jsonObject1 = jsonArray.getJSONObject(i);
-                                //Log.e("", "onResponse: " + jsonObject1.toString());
+                                Log.e("", "onResponse: " + jsonObject1.toString());
                                 addMaintenanceMarkerToList((float) jsonObject1.getDouble("Lat"),
                                         (float) jsonObject1.getDouble("Lon"), jsonObject1.getString("Name"));
 
@@ -329,7 +330,7 @@ public class SignupAsMaintainer extends AppCompatActivity implements OnMapReadyC
                 }
                 else{
                     try {
-                        //Log.e(", ",response.errorBody().toString() + response.code());
+                        Log.e(", ",response.errorBody().toString() + response.code());
                     }catch (Exception e){
                         e.printStackTrace();
                     }
@@ -338,7 +339,7 @@ public class SignupAsMaintainer extends AppCompatActivity implements OnMapReadyC
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                //Log.e("", "onFailure: " + t.toString());
+                Log.e("", "onFailure: " + t.toString());
             }
         });
     }

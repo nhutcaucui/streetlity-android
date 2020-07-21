@@ -2,6 +2,7 @@ package com.streetlity.client.MainFragment;
 
 import android.app.Activity;
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -148,7 +149,7 @@ public class MapObjectAllSearchAdapter extends ArrayAdapter implements Filterabl
             protected FilterResults performFiltering(CharSequence constraint) {
                 FilterResults results = new FilterResults();        // Holds the results of a filtering operation in values
                 ArrayList<MapObject> FilteredArrList = new ArrayList<MapObject>();
-                //Log.e("", "performFiltering: " + constraint );
+                Log.e("", "performFiltering: " + constraint );
                 if (mOriginalValues == null) {
                     mOriginalValues = new ArrayList<MapObject>(mDisplayedValues); // saves the original data in mOriginalValues
                 }

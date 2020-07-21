@@ -16,6 +16,8 @@ import android.util.Log;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 
+import org.json.JSONObject;
+
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -100,7 +102,7 @@ public class UpdateLocationService extends Service implements LocationListener{
         if (isServiceRunning) return;
         isServiceRunning = true;
 
-        //Log.e("TAG", "startServiceWithNotification: ");
+        Log.e("tag", "startServiceWithNotification: ");
 //        Intent notificationIntent = new Intent(getApplicationContext(), MyActivity.class);
 //        notificationIntent.setAction(C.ACTION_MAIN);  // A string containing the action name
 //        notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -124,7 +126,7 @@ public class UpdateLocationService extends Service implements LocationListener{
 
     void stopMyService() {
         //stopForeground(true);
-        //Log.e("", "stopMyService: " );
+        Log.e("", "stopMyService: " );
         stopSelf();
         isServiceRunning = false;
     }
@@ -156,7 +158,7 @@ public class UpdateLocationService extends Service implements LocationListener{
     public void onDestroy() {
         super.onDestroy();
 
-        //Log.e("TAG", "onDestroy: " );
+        Log.e("tag", "onDestroy: " );
         locationManager.removeUpdates(this);
     }
 
@@ -172,7 +174,7 @@ public class UpdateLocationService extends Service implements LocationListener{
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 if (response.code() == 200) {
                     try {
-                        //Log.e("TAG", "onResponse: " + new JSONObject(response.body().string()));
+                        Log.e("tag", "onResponse: " + new JSONObject(response.body().string()));
 //                        Handler handler = new Handler(Looper.getMainLooper());
 //                        handler.post(new Runnable() {
 //                            @Override
@@ -189,7 +191,7 @@ public class UpdateLocationService extends Service implements LocationListener{
                         e.printStackTrace();
                     }
                 } else {
-                    //Log.e("TAG", "onResponse: " + response.code());
+                    Log.e("tag", "onResponse: " + response.code());
 
                 }
             }

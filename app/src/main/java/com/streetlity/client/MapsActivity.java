@@ -23,6 +23,7 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -157,12 +158,12 @@ find direction and show detail information of a service
                         if(response.code() == 200){
                             try{
                                 JSONObject jsonObject1 = new JSONObject(response.body().string());
-                                //Log.e("TAG", "onResponse: " + jsonObject1.toString() );
+                                Log.e("tag", "onResponse: " + jsonObject1.toString() );
                             }catch (Exception e){
                                 e.printStackTrace();
                             }
                         }else{
-                            //Log.e(TAG, "onResponse: "+response.code() );
+                            Log.e("tag", "onResponse: "+response.code() );
                         }
                     }
 
@@ -462,7 +463,7 @@ find direction and show detail information of a service
                         com.google.android.material.textfield.TextInputEditText edtName = dialogView2.findViewById(R.id.edt_name);
 
                         Button confirm = dialogView2.findViewById(R.id.btn_confirm);
-                        //Log.e(TAG, "onClick: "+ tvName.getText().toString() + " " +getString(R.string.fuel));
+                        Log.e("tag", "onClick: "+ tvName.getText().toString() + " " +getString(R.string.fuel));
                         if (item.getType() == 1 && tvName.getText().toString().equals(getString(R.string.fuel))) {
                             edtName.setText("");
                         } else if (item.getType() == 2 && tvName.getText().toString().equals(getString(R.string.wc))) {
@@ -619,7 +620,7 @@ find direction and show detail information of a service
                     final JSONObject jsonObject;
                     try {
                         jsonObject = new JSONObject(response.body().string());
-                        //Log.e("", "onResponse create review: " + jsonObject.toString());
+                        Log.e("", "onResponse create review: " + jsonObject.toString());
                         item.setName(newName);
 
                         data.putExtra("name", newName);
@@ -662,7 +663,7 @@ find direction and show detail information of a service
                     final JSONObject jsonObject;
                     try {
                         jsonObject = new JSONObject(response.body().string());
-                        //Log.e("", "onResponse create review: " + jsonObject.toString());
+                        Log.e("", "onResponse create review: " + jsonObject.toString());
                         item.setNote(newNote);
 
                         data.putExtra("note", newNote);
@@ -713,7 +714,7 @@ find direction and show detail information of a service
                     public void onDirectionSuccess(Direction direction) {
 
                         String status = direction.getStatus();
-                        //Log.e("", "onDirectionSuccess: " + status);
+                        Log.e("", "onDirectionSuccess: " + status);
                         if(status.equals(RequestResult.OK)) {
                             Route route = direction.getRouteList().get(0);
                             Leg leg = route.getLegList().get(0);
@@ -732,7 +733,7 @@ find direction and show detail information of a service
 
                     @Override
                     public void onDirectionFailure(Throwable t) {
-                        //Log.e("", "onDirectionFailure: ");
+                        Log.e("", "onDirectionFailure: ");
                         Toast toast = Toast.makeText(MapsActivity.this, "Something went wrong when trying to find direction", Toast.LENGTH_LONG);
                         TextView tv = (TextView) toast.getView().findViewById(android.R.id.message);
                         tv.setTextColor(Color.RED);
@@ -824,7 +825,7 @@ find direction and show detail information of a service
             final MapAPI tour = retro.create(MapAPI.class);
             for (int i = 0; i < split.length; i++) {
                 imageName = split[i].substring(0,9) + i;
-                //Log.e("", "addImages: " + split[i]);
+                Log.e("", "addImages: " + split[i]);
                 Call<ResponseBody> call = tour.download(split[i]);
                 call.enqueue(new Callback<ResponseBody>() {
                     @Override
@@ -915,7 +916,7 @@ find direction and show detail information of a service
                     final JSONObject jsonObject;
                     try {
                         jsonObject = new JSONObject(response.body().string());
-                        //Log.e("", "onResponse create review: " + jsonObject.toString());
+                        Log.e("", "onResponse create review: " + jsonObject.toString());
                         if (jsonObject.getBoolean("Status")) {
                             Review review = new Review(((MyApplication) MapsActivity.this.getApplication()).getUsername(),
                                     comment,
@@ -965,9 +966,39 @@ find direction and show detail information of a service
                                 type = "Atm";
                             }
 
-                            e.trigger(MyApplication.getInstance().getUsername(), builder);
+                            //e.trigger(MyApplication.getInstance().getUsername(), builder);
+
+                            Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getAuthURL())
+                                    .addConverterFactory(GsonConverterFactory.create()).build();
+                            final MapAPI tour = retro.create(MapAPI.class);
+                            Call<ResponseBody> call2 = tour.addActionReview(MyApplication.getInstance().getUsername(), time,
+                                    Integer.toString(item.getId()), type);
+                            call2.enqueue(new Callback<ResponseBody>() {
+                                @Override
+                                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                    if(response.code() == 200){
+                                        try{
+                                            JSONObject jsonObject1 = new JSONObject(response.body().string());
+                                            Log.e("tag", "onResponse: " + jsonObject1.toString() );
+                                        }catch (Exception e){
+                                            e.printStackTrace();
+                                        }
+                                    }else{
+                                        Log.e("tag", "onResponse: "+response.code() );
+                                    }
+                                }
+
+                                @Override
+                                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                    t.printStackTrace();
+                                }
+                            });
 
                             ActionObject ao = new ActionObject("review " + item.getId(), time,"Review", Integer.toString(item.getId()));
+
+                            if(MyApplication.getInstance().getReviewedMap() == null){
+                                MyApplication.getInstance().setReviewedMap(new HashMap<>());
+                            }
 
                             if(MyApplication.getInstance().getReviewedMap().containsKey(type)){
                                 MyApplication.getInstance().getReviewedMap().get(type).put("review " + item.getId(), ao);
@@ -980,13 +1011,13 @@ find direction and show detail information of a service
 
                             tvNoReview.setVisibility(View.GONE);
 
-                            //Log.e(TAG, "onResponse create review: " + MyApplication.getInstance().getReviewedMap());
+                            Log.e("tag", "onResponse create review: " + MyApplication.getInstance().getReviewedMap());
                         }
                     }catch (Exception e){
                         e.printStackTrace();
                     }
                 }else{
-                    //Log.e("", "onResponse create rview failed: " +response.code() );
+                    Log.e("", "onResponse create rview failed: " +response.code() );
                 }
             }
 
@@ -1037,7 +1068,7 @@ find direction and show detail information of a service
                     final JSONObject jsonObject;
                     try {
                         jsonObject = new JSONObject(response.body().string());
-                        //Log.e("", "onResponse update review: " + jsonObject.toString());
+                        Log.e("", "onResponse update review: " + jsonObject.toString());
                         if (jsonObject.getBoolean("Status")) {
                             Review review = new Review(((MyApplication) MapsActivity.this.getApplication()).getUsername(),
                                     comment,
@@ -1056,7 +1087,7 @@ find direction and show detail information of a service
                         e.printStackTrace();
                     }
                 }else{
-                    //Log.e("", "onResponse update review fail: " +response.code() );
+                    Log.e("", "onResponse update review fail: " +response.code() );
                 }
             }
 
@@ -1075,7 +1106,7 @@ find direction and show detail information of a service
      */
     public void deleteReviews(int pos, int id, Dialog dialog){
        // MapObject item = (MapObject) getIntent().getSerializableExtra("item");
-        //Log.e(TAG, "deleteReviews: "+ id );
+        Log.e("tag", "deleteReviews: "+ id );
         Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getServiceURL())
                 .addConverterFactory(GsonConverterFactory.create()).build();
         final MapAPI tour = retro.create(MapAPI.class);
@@ -1113,7 +1144,7 @@ find direction and show detail information of a service
                     final JSONObject jsonObject;
                     try {
                         jsonObject = new JSONObject(response.body().string());
-                        //Log.e("", "onResponse del review: " + jsonObject.toString());
+                        Log.e("", "onResponse del review: " + jsonObject.toString());
                         if (jsonObject.getBoolean("Status")) {
                             displayReviewItems.remove(pos);
                             reviewItems.remove(reviewItems.size()-1-pos);
@@ -1147,10 +1178,10 @@ find direction and show detail information of a service
                                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                                     try{
                                         if(response.code()==200){
-                                            //Log.e(TAG, "onResponse del action review: " + response.body().string());
+                                            Log.e("tag", "onResponse del action review: " + response.body().string());
                                         }
                                         else{
-                                            //Log.e(TAG, "onResponse del action review fail: " + response.code());
+                                            Log.e("tag", "onResponse del action review fail: " + response.code());
                                         }
 
                                     }catch (Exception e) {e.printStackTrace();}
@@ -1168,7 +1199,7 @@ find direction and show detail information of a service
                         e.printStackTrace();
                     }
                 }else{
-                    //Log.e("", "onResponse del review failed: " +response.code() );
+                    Log.e("", "onResponse del review failed: " +response.code() );
                 }
             }
 
@@ -1218,7 +1249,7 @@ find direction and show detail information of a service
                     final JSONObject jsonObject;
                     try {
                         jsonObject = new JSONObject(response.body().string());
-                        //Log.e("", "onResponse load review: " + jsonObject.toString() + " reviewload" + item.getId());
+                        Log.e("", "onResponse load review: " + jsonObject.toString() + " reviewload" + item.getId());
                         if (jsonObject.getBoolean("Status")) {
 
                             JSONArray jsonArray = jsonObject.getJSONArray("Reviews");
@@ -1301,7 +1332,7 @@ find direction and show detail information of a service
                         e.printStackTrace();
                     }
                 }else{
-                    //Log.e("", "onResponse load review failed: " +response.code() );
+                    Log.e("", "onResponse load review failed: " +response.code() );
                 }
             }
 
@@ -1322,7 +1353,7 @@ find direction and show detail information of a service
         currOption.rotation(location.getBearing()-45);
         currOption.title(getString(R.string.you_r_here));
         currMarker = mMap.addMarker(currOption);
-        //Log.e("", "onLocationChanged: updation" );
+        Log.e("", "onLocationChanged: updation" );
     }
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {
@@ -1422,7 +1453,7 @@ find direction and show detail information of a service
                                     final JSONObject jsonObject;
                                     try {
                                         jsonObject = new JSONObject(response.body().string());
-                                        //Log.e("", "onResponse upload: " + jsonObject.toString());
+                                        Log.e("", "onResponse upload: " + jsonObject.toString());
 
                                         if (jsonObject.getBoolean("Status")) {
                                             JSONObject jsonObject1 = jsonObject.getJSONObject("Paths");
@@ -1454,7 +1485,7 @@ find direction and show detail information of a service
                                             String[] split = images.split(";");
 
                                             for(int i =0 ; i < split.length; i++) {
-                                                //Log.e(TAG, "onResponse: " + split[i]);
+                                                Log.e("tag", "onResponse: " + split[i]);
                                             }
 
                                             Retrofit retro2 = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getServiceURL())
@@ -1468,7 +1499,7 @@ find direction and show detail information of a service
                                                         final JSONObject jsonObject;
                                                         try {
                                                             jsonObject = new JSONObject(response.body().string());
-                                                            //Log.e("", "onResponse create review: " + jsonObject.toString());
+                                                            Log.e("", "onResponse create review: " + jsonObject.toString());
 
                                                             data.putExtra("image", finalImage);
                                                             setResult(RESULT_OK, data);
@@ -1477,7 +1508,7 @@ find direction and show detail information of a service
                                                         }catch (Exception e){
                                                             e.printStackTrace();}
                                                     }else{
-                                                        //Log.e("", "onResponse create review: " + response.code());
+                                                        Log.e("", "onResponse create review: " + response.code());
                                                     }
                                                 }
 
@@ -1492,7 +1523,7 @@ find direction and show detail information of a service
                                         e.printStackTrace();
                                     }
                                 }else{
-                                    //Log.e("", "onResponse uploadfail: " + response.code());
+                                    Log.e("", "onResponse uploadfail: " + response.code());
                                 }
                             }
 
@@ -1573,7 +1604,7 @@ find direction and show detail information of a service
                                         final JSONObject jsonObject;
                                         try {
                                             jsonObject = new JSONObject(response.body().string());
-                                            //Log.e("", "onResponse upload: " + jsonObject.toString());
+                                            Log.e("", "onResponse upload: " + jsonObject.toString());
                                             JSONObject jsonObject1 = jsonObject.getJSONObject("Paths");
                                             String images = item.getImages();
                                             for (int i = 0; i < jsonObject1.length(); i++) {
@@ -1602,7 +1633,7 @@ find direction and show detail information of a service
                                             final MapAPI tour2 = retro2.create(MapAPI.class);
 
                                             for(int i =0 ; i < split.length; i++) {
-                                                //Log.e(TAG, "onResponse: " + split[i]);
+                                                Log.e("tag", "onResponse: " + split[i]);
                                             }
 
                                             Call<ResponseBody> call3 = tour2.addServicePhotos(MyApplication.getInstance().getVersion(),item.getId(), split, type);call3.enqueue(new Callback<ResponseBody>() {
@@ -1612,7 +1643,7 @@ find direction and show detail information of a service
                                                         final JSONObject jsonObject;
                                                         try {
                                                             jsonObject = new JSONObject(response.body().string());
-                                                            //Log.e("", "onResponse create review: " + jsonObject.toString());
+                                                            Log.e("", "onResponse create review: " + jsonObject.toString());
 
                                                             data.putExtra("image", finalImage);
                                                             setResult(RESULT_OK, data);
@@ -1621,7 +1652,7 @@ find direction and show detail information of a service
                                                         }catch (Exception e){
                                                             e.printStackTrace();}
                                                     }else{
-                                                        //Log.e("", "onResponse create review: " + response.code());
+                                                        Log.e("", "onResponse create review: " + response.code());
                                                     }
                                                 }
 
@@ -1634,7 +1665,7 @@ find direction and show detail information of a service
                                             e.printStackTrace();
                                         }
                                     }else{
-                                        //Log.e("", "onResponse upload failed: " + response.code());
+                                        Log.e("", "onResponse upload failed: " + response.code());
                                     }
                                 }
 
@@ -1658,7 +1689,7 @@ find direction and show detail information of a service
     upvote a service, increase its points
      */
     public void upvote(boolean isClear) {
-        //Log.e(TAG, "onActivityResult: " + getIntent().getIntExtra("index", -1));
+        Log.e("tag", "onActivityResult: " + getIntent().getIntExtra("index", -1));
         Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getServiceURL())
                 .addConverterFactory(GsonConverterFactory.create()).build();
         final MapAPI tour = retro.create(MapAPI.class);
@@ -1678,9 +1709,9 @@ find direction and show detail information of a service
                 if (response.code() == 200) {
                     final JSONObject jsonObject;
                     try {
-                        //Log.e("", "onResponse updoot: " + response);
+                        Log.e("", "onResponse updoot: " + response);
                         jsonObject = new JSONObject(response.body().string());
-                        //Log.e("", "onResponse updoot: " + jsonObject.toString());
+                        Log.e("", "onResponse updoot: " + jsonObject.toString());
 
                         Calendar calendar = Calendar.getInstance();
                         long time = calendar.getTimeInMillis();
@@ -1717,12 +1748,12 @@ find direction and show detail information of a service
                                         if (response.code() == 200) {
                                             try {
                                                 JSONObject jsonObject1 = new JSONObject(response.body().string());
-                                                //Log.e("TAG", "onResponse add updoot: " + jsonObject1.toString());
+                                                Log.e("tag", "onResponse add updoot: " + jsonObject1.toString());
                                             } catch (Exception e) {
                                                 e.printStackTrace();
                                             }
                                         } else {
-                                            //Log.e(TAG, "onResponse add updoot: " + response.code());
+                                            Log.e("tag", "onResponse add updoot: " + response.code());
                                         }
                                     }
 
@@ -1734,9 +1765,9 @@ find direction and show detail information of a service
 
                                 ActionObject ao = new ActionObject("upvote " + item.getId(), time, "Upvote", Integer.toString(item.getId()));
 
-                                /*
-                                update map
-                                 */
+                                if(MyApplication.getInstance().getUpvoteMap() == null){
+                                    MyApplication.getInstance().setUpvoteMap(new HashMap<>());
+                                }
                                 if (MyApplication.getInstance().getUpvoteMap().containsKey(type)) {
                                     MyApplication.getInstance().getUpvoteMap().get(type).put("upvote " + item.getId(), ao);
                                 } else {
@@ -1757,10 +1788,10 @@ find direction and show detail information of a service
                                     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                                         try{
                                             if(response.code()==200){
-                                                //Log.e(TAG, "onResponse del downvote: " + new JSONObject(response.body().string()).toString());
+                                                Log.e("tag", "onResponse del downvote: " + new JSONObject(response.body().string()).toString());
                                             }
                                             else{
-                                                //Log.e(TAG, "onResponse del downvote: " + response.code() );
+                                                Log.e("tag", "onResponse del downvote: " + response.code() );
                                             }
 
                                         }catch (Exception e) {e.printStackTrace();}
@@ -1773,7 +1804,7 @@ find direction and show detail information of a service
                                 });
                             }
 
-                            //Log.e(TAG, "onResponse: " + MyApplication.getInstance().getUpvoteMap());
+                            Log.e("tag", "onResponse: " + MyApplication.getInstance().getUpvoteMap());
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -1793,7 +1824,7 @@ find direction and show detail information of a service
     isClear is used to check if user is simply remove their previous vote
      */
     public void downvote(boolean isClear) {
-        //Log.e(TAG, "onActivityResult: " + getIntent().getIntExtra("index", -1));
+        Log.e("tag", "onActivityResult: " + getIntent().getIntExtra("index", -1));
         Retrofit retro = new Retrofit.Builder().baseUrl(MyApplication.getInstance().getServiceURL())
                 .addConverterFactory(GsonConverterFactory.create()).build();
         final MapAPI tour = retro.create(MapAPI.class);
@@ -1813,9 +1844,9 @@ find direction and show detail information of a service
                 if (response.code() == 200) {
                     final JSONObject jsonObject;
                     try {
-                        //Log.e("", "onResponse downvote: " + response);
+                        Log.e("", "onResponse downvote: " + response);
                         jsonObject = new JSONObject(response.body().string());
-                        //Log.e("", "onResponse downvote: " + jsonObject.toString());
+                        Log.e("", "onResponse downvote: " + jsonObject.toString());
 
                         Calendar calendar = Calendar.getInstance();
                         long time = calendar.getTimeInMillis();
@@ -1845,12 +1876,12 @@ find direction and show detail information of a service
                                         if (response.code() == 200) {
                                             try {
                                                 JSONObject jsonObject1 = new JSONObject(response.body().string());
-                                                //Log.e("TAG", "onResponse add downvote: " + jsonObject1.toString());
+                                                Log.e("tag", "onResponse add downvote: " + jsonObject1.toString());
                                             } catch (Exception e) {
                                                 e.printStackTrace();
                                             }
                                         } else {
-                                            //Log.e(TAG, "onResponse add downvote: " + response.code());
+                                            Log.e("tag", "onResponse add downvote: " + response.code());
                                         }
                                     }
 
@@ -1862,9 +1893,9 @@ find direction and show detail information of a service
 
                                 ActionObject ao = new ActionObject("downvote " + item.getId(), time, "Downvote", Integer.toString(item.getId()));
 
-                                /*
-                                update map
-                                 */
+                                if(MyApplication.getInstance().getUpvoteMap() == null){
+                                    MyApplication.getInstance().setDownvoteMap(new HashMap<>());
+                                }
                                 if (MyApplication.getInstance().getDownvoteMap().containsKey(type)) {
                                     MyApplication.getInstance().getDownvoteMap().get(type).put("downvote " + item.getId(), ao);
                                 } else {
@@ -1887,10 +1918,10 @@ find direction and show detail information of a service
                                     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                                         try{
                                             if(response.code()==200){
-                                                //Log.e(TAG, "onResponse del updoot: " + new JSONObject(response.body().string()).toString());
+                                                Log.e("tag", "onResponse del updoot: " + new JSONObject(response.body().string()).toString());
                                             }
                                             else{
-                                                //Log.e(TAG, "onResponse del updoot: " + response.code() );
+                                                Log.e("tag", "onResponse del updoot: " + response.code() );
                                             }
 
                                         }catch (Exception e) {e.printStackTrace();}
@@ -1905,7 +1936,7 @@ find direction and show detail information of a service
 
                             }
 
-                            //Log.e(TAG, "onResponse: " + MyApplication.getInstance().getDownvoteMap());
+                            Log.e("tag", "onResponse: " + MyApplication.getInstance().getDownvoteMap());
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -1928,19 +1959,8 @@ find direction and show detail information of a service
         super.onStop();
 
         locationManager.removeUpdates(this);
-        new CountDownTimer(3000,1000){
 
-            @Override
-            public void onTick(long millisUntilFinished) {
-
-            }
-
-            @Override
-            public void onFinish() {
-                e.unsubcribe(listener);
-            }
-        }.start();
-
+        e.unsubcribe(listener);
 
         if(oriUpvoted != item.isUpvoted() || oriDownvoted != item.isDownvoted()){
             if(item.isUpvoted() && oriDownvoted){
