@@ -20,9 +20,11 @@ import com.akexorcist.googledirection.model.Direction;
 import com.akexorcist.googledirection.model.Leg;
 import com.akexorcist.googledirection.model.Route;
 import com.akexorcist.googledirection.util.DirectionConverter;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.streetlity.client.Chat.Chat;
 import com.streetlity.client.Chat.ChatObject;
+import com.streetlity.client.RealtimeService.DeclineListener;
 import com.streetlity.client.RealtimeService.Information;
 import com.streetlity.client.RealtimeService.InformationListener;
 import com.streetlity.client.RealtimeService.Listener;
@@ -75,6 +77,8 @@ public class MaintainerLocation extends AppCompatActivity implements OnMapReadyC
     double currLon;
 
     Marker currMarker;
+
+    Marker repairmanMarker;
 
     boolean firstMove = false;
 
@@ -281,6 +285,9 @@ public class MaintainerLocation extends AppCompatActivity implements OnMapReadyC
             currMarker.remove();
         }
 
+        currLat = location.getLatitude();
+        currLon = location.getLongitude();
+
         MarkerOptions currOption = new MarkerOptions();
         currOption.position(new LatLng(location.getLatitude(),location.getLongitude()));
         currOption.title(getString(R.string.you_r_here));
@@ -454,19 +461,21 @@ public class MaintainerLocation extends AppCompatActivity implements OnMapReadyC
                         @Override
                         public void run() {
                             mMap.addMarker(option);
+                            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat,lon), 15f));
                         }
                     });
                 } else {
-                    if (currMarker != null) {
-                        currMarker.remove();
-                    }
-                    MarkerOptions option = new MarkerOptions();
-                    option.icon(BitmapDescriptorFactory.fromResource(R.drawable.cursor));
-                    option.position(new LatLng(lat, lon));
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            currMarker = mMap.addMarker(option);
+                            if (repairmanMarker != null) {
+                                repairmanMarker.remove();
+                            }
+                            MarkerOptions option = new MarkerOptions();
+                            option.icon(BitmapDescriptorFactory.fromResource(R.drawable.cursor));
+                            option.position(new LatLng(lat, lon));
+
+                            repairmanMarker = mMap.addMarker(option);
                         }
                     });
                 }
@@ -494,9 +503,9 @@ public class MaintainerLocation extends AppCompatActivity implements OnMapReadyC
             }
         };
 
-        socket.DeclineListener = new Listener<MaintenanceOrder>() {
+        socket.DeclineListener = new DeclineListener<MaintenanceOrder>() {
             @Override
-            public void trigger(MaintenanceOrder sender) {
+            public void onReceived(MaintenanceOrder sender, String reason) {
                 getSharedPreferences("activeOrder",MODE_PRIVATE).edit().clear().apply();
                 findViewById(R.id.btn_finish_denu).setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -508,6 +517,7 @@ public class MaintainerLocation extends AppCompatActivity implements OnMapReadyC
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        ((TextView) findViewById(R.id.tv_deny_reason)).setText(reason);
                         findViewById(R.id.layout_denied).setVisibility(View.VISIBLE);
                     }
                 });
@@ -530,6 +540,9 @@ public class MaintainerLocation extends AppCompatActivity implements OnMapReadyC
                 if(currMarker!= null) {
                     currMarker.remove();
                 }
+
+                currLat = location.getLatitude();
+                currLon = location.getLongitude();
 
                 MarkerOptions currOption = new MarkerOptions();
                 currOption.position(new LatLng(location.getLatitude(),location.getLongitude()));

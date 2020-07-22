@@ -12,6 +12,7 @@ import android.os.Bundle;
 
 import com.streetlity.client.MyApplication;
 import com.streetlity.client.R;
+import com.streetlity.client.RealtimeService.DeclineListener;
 import com.streetlity.client.RealtimeService.Information;
 import com.streetlity.client.RealtimeService.InformationListener;
 import com.streetlity.client.RealtimeService.Listener;
@@ -35,6 +36,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -171,9 +173,9 @@ public class Chat extends AppCompatActivity implements android.location.Location
             }
         };
 
-        socket.DeclineListener = new Listener<MaintenanceOrder>() {
+        socket.DeclineListener = new DeclineListener<MaintenanceOrder>() {
             @Override
-            public void trigger(MaintenanceOrder sender) {
+            public void onReceived(MaintenanceOrder sender, String reason) {
                 Log.e("TAG", "trigger: order is cancelededed");
                 getSharedPreferences("activeOrder",MODE_PRIVATE).edit().clear().apply();
                 findViewById(R.id.btn_finish_denu).setOnClickListener(new View.OnClickListener() {
@@ -187,6 +189,7 @@ public class Chat extends AppCompatActivity implements android.location.Location
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        ((TextView) findViewById(R.id.tv_deny_reason)).setText(reason);
                         findViewById(R.id.layout_denied).setVisibility(View.VISIBLE);
                     }
                 });
@@ -302,6 +305,7 @@ public class Chat extends AppCompatActivity implements android.location.Location
             Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
             if(location != null){
                 socket.updateLocation(location.getLatitude(),location.getLongitude(),location.getBearing());
+                socket.pullLocation(location);
             }
         }
     }
@@ -337,6 +341,7 @@ public class Chat extends AppCompatActivity implements android.location.Location
         if(socket != null){
             Log.e("TAG", "trigger: update location in chat");
             socket.updateLocation(location.getLatitude(),location.getLongitude(),location.getBearing());
+            socket.pullLocation(location);
         }
     }
 

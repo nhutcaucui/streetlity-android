@@ -33,6 +33,7 @@ import com.akexorcist.googledirection.model.Route;
 import com.akexorcist.googledirection.util.DirectionConverter;
 import com.streetlity.client.Chat.Chat;
 import com.streetlity.client.Chat.ChatObject;
+import com.streetlity.client.RealtimeService.DeclineListener;
 import com.streetlity.client.RealtimeService.Information;
 import com.streetlity.client.RealtimeService.InformationListener;
 import com.streetlity.client.RealtimeService.Listener;
@@ -244,6 +245,10 @@ common user find repairman's location on the map
         if(currMarker!= null) {
             currMarker.remove();
         }
+
+        currLat = location.getLatitude();
+        currLon = location.getLongitude();
+
         MarkerOptions currOption = new MarkerOptions();
         currOption.position(new LatLng(location.getLatitude(),location.getLongitude()));
         currOption.title(getString(R.string.you_r_here));
@@ -254,10 +259,11 @@ common user find repairman's location on the map
         if(socket != null){
             Log.e("TAG", "onResume: socket update location" );
             socket.updateLocation(location.getLatitude(),location.getLongitude(),location.getBearing());
+            socket.pullLocation(location);
         }
 
         Log.e("TAG", "onLocationChanged: update location for repairman" );
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()),15f));
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()),15f));
     }
 
     /*
@@ -376,10 +382,7 @@ common user find repairman's location on the map
 //            }
 //        };
 
-        /*
-        when receive a location update from the user, if it's the first time, find the direction to the user
-        else update the user's marker
-         */
+
         socket.LocationListener = new com.streetlity.client.RealtimeService.LocationListener<MaintenanceOrder>() {
             @Override
             public void onReceived(MaintenanceOrder sender, float lat, float lon) {
@@ -393,6 +396,8 @@ common user find repairman's location on the map
                     String serverKey = "AIzaSyB56CeF7ccQ9ZeMn0O4QkwlAQVX7K97-Ss";
                     LatLng origin = new LatLng(currLat, currLon);
                     LatLng destination = new LatLng(lat, lon);
+
+
                     GoogleDirection.withServerKey(serverKey)
                             .from(origin)
                             .to(destination)
@@ -443,6 +448,7 @@ common user find repairman's location on the map
                                     });
                                 }
                             });
+
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -450,16 +456,17 @@ common user find repairman's location on the map
                         }
                     });
                 }else{
-                    Log.e("TAG", "onReceived: receive location" );
-                    if(userMaker!=null) {
-                        userMaker.remove();
-                    }
-                    MarkerOptions option = new MarkerOptions();
-                    option.icon(BitmapDescriptorFactory.fromResource(R.drawable.user));
-                    option.position(new LatLng(lat,lon));
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+                            Log.e("TAG", "onReceived: receive location");
+                            if (userMaker != null) {
+                                userMaker.remove();
+                            }
+                            MarkerOptions option = new MarkerOptions();
+                            option.icon(BitmapDescriptorFactory.fromResource(R.drawable.user));
+                            option.position(new LatLng(lat, lon));
+
                             userMaker = mMap.addMarker(option);
                         }
                     });
@@ -494,9 +501,9 @@ common user find repairman's location on the map
         /*
         when receive a cancel call, show dialog saying this order is canceled with reason
          */
-        socket.DeclineListener = new Listener<MaintenanceOrder>() {
+        socket.DeclineListener = new DeclineListener<MaintenanceOrder>() {
             @Override
-            public void trigger(MaintenanceOrder sender) {
+            public void onReceived(MaintenanceOrder sender, String reason) {
                 Log.e("TAG", "trigger: order canceled" );
                 getSharedPreferences("activeOrder",MODE_PRIVATE).edit().clear().apply();
                 findViewById(R.id.btn_finish_denu).setOnClickListener(new View.OnClickListener() {
@@ -509,6 +516,7 @@ common user find repairman's location on the map
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        ((TextView) findViewById(R.id.tv_deny_reason)).setText(reason);
                         findViewById(R.id.layout_denied).setVisibility(View.VISIBLE);
                     }
                 });
@@ -530,6 +538,10 @@ common user find repairman's location on the map
                 if(currMarker!= null) {
                     currMarker.remove();
                 }
+
+                currLat = location.getLatitude();
+                currLon = location.getLongitude();
+
                 MarkerOptions currOption = new MarkerOptions();
                 currOption.position(new LatLng(location.getLatitude(),location.getLongitude()));
                 currOption.title(getString(R.string.you_r_here));
@@ -537,12 +549,13 @@ common user find repairman's location on the map
                 currOption.rotation(location.getBearing() - 45);
                 currMarker = mMap.addMarker(currOption);
 
-                if(socket != null){
-                    Log.e("TAG", "onResume: socket update location" );
-                    socket.updateLocation(location.getLatitude(),location.getLongitude(),location.getBearing());
-                    socket.pullLocation(location);
-                }
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(),location.getLongitude()),15f));
+            }
 
+            if(socket != null){
+                Log.e("TAG", "onResume: socket update location" );
+                socket.updateLocation(location.getLatitude(),location.getLongitude(),location.getBearing());
+                socket.pullLocation(location);
             }
 
             if(inited){

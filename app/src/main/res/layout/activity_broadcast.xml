@@ -180,6 +180,10 @@
         android:gravity="center_vertical"
         android:orientation="vertical">
 
+        <ScrollView
+            android:id="@+id/scroll_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -190,10 +194,7 @@
             android:orientation="vertical"
             android:padding="5dp">
 
-            <ScrollView
-                android:id="@+id/scroll_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -306,27 +307,25 @@
                         android:orientation="horizontal">
 
                     </LinearLayout>
-
+                    <Button
+                        android:id="@+id/btn_broadcast"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="15dp"
+                        android:layout_marginTop="15dp"
+                        android:layout_marginEnd="15dp"
+                        android:layout_marginBottom="15dp"
+                        android:background="@drawable/button_background"
+                        android:elevation="5dp"
+                        android:foreground="?android:attr/selectableItemBackground"
+                        android:paddingLeft="5dp"
+                        android:paddingRight="5dp"
+                        android:text="@string/emit_signal"
+                        android:textColor="@color/black" />
                 </LinearLayout>
-            </ScrollView>
 
-            <Button
-                android:id="@+id/btn_broadcast"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="15dp"
-                android:layout_marginTop="15dp"
-                android:layout_marginEnd="15dp"
-                android:layout_marginBottom="15dp"
-                android:background="@drawable/button_background"
-                android:elevation="5dp"
-                android:foreground="?android:attr/selectableItemBackground"
-                android:paddingLeft="5dp"
-                android:paddingRight="5dp"
-                android:text="@string/emit_signal"
-                android:textColor="@color/black" />
         </LinearLayout>
-
+        </ScrollView>
     </LinearLayout>
 
 

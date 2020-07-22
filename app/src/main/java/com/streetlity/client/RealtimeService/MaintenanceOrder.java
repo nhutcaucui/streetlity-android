@@ -1,9 +1,13 @@
 package com.streetlity.client.RealtimeService;
 
 import android.location.Location;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.util.Log;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.streetlity.client.Achievement.ActionObject;
 import com.streetlity.client.Chat.ChatObject;
 import com.github.nkzawa.emitter.Emitter;
 import com.github.nkzawa.socketio.client.Manager;
@@ -17,6 +21,7 @@ import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 public class MaintenanceOrder {
     public final String Endpoint = "34.87.144.190:6182";
@@ -54,7 +59,7 @@ public class MaintenanceOrder {
     /**
      * Listener for event Decline
      */
-    public Listener<MaintenanceOrder> DeclineListener;
+    public DeclineListener<MaintenanceOrder> DeclineListener;
     /**
      * Listener for event Complete
      */
@@ -95,16 +100,23 @@ public class MaintenanceOrder {
     private Emitter.Listener onUpdateLocation = new Emitter.Listener() {
         @Override
         public void call(Object... args) {
-            String slat = (String)args[0];
-            String slon = (String)args[1];
-            Log.println(Log.INFO, Tag, "OnUpdateLocation: " + slat + ":" + slon);
+            Log.e(Tag, "call: " + (String) args[0]);
+            try {
+                JSONObject jsonObject = new JSONObject( args[0].toString());
+                Log.e("TAG", "call: " + jsonObject.toString());
 
+                double slat = jsonObject.getDouble("lat");
+                double slon = jsonObject.getDouble("lon");
+                double bearing = jsonObject.getDouble("bear");
+                Log.println(Log.INFO, Tag, "OnUpdateLocation: " + slat + ":" + slon);
 
-
-            float lat = Float.parseFloat(slat);
-            float lon = Float.parseFloat(slon);
-            if (LocationListener != null) {
-                LocationListener.onReceived(self, lat, lon);
+                float lat = (float) slat;
+                float lon = (float) slon;
+                if (LocationListener != null) {
+                    LocationListener.onReceived(self, lat, lon);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     };
@@ -112,6 +124,7 @@ public class MaintenanceOrder {
     private Emitter.Listener onPullLocation = new Emitter.Listener() {
         @Override
         public void call(Object... args) {
+            Log.e(Tag, "call: on pull location" );
             updateLocation(location);
         }
     };
@@ -137,13 +150,18 @@ public class MaintenanceOrder {
     private Emitter.Listener onDecline = new Emitter.Listener() {
         @Override
         public void call(Object... args) {
-            String message = (String)args[0];
-            Log.println(Log.INFO, Tag, "OnDecline: " + message);
+            Log.e(Tag, "call: onDecline"     );
+            try {
+                String message = (String) args[0];
+                Log.println(Log.INFO, Tag, "OnDecline: " + message);
 
-            mSocket.close();
+                if (DeclineListener != null) {
+                    DeclineListener.onReceived(self, message);
+                }
 
-            if (DeclineListener != null) {
-                DeclineListener.trigger(self);
+                //mSocket.close();
+            }catch (Exception e){
+                e.printStackTrace();
             }
         }
     };
@@ -152,6 +170,7 @@ public class MaintenanceOrder {
     private Emitter.Listener onComplete = new Emitter.Listener() {
         @Override
         public void call(Object... args) {
+            Log.e(Tag, "call: on complete" );
             if (CompleteListener != null) {
                 CompleteListener.trigger(self);
             }
@@ -320,9 +339,12 @@ public class MaintenanceOrder {
      */
     public void updateLocation(Location location) {
         JSONObject json = new JSONObject();
+
         try {
-            json.put("Location", location);
-        } catch (JSONException e) {
+            json.put("lat", location.getLatitude());
+            json.put("lon", location.getLongitude());
+            json.put("bear", location.getBearing());
+        } catch (Exception e) {
             Log.e(Tag, "updateLocation: " + e.getMessage());
         }
         mSocket.emit("update-location", json.toString());
@@ -335,7 +357,7 @@ public class MaintenanceOrder {
      */
     public void updateLocation(double lat, double lon, float bearing) {
         Log.e(Tag, "updateLocation: update location" );
-        location = new Location("");
+        location = new Location(LocationManager.GPS_PROVIDER);
         location.setLatitude(lat);
         location.setLongitude(lon);
         location.setBearing(bearing);
@@ -362,7 +384,7 @@ public class MaintenanceOrder {
      * @param reason the reason of the
      */
     public void decline(String reason) {
-        Log.e(Tag, "decline: " );
+        Log.e(Tag, "decline: " + reason);
         mSocket.emit("decline", reason);
     }
 
@@ -400,6 +422,7 @@ public class MaintenanceOrder {
         mSocket.off("typing-chat", onTypingChat);
         mSocket.off("typed-chat", onTypedChat);
         Orders.remove(room);
+        mSocket.close();
     }
 
     /**

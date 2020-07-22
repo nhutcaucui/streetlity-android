@@ -693,6 +693,9 @@ Send a request to deny the order to the server
          */
         getSharedPreferences("activeOrder",MODE_PRIVATE).edit().putString("activeOrder", intent.getStringExtra("id")).apply();
 
+        SharedPreferences s = getSharedPreferences("Room", MODE_PRIVATE);
+        s.edit().putString("room",intent.getStringExtra("id")).apply();
+
         RelativeLayout broadcasting = findViewById(R.id.layout_broadcasting);
 
         broadcasting.setVisibility(View.GONE);
@@ -712,9 +715,6 @@ Send a request to deny the order to the server
             public void onClick(View v) {
                 Intent t1 = new Intent(BroadcastActivity.this, MaintainerLocation.class);
                 startActivity(t1);
-
-                SharedPreferences s = getSharedPreferences("Room", MODE_PRIVATE);
-                s.edit().putString("room",intent.getStringExtra("id")).apply();
 
                 //startActivity(intent);
 
