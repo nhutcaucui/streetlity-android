@@ -356,7 +356,7 @@ common user find repairman's location on the map
          */
         String phone2 = "";
         if (getSharedPreferences("broadcastPhone", MODE_PRIVATE).contains("phone")) {
-            phone2 = getSharedPreferences("broadcastPhone", MODE_PRIVATE).getString("phone", "no");
+            phone2 = getSharedPreferences("broadcastPhone", MODE_PRIVATE).getString("phone", MyApplication.getInstance().getPhone());
         }
         else if (phone2.equals("")) {
             phone2 = MyApplication.getInstance().getPhone();
@@ -488,6 +488,8 @@ common user find repairman's location on the map
                     }
                 });
                 getSharedPreferences("activeOrder",MODE_PRIVATE).edit().clear().apply();
+                getSharedPreferences("broadcastPhone", MODE_PRIVATE).edit()
+                        .clear().apply();
 
                 runOnUiThread(new Runnable() {
                     @Override
@@ -506,6 +508,10 @@ common user find repairman's location on the map
             public void onReceived(MaintenanceOrder sender, String reason) {
                 Log.e("TAG", "trigger: order canceled" );
                 getSharedPreferences("activeOrder",MODE_PRIVATE).edit().clear().apply();
+
+                getSharedPreferences("broadcastPhone", MODE_PRIVATE).edit()
+                        .clear().apply();
+
                 findViewById(R.id.btn_finish_denu).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {

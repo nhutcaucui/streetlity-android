@@ -372,7 +372,7 @@ public class MaintainerLocation extends AppCompatActivity implements OnMapReadyC
 
         String phone2 = "";
         if (getSharedPreferences("broadcastPhone", MODE_PRIVATE).contains("phone")) {
-            phone2 = getSharedPreferences("broadcastPhone", MODE_PRIVATE).getString("phone", "no");
+            phone2 = getSharedPreferences("broadcastPhone", MODE_PRIVATE).getString("phone", MyApplication.getInstance().getPhone());
         }
         if (phone2.equals("")) {
             phone2 = MyApplication.getInstance().getPhone();
@@ -507,6 +507,8 @@ public class MaintainerLocation extends AppCompatActivity implements OnMapReadyC
             @Override
             public void onReceived(MaintenanceOrder sender, String reason) {
                 getSharedPreferences("activeOrder",MODE_PRIVATE).edit().clear().apply();
+                getSharedPreferences("broadcastPhone", MODE_PRIVATE).edit()
+                        .clear().apply();
                 findViewById(R.id.btn_finish_denu).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {

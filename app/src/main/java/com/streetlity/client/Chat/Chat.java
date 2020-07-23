@@ -163,6 +163,8 @@ public class Chat extends AppCompatActivity implements android.location.Location
                     }
                 });
                 getSharedPreferences("activeOrder",MODE_PRIVATE).edit().clear().apply();
+                getSharedPreferences("broadcastPhone", MODE_PRIVATE).edit()
+                        .clear().apply();
 
                 runOnUiThread(new Runnable() {
                     @Override
@@ -178,6 +180,8 @@ public class Chat extends AppCompatActivity implements android.location.Location
             public void onReceived(MaintenanceOrder sender, String reason) {
                 Log.e("TAG", "trigger: order is cancelededed");
                 getSharedPreferences("activeOrder",MODE_PRIVATE).edit().clear().apply();
+                getSharedPreferences("broadcastPhone", MODE_PRIVATE).edit()
+                        .clear().apply();
                 findViewById(R.id.btn_finish_denu).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
