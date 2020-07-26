@@ -78,6 +78,9 @@ public class MapsActivityConfirmation extends AppCompatActivity implements OnMap
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("");
 
+        TextView tvTitle = findViewById(R.id.tv_title);
+        tvTitle.setText(getString(R.string.confirming_location));
+
         item = (MapObject) getIntent().getSerializableExtra("item");
 
         findViewById(R.id.layout_vote).setVisibility(View.GONE);

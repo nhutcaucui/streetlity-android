@@ -154,7 +154,7 @@
     <string name="no_fuel">Không tìm được trạm xăng gần đây</string>
     <string name="no_wc">Không tìm được nhà vệ sinh gần đây</string>
     <string name="no_maintenance">Không tìm được tiệm sửa xe gần đây</string>
-    <string name="cant_find_loca">Không tìm được vị trí hiện tại\nXin hãy lắc điện thoại</string>
+    <string name="cant_find_loca">Không tìm được vị trí hiện tại\nXin hãy chờ giây lát\nNếu sau 1 phút mà màn hình này chưa biến mất, xin vui lòng tìm một nơi mà bầu trời không bị che khuất</string>
     <string name="location_services_off">Xin hãy bật vị trí</string>
     <string name="open_settings">Mở cài đặt</string>
     <string name="no_internet">Không có internet</string>
@@ -225,7 +225,7 @@
     <string name="chat_with">Trò chuyện (nếu cần thiết)</string>
     <string name="repair_come">Thợ đến và sửa phương tiện</string>
     <string name="mark_and_pay">Đánh dấu công việc hoàn thành và trả tiền cho thợ</string>
-    <string name="note_pay">Lưu ý: Giá sẽ tùy thuộc vào thợ</string>
+    <string name="note_pay">Lưu ý: Giá sẽ tùy thuộc vào tình huống</string>
     <string name="i_understand">Tôi đã hiểu</string>
     <string name="instruction">Hướng dẫn</string>
     <string name="its_late">Đã khuya và các tiệm sửa xe đã đóng cửa</string>

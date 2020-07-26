@@ -115,7 +115,9 @@ public class MaintainerLocation extends AppCompatActivity implements OnMapReadyC
         btnChat.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivityForResult(new Intent(MaintainerLocation.this, Chat.class), 1);
+                Intent t = new Intent(MaintainerLocation.this, Chat.class);
+                t.putExtra("created", "");
+                startActivityForResult(t,1);
                 findViewById(R.id.img_chat_new).setVisibility(View.GONE);
             }
         });

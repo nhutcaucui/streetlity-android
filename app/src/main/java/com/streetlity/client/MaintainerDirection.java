@@ -125,7 +125,9 @@ common user find repairman's location on the map
         btnChat.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivityForResult(new Intent(MaintainerDirection.this, Chat.class),1);
+                Intent t = new Intent(MaintainerDirection.this, Chat.class);
+                t.putExtra("created", "");
+                startActivityForResult(t,1);
                 findViewById(R.id.img_chat_new).setVisibility(View.GONE);
             }
         });

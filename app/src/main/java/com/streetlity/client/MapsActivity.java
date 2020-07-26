@@ -294,6 +294,9 @@ find direction and show detail information of a service
         ImageView editName = findViewById(R.id.btn_edit_name);
         LinearLayout layoutVote = findViewById(R.id.layout_vote);
 
+        TextView tvPoints = findViewById(R.id.tv_points);
+        tvPoints.setText(Integer.toString(item.getConfident()));
+
         if(!MyApplication.getInstance().getToken().equals("")){
             leaveReview.setVisibility(View.VISIBLE);
             addPhoto.setVisibility(View.VISIBLE);
@@ -302,9 +305,6 @@ find direction and show detail information of a service
                 editName.setVisibility(View.VISIBLE);
             }
             layoutVote.setVisibility(VISIBLE);
-
-            TextView tvPoints = findViewById(R.id.tv_points);
-            tvPoints.setText(Integer.toString(item.getConfident()));
 
             ImageView imgUpvote = findViewById(R.id.img_upvote);
 
@@ -538,6 +538,27 @@ find direction and show detail information of a service
             });
         }
 
+        else {
+            ImageView imgUpvote = findViewById(R.id.img_upvote);
+
+            ImageView imgDownvote = findViewById(R.id.img_downvote);
+
+            imgUpvote.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast toast = Toast.makeText(MapsActivity.this, R.string.need_login_info, Toast.LENGTH_LONG);
+                    toast.show();
+                }
+            });
+
+            imgDownvote.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast toast = Toast.makeText(MapsActivity.this, R.string.need_login_info, Toast.LENGTH_LONG);
+                    toast.show();
+                }
+            });
+        }
 
 
         LinearLayout peekLayout = findViewById(R.id.layout_peek);

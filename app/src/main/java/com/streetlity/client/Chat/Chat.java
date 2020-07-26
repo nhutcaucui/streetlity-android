@@ -10,6 +10,7 @@ import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
+import com.google.android.gms.tasks.Task;
 import com.streetlity.client.MyApplication;
 import com.streetlity.client.R;
 import com.streetlity.client.RealtimeService.DeclineListener;
@@ -62,6 +63,27 @@ public class Chat extends AppCompatActivity implements android.location.Location
 
     LocationManager locationManager;
 
+    class Task extends AsyncTask<ChatObject, Void, ArrayList<ChatObject>> {
+
+        @Override
+        protected ArrayList<ChatObject> doInBackground(ChatObject... message) {
+            try {
+                items.add(message[0]);
+                //findViewById(R.id.layout_is_typing).setVisibility(View.GONE);
+                return null;
+            } catch (Exception e) {
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(ArrayList<ChatObject> a) {
+            //add the tours from internet to the array
+            adapter.notifyDataSetChanged();
+            lv.setSelection(adapter.getCount()-1);
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -113,7 +135,9 @@ public class Chat extends AppCompatActivity implements android.location.Location
 
         Log.e("", "onCreate: " + room);
 
-        MaintenanceOrder.Create(room);
+        if(!getIntent().hasExtra("created")) {
+            MaintenanceOrder.Create(room);
+        }
 
         socket = MaintenanceOrder.getInstance();
 
@@ -216,7 +240,7 @@ public class Chat extends AppCompatActivity implements android.location.Location
                     public void run() {
                         ConstraintLayout layoutLoading = findViewById(R.id.layout_loading_top);
                         layoutLoading.setVisibility(GONE);
-                        sender.pullChat();
+                        socket.pullChat();
 
                         Log.e("", "run: joined");
 
@@ -298,7 +322,7 @@ public class Chat extends AppCompatActivity implements android.location.Location
 //            }
 //        };
 
-        socket.close();
+        //socket.close();
         socket.join();
 
         if (ContextCompat.checkSelfPermission(Chat.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
@@ -364,28 +388,6 @@ public class Chat extends AppCompatActivity implements android.location.Location
 
     }
 
-
-    class Task extends AsyncTask<ChatObject, Void, ArrayList<ChatObject>> {
-        private Exception exception;
-
-        @Override
-        protected ArrayList<ChatObject> doInBackground(ChatObject... message) {
-            try {
-                items.add(message[0]);
-                findViewById(R.id.layout_is_typing).setVisibility(View.GONE);
-                return null;
-            } catch (Exception e) {
-                return null;
-            }
-        }
-
-        @Override
-        protected void onPostExecute(ArrayList<ChatObject> a) {
-            //add the tours from internet to the array
-            adapter.notifyDataSetChanged();
-            lv.setSelection(adapter.getCount()-1);
-        }
-    }
 
     /**
      * sort the chat when load

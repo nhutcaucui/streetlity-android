@@ -168,7 +168,7 @@
     <string name="no_fuel">No fuel station nearby</string>
     <string name="no_wc">No public toilet nearby</string>
     <string name="no_maintenance">No maintenance store nearby</string>
-    <string name="cant_find_loca">Can\'t find location\nplease shake the phone</string>
+    <string name="cant_find_loca">Can\'t find location\nPlease wait\nIn case this screen doesn\'t disappear after 1 minute, please find a place where the sky is visible</string>
     <string name="location_services_off">Please turn on location service</string>
     <string name="open_settings">Open settings</string>
     <string name="no_internet">No internet</string>
@@ -241,7 +241,7 @@
     <string name="chat_with">Chat with him (if needed)</string>
     <string name="repair_come">Repairman comes and fixes your vehicle</string>
     <string name="mark_and_pay">Mark the job as done and pay the repair man</string>
-    <string name="note_pay">Note: Price is depend on the repairman</string>
+    <string name="note_pay">Note: Price is depend on the situation</string>
     <string name="i_understand">I understand</string>
     <string name="instruction">Instruction</string>
     <string name="its_late">It\'s late and the maintenance stores are closed</string>
